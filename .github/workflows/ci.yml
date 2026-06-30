@@ -166,9 +166,6 @@ jobs:
   web:
     name: Web - Lint, Test, Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: examples/web
     steps:
       - uses: actions/checkout@v6
       - name: Detect web example
@@ -188,22 +185,28 @@ jobs:
           cache-dependency-path: examples/web/package-lock.json
       - run: npm ci
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - run: npm run lint
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - run: npm test
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - run: npm run build
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - name: Bundle size budget
         if: steps.detect.outputs.enabled == 'true'
-        working-directory: ${{ github.workspace }}
         run: bash scripts/check-bundle-size.sh
       - run: npx playwright install --with-deps chromium
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - run: npx playwright test
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - run: npm run lighthouse
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/web
       - name: Upload web coverage
         if: always() && steps.detect.outputs.enabled == 'true'
         uses: actions/upload-artifact@v7
@@ -213,15 +216,11 @@ jobs:
           if-no-files-found: ignore
       - name: License compliance (web)
         if: steps.detect.outputs.enabled == 'true'
-        working-directory: ${{ github.workspace }}
         run: bash scripts/check-license-compliance.sh web
 
   python:
     name: Python - Lint, Type, Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: examples/python
     steps:
       - uses: actions/checkout@v6
       - name: Detect python example
@@ -239,16 +238,22 @@ jobs:
           enable-cache: true
       - run: uv sync --locked --all-extras
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/python
       - run: uv run ruff check .
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/python
       - run: uv run ruff format --check .
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/python
       - run: uv run mypy src
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/python
       - run: uv run pyright
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/python
       - run: uv run pytest --cov-report=json:coverage/coverage-summary.json
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/python
       - name: Upload python coverage
         if: always() && steps.detect.outputs.enabled == 'true'
         uses: actions/upload-artifact@v7
@@ -258,15 +263,11 @@ jobs:
           if-no-files-found: ignore
       - name: License compliance (python)
         if: steps.detect.outputs.enabled == 'true'
-        working-directory: ${{ github.workspace }}
         run: bash scripts/check-license-compliance.sh python
 
   node:
     name: Node - Lint, Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: examples/node
     steps:
       - uses: actions/checkout@v6
       - name: Detect node example
@@ -286,10 +287,13 @@ jobs:
           cache-dependency-path: examples/node/package-lock.json
       - run: npm ci
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/node
       - run: npm run lint
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/node
       - run: npm test
         if: steps.detect.outputs.enabled == 'true'
+        working-directory: examples/node
       - name: Upload node coverage
         if: always() && steps.detect.outputs.enabled == 'true'
         uses: actions/upload-artifact@v7
@@ -299,7 +303,6 @@ jobs:
           if-no-files-found: ignore
       - name: License compliance (node)
         if: steps.detect.outputs.enabled == 'true'
-        working-directory: ${{ github.workspace }}
         run: bash scripts/check-license-compliance.sh node
 
   android-structure:
