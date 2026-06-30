@@ -1,0 +1,10 @@
+ExpeditionGauge is an offline-first automotive HUD for track days and off-road exploration.
+
+Core v1 features:
+• Real-time attitude G-meter, speed, heading, and drift angle (β)
+• Optional WitMotion BLE IMU, OBD-II, BLE TPMS, and external Bluetooth GPS
+• Session recording with CSV/JSON/GPX export
+• Playback with drift-colored route visualization
+
+Pure FOSS (MIT). No Google Play Services, Firebase, or closed telemetry.
+All optional hardware features default off — phone-only mode works out of the box.

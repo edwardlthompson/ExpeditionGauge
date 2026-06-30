@@ -1,0 +1,28 @@
+{
+  "features": {
+    "liveTelemetryEnabled": false,
+    "tpmsEnabled": false,
+    "externalGpsEnabled": false
+  },
+  "maintainer": "edward",
+  "releaseDraft": true,
+  "releaseRepo": "github.com/OWNER/ExpeditionGauge",
+  "sprints": {
+    "wave1_polish": true,
+    "v2_live_telemetry": true,
+    "v2_video": true,
+    "wave2_polish": true,
+    "core_v1": true
+  },
+  "projectName": "ExpeditionGauge",
+  "devDevice": {
+    "adbSerial": "b5214fc6",
+    "bootloaderUnlocked": true,
+    "rooted": true,
+    "model": "OnePlus 12",
+    "connection": "usb-adb"
+  },
+  "stack": "android",
+  "donationsUrl": "",
+  "purpose": "Offline-first automotive HUD with recording and playback"
+}

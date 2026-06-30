@@ -1,0 +1,103 @@
+package dev.foss.expeditiongauge
+
+import android.content.Context
+import dev.foss.expeditiongauge.ble.BleConnectionBudget
+import dev.foss.expeditiongauge.ble.BleImuManager
+import dev.foss.expeditiongauge.ble.BleScanCoordinator
+import dev.foss.expeditiongauge.ble.tpms.BleTpmsManager
+import dev.foss.expeditiongauge.calibration.CalibrationStore
+import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
+import dev.foss.expeditiongauge.drift.DriftAngleEstimator
+import dev.foss.expeditiongauge.export.ExportService
+import dev.foss.expeditiongauge.fusion.SensorFusionEngine
+import dev.foss.expeditiongauge.gps.ExternalNmeaGpsManager
+import dev.foss.expeditiongauge.gps.FusedGpsLocationProvider
+import dev.foss.expeditiongauge.live.LiveTelemetryModule
+import dev.foss.expeditiongauge.obd.ClassicBluetoothBudget
+import dev.foss.expeditiongauge.obd.ObdClassicManager
+import dev.foss.expeditiongauge.playback.PlaybackEngine
+import dev.foss.expeditiongauge.recording.RecordingWriter
+import dev.foss.expeditiongauge.recording.SessionEventRecorder
+import dev.foss.expeditiongauge.settings.SettingsPreferences
+import dev.foss.expeditiongauge.settings.SettingsProfileRepository
+import dev.foss.expeditiongauge.sensors.PhoneSensorProvider
+import dev.foss.expeditiongauge.telemetry.TelemetryBus
+import dev.foss.expeditiongauge.telemetry.TelemetryOrchestrator
+import dev.foss.expeditiongauge.thermal.ThermalMonitor
+import kotlinx.coroutines.CoroutineScope
+
+class ExpeditionGaugeServices(
+    private val appContext: Context,
+    scope: CoroutineScope,
+) {
+    val telemetryBus = TelemetryBus()
+    val calibrationStore = CalibrationStore(appContext)
+    val fusionEngine = SensorFusionEngine(calibrationStore)
+    val driftEstimator = DriftAngleEstimator()
+    val thermalMonitor = ThermalMonitor(appContext)
+    val settingsPreferences = SettingsPreferences(appContext)
+
+    val scanCoordinator = BleScanCoordinator()
+    val bleConnectionBudget = BleConnectionBudget()
+    val classicBluetoothBudget = ClassicBluetoothBudget()
+
+    val bleImuManager = BleImuManager(appContext, scanCoordinator, bleConnectionBudget)
+    val bleTpmsManager = BleTpmsManager(appContext, scanCoordinator)
+    val obdManager = ObdClassicManager(appContext, classicBluetoothBudget, scope)
+    val externalGpsManager = ExternalNmeaGpsManager(appContext, classicBluetoothBudget, scope)
+
+    lateinit var phoneSensorProvider: PhoneSensorProvider
+    lateinit var fusedGpsProvider: FusedGpsLocationProvider
+    lateinit var telemetryOrchestrator: TelemetryOrchestrator
+
+    val database = ExpeditionGaugeDatabase.create(appContext)
+    val recordingWriter = RecordingWriter(telemetryBus, database, scope)
+    val exportService = ExportService(database)
+    val playbackEngine = PlaybackEngine()
+    val settingsProfileRepository = SettingsProfileRepository(appContext, database.settingsProfileDao())
+    val sessionEventRecorder = SessionEventRecorder(database.sessionEventDao())
+    val liveTelemetryModule = LiveTelemetryModule(telemetryBus)
+
+    fun initialize(scope: CoroutineScope) {
+        phoneSensorProvider = PhoneSensorProvider(
+            context = appContext,
+            fusionEngine = fusionEngine,
+            driftEstimator = driftEstimator,
+            telemetryBus = telemetryBus,
+            calibrationStore = calibrationStore,
+            scope = scope,
+            bleImuManager = bleImuManager,
+        )
+        fusedGpsProvider = FusedGpsLocationProvider(
+            context = appContext,
+            telemetryBus = telemetryBus,
+            driftEstimator = driftEstimator,
+            sensorProvider = phoneSensorProvider,
+            externalGps = externalGpsManager,
+        )
+        telemetryOrchestrator = TelemetryOrchestrator(
+            telemetryBus = telemetryBus,
+            bleImuManager = bleImuManager,
+            bleTpmsManager = bleTpmsManager,
+            obdManager = obdManager,
+            externalGps = externalGpsManager,
+            fusedGps = fusedGpsProvider,
+            scope = scope,
+        )
+        telemetryOrchestrator.start()
+    }
+
+    fun startSensors() {
+        phoneSensorProvider.start()
+        fusedGpsProvider.startPhone()
+        bleImuManager.startScan()
+        if (FeatureFlags.tpmsEnabled) bleTpmsManager.startScan()
+    }
+
+    fun stopSensors() {
+        phoneSensorProvider.stop()
+        fusedGpsProvider.stopPhone()
+        bleImuManager.stopScan()
+        bleTpmsManager.stopScan()
+    }
+}

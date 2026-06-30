@@ -1,0 +1,25 @@
+name: Verify Plan Persisted
+
+on:
+  push:
+    paths:
+      - 'BUILD_PLAN.md'
+      - 'project.config.json'
+      - 'docs/START_HERE.md'
+      - 'scripts/expedition/**'
+  pull_request:
+    paths:
+      - 'BUILD_PLAN.md'
+      - 'project.config.json'
+      - 'docs/START_HERE.md'
+      - 'scripts/expedition/**'
+  workflow_dispatch:
+
+jobs:
+  verify-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify canonical plan files
+        shell: pwsh
+        run: pwsh scripts/expedition/verify-plan-persisted.ps1
