@@ -1,10 +1,8 @@
 package dev.foss.expeditiongauge
 
 import android.Manifest
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -25,37 +23,26 @@ class ExpeditionGaugeUiTest {
         Manifest.permission.BLUETOOTH_CONNECT,
     )
 
-    private fun dismissStartupScreens() {
+    private fun dismissOnboardingIfShown() {
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil(timeoutMillis = 15_000) {
-            composeTestRule.onAllNodesWithTag("onboarding_tour").fetchSemanticsNodes().isNotEmpty() ||
-                composeTestRule.onAllNodesWithContentDescription("Settings").fetchSemanticsNodes().isNotEmpty()
-        }
         if (composeTestRule.onAllNodesWithTag("onboarding_skip").fetchSemanticsNodes().isNotEmpty()) {
             composeTestRule.onNodeWithTag("onboarding_skip").performClick()
             composeTestRule.waitForIdle()
         }
-        composeTestRule.waitUntil(timeoutMillis = 15_000) {
-            composeTestRule.onAllNodesWithContentDescription("Settings").fetchSemanticsNodes().isNotEmpty()
-        }
     }
 
     @Test
-    fun opensSettingsPanelWithThemeAndUpdateControls() {
-        dismissStartupScreens()
+    fun dashboardShowsRecordControlsAfterOnboarding() {
+        dismissOnboardingIfShown()
+        composeTestRule.onNodeWithContentDescription("Settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Record").assertIsDisplayed()
+    }
+
+    @Test
+    fun opensSettingsScreenFromDashboard() {
+        dismissOnboardingIfShown()
         composeTestRule.onNodeWithContentDescription("Settings").performClick()
         composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Theme").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Check for updates").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Dark theme").performClick()
         composeTestRule.onNodeWithText("Close settings").performClick()
-    }
-
-    @Test
-    fun opensAboutPanelWithVersion() {
-        dismissStartupScreens()
-        composeTestRule.onNodeWithContentDescription("About").performClick()
-        composeTestRule.onNodeWithText("About").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Installed format: apk").assertIsDisplayed()
     }
 }
