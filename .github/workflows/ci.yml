@@ -171,58 +171,93 @@ jobs:
         working-directory: examples/web
     steps:
       - uses: actions/checkout@v6
+      - name: Detect web example
+        id: detect
+        run: |
+          if [ -f examples/web/package-lock.json ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping — no examples/web/package-lock.json"
+          fi
       - uses: actions/setup-node@v6
+        if: steps.detect.outputs.enabled == 'true'
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: examples/web/package-lock.json
       - run: npm ci
+        if: steps.detect.outputs.enabled == 'true'
       - run: npm run lint
+        if: steps.detect.outputs.enabled == 'true'
       - run: npm test
+        if: steps.detect.outputs.enabled == 'true'
       - run: npm run build
+        if: steps.detect.outputs.enabled == 'true'
       - name: Bundle size budget
+        if: steps.detect.outputs.enabled == 'true'
         working-directory: ${{ github.workspace }}
         run: bash scripts/check-bundle-size.sh
       - run: npx playwright install --with-deps chromium
+        if: steps.detect.outputs.enabled == 'true'
       - run: npx playwright test
+        if: steps.detect.outputs.enabled == 'true'
       - run: npm run lighthouse
+        if: steps.detect.outputs.enabled == 'true'
       - name: Upload web coverage
-        if: always()
+        if: always() && steps.detect.outputs.enabled == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: coverage-web
           path: examples/web/coverage/coverage-summary.json
           if-no-files-found: ignore
       - name: License compliance (web)
+        if: steps.detect.outputs.enabled == 'true'
         working-directory: ${{ github.workspace }}
         run: bash scripts/check-license-compliance.sh web
 
   python:
     name: Python - Lint, Type, Test
-    if: hashFiles('examples/python/pyproject.toml') != ''
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: examples/python
     steps:
       - uses: actions/checkout@v6
+      - name: Detect python example
+        id: detect
+        run: |
+          if [ -f examples/python/pyproject.toml ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping — no examples/python/pyproject.toml"
+          fi
       - uses: astral-sh/setup-uv@v7
+        if: steps.detect.outputs.enabled == 'true'
         with:
           enable-cache: true
       - run: uv sync --locked --all-extras
+        if: steps.detect.outputs.enabled == 'true'
       - run: uv run ruff check .
+        if: steps.detect.outputs.enabled == 'true'
       - run: uv run ruff format --check .
+        if: steps.detect.outputs.enabled == 'true'
       - run: uv run mypy src
+        if: steps.detect.outputs.enabled == 'true'
       - run: uv run pyright
+        if: steps.detect.outputs.enabled == 'true'
       - run: uv run pytest --cov-report=json:coverage/coverage-summary.json
+        if: steps.detect.outputs.enabled == 'true'
       - name: Upload python coverage
-        if: always()
+        if: always() && steps.detect.outputs.enabled == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: coverage-python
           path: examples/python/coverage/coverage-summary.json
           if-no-files-found: ignore
       - name: License compliance (python)
+        if: steps.detect.outputs.enabled == 'true'
         working-directory: ${{ github.workspace }}
         run: bash scripts/check-license-compliance.sh python
 
@@ -234,22 +269,36 @@ jobs:
         working-directory: examples/node
     steps:
       - uses: actions/checkout@v6
+      - name: Detect node example
+        id: detect
+        run: |
+          if [ -f examples/node/package-lock.json ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping — no examples/node/package-lock.json"
+          fi
       - uses: actions/setup-node@v6
+        if: steps.detect.outputs.enabled == 'true'
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: examples/node/package-lock.json
       - run: npm ci
+        if: steps.detect.outputs.enabled == 'true'
       - run: npm run lint
+        if: steps.detect.outputs.enabled == 'true'
       - run: npm test
+        if: steps.detect.outputs.enabled == 'true'
       - name: Upload node coverage
-        if: always()
+        if: always() && steps.detect.outputs.enabled == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: coverage-node
           path: examples/node/coverage/coverage-summary.json
           if-no-files-found: ignore
       - name: License compliance (node)
+        if: steps.detect.outputs.enabled == 'true'
         working-directory: ${{ github.workspace }}
         run: bash scripts/check-license-compliance.sh node
 
