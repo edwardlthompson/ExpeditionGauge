@@ -48,6 +48,8 @@ check_file "$ANDROID/ghost/GhostLapOverlay.kt"
 check_file "$DOCS/alerts.md"
 check_file "$ANDROID/alerts/AlertEngine.kt"
 check_file "$ANDROID/alerts/AlertThresholds.kt"
+check_file "$ANDROID/alerts/AlertService.kt"
+check_file "$ANDROID/alerts/AlertThresholdsPreferences.kt"
 
 # Shared coordinator
 check_file "$ANDROID/playback/PlaybackEngine.kt"

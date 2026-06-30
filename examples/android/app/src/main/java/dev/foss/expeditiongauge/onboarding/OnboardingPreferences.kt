@@ -31,4 +31,6 @@ enum class OnboardingStep {
     Permissions,
     MountLevel,
     FirstRecording,
+    LiveSessionTip,
+    PlaybackReview,
 }

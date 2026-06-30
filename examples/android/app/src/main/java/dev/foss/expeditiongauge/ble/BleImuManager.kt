@@ -2,13 +2,8 @@ package dev.foss.expeditiongauge.ble
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanSettings
 import android.content.Context
@@ -37,6 +32,7 @@ class BleImuManager(
     private val adapter: BluetoothAdapter? = bluetoothManager.adapter
     private val sessions = ConcurrentHashMap<String, ImuDeviceSession>()
     private val gattConnections = ConcurrentHashMap<String, BluetoothGatt>()
+    private val userDisconnected = ConcurrentHashMap.newKeySet<String>()
     private val multiFusion = dev.foss.expeditiongauge.fusion.MultiImuYawFusion()
 
     private val _sessionsFlow = MutableStateFlow<List<ImuDeviceSession>>(emptyList())
@@ -83,13 +79,35 @@ class BleImuManager(
     }
 
     fun connect(deviceId: String) {
+        userDisconnected.remove(deviceId)
+        connectGatt(deviceId)
+    }
+
+    private fun connectGatt(deviceId: String) {
         if (!connectionBudget.canConnect(deviceId)) return
         val device = adapter?.getRemoteDevice(deviceId) ?: return
         gattConnections[deviceId]?.close()
-        gattConnections[deviceId] = device.connectGatt(context, false, gattCallback(deviceId))
+        gattConnections[deviceId] = device.connectGatt(
+            context,
+            false,
+            BleImuGattCallback(
+                deviceId = deviceId,
+                sessions = sessions,
+                gattConnections = gattConnections,
+                connectionBudget = connectionBudget,
+                onSessionsChanged = ::publishSessions,
+                onFusionUpdate = ::updateFusion,
+                onReconnect = { id ->
+                    if (!userDisconnected.contains(id)) {
+                        connectGatt(id)
+                    }
+                },
+            ),
+        )
     }
 
     fun disconnect(deviceId: String) {
+        userDisconnected.add(deviceId)
         gattConnections.remove(deviceId)?.close()
         connectionBudget.onDisconnected(deviceId)
         sessions[deviceId]?.let { sessions[deviceId] = it.copy(connected = false) }
@@ -107,53 +125,12 @@ class BleImuManager(
         ImuDeviceStatus(it.deviceId, it.displayName, it.placement, it.connected, it.signalQuality)
     }
 
+    fun currentSessions(): List<ImuDeviceSession> = sessions.values.toList()
+
     fun fuseWithPhone(phoneYawDeg: Float): dev.foss.expeditiongauge.fusion.MultiImuFusionOutput {
         val output = multiFusion.fuse(sessions.values.toList(), phoneYawDeg)
         _fusionOutput.value = output
         return output
-    }
-
-    private fun gattCallback(deviceId: String) = object : BluetoothGattCallback() {
-        override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
-            when (newState) {
-                BluetoothProfile.STATE_CONNECTED -> {
-                    connectionBudget.onConnected(deviceId)
-                    sessions[deviceId]?.let { sessions[deviceId] = it.copy(connected = true) }
-                    publishSessions()
-                    gatt.discoverServices()
-                }
-                BluetoothProfile.STATE_DISCONNECTED -> {
-                    connectionBudget.onDisconnected(deviceId)
-                    sessions[deviceId]?.let { sessions[deviceId] = it.copy(connected = false) }
-                    publishSessions()
-                    gatt.close()
-                    gattConnections.remove(deviceId)
-                }
-            }
-        }
-
-        override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-            val service = gatt.getService(WIT_SERVICE) ?: return
-            val notifyChar = service.getCharacteristic(WIT_NOTIFY) ?: return
-            gatt.setCharacteristicNotification(notifyChar, true)
-            notifyChar.getDescriptor(CLIENT_CONFIG)?.let { desc ->
-                desc.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-                gatt.writeDescriptor(desc)
-            }
-            service.getCharacteristic(WIT_WRITE)?.let { write ->
-                write.value = WitMotionParser.buildRateCommand(50)
-                gatt.writeCharacteristic(write)
-            }
-        }
-
-        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            val sample = WitMotionParser.parsePacket(characteristic.value ?: return) ?: return
-            val session = sessions[deviceId] ?: return
-            session.filter.onSample(sample)
-            sessions[deviceId] = session.copy(lastSeenMs = System.currentTimeMillis())
-            publishSessions()
-            updateFusion(0f)
-        }
     }
 
     private fun publishSessions() {
@@ -168,6 +145,5 @@ class BleImuManager(
         val WIT_SERVICE: UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb")
         val WIT_NOTIFY: UUID = UUID.fromString("0000ffe4-0000-1000-8000-00805f9b34fb")
         val WIT_WRITE: UUID = UUID.fromString("0000ffe9-0000-1000-8000-00805f9b34fb")
-        private val CLIENT_CONFIG: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
 }

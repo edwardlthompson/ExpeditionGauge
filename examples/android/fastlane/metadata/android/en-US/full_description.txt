@@ -1,0 +1,29 @@
+ExpeditionGauge is an offline-first automotive HUD for track days, drift practice, and off-road exploration.
+
+Core HUD (phone-only, no accessories required):
+• Attitude G-meter with pitch, roll, and lateral G
+• Speed, heading, and drift angle (β)
+• Session recording with CSV, JSON, and GPX export
+• MapLibre playback with drift-colored route and elevation profile
+
+v1.1 polish (optional toggles, default off where noted):
+• Session metadata — notes, driver, conditions, tags, photo stub
+• Crawling mode — attitude-first HUD for low-speed off-road
+• Lap timing — GPS lap detection, sector splits, predictive delta strip
+• Telemetry graphs — speed, attitude, and tire tabs synced to scrubber
+• Route heatmaps — latG, β, and slip intensity along the path
+• Driving line — apex and brake-zone hints on the map
+• Ghost lap — compare against best lap with sector deltas
+• Configurable alerts — latG, drift, pitch/roll, speed, OBD/TPMS thresholds (master off by default)
+
+v1.2 polish (wave 2–3):
+• Dashboard presets — Drift, Offroad, Track, Minimal layouts + saved profiles
+• Playback layout — resizable map/gauge split, keyboard seek, graphs dock
+• Session stats + side-by-side comparison with HTML share summary
+• Mark event FAB with telemetry snapshot on scrubber + export
+• Skippable onboarding tour, calibration tips, large text, high contrast, optional TTS
+
+Optional hardware (all default off):
+• WitMotion BLE IMU, OBD-II, BLE TPMS, external Bluetooth GPS
+
+Pure FOSS (MIT). No Google Play Services, Firebase, or closed telemetry.

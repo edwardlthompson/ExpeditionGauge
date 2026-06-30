@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
@@ -14,6 +15,7 @@ fun ExpeditionGaugeTheme(
     themeMode: ThemeMode,
     brightnessMode: BrightnessMode = BrightnessMode.Auto,
     highContrastEnabled: Boolean = false,
+    textScale: Float = 1f,
     content: @Composable () -> Unit,
 ) {
     val systemDark = isSystemInDarkTheme()
@@ -37,12 +39,17 @@ fun ExpeditionGaugeTheme(
             window.statusBarColor = colorScheme.surface.toArgb()
             window.navigationBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            val attrs = window.attributes
+            attrs.screenBrightness = screenBrightnessFor(brightnessMode)
+            window.attributes = attrs
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = ExpeditionGaugeTypography,
-        content = content,
-    )
+    CompositionLocalProvider(LocalTextScale provides textScale) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = scaledTypography(textScale),
+            content = content,
+        )
+    }
 }

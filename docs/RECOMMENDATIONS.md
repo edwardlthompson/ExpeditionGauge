@@ -1,8 +1,6 @@
 # Accepted stakeholder recommendations
 
-Canonical copy of the accepted recommendation set from BUILD_PLAN.md. Every item maps to a sprint in the traceability matrix — no orphan features.
-
-See BUILD_PLAN.md sections **Stakeholder recommendations (accepted — in scope)** and **Recommendations traceability matrix** for full tables.
+Canonical traceability matrix for accepted stakeholder recommendations. Every item maps to a sprint — no orphan features. Active sprint board: [`BUILD_PLAN.md`](../BUILD_PLAN.md).
 
 ## Summary
 

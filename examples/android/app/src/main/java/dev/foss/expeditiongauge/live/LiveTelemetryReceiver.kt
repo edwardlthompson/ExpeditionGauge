@@ -1,8 +1,13 @@
 package dev.foss.expeditiongauge.live
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 enum class LiveReceiverState {
     Idle,
@@ -10,34 +15,46 @@ enum class LiveReceiverState {
     Connected,
 }
 
-/**
- * In-app receiver WebRTC stub — parses live JSON into gauge-ready state.
- */
 class LiveTelemetryReceiver(
-    private val signalingClient: SignalingClient = SignalingClientStub(),
-    private val transport: LiveTelemetryTransport = StubLiveTelemetryTransport(),
+    private val webSocketClient: LiveWebSocketClient,
 ) {
     private val _state = MutableStateFlow(LiveReceiverState.Idle)
     val state: StateFlow<LiveReceiverState> = _state.asStateFlow()
 
-    private val _latestJson = MutableStateFlow<String?>(null)
-    val latestJson: StateFlow<String?> = _latestJson.asStateFlow()
+    private val _latestSample = MutableStateFlow<LiveSampleDto?>(null)
+    val latestSample: StateFlow<LiveSampleDto?> = _latestSample.asStateFlow()
 
-    suspend fun joinSession(sessionId: String, code: String, signalWss: String) {
+    private var metricsJob: Job? = null
+
+    fun joinSession(scope: CoroutineScope, sessionId: String, code: String, signalWss: String) {
         _state.value = LiveReceiverState.Connecting
-        signalingClient.connect(sessionId, code, signalWss)
-        transport.connect(sessionId, code)
+        webSocketClient.connect(sessionId, code, signalWss, "receiver")
+        metricsJob?.cancel()
+        metricsJob = scope.launch {
+            webSocketClient.metrics.collectLatest { json -> onMetricReceived(json) }
+        }
         _state.value = LiveReceiverState.Connected
     }
 
     fun onMetricReceived(json: String) {
-        _latestJson.value = json
+        val obj = runCatching { JSONObject(json) }.getOrNull() ?: return
+        _latestSample.value = LiveSampleDto(
+            timestampMs = obj.optLong("t"),
+            speedMps = obj.optDouble("speed").toFloat(),
+            latG = obj.optDouble("latG").toFloat(),
+            betaDeg = if (obj.has("beta")) obj.optDouble("beta").toFloat() else null,
+            pitchDeg = obj.optDouble("pitch").toFloat(),
+            rollDeg = obj.optDouble("roll").toFloat(),
+            headingDeg = obj.optDouble("hdg").toFloat(),
+            tpmsJson = obj.optJSONObject("tpms")?.toString(),
+        )
     }
 
-    suspend fun disconnect() {
-        transport.disconnect()
-        signalingClient.disconnect()
+    fun disconnect() {
+        metricsJob?.cancel()
+        metricsJob = null
+        webSocketClient.disconnect()
         _state.value = LiveReceiverState.Idle
-        _latestJson.value = null
+        _latestSample.value = null
     }
 }

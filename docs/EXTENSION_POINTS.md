@@ -14,7 +14,9 @@
 | Recording sink | `RecordingWriter` → Room | 6 |
 | Export format | `ExportService` | 6 |
 | Playback clock | `PlaybackEngine` | 7 |
-| Live telemetry | `FeatureFlags.liveTelemetryEnabled` stub | 19 |
+| Live telemetry | `FeatureFlags.liveTelemetryEnabled` stub (default **false**) | 19 |
+
+Core v1 keeps `liveTelemetryEnabled`, `tpmsEnabled`, and `externalGpsEnabled` runtime flags default **off**; user settings may enable TPMS/external GPS when hardware is present.
 
 ## Adding a new TPMS brand
 

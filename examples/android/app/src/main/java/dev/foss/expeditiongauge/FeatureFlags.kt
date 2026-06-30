@@ -2,14 +2,14 @@ package dev.foss.expeditiongauge
 
 /**
  * Runtime feature toggles synced from [project.config.json] at build time.
- * All optional hardware paths default off for phone-only core v1.
- * Polish wave 1 (Sprints 9–14) flags default on when wave1_polish is enabled.
+ * Core v1 (Sprint 8): optional hardware paths default off — phone-only works without BLE/OBD/TPMS/external GPS.
+ * Live telemetry remains off until Sprint 19.
  */
 object FeatureFlags {
     const val wave1PolishEnabled: Boolean = true
     const val wave2PolishEnabled: Boolean = true
-    const val tpmsEnabled: Boolean = false
-    const val externalGpsEnabled: Boolean = false
+    var tpmsEnabled: Boolean = false
+    var externalGpsEnabled: Boolean = false
     var liveTelemetryEnabled: Boolean = false
 
     const val sessionMetadataEnabled: Boolean = wave1PolishEnabled
@@ -21,4 +21,12 @@ object FeatureFlags {
     const val ghostLapEnabled: Boolean = wave1PolishEnabled
     const val alertsEnabled: Boolean = wave1PolishEnabled
     const val lapTimerStripEnabled: Boolean = false
+    const val dashboardPresetsEnabled: Boolean = wave2PolishEnabled
+    const val playbackLayoutEnabled: Boolean = wave2PolishEnabled
+    const val sessionStatsEnabled: Boolean = wave2PolishEnabled
+    const val markEventEnabled: Boolean = wave2PolishEnabled
+    const val onboardingEnabled: Boolean = wave2PolishEnabled
+    const val accessibilityPackEnabled: Boolean = wave2PolishEnabled
+    const val videoSyncEnabled: Boolean = true
+    var developerModeEnabled: Boolean = false
 }

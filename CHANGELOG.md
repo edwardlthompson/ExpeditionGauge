@@ -17,14 +17,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [Unreleased]
+## [2.1.0] — ExpeditionGauge live telemetry (2026-06-30)
 
 ### Added
 
-* **android:** v1.1 polish wave 1 (Sprints 9–14) — session metadata, crawling mode, lap timing, telemetry graphs, heatmaps, driving line, ghost lap, configurable alerts
-* **android:** `PlaybackEngine` scrubber markers for high-β, slip, and alert events
-* **android:** `FeatureFlags` polish toggles gated by `wave1_polish` in `project.config.json`
-* **docs:** feature specs for session metadata, crawling, lap timing, graphs, heatmap, driving line, ghost lap, alerts; ADR-0002 lap timing architecture
+* Live Telemetry sender — QR + 6-digit code pairing, pit-crew receiver count (Sprint 19)
+* OkHttp WebSocket signaling client + self-hosted `signaling-server/` (Sprint 19)
+* In-app live receiver screen + static `live-receiver/` web dashboard (Sprint 19)
+* TPMS object in live metric JSON when TPMS active (Sprint 19)
+* Settings persistence for live telemetry toggle and signaling URL (Sprint 19)
+* F-Droid changelog for versionCode 5
+
+## [2.0.0] — ExpeditionGauge v2 video + export (2026-06-30)
+
+### Added
+
+* Video sync — import MP4, offset alignment, ExoPlayer preview on playback (Sprint 18)
+* MediaCodec telemetry burn-in export (Sprint 18)
+* Full calibration wizard with Test Drive step (Sprint 18)
+* Developer / Advanced mode — Madgwick β tuning (Sprint 18)
+* Enhanced export — GPX extensions, session ZIP bundle (Sprint 18)
+* F-Droid changelog for versionCode 4
+
+## [1.2.0] — ExpeditionGauge polish waves 2–3 (2026-06-30)
+
+### Added
+
+* Dashboard presets + settings profiles (Sprint 15)
+* Playback layout presets + keyboard/gamepad scrubber (Sprint 16)
+* Session stats, comparison, mark events, HTML share summary (Sprint 17)
+* Onboarding tour, accessibility pack, calibration tips (Sprint 17)
+* F-Droid changelog for versionCode 3
+
+## [1.1.0] — ExpeditionGauge polish wave 1 (2026-06-30)
+
+### Added
+
+* Session metadata, crawling mode, lap timing, telemetry graphs, route heatmaps, driving line, ghost lap, configurable alerts (Sprints 9–13)
+* F-Droid store assets: icon, feature graphic, phone screenshots
+
+## [Unreleased]
+
+### Changed
+
+* Trim `BUILD_PLAN.md` to active board (Sprints 19b–27); archive Sprints 0–19 in `COMPLETED_TASKS.md`
+* Split oversized Kotlin/XML files for CI file-limit compliance
+* Playback map overlay colors migrated to design tokens (`Playback*` palette)
 
 ## [0.11.1](https://github.com/edwardlthompson/agent-project-bootstrap/compare/v0.11.0...v0.11.1) (2026-06-21)
 

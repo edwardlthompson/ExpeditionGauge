@@ -19,7 +19,7 @@ class SectorSplitCalculator(
         if (sectorLines.isEmpty() || samples.isEmpty()) {
             return SectorTimingResult(emptyList(), emptyList())
         }
-        val lapSamples = samples.filter { it.id in lap.startSampleId..lap.endSampleId }
+        val lapSamples = samplesForLap(lap, samples)
         if (lapSamples.size < 2) return SectorTimingResult(emptyList(), emptyList())
 
         val splits = mutableListOf<SectorSplitEntity>()
@@ -47,15 +47,25 @@ class SectorSplitCalculator(
         return SectorTimingResult(splits, durations)
     }
 
+    private fun samplesForLap(lap: LapEntity, samples: List<SampleEntity>): List<SampleEntity> {
+        val startIdx = samples.indexOfFirst { it.id == lap.startSampleId }
+        val endIdx = samples.indexOfFirst { it.id == lap.endSampleId }
+        if (startIdx < 0 || endIdx < 0 || endIdx < startIdx) return emptyList()
+        return samples.subList(startIdx, endIdx + 1)
+    }
+
     fun theoreticalBest(sectorBestMs: List<Long>): Long = sectorBestMs.sum()
 }
 
 fun parseSectorLinesFromGeoJson(geoJson: String?): List<LineSegment> {
     if (geoJson.isNullOrBlank()) return emptyList()
+    val inner = geoJson.substringAfter("coordinates\":", "").substringBeforeLast(']').trim()
+    if (inner.isBlank()) return emptyList()
     val segments = mutableListOf<LineSegment>()
-    val lineRegex = """\[\[(-?\d+\.?\d*),\s*(-?\d+\.?\d*)\],\s*\[(-?\d+\.?\d*),\s*(-?\d+\.?\d*)\]\]"""
-        .toRegex()
-    lineRegex.findAll(geoJson).forEach { match ->
+    val chunkRegex =
+        """\[\s*\[\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\]\s*,\s*\[\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\]\s*\]"""
+            .toRegex()
+    chunkRegex.findAll(inner).forEach { match ->
         val (lon1, lat1, lon2, lat2) = match.destructured
         segments += LineSegment(lat1.toDouble(), lon1.toDouble(), lat2.toDouble(), lon2.toDouble())
     }

@@ -34,6 +34,13 @@ class CalibrationStore(private val context: Context) {
         }
     }
 
+    suspend fun clearOffsets() {
+        context.calibrationDataStore.edit { prefs ->
+            prefs[pitchKey] = 0f
+            prefs[rollKey] = 0f
+        }
+    }
+
     fun applyOffsets(pitchDeg: Float, rollDeg: Float, offsets: CalibrationOffsets): Pair<Float, Float> {
         return Pair(pitchDeg - offsets.pitchOffsetDeg, rollDeg - offsets.rollOffsetDeg)
     }

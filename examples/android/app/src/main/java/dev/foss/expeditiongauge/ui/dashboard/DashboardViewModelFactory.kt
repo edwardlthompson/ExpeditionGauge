@@ -6,7 +6,10 @@ import dev.foss.expeditiongauge.calibration.CalibrationStore
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
+import dev.foss.expeditiongauge.alerts.AlertService
+import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
+import dev.foss.expeditiongauge.timing.LapTimingService
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.thermal.ThermalMonitor
 
@@ -18,6 +21,9 @@ class DashboardViewModelFactory(
     private val settingsProfileRepository: SettingsProfileRepository,
     private val sessionEventRecorder: SessionEventRecorder,
     private val liveTelemetryModule: LiveTelemetryModule,
+    private val lapTimingService: LapTimingService,
+    private val settingsPreferences: SettingsPreferences,
+    private val alertService: AlertService,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -30,6 +36,9 @@ class DashboardViewModelFactory(
                 settingsProfileRepository = settingsProfileRepository,
                 sessionEventRecorder = sessionEventRecorder,
                 liveTelemetryModule = liveTelemetryModule,
+                lapTimingService = lapTimingService,
+                settingsPreferences = settingsPreferences,
+                alertService = alertService,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

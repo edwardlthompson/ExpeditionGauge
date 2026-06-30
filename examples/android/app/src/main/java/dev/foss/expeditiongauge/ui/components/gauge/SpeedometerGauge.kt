@@ -17,6 +17,10 @@ import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import dev.foss.expeditiongauge.ui.theme.LocalTextScale
+import dev.foss.expeditiongauge.ui.theme.scaledGaugeSpeedTextStyle
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
 
@@ -25,9 +29,14 @@ fun SpeedometerGauge(
     speedMps: Float,
     modifier: Modifier = Modifier,
     useMetric: Boolean = true,
+    speedFromObd: Boolean = false,
 ) {
     Column(
-        modifier = modifier.padding(SpacingSm),
+        modifier = modifier
+            .padding(SpacingSm)
+            .semantics {
+                contentDescription = "Speed ${GaugeLogic.formatSpeedMps(speedMps, useMetric)} ${GaugeLogic.speedUnitLabel(useMetric)}"
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Canvas(modifier = Modifier.size(160.dp)) {
@@ -46,11 +55,19 @@ fun SpeedometerGauge(
         Text(
             text = GaugeLogic.formatSpeedMps(speedMps, useMetric),
             color = GaugeScaleWhite,
-            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
+            style = scaledGaugeSpeedTextStyle(LocalTextScale.current),
         )
         Text(
             text = stringResource(R.string.gauge_speed_unit, GaugeLogic.speedUnitLabel(useMetric)),
             color = GaugeYellow,
+            style = androidx.compose.material3.MaterialTheme.typography.labelLarge,
         )
+        if (speedFromObd) {
+            Text(
+                text = stringResource(R.string.gauge_speed_obd),
+                color = GaugeYellow,
+                style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+            )
+        }
     }
 }

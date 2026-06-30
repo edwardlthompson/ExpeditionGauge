@@ -4,22 +4,35 @@
 
 ## Acceptance criteria
 
-- ✅ ELM327 over Bluetooth Classic SPP (`ObdClassicManager`)
-- ✅ Poll RPM, speed, throttle, load, battery voltage
-- ✅ `slipRatio` on TelemetryBus — distinct from `driftAngleDeg` (β)
-- ✅ Settings OBD device picker
-- ✅ Shares `ClassicBluetoothBudget` with external GPS (max 2 SPP)
+- ELM327 over Bluetooth Classic SPP (`ObdClassicManager` + `Elm327Protocol` init: ATZ, ATE0, ATL0, ATSP0)
+- Poll RPM (010C), speed (010D), throttle (0111), load (0104), voltage (0142); optional rear wheels (015A/B)
+- PID enable toggles in Settings (`ObdPidConfig`)
+- OBD speed overlays speedometer (`speedFromObd` + "OBD speed" label)
+- `slipRatio` / `rearSlipRatio` on TelemetryBus — distinct from `driftAngleDeg` (β)
+- `slipSource` + rear slip in sample `extrasJson`
+- Shares `ClassicBluetoothBudget` with external GPS (max 2 SPP)
 
 ## Container map
 
 | Layer | Path |
 |-------|------|
-| OBD | `obd/ObdClassicManager.kt`, `obd/ClassicBluetoothBudget.kt` |
+| OBD | `obd/ObdClassicManager.kt`, `obd/Elm327Protocol.kt`, `obd/ClassicBluetoothBudget.kt` |
 | Slip | `slip/TireSlipCalculator.kt` |
-| UI | Settings OBD picker, dashboard slip readout |
+| UI | Settings OBD picker + PID toggles; dashboard slip/rear slip + RPM |
+| ADB log tag | `ExpeditionGauge/Obd` |
 
-## Smoke scenario
+## Terminology
 
-1. Pair ELM327 adapter
-2. Settings → select OBD device → connect
-3. Dashboard shows RPM/voltage; slip ratio appears above ~5 km/h when wheel speed differs from GPS
+| Field | Meaning |
+|-------|---------|
+| `driftAngleDeg` (β) | Vehicle sideslip — body yaw vs GPS velocity heading (degrees) |
+| `slipRatio` | Tire longitudinal slip `(wheelSpeed − gpsSpeed) / gpsSpeed` |
+
+## ADB smoke scenarios
+
+| Scenario | Command | Notes |
+|----------|---------|-------|
+| ELM327 PIDs | `adb-smoke.ps1 -Sprint 5 -Scenario obd-elm327` | Requires paired adapter; exit 2 if absent |
+| β vs slip | `adb-smoke.ps1 -Sprint 5 -Scenario obd-slip-beta` | Phone-only: verifies β in `ImuFusion` log; full slip needs OBD |
+
+Manual: Settings → select OBD device → verify RPM/throttle in logcat and slip ratio above ~5 km/h when wheel speed differs from GPS.

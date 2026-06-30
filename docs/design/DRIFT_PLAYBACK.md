@@ -6,28 +6,44 @@
 
 | β range | Color token | Meaning |
 |---------|-------------|---------|
-| \|β\| ≤ 5° | `driftNeutral` (yellow) | Straight / neutral |
-| β > 5° | `driftLeft` (cyan) | Left drift |
-| β < −5° | `driftRight` (magenta) | Right drift |
+| \|β\| ≤ 5° | `DriftNeutral` (yellow) | Straight / neutral |
+| β > 5° | `DriftLeft` (cyan) | Left drift |
+| β < −5° | `DriftRight` (magenta) | Right drift |
+| lonAccel < −0.4g | `LonAccelBrake` (red) | Hard braking |
+| lonAccel > +0.35g | `LonAccelAccel` (green) | Strong accel |
 
-Segment color derived from `SampleEntity.driftAngleDeg` at each GPS point.
+Segment `colorBucket` precomputed in `RouteGeoJsonBuilder`; MapLibre `LineLayer` uses data-driven `switch` on `colorBucket`.
+
+## Line width (latG bands)
+
+| \|latG\| | `widthBucket` | Width |
+|----------|---------------|-------|
+| < 0.3g | 0 | 3 dp |
+| 0.3–0.7g | 1 | 5 dp |
+| 0.7–1.2g | 2 | 7 dp |
+| ≥ 1.2g | 3 | 10 dp |
+
+## Slip overlay
+
+Separate GeoJSON source; orange `route-slip` layer with opacity from `slipAlpha` (distinct from β coloring).
 
 ## Vehicle overlay
 
-- Icon heading = `bodyYawDeg`
-- Velocity vector tangent to GPS path
-- Wedge arc magnitude = `abs(driftAngleDeg)` (capped for readability)
-- Tail length ∝ \|β\| when Drift Analysis enabled
+- Icon heading = `bodyYawDeg` (yellow)
+- Velocity vector = `velocityHeadingDeg` (cyan)
+- Wedge arc magnitude = `driftAngleDeg` (tail ∝ |β|)
+- Rendered in `VehicleDriftOverlay` atop MapLibre map (map camera keeps vehicle near center)
 
 ## Sync contract
 
 `PlaybackEngine.state` is the single scrubber clock consumed by:
 
-- Map polyline highlight index
-- Gauge numeric readouts
-- Drift analysis panel
-- (Sprint 11) time-series graphs
+- Map polyline + vehicle marker (`PlaybackMapView`)
+- Gauge numeric readouts (`PlaybackMetricsPanel`)
+- Drift analysis panel (`DriftAnalysisCanvas`)
+- Elevation profile cursor
+- (Sprint 11) time-series graphs (`TelemetryGraphPanel`)
 
 ## Multi-IMU playback
 
-When `extrasJson.imu` present, per-corner force vectors shown in Drift Analysis toggle (Sprint 7 basics; full vectors in Sprint 11).
+When `extrasJson.imuDevices` present, per-corner latG vectors shown in `DriftAnalysisCanvas` (`SampleImuExtras`).

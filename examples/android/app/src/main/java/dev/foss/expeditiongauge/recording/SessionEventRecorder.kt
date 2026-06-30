@@ -15,6 +15,9 @@ object SessionEventFactory {
             .put("rollDeg", snapshot.rollDeg.toDouble())
             .apply {
                 snapshot.driftAngleDeg?.let { put("betaDeg", it.toDouble()) }
+                snapshot.slipRatio?.let { put("slipRatio", it.toDouble()) }
+                snapshot.throttlePct?.let { put("throttlePct", it.toDouble()) }
+                snapshot.rpm?.let { put("rpm", it.toDouble()) }
                 tag?.let { put("tag", it) }
             }
         return SessionEventEntity(

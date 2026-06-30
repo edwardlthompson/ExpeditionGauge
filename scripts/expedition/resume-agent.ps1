@@ -13,7 +13,7 @@ foreach ($line in $lines) {
     if ($line -match '^### Sprint (\d+[a-z]?) —') {
         $activeSprint = $Matches[1]
     }
-    if ($line -match '🔲 \[AGENT\]') {
+    if ($line -match '^\d+\.\s+🔲 \[AGENT\]') {
         $nextTask = $line.Trim()
         break
     }

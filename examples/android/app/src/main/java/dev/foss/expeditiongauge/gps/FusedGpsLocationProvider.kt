@@ -34,7 +34,9 @@ class FusedGpsLocationProvider(
     private val sensorProvider: PhoneSensorProvider,
     private val externalGps: ExternalNmeaGpsManager,
 ) {
-    private val phoneGps = PhoneGpsProvider(context, telemetryBus, driftEstimator, sensorProvider)
+    private val phoneGps = PhoneGpsProvider(context, driftEstimator) { snapshot ->
+        onPhoneSnapshot(snapshot)
+    }
     private val _state = MutableStateFlow(FusedGpsState())
     val state: StateFlow<FusedGpsState> = _state.asStateFlow()
 
@@ -71,10 +73,7 @@ class FusedGpsLocationProvider(
     }
 
     fun onPhoneSnapshot(snapshot: TelemetrySnapshot) {
-        if (_state.value.source == GpsSource.EXTERNAL && !ExternalNmeaGpsManager.isStale(
-                externalGps.fix.value.copy(timestampMs = externalGps.fix.value.timestampMs),
-            )
-        ) {
+        if (externalGpsActive()) {
             return
         }
         val state = FusedGpsState(
@@ -90,10 +89,38 @@ class FusedGpsLocationProvider(
             fixQuality = snapshot.fixQuality,
         )
         _state.value = state
+        mergePhoneSnapshot(snapshot)
     }
 
     private fun publishPhoneFallback() {
-        _state.value = _state.value.copy(source = GpsSource.PHONE)
+        if (_state.value.source == GpsSource.EXTERNAL) {
+            _state.value = _state.value.copy(source = GpsSource.PHONE)
+        }
+    }
+
+    private fun externalGpsActive(): Boolean {
+        val fix = externalGps.fix.value
+        return fix.valid && !ExternalNmeaGpsManager.isStale(fix)
+    }
+
+    private fun mergePhoneSnapshot(snapshot: TelemetrySnapshot) {
+        val current = telemetryBus.snapshots.value
+        val merged = current.copy(
+            timestampMs = snapshot.timestampMs,
+            speedMps = snapshot.speedMps,
+            headingDeg = snapshot.headingDeg,
+            latitude = snapshot.latitude,
+            longitude = snapshot.longitude,
+            altitudeM = snapshot.altitudeM,
+            gpsFix = snapshot.gpsFix,
+            gpsSource = "phone",
+            hdop = snapshot.hdop,
+            numSatellites = snapshot.numSatellites,
+            fixQuality = snapshot.fixQuality,
+            driftAngleDeg = snapshot.driftAngleDeg,
+        )
+        telemetryBus.publish(merged)
+        sensorProvider.updateGpsContext(merged)
     }
 
     private fun mergeIntoBus(gps: FusedGpsState) {

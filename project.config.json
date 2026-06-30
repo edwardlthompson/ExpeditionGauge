@@ -6,13 +6,22 @@
   },
   "maintainer": "edward",
   "releaseDraft": true,
-  "releaseRepo": "github.com/OWNER/ExpeditionGauge",
+  "releaseRepo": "github.com/edwardlthompson/ExpeditionGauge",
   "sprints": {
     "wave1_polish": true,
     "v2_live_telemetry": true,
     "v2_video": true,
     "wave2_polish": true,
-    "core_v1": true
+    "core_v1": true,
+    "system_ui_insets": true,
+    "v2_dual_orientation": false,
+    "v2_android_auto": false,
+    "v2_media_attach": false,
+    "v2_elevation_profile": false,
+    "v2_activity_library": false,
+    "v2_playback_export": false,
+    "v2_3d_flyover": false,
+    "v2_sharing_polish": false
   },
   "projectName": "ExpeditionGauge",
   "devDevice": {

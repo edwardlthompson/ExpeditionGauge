@@ -1,61 +1,21 @@
 package dev.foss.expeditiongauge.playback
 
-import androidx.compose.ui.graphics.Color
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-enum class ScrubberMarkerType {
-    HIGH_BETA,
-    HIGH_SLIP,
-    ALERT,
-    LAP_CROSSING,
-}
-
-data class ScrubberMarker(
-    val sampleIndex: Int,
-    val timestampMs: Long,
-    val type: ScrubberMarkerType,
-    val label: String? = null,
-)
-
-data class PlaybackState(
-    val samples: List<SampleEntity> = emptyList(),
-    val currentIndex: Int = 0,
-    val speedMultiplier: Float = 1f,
-    val isPlaying: Boolean = false,
-    val markers: List<ScrubberMarker> = emptyList(),
-    val ghostSamples: List<SampleEntity> = emptyList(),
-    val ghostDeltaMs: Long? = null,
-    val showDriftAnalysis: Boolean = false,
-    val mapWeight: Float = 0.6f,
-) {
-    val currentSample: SampleEntity?
-        get() = samples.getOrNull(currentIndex)
-
-    val current: SampleEntity?
-        get() = currentSample
-
-    val playing: Boolean
-        get() = isPlaying
-
-    val index: Int
-        get() = currentIndex
-
-    val progress: Float
-        get() = if (samples.size <= 1) 0f else currentIndex.toFloat() / (samples.size - 1)
-
-    val durationMs: Long
-        get() = if (samples.size < 2) 0L else samples.last().timestampMs - samples.first().timestampMs
-}
-
 class PlaybackEngine {
     private val _state = MutableStateFlow(PlaybackState())
     val state: StateFlow<PlaybackState> = _state.asStateFlow()
+    private val seekController = PlaybackSeekController(
+        getState = { _state.value },
+        setState = { _state.value = it },
+    )
 
-    fun loadSession(samples: List<SampleEntity>, markers: List<ScrubberMarker> = emptyList()) {
+    fun loadSession(sessionId: Long?, samples: List<SampleEntity>, markers: List<ScrubberMarker> = emptyList()) {
         _state.value = PlaybackState(
+            sessionId = sessionId,
             samples = samples,
             currentIndex = 0,
             markers = markers,
@@ -63,39 +23,62 @@ class PlaybackEngine {
     }
 
     fun loadSamples(samples: List<SampleEntity>, markers: List<ScrubberMarker> = emptyList()) {
-        loadSession(samples, markers)
+        loadSession(null, samples, markers)
     }
 
-    fun loadGhost(samples: List<SampleEntity>) {
-        _state.value = _state.value.copy(ghostSamples = samples)
-        updateGhostDelta()
+    fun loadGhost(samples: List<SampleEntity>, lapNumber: Int? = null) {
+        _state.value = _state.value.copy(
+            ghostSamples = samples,
+            ghostLapNumber = lapNumber,
+            ghostTrackMismatch = false,
+        )
+        seekToIndex(_state.value.currentIndex)
     }
 
     fun clearGhost() {
-        _state.value = _state.value.copy(ghostSamples = emptyList(), ghostDeltaMs = null)
+        _state.value = _state.value.copy(
+            ghostSamples = emptyList(),
+            ghostDeltaMs = null,
+            ghostLapNumber = null,
+            ghostTrackMismatch = false,
+        )
     }
 
-    fun seekToIndex(index: Int) {
-        val clamped = index.coerceIn(0, (_state.value.samples.size - 1).coerceAtLeast(0))
-        _state.value = _state.value.copy(currentIndex = clamped)
-        updateGhostDelta()
+    fun setGhostTrackMismatch(mismatch: Boolean) {
+        _state.value = _state.value.copy(
+            ghostTrackMismatch = mismatch,
+            ghostSamples = if (mismatch) emptyList() else _state.value.ghostSamples,
+            ghostDeltaMs = if (mismatch) null else _state.value.ghostDeltaMs,
+        )
     }
 
-    fun seekToTimestamp(timestampMs: Long) {
-        val index = _state.value.samples.indexOfFirst { it.timestampMs >= timestampMs }
-        seekToIndex(if (index < 0) _state.value.samples.lastIndex else index)
+    fun setSectorLinesGeoJson(geoJson: String?) {
+        _state.value = _state.value.copy(sectorLinesGeoJson = geoJson)
     }
 
-    fun seekProgress(progress: Float) {
-        val size = _state.value.samples.size
-        if (size <= 1) return
-        seekToIndex((progress.coerceIn(0f, 1f) * (size - 1)).toInt())
+    fun toggleShowRoute() {
+        _state.value = _state.value.copy(showRoute = !_state.value.showRoute)
     }
 
-    fun seekBy(deltaMs: Long) {
-        val current = _state.value.currentSample ?: return
-        seekToTimestamp(current.timestampMs + deltaMs)
+    fun toggleDrivingLine() {
+        _state.value = _state.value.copy(showDrivingLine = !_state.value.showDrivingLine)
     }
+
+    fun toggleGhost() {
+        _state.value = _state.value.copy(showGhost = !_state.value.showGhost)
+    }
+
+    fun setShowGhost(enabled: Boolean) {
+        _state.value = _state.value.copy(showGhost = enabled)
+    }
+
+    fun seekToIndex(index: Int) = seekController.seekToIndex(index)
+
+    fun seekToTimestamp(timestampMs: Long) = seekController.seekToTimestamp(timestampMs)
+
+    fun seekProgress(progress: Float) = seekController.seekProgress(progress)
+
+    fun seekBy(deltaMs: Long) = seekController.seekBy(deltaMs)
 
     fun setSpeedMultiplier(multiplier: Float) {
         _state.value = _state.value.copy(speedMultiplier = multiplier.coerceIn(0.25f, 4f))
@@ -124,64 +107,34 @@ class PlaybackEngine {
         _state.value = _state.value.copy(mapWeight = weight.coerceIn(0.2f, 0.8f))
     }
 
-    fun advanceFrame(deltaMs: Long = 50L) {
-        val state = _state.value
-        if (!state.isPlaying || state.samples.isEmpty()) return
-        val current = state.currentSample ?: return
-        val targetTs = current.timestampMs + (deltaMs * state.speedMultiplier).toLong()
-        seekToTimestamp(targetTs)
+    fun setGraphsExpanded(expanded: Boolean) {
+        _state.value = _state.value.copy(graphsExpanded = expanded)
     }
 
-    fun driftColorForBeta(beta: Float?): Long {
-        if (beta == null) return Color.White.value.toLong()
-        val abs = kotlin.math.abs(beta)
-        return when {
-            abs >= 30f -> Color.Red.value.toLong()
-            abs >= 15f -> Color.Yellow.value.toLong()
-            else -> Color.Green.value.toLong()
-        }
+    fun applyLayout(layout: PlaybackLayoutState) {
+        _state.value = _state.value.copy(
+            mapWeight = layout.mapWeight.coerceIn(0.2f, 0.8f),
+            graphsExpanded = layout.graphsExpanded,
+        )
     }
 
-    private fun updateGhostDelta() {
-        val state = _state.value
-        val primary = state.currentSample ?: return
-        val ghost = state.ghostSamples
-        if (ghost.isEmpty()) {
-            _state.value = state.copy(ghostDeltaMs = null)
-            return
-        }
-        val ghostIndex = ghost.indexOfFirst { it.timestampMs >= primary.timestampMs }
-        val ghostSample = ghost.getOrNull(ghostIndex) ?: ghost.last()
-        _state.value = state.copy(ghostDeltaMs = primary.timestampMs - ghostSample.timestampMs)
-    }
+    fun advanceFrame(deltaMs: Long = 50L) = seekController.advanceFrame(deltaMs)
+
+    fun driftColorForBeta(beta: Float?): Long = DriftRouteStyling.betaToArgb(beta)
 
     companion object {
         fun computeMarkers(
             samples: List<SampleEntity>,
             alertTimestamps: List<Long> = emptyList(),
+            markEventTimestamps: List<Long> = emptyList(),
             betaThreshold: Float = 15f,
             slipThreshold: Float = 0.15f,
-        ): List<ScrubberMarker> {
-            val markers = mutableListOf<ScrubberMarker>()
-            samples.forEachIndexed { index, sample ->
-                sample.driftAngleDeg?.let { beta ->
-                    if (kotlin.math.abs(beta) >= betaThreshold) {
-                        markers += ScrubberMarker(index, sample.timestampMs, ScrubberMarkerType.HIGH_BETA)
-                    }
-                }
-                sample.slipRatio?.let { slip ->
-                    if (slip >= slipThreshold) {
-                        markers += ScrubberMarker(index, sample.timestampMs, ScrubberMarkerType.HIGH_SLIP)
-                    }
-                }
-            }
-            alertTimestamps.forEach { ts ->
-                val index = samples.indexOfFirst { it.timestampMs >= ts }
-                if (index >= 0) {
-                    markers += ScrubberMarker(index, ts, ScrubberMarkerType.ALERT)
-                }
-            }
-            return markers.distinctBy { it.sampleIndex to it.type }
-        }
+        ): List<ScrubberMarker> = ScrubberMarkerFactory.computeMarkers(
+            samples,
+            alertTimestamps,
+            markEventTimestamps,
+            betaThreshold,
+            slipThreshold,
+        )
     }
 }

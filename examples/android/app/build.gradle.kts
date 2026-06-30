@@ -18,8 +18,8 @@ android {
         applicationId = "dev.foss.expeditiongauge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 5
+        versionName = "2.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -43,6 +43,10 @@ android {
     }
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2026.05.01")
     val roomVersion = "2.7.2"
@@ -64,8 +68,13 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    // Pinned FOSS stack — Sprint 1; versions mirrored in app/gradle.lockfile
     implementation("org.maplibre.compose:maplibre-compose:0.13.0")
     implementation("com.github.eltonvs:kotlin-obd-api:1.4.1")
+    implementation("androidx.media3:media3-exoplayer:1.7.1")
+    implementation("androidx.media3:media3-ui:1.7.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.zxing:core:3.5.3")
 
     testImplementation("androidx.test:core:1.6.1")
     testImplementation("junit:junit:4.13.2")

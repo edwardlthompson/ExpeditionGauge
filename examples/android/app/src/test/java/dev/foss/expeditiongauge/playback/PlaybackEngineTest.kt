@@ -12,7 +12,7 @@ class PlaybackEngineTest {
         val samples = (0..9).map { i ->
             SampleEntity(id = i.toLong(), sessionId = 1L, timestampMs = i * 100L)
         }
-        engine.loadSession(samples)
+        engine.loadSession(1L, samples)
         engine.seekToIndex(99)
         assertEquals(9, engine.state.value.currentIndex)
     }
@@ -25,5 +25,13 @@ class PlaybackEngineTest {
         )
         val markers = PlaybackEngine.computeMarkers(samples, betaThreshold = 15f)
         assertTrue(markers.any { it.type == ScrubberMarkerType.HIGH_BETA })
+    }
+
+    @Test
+    fun applyLayoutUpdatesWeights() {
+        val engine = PlaybackEngine()
+        engine.applyLayout(PlaybackLayoutState(mapWeight = 0.7f, graphsExpanded = false))
+        assertEquals(0.7f, engine.state.value.mapWeight)
+        assertEquals(false, engine.state.value.graphsExpanded)
     }
 }

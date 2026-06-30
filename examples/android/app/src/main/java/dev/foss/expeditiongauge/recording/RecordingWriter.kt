@@ -7,11 +7,11 @@ import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -37,16 +37,41 @@ class RecordingWriter(
     private var writerJob: Job? = null
     private var peakSpeed = 0f
     private var peakDrift = 0f
+    private var peakAbsPitch = 0f
+    private var peakAbsRoll = 0f
+    private var crawlProfile: CrawlingModeProfile? = null
+    private val speedSamples = ArrayDeque<Pair<Long, Float>>()
 
-    suspend fun startRecording(): Long {
+    suspend fun startRecording(
+        recordingMode: RecordingMode = RecordingMode.NORMAL,
+        externalImuConnected: Boolean = false,
+    ): Long {
         if (_recording.value) return _activeSessionId.value ?: -1L
+        crawlProfile = if (recordingMode == RecordingMode.CRAWLING) {
+            CrawlingModeProfile.forMode(recordingMode, externalImuConnected)
+        } else {
+            null
+        }
+        crawlProfile?.let { profile ->
+            val hz = profile.effectiveImuRateHz(externalImuConnected)
+            logIntervalMs = (1000L / hz).coerceIn(MIN_INTERVAL_MS, MAX_INTERVAL_MS)
+        }
+        speedSamples.clear()
         val now = System.currentTimeMillis()
         val name = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(now))
-        val id = sessionDao.insert(RecordingSessionEntity(name = name, startTimeMs = now))
+        val id = sessionDao.insert(
+            RecordingSessionEntity(
+                name = name,
+                startTimeMs = now,
+                recordingMode = recordingMode,
+            ),
+        )
         _activeSessionId.value = id
         _recording.value = true
         peakSpeed = 0f
         peakDrift = 0f
+        peakAbsPitch = 0f
+        peakAbsRoll = 0f
         telemetryBus.publish(telemetryBus.snapshots.value.copy(recordingActive = true))
         writerJob = scope.launch { writeLoop(id) }
         return id
@@ -57,9 +82,22 @@ class RecordingWriter(
         writerJob = null
         val id = _activeSessionId.value ?: return
         val session = sessionDao.getById(id) ?: return
-        sessionDao.update(session.copy(endTimeMs = System.currentTimeMillis()))
+        val sessionPeaks = JSONObject().apply {
+            put("peakAbsPitchDeg", peakAbsPitch)
+            put("peakAbsRollDeg", peakAbsRoll)
+            put("peakSpeedMps", peakSpeed)
+            put("peakDriftDeg", peakDrift)
+        }
+        sessionDao.update(
+            session.copy(
+                endTimeMs = System.currentTimeMillis(),
+                deviceConfigJson = sessionPeaks.toString(),
+            ),
+        )
         _recording.value = false
         _activeSessionId.value = null
+        crawlProfile = null
+        speedSamples.clear()
         telemetryBus.publish(telemetryBus.snapshots.value.copy(recordingActive = false))
     }
 
@@ -68,66 +106,36 @@ class RecordingWriter(
     }
 
     private suspend fun writeLoop(sessionId: Long) {
-        while (scope.coroutineContext.isActive && _recording.value) {
-            writeSample(sessionId, telemetryBus.snapshots.value)
-            delay(logIntervalMs)
+        var lastWriteMs = 0L
+        telemetryBus.snapshots.collectLatest { snapshot ->
+            if (!scope.coroutineContext.isActive || !_recording.value) return@collectLatest
+            val now = System.currentTimeMillis()
+            if (now - lastWriteMs < logIntervalMs) return@collectLatest
+            writeSample(sessionId, snapshot)
+            lastWriteMs = now
         }
     }
 
     private suspend fun writeSample(sessionId: Long, snapshot: TelemetrySnapshot) {
-        peakSpeed = maxOf(peakSpeed, snapshot.speedMps)
-        snapshot.driftAngleDeg?.let { peakDrift = maxOf(peakDrift, abs(it)) }
-        sampleDao.insert(snapshot.toEntity(sessionId))
+        val smoothed = smoothSpeedIfCrawling(snapshot)
+        peakSpeed = maxOf(peakSpeed, smoothed.speedMps)
+        smoothed.driftAngleDeg?.let { peakDrift = maxOf(peakDrift, abs(it)) }
+        peakAbsPitch = maxOf(peakAbsPitch, smoothed.peakAbsPitchDeg)
+        peakAbsRoll = maxOf(peakAbsRoll, smoothed.peakAbsRollDeg)
+        sampleDao.insert(RecordingSampleWriter.toEntity(smoothed, sessionId))
     }
 
-    private fun TelemetrySnapshot.toEntity(sessionId: Long): SampleEntity {
-        val extras = JSONObject().apply {
-            put("fusionSource", fusionSource)
-            put("gpsSource", gpsSource)
-            hdop?.let { put("hdop", it) }
-            numSatellites?.let { put("numSatellites", it) }
-            chassisTwistDeg?.let { put("chassisTwistDeg", it) }
-            rearSlipRatio?.let { put("rearSlipRatio", it) }
-            tpms?.let { tp ->
-                put("tpms", JSONObject().apply {
-                    listOf("fl", "fr", "rl", "rr").zip(
-                        listOf(tp.frontLeft, tp.frontRight, tp.rearLeft, tp.rearRight),
-                    ).forEach { (key, corner) ->
-                        put(key, JSONObject().apply {
-                            corner.pressureKpa?.let { put("pressureKpa", it) }
-                            corner.tempC?.let { put("tempC", it) }
-                            corner.batteryPct?.let { put("batteryPct", it) }
-                            put("lastSeenMs", corner.lastSeenMs)
-                        })
-                    }
-                })
-            }
-            if (imuStatuses.isNotEmpty()) {
-                put("imu", imuStatuses.joinToString(",") { "${it.deviceId}:${it.placement}" })
-            }
+    private fun smoothSpeedIfCrawling(snapshot: TelemetrySnapshot): TelemetrySnapshot {
+        val profile = crawlProfile ?: return snapshot
+        val now = snapshot.timestampMs
+        speedSamples.addLast(now to snapshot.speedMps)
+        val cutoff = now - profile.gpsSmoothingWindowMs
+        while (speedSamples.isNotEmpty() && speedSamples.first().first < cutoff) {
+            speedSamples.removeFirst()
         }
-        return SampleEntity(
-            sessionId = sessionId,
-            timestampMs = timestampMs,
-            latitude = latitude,
-            longitude = longitude,
-            altitudeM = altitudeM,
-            speedMps = speedMps,
-            headingDeg = headingDeg,
-            pitchDeg = pitchDeg,
-            rollDeg = rollDeg,
-            lonAccel = lonG,
-            latG = latG,
-            yawRate = 0f,
-            driftAngleDeg = driftAngleDeg,
-            bodyYawDeg = bodyYawDeg,
-            velocityHeadingDeg = velocityHeadingDeg,
-            throttle = throttlePct,
-            rpm = rpm,
-            load = engineLoadPct,
-            slipRatio = slipRatio,
-            extrasJson = extras.toString(),
-        )
+        if (speedSamples.isEmpty()) return snapshot
+        val avg = speedSamples.map { it.second }.average().toFloat()
+        return snapshot.copy(speedMps = avg)
     }
 
     companion object {

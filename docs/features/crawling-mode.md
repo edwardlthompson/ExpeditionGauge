@@ -20,7 +20,8 @@
 
 | Layer | Path |
 |-------|------|
-| Logic | `recording/CrawlingModeProfile.kt`, `recording/RecordingMode.kt` |
+| Logic | `recording/CrawlingModeProfile.kt`, `recording/RecordingMode.kt`, `recording/RecordingWriter.kt` |
+| UI | `ui/dashboard/DashboardScreen.kt` (CRAWL badge), `ui/settings/SettingsScreen.kt` (mode selector) |
 | Tests | `recording/CrawlingModeProfileTest.kt` |
 
 ## Definition of Done

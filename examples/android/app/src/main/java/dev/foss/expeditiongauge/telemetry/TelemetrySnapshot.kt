@@ -6,6 +6,9 @@ data class ImuStatusEntry(
     val placement: String,
     val connected: Boolean,
     val signalQuality: String,
+    val rawYawDeg: Float? = null,
+    val filteredYawDeg: Float? = null,
+    val latG: Float? = null,
 )
 
 data class TirePressureReading(
@@ -27,6 +30,8 @@ data class TelemetrySnapshot(
     val velocityHeadingDeg: Float? = null,
     val slipRatio: Float? = null,
     val rearSlipRatio: Float? = null,
+    val slipSource: String? = null,
+    val speedFromObd: Boolean = false,
     val latitude: Double? = null,
     val longitude: Double? = null,
     val altitudeM: Double? = null,
@@ -50,6 +55,8 @@ data class TelemetrySnapshot(
     val chassisTwistDeg: Float? = null,
     val peakAbsPitchDeg: Float = 0f,
     val peakAbsRollDeg: Float = 0f,
+    val peakPitchDeg: Float = 0f,
+    val peakRollDeg: Float = 0f,
     val recordingActive: Boolean = false,
 ) {
     companion object {

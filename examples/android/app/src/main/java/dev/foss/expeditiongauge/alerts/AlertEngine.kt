@@ -1,6 +1,8 @@
 package dev.foss.expeditiongauge.alerts
 
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.telemetry.TpmsCornerReading
+import dev.foss.expeditiongauge.telemetry.TpmsSnapshot
 import kotlin.math.abs
 
 class AlertEngine(
@@ -25,6 +27,13 @@ class AlertEngine(
             snapshot.driftAngleDeg?.let { beta ->
                 if (abs(beta) >= limit) {
                     tryFire(AlertType.DRIFT_ANGLE, abs(beta), limit, nowMs)?.let(events::add)
+                }
+            }
+        }
+        thresholds.maxSlipRatio?.let { limit ->
+            snapshot.slipRatio?.let { slip ->
+                if (slip >= limit) {
+                    tryFire(AlertType.SLIP_RATIO, slip, limit, nowMs)?.let(events::add)
                 }
             }
         }
@@ -58,9 +67,6 @@ class AlertEngine(
         thresholds.maxRpm?.let { limit ->
             rpm?.let { if (it >= limit) tryFire(AlertType.RPM, it, limit, nowMs)?.let(events::add) }
         }
-        thresholds.maxSlipRatio?.let { limit ->
-            slipRatio?.let { if (it >= limit) tryFire(AlertType.SLIP_RATIO, it, limit, nowMs)?.let(events::add) }
-        }
         thresholds.minFuelEconomyKmpl?.let { limit ->
             fuelRateLph?.let { rate ->
                 if (rate > 0f && speedMps > 1f) {
@@ -72,6 +78,56 @@ class AlertEngine(
             }
         }
         return events
+    }
+
+    fun evaluateTpms(
+        tpms: TpmsSnapshot,
+        nowMs: Long,
+        tracker: TpmsPressureTracker,
+    ): List<AlertEvent> {
+        if (!thresholds.masterEnabled) return emptyList()
+        val events = mutableListOf<AlertEvent>()
+        val corners = listOf(
+            "fl" to tpms.frontLeft,
+            "fr" to tpms.frontRight,
+            "rl" to tpms.rearLeft,
+            "rr" to tpms.rearRight,
+        )
+        corners.forEach { (wheelId, reading) ->
+            evaluateCorner(reading, wheelId, nowMs, tracker, events)
+        }
+        return events
+    }
+
+    private fun evaluateCorner(
+        reading: TpmsCornerReading,
+        wheelId: String,
+        nowMs: Long,
+        tracker: TpmsPressureTracker,
+        events: MutableList<AlertEvent>,
+    ) {
+        thresholds.minTirePressureKpa?.let { limit ->
+            reading.pressureKpa?.let { kpa ->
+                if (kpa <= limit) {
+                    tryFire(AlertType.TIRE_PRESSURE, kpa, limit, nowMs)?.let(events::add)
+                }
+            }
+        }
+        thresholds.maxTireTempC?.let { limit ->
+            reading.tempC?.let { temp ->
+                if (temp >= limit) {
+                    tryFire(AlertType.TIRE_TEMP, temp, limit, nowMs)?.let(events::add)
+                }
+            }
+        }
+        thresholds.rapidPressureLossKpaPerMin?.let { limit ->
+            reading.pressureKpa?.let { kpa ->
+                val lossRate = tracker.recordLossKpaPerMin(wheelId, kpa, nowMs)
+                if (lossRate != null && lossRate >= limit) {
+                    tryFire(AlertType.PRESSURE_LOSS, lossRate, limit, nowMs)?.let(events::add)
+                }
+            }
+        }
     }
 
     fun computeFuelEconomyKmpl(speedMps: Float, fuelRateLph: Float?): Float? {

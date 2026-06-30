@@ -1,0 +1,1 @@
+Video sync with playback offset UI, full calibration wizard, developer mode, enhanced ZIP export, and MediaCodec burn-in pipeline.

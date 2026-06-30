@@ -17,11 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.ble.BleImuManager
 import dev.foss.expeditiongauge.ble.ImuDeviceSession
 import dev.foss.expeditiongauge.ble.ImuPlacement
+import dev.foss.expeditiongauge.ble.SignalQuality
+import dev.foss.expeditiongauge.ui.theme.GaugeGreen
+import dev.foss.expeditiongauge.ui.theme.GaugeRed
+import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -41,8 +47,14 @@ fun ImuManagementScreen(
             text = stringResource(R.string.imu_management_title),
             style = MaterialTheme.typography.headlineSmall,
         )
-        Button(onClick = { bleImuManager.startScan() }) {
+        Button(
+            onClick = { bleImuManager.startScan() },
+            modifier = Modifier.testTag("imu_scan"),
+        ) {
             Text(stringResource(R.string.imu_scan))
+        }
+        Button(onClick = { bleImuManager.stopScan() }) {
+            Text(stringResource(R.string.imu_stop_scan))
         }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(SpacingMd)) {
             items(sessions, key = { it.deviceId }) { session ->
@@ -69,6 +81,7 @@ private fun ImuDeviceRow(session: ImuDeviceSession, manager: BleImuManager) {
                 Text(
                     text = stringResource(R.string.imu_signal_quality, session.signalQuality.name),
                     style = MaterialTheme.typography.bodySmall,
+                    color = imuSignalColor(session.signalQuality),
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
@@ -93,4 +106,10 @@ private fun ImuDeviceRow(session: ImuDeviceSession, manager: BleImuManager) {
             }
         }
     }
+}
+
+private fun imuSignalColor(quality: SignalQuality): Color = when (quality) {
+    SignalQuality.Good -> GaugeGreen
+    SignalQuality.Fair -> GaugeYellow
+    SignalQuality.Poor, SignalQuality.Disconnected -> GaugeRed
 }

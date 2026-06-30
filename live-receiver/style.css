@@ -1,0 +1,73 @@
+:root {
+  --bg: #0a0a0a;
+  --yellow: #f5c518;
+  --white: #e8e8e8;
+  --red: #c41e3a;
+  font-family: system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h1 { color: var(--yellow); margin: 0 0 0.25rem; }
+.subtitle { opacity: 0.8; margin-top: 0; }
+
+label {
+  display: block;
+  margin: 0.75rem 0;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  background: #111;
+  border: 1px solid #333;
+  color: var(--white);
+}
+
+button {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: var(--red);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#gauges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.gauge {
+  background: #111;
+  border: 1px solid #333;
+  padding: 1rem;
+  text-align: center;
+}
+
+.gauge .label { display: block; color: var(--yellow); font-size: 0.85rem; }
+.gauge .value { display: block; font-size: 2rem; font-weight: bold; }
+.gauge .unit { font-size: 0.85rem; opacity: 0.7; }
+
+#status { color: var(--yellow); min-height: 1.5rem; }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  #gauges { grid-template-columns: repeat(5, 1fr); }
+}

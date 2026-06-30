@@ -14,6 +14,7 @@ data class SettingsProfile(
     val unitsMetric: Boolean = true,
     val logRateHz: Int = 10,
     val playbackMapWeight: Float = 0.6f,
+    val playbackGraphsExpanded: Boolean = true,
 ) {
     val dashboardPreset: DashboardPreset
         get() = DashboardPreset.fromId(presetId).copy(recordingMode = recordingMode)
@@ -30,6 +31,7 @@ data class SettingsProfile(
         .put("unitsMetric", unitsMetric)
         .put("logRateHz", logRateHz)
         .put("playbackMapWeight", playbackMapWeight.toDouble())
+        .put("playbackGraphsExpanded", playbackGraphsExpanded)
         .toString()
 
     companion object {
@@ -47,6 +49,7 @@ data class SettingsProfile(
                 unitsMetric = json?.optBoolean("unitsMetric", true) ?: true,
                 logRateHz = json?.optInt("logRateHz", 10) ?: 10,
                 playbackMapWeight = json?.optDouble("playbackMapWeight", 0.6)?.toFloat() ?: 0.6f,
+                playbackGraphsExpanded = json?.optBoolean("playbackGraphsExpanded", true) ?: true,
             )
         }
 

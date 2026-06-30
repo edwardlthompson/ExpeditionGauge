@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
 class BleTpmsManager(
     private val context: Context,
     private val scanCoordinator: BleScanCoordinator,
-    private val parsers: List<TpmsParser> = listOf(BrTpmsParser()),
+    private val parsers: List<TpmsParser> = listOf(BrTpmsParser(), PechamTpmsParser()),
 ) {
     private val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     private val sessions = ConcurrentHashMap<String, TpmsDeviceSession>()
@@ -30,6 +30,9 @@ class BleTpmsManager(
 
     private val _snapshot = MutableStateFlow(TpmsSnapshot())
     val snapshot: StateFlow<TpmsSnapshot> = _snapshot.asStateFlow()
+
+    private val _sessionsFlow = MutableStateFlow<List<TpmsDeviceSession>>(emptyList())
+    val sessionsFlow: StateFlow<List<TpmsDeviceSession>> = _sessionsFlow.asStateFlow()
 
     private var scanning = false
 
@@ -47,6 +50,7 @@ class BleTpmsManager(
             val corner = cornerAssignments[mac] ?: sessions[mac]?.corner ?: ImuPlacement.Unassigned
             val session = TpmsDeviceSession(mac, corner, reading.copy(macAddress = mac), parser.parserId, result.rssi)
             sessions[mac] = session
+            refreshSessions()
             publishSnapshot()
         }
     }
@@ -72,10 +76,15 @@ class BleTpmsManager(
     fun assignCorner(macAddress: String, corner: ImuPlacement) {
         cornerAssignments[macAddress] = corner
         sessions[macAddress]?.let { sessions[macAddress] = it.copy(corner = corner) }
+        refreshSessions()
         publishSnapshot()
     }
 
     fun knownSessions(): List<TpmsDeviceSession> = sessions.values.toList()
+
+    private fun refreshSessions() {
+        _sessionsFlow.value = sessions.values.sortedBy { it.macAddress }
+    }
 
     private fun publishSnapshot() {
         var snap = TpmsSnapshot()
@@ -89,6 +98,12 @@ class BleTpmsManager(
                 lastSeenMs = reading.timestampMs,
             )
             snap = snap.withCorner(session.corner, corner)
+            TpmsTelemetryLog.publish(
+                corner = session.corner.label,
+                pressureKpa = reading.pressureKpa,
+                tempC = reading.tempC,
+                parserId = session.parserId,
+            )
         }
         _snapshot.value = snap
     }

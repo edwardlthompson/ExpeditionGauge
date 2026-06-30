@@ -12,6 +12,12 @@ import kotlinx.coroutines.flow.Flow
 interface SessionEventDao {
     @Insert
     suspend fun insert(entity: SessionEventEntity): Long
+
+    @Query("SELECT COUNT(*) FROM session_events WHERE sessionId = :sessionId")
+    suspend fun countBySession(sessionId: Long): Int
+
+    @Query("SELECT * FROM session_events WHERE sessionId = :sessionId ORDER BY timestampMs ASC")
+    suspend fun getBySession(sessionId: Long): List<SessionEventEntity>
 }
 
 @Dao

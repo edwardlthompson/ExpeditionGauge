@@ -11,17 +11,25 @@ data class LivePairingSession(
 )
 
 class LivePairingManager(
-    private val defaultSignalWss: String = "wss://signaling.example.invalid/live",
+    private val defaultSignalWss: String = DEFAULT_SIGNAL_WSS,
 ) {
-    fun createSession(): LivePairingSession {
+    fun createSession(signalWss: String = defaultSignalWss): LivePairingSession {
         val sessionId = UUID.randomUUID().toString()
         val code = Random.nextInt(100_000, 999_999).toString()
-        val qrPayload = "expeditiongauge://live?v=1&sessionId=$sessionId&code=$code&signalWss=$defaultSignalWss"
+        val qrPayload =
+            "expeditiongauge://live?v=1&sessionId=$sessionId&code=$code&signalWss=${encode(signalWss)}"
         return LivePairingSession(
             sessionId = sessionId,
             code = code,
-            signalWss = defaultSignalWss,
+            signalWss = signalWss,
             qrPayload = qrPayload,
         )
+    }
+
+    companion object {
+        const val DEFAULT_SIGNAL_WSS = "ws://127.0.0.1:8787/live"
+
+        private fun encode(value: String): String =
+            java.net.URLEncoder.encode(value, Charsets.UTF_8.name())
     }
 }

@@ -1,1 +1,1 @@
-Offline automotive HUD with recording, drift angle, and playback
+Offline automotive HUD — recording, drift angle, lap timing, graphs, alerts

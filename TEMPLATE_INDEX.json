@@ -1032,6 +1032,34 @@
       "owner": "maintainer"
     },
     {
+      "path": "scripts/check-polish-wave2-gate.sh",
+      "purpose": "Polish wave 2 feature gate for ExpeditionGauge v1.2",
+      "read_when": "release",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/check-polish-wave3-gate.sh",
+      "purpose": "Polish wave 3 feature gate for ExpeditionGauge v1.2 stats/onboarding",
+      "read_when": "release",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/check-v2-video-gate.sh",
+      "purpose": "v2 video sync and export gate (Sprint 18+)",
+      "read_when": "release",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/check-v2-live-gate.sh",
+      "purpose": "v2 live telemetry gate (Sprint 19+)",
+      "read_when": "release",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
       "path": "scripts/expedition/materialize-build-plan.ps1",
       "purpose": "Materialize canonical BUILD_PLAN and project config",
       "read_when": "bootstrap_session_start",

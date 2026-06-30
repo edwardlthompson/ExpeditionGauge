@@ -7,8 +7,13 @@ import dev.foss.expeditiongauge.live.LivePairingSession
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
+import dev.foss.expeditiongauge.recording.RecordingMode
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
+import dev.foss.expeditiongauge.alerts.AlertService
+import dev.foss.expeditiongauge.settings.SettingsPreferences
+import dev.foss.expeditiongauge.timing.LapTimingService
+import dev.foss.expeditiongauge.timing.PredictiveTimingState
 import dev.foss.expeditiongauge.settings.SettingsProfile
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
@@ -20,6 +25,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -30,6 +38,8 @@ data class DashboardUiState(
     val recording: Boolean = false,
     val activeSessionId: Long? = null,
     val activePreset: DashboardPreset = DashboardPreset.Default,
+    val recordingMode: RecordingMode = RecordingMode.NORMAL,
+    val activeAlerts: Set<dev.foss.expeditiongauge.alerts.AlertType> = emptySet(),
     val liveSession: LivePairingSession? = null,
     val liveReceiverCount: Int = 0,
     val isLive: Boolean = false,
@@ -43,8 +53,14 @@ class DashboardViewModel(
     private val settingsProfileRepository: SettingsProfileRepository,
     private val sessionEventRecorder: SessionEventRecorder,
     private val liveTelemetryModule: LiveTelemetryModule,
+    private val lapTimingService: LapTimingService,
+    private val settingsPreferences: SettingsPreferences,
+    private val alertService: AlertService,
 ) : ViewModel() {
     private val liveState = MutableStateFlow(LiveUi(session = null, receiverCount = 0))
+    private var receiverCountJob: Job? = null
+
+    val lapTimingState: StateFlow<PredictiveTimingState> = lapTimingService.liveState
 
     val uiState: StateFlow<DashboardUiState> = combine(
         combine(
@@ -57,7 +73,8 @@ class DashboardViewModel(
         },
         settingsProfileRepository.activeProfile,
         liveState,
-    ) { core, profile, live ->
+        alertService.activeAlerts,
+    ) { core, profile, live, alerts ->
         val preset = profile.dashboardPreset
         DashboardUiState(
             telemetry = core.telemetry,
@@ -67,6 +84,8 @@ class DashboardViewModel(
             recording = core.recording,
             activeSessionId = core.sessionId,
             activePreset = preset,
+            recordingMode = profile.recordingMode,
+            activeAlerts = alerts,
             liveSession = live.session,
             liveReceiverCount = live.receiverCount,
             isLive = live.session != null,
@@ -92,11 +111,27 @@ class DashboardViewModel(
     }
 
     fun startRecording() {
-        viewModelScope.launch { recordingWriter.startRecording() }
+        viewModelScope.launch {
+            val profile = settingsProfileRepository.activeProfile.first()
+            val externalImu = telemetryBus.snapshots.value.imuStatuses.any { it.connected }
+            val sessionId = recordingWriter.startRecording(
+                recordingMode = profile.recordingMode,
+                externalImuConnected = externalImu,
+            )
+            if (settingsPreferences.lapTimingEnabled.first()) {
+                lapTimingService.onRecordingStarted(sessionId)
+            }
+        }
     }
 
     fun stopRecording() {
-        viewModelScope.launch { recordingWriter.stopRecording() }
+        viewModelScope.launch {
+            val sessionId = recordingWriter.activeSessionId.value
+            recordingWriter.stopRecording()
+            if (sessionId != null && settingsPreferences.lapTimingEnabled.first()) {
+                lapTimingService.onRecordingStopped(sessionId)
+            }
+        }
     }
 
     fun selectPreset(presetId: DashboardPresetId) {
@@ -112,17 +147,25 @@ class DashboardViewModel(
 
     fun startLiveSession() {
         if (!liveTelemetryModule.isEnabled()) return
-        val session = liveTelemetryModule.pairingManager.createSession()
-        liveState.value = LiveUi(session = session, receiverCount = 0)
-        liveTelemetryModule.startSender(viewModelScope, session)
-        liveState.update { it.copy(receiverCount = liveTelemetryModule.sender.connectedReceivers) }
+        viewModelScope.launch {
+            val url = settingsPreferences.liveSignalWssUrl.first()
+            val session = liveTelemetryModule.pairingManager.createSession(url)
+            liveState.value = LiveUi(session = session, receiverCount = 0)
+            liveTelemetryModule.startSender(viewModelScope, session)
+            receiverCountJob?.cancel()
+            receiverCountJob = viewModelScope.launch {
+                liveTelemetryModule.receiverCount.collectLatest { count ->
+                    liveState.update { it.copy(receiverCount = count) }
+                }
+            }
+        }
     }
 
     fun stopLiveSession() {
-        viewModelScope.launch {
-            liveTelemetryModule.stopSender()
-            liveState.value = LiveUi(session = null, receiverCount = 0)
-        }
+        receiverCountJob?.cancel()
+        receiverCountJob = null
+        liveTelemetryModule.stopSender()
+        liveState.value = LiveUi(session = null, receiverCount = 0)
     }
 
     private data class CoreState(

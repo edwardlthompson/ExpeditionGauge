@@ -21,7 +21,11 @@ data class MultiImuFusionOutput(
  */
 class MultiImuYawFusion {
     fun fuse(sessions: List<ImuDeviceSession>, phoneYawDeg: Float): MultiImuFusionOutput {
-        val active = sessions.filter { it.connected && it.placement != ImuPlacement.Unassigned }
+        val now = System.currentTimeMillis()
+        val active = sessions.filter { session ->
+            session.placement != ImuPlacement.Unassigned &&
+                (session.connected || now - session.lastSeenMs <= STALE_MS)
+        }
         if (active.isEmpty()) {
             return MultiImuFusionOutput(
                 bodyYawDeg = phoneYawDeg,
@@ -72,5 +76,10 @@ class MultiImuYawFusion {
             source = if (active.size == 1) "external_imu" else "multi_imu",
             activeCount = active.size,
         )
+    }
+
+    companion object {
+        /** Grace period after notify dropout before excluding a corner IMU. */
+        const val STALE_MS = 2_000L
     }
 }

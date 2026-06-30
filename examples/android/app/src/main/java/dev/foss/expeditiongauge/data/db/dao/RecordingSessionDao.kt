@@ -19,6 +19,17 @@ interface RecordingSessionDao {
     @Query("SELECT * FROM recording_sessions ORDER BY startTimeMs DESC")
     fun observeAll(): Flow<List<RecordingSessionEntity>>
 
+    @Query(
+        """
+        SELECT * FROM recording_sessions
+        WHERE notes LIKE '%' || :query || '%'
+           OR driverName LIKE '%' || :query || '%'
+           OR tagsJson LIKE '%' || :query || '%'
+        ORDER BY startTimeMs DESC
+        """,
+    )
+    fun observeSearch(query: String): Flow<List<RecordingSessionEntity>>
+
     @Query("SELECT * FROM recording_sessions WHERE id = :id")
     suspend fun getById(id: Long): RecordingSessionEntity?
 

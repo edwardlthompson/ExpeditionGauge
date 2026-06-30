@@ -9,9 +9,10 @@ import kotlin.math.sqrt
  * Based on Madgwick's open-source IMU/AHRS algorithm.
  */
 class MadgwickFilter(
-    private val beta: Float = 0.1f,
+    beta: Float = 0.1f,
     private val samplePeriodSec: Float = 0.02f,
 ) {
+    private var beta: Float = beta
     private var q0 = 1f
     private var q1 = 0f
     private var q2 = 0f
@@ -22,6 +23,10 @@ class MadgwickFilter(
         q1 = 0f
         q2 = 0f
         q3 = 0f
+    }
+
+    fun setBeta(value: Float) {
+        beta = value.coerceIn(0.01f, 0.5f)
     }
 
     fun update(gyroX: Float, gyroY: Float, gyroZ: Float, accelX: Float, accelY: Float, accelZ: Float) {

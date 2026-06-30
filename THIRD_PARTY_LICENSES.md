@@ -24,6 +24,24 @@ head -1 examples/go/go.mod
 
 `[AUTO]` CI runs `scripts/check-license-compliance.sh` on each push.
 
+## Android (ExpeditionGauge)
+
+| Dependency | Version | License | Notes |
+|------------|---------|---------|-------|
+| AndroidX Room | 2.7.2 | Apache-2.0 | Session/sample persistence |
+| kotlin-obd-api (JitPack) | 1.4.1 | Apache-2.0 | OBD-II ELM327; pinned tag `1.4.1` |
+| MapLibre GL Android SDK | 13.0.2 | BSD-2-Clause | Via MapLibre Compose playback map |
+| MapLibre Compose | 0.13.0 | BSD-2-Clause | Playback map (Sprint 7+) |
+
+Lockfile: `examples/android/app/gradle.lockfile` (regenerate with `./gradlew :app:assembleDebug --write-locks`).
+
+## Reference implementations (not bundled)
+
+| Project | License | Use in ExpeditionGauge |
+|---------|---------|------------------------|
+| [omadon/TPMS_BLE_BR](https://github.com/omadon/TPMS_BLE_BR) | MIT | Protocol reference for `BrTpmsParser` (Sprint 5b); not a runtime dependency |
+| [KreAch3R/tpms-oap](https://github.com/KreAch3R/tpms-oap) | GPL-3.0 | PECHAM GATT protocol reference for v2 `PechamTpmsParser` stub only; not linked in APK |
+
 ## Attribution
 
 When bundling dependencies in releases (APK, desktop binary, etc.), include

@@ -12,8 +12,8 @@ import dev.foss.expeditiongauge.drift.DriftAngleEstimator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import dev.foss.expeditiongauge.calibration.CalibrationStore
+import dev.foss.expeditiongauge.ble.ImuFusionLog
 import kotlin.math.abs
-import kotlin.math.max
 
 class PhoneSensorProvider(
     context: Context,
@@ -27,8 +27,8 @@ class PhoneSensorProvider(
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-    private var peakAbsPitch = 0f
-    private var peakAbsRoll = 0f
+    private var peakPitch = 0f
+    private var peakRoll = 0f
     private var lastGpsSnapshot = TelemetrySnapshot.empty()
 
     fun start() {
@@ -37,11 +37,12 @@ class PhoneSensorProvider(
                 fusionEngine.setCalibrationOffsets(offsets)
             }
         }
+        val imuDelay = SensorPollScheduler.phoneImuSensorDelay
         accelerometer?.let {
-            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+            sensorManager.registerListener(this, it, imuDelay)
         }
         gyroscope?.let {
-            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+            sensorManager.registerListener(this, it, imuDelay)
         }
     }
 
@@ -51,6 +52,11 @@ class PhoneSensorProvider(
 
     fun updateGpsContext(snapshot: TelemetrySnapshot) {
         lastGpsSnapshot = snapshot
+    }
+
+    fun resetSessionPeaks() {
+        peakPitch = 0f
+        peakRoll = 0f
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -86,10 +92,20 @@ class PhoneSensorProvider(
         val lonG = multiImu?.lonG?.takeIf { (multiImu.activeCount) > 0 } ?: fusion.lonG
         val yawRate = multiImu?.yawRateDegPerSec ?: 0f
         driftEstimator.onFusionSample(yaw, yawRate, now)
-        peakAbsPitch = max(peakAbsPitch, abs(pitch))
-        peakAbsRoll = max(peakAbsRoll, abs(roll))
+        if (abs(pitch) > abs(peakPitch)) peakPitch = pitch
+        if (abs(roll) > abs(peakRoll)) peakRoll = roll
         val drift = driftEstimator.currentSample().copy(
             source = multiImu?.source ?: "phone",
+        )
+        val fusionSource = multiImu?.source ?: "phone"
+        ImuFusionLog.publish(
+            fusionSource = fusionSource,
+            activeCount = multiImu?.activeCount ?: 0,
+            chassisTwistDeg = multiImu?.chassisTwistDeg,
+            driftAngleDeg = drift.driftAngleDeg,
+            latG = latG,
+            pitchDeg = pitch,
+            rollDeg = roll,
         )
         telemetryBus.publish(
             lastGpsSnapshot.copy(
@@ -102,10 +118,12 @@ class PhoneSensorProvider(
                 driftAngleDeg = drift.driftAngleDeg,
                 bodyYawDeg = drift.bodyYawDeg,
                 velocityHeadingDeg = drift.velocityHeadingDeg,
-                fusionSource = multiImu?.source ?: "phone",
+                fusionSource = fusionSource,
                 chassisTwistDeg = multiImu?.chassisTwistDeg,
-                peakAbsPitchDeg = peakAbsPitch,
-                peakAbsRollDeg = peakAbsRoll,
+                peakAbsPitchDeg = abs(peakPitch),
+                peakAbsRollDeg = abs(peakRoll),
+                peakPitchDeg = peakPitch,
+                peakRollDeg = peakRoll,
             ),
         )
     }

@@ -9,17 +9,15 @@ import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import dev.foss.expeditiongauge.drift.DriftAngleEstimator
-import dev.foss.expeditiongauge.sensors.PhoneSensorProvider
-import dev.foss.expeditiongauge.telemetry.TelemetryBus
+import dev.foss.expeditiongauge.sensors.SensorPollScheduler
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class PhoneGpsProvider(
     private val context: Context,
-    private val telemetryBus: TelemetryBus,
     private val driftEstimator: DriftAngleEstimator,
-    private val sensorProvider: PhoneSensorProvider,
+    private val onPhoneFix: (TelemetrySnapshot) -> Unit,
 ) : LocationListener {
     private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var lastLocation: Location? = null
@@ -32,7 +30,12 @@ class PhoneGpsProvider(
             else -> return
         }
         try {
-            locationManager.requestLocationUpdates(provider, 500L, 0f, this)
+            locationManager.requestLocationUpdates(
+                provider,
+                SensorPollScheduler.PHONE_GPS_INTERVAL_MS,
+                0f,
+                this,
+            )
             locationManager.getLastKnownLocation(provider)?.let { onLocationChanged(it) }
         } catch (_: SecurityException) {
             // Permission not granted at runtime
@@ -48,8 +51,7 @@ class PhoneGpsProvider(
         val heading = if (location.hasBearing()) location.bearing else computeHeading(location)
         val speedMps = if (location.hasSpeed()) location.speed else 0f
         driftEstimator.onGpsSample(heading, speedMps)
-        val current = telemetryBus.snapshots.value
-        val snapshot = current.copy(
+        val snapshot = TelemetrySnapshot(
             timestampMs = System.currentTimeMillis(),
             speedMps = speedMps,
             headingDeg = heading,
@@ -60,8 +62,7 @@ class PhoneGpsProvider(
             gpsSource = "phone",
             driftAngleDeg = driftEstimator.currentSample().driftAngleDeg,
         )
-        telemetryBus.publish(snapshot)
-        sensorProvider.updateGpsContext(snapshot)
+        onPhoneFix(snapshot)
     }
 
     override fun onProviderDisabled(provider: String) = Unit

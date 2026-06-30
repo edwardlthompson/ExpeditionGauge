@@ -24,6 +24,10 @@ class SensorFusionEngine(
         calibrationOffsets = offsets
     }
 
+    fun setMadgwickBeta(beta: Float) {
+        madgwick.setBeta(beta)
+    }
+
     fun onAccelerometer(x: Float, y: Float, z: Float, timestampNs: Long) {
         lastAccel = Triple(x, y, z)
         lastTimestampNs = timestampNs

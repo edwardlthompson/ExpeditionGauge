@@ -33,7 +33,9 @@ function Invoke-AdbCommand {
     }
 }
 
-Invoke-AdbCommand shell screencap -p /sdcard/expedition_hud.png | Out-Null
+Invoke-AdbCommand shell am start -n "$pkg/.MainActivity" | Out-Null
+Start-Sleep -Seconds 2
+Invoke-AdbCommand shell "screencap -p /sdcard/expedition_hud.png" | Out-Null
 Invoke-AdbCommand pull /sdcard/expedition_hud.png $shot | Out-Null
 
 $result = @{

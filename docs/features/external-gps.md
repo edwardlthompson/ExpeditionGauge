@@ -10,6 +10,9 @@
 - ✅ GPS status chip: source, satellites, HDOP
 - ✅ Gated by `FeatureFlags.externalGpsEnabled`
 
+- ✅ Settings: enable toggle, device picker, forget device; GPS status chip on HUD
+- ✅ `fixQuality` in recording `extrasJson`; playback highlights external GPS metadata
+
 ## Container map
 
 | Layer | Path |
@@ -17,6 +20,7 @@
 | Parser | `gps/NmeaParser.kt` |
 | Managers | `gps/ExternalNmeaGpsManager.kt`, `gps/FusedGpsLocationProvider.kt` |
 | UI | `ui/components/gauge/GpsStatusChip.kt` |
+| Playback | `playback/SampleGpsMetadata.kt` |
 
 ## Smoke scenario
 

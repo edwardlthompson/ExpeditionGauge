@@ -11,7 +11,7 @@ import android.os.VibratorManager
 /**
  * Haptic + audible chime feedback for live alerts.
  */
-class AlertFeedback(@Suppress("UNUSED_PARAMETER") context: Context) {
+class AlertFeedback(context: Context) {
     private val vibrator: Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val manager = context.getSystemService(VibratorManager::class.java)
         manager?.defaultVibrator
@@ -23,8 +23,9 @@ class AlertFeedback(@Suppress("UNUSED_PARAMETER") context: Context) {
     private val toneGenerator = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 80)
 
     @Suppress("UNUSED_PARAMETER")
-    fun onAlert(type: AlertType) {
+    fun onAlert(type: AlertType, playTone: Boolean = true) {
         vibrate(type)
+        if (!playTone) return
         val tone = when (type) {
             AlertType.LAT_G, AlertType.DRIFT_ANGLE -> ToneGenerator.TONE_PROP_BEEP
             AlertType.RPM, AlertType.SPEED -> ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD
@@ -39,11 +40,15 @@ class AlertFeedback(@Suppress("UNUSED_PARAMETER") context: Context) {
             AlertType.RPM, AlertType.SPEED -> 80L
             else -> 60L
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator?.vibrate(duration)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator?.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator?.vibrate(duration)
+            }
+        } catch (_: SecurityException) {
+            // VIBRATE permission may be denied on some installs.
         }
     }
 

@@ -19,7 +19,7 @@
 
 | Layer | Path |
 |-------|------|
-| Logic | `ui/playback/RouteHeatmapLayer.kt` |
+| Logic | `playback/RouteHeatmapLayer.kt` |
 | Controls | `RouteHeatmapControls`, `HeatmapLegend` composables |
 
 ## Definition of Done

@@ -21,9 +21,9 @@
 
 | Layer | Path |
 |-------|------|
-| Logic | `timing/LapDetector.kt`, `timing/SectorSplitCalculator.kt`, `timing/PredictiveTimingEngine.kt` |
+| Logic | `timing/LapDetector.kt`, `timing/SectorSplitCalculator.kt`, `timing/PredictiveTimingEngine.kt`, `timing/LapTimingService.kt`, `timing/TrackLineBuilder.kt` |
 | Data | `TrackConfigEntity`, `LapEntity`, `SectorSplitEntity` |
-| UI | `ui/components/LapTimerStrip.kt` |
+| UI | `ui/components/LapTimerStrip.kt`, `ui/timing/TrackSetupScreen.kt`, `ui/playback/LapListPanel.kt` |
 | ADR | `docs/adr/0002-lap-timing.md` |
 | Tests | `timing/*Test.kt` |
 

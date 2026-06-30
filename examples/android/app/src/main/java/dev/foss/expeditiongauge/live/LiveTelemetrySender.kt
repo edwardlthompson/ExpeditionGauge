@@ -1,11 +1,14 @@
 package dev.foss.expeditiongauge.live
 
+import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.telemetry.TpmsSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 enum class LiveSenderState {
     Idle,
@@ -13,29 +16,23 @@ enum class LiveSenderState {
     Live,
 }
 
-/**
- * WebRTC Data Channel sender stub — subscribes to TelemetryBus without forking fusion.
- */
 class LiveTelemetrySender(
     private val telemetryBus: TelemetryBus,
+    private val webSocketClient: LiveWebSocketClient,
     private val encoder: LiveTelemetryEncoder = LiveTelemetryEncoder(),
-    private val transport: LiveTelemetryTransport = StubLiveTelemetryTransport(),
-    private val signalingClient: SignalingClient = SignalingClientStub(),
 ) {
     var state: LiveSenderState = LiveSenderState.Idle
         private set
 
-    var connectedReceivers: Int = 0
-        private set
+    val connectedReceivers: Int
+        get() = webSocketClient.receiverCount.value
 
     private var collectJob: Job? = null
 
-    suspend fun startSession(session: LivePairingSession) {
+    fun startSession(scope: CoroutineScope, session: LivePairingSession) {
         state = LiveSenderState.Pairing
-        signalingClient.connect(session.sessionId, session.code, session.signalWss)
-        transport.connect(session.sessionId, session.code)
+        webSocketClient.connect(session.sessionId, session.code, session.signalWss, "sender")
         state = LiveSenderState.Live
-        connectedReceivers = 1
     }
 
     fun subscribe(scope: CoroutineScope) {
@@ -48,18 +45,31 @@ class LiveTelemetrySender(
         }
     }
 
-    suspend fun onSnapshot(snapshot: TelemetrySnapshot) {
-        val payload = encoder.encodeIfChanged(snapshot) ?: return
-        transport.send(payload)
+    fun onSnapshot(snapshot: TelemetrySnapshot) {
+        val tpmsJson = tpmsToJson(snapshot.tpms)
+        val payload = encoder.encodeIfChanged(snapshot, tpmsJson) ?: return
+        webSocketClient.sendMetric(payload)
     }
 
-    suspend fun stopSession() {
+    fun stopSession() {
         collectJob?.cancel()
         collectJob = null
-        transport.disconnect()
-        signalingClient.disconnect()
+        webSocketClient.disconnect()
         encoder.reset()
         state = LiveSenderState.Idle
-        connectedReceivers = 0
+    }
+
+    private fun tpmsToJson(tpms: TpmsSnapshot?): String? {
+        if (!FeatureFlags.tpmsEnabled || tpms == null) return null
+        fun corner(c: dev.foss.expeditiongauge.telemetry.TpmsCornerReading) = JSONObject().apply {
+            c.pressureKpa?.let { put("kpa", it.toDouble()) }
+            c.tempC?.let { put("tempC", it.toDouble()) }
+        }
+        return JSONObject()
+            .put("fl", corner(tpms.frontLeft))
+            .put("fr", corner(tpms.frontRight))
+            .put("rl", corner(tpms.rearLeft))
+            .put("rr", corner(tpms.rearRight))
+            .toString()
     }
 }

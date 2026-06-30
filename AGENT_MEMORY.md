@@ -3,7 +3,28 @@
 > Centralized index of tech stack, threat models, persistent context, and retrospectives.
 > Update only at session startups, milestone boundaries, or major architectural pivots.
 
-## Tech Stack
+## Active Project: ExpeditionGauge
+
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through v2.1.0 live telemetry. **Active sprint:** 19b (system UI insets). **Dev device:** OnePlus 12 (`b5214fc6`).
+
+| Milestone | Version | Status |
+|-----------|---------|--------|
+| Core v1 | 1.0.0 | ✅ Sprint 8 |
+| Polish v1.1 | 1.1.0 | ✅ Sprint 14 |
+| Polish v1.2 | 1.2.0 | ✅ Sprint 17b |
+| v2 video | 2.0.0 | ✅ Sprint 18 |
+| v2 live | 2.1.0 | ✅ Sprint 19 |
+| Next | 2.1.1 | 🔲 Sprint 19b insets |
+
+## Tech Stack (ExpeditionGauge)
+
+| Layer | Technology | Notes |
+|-------|-----------|-------|
+| Platform | Android Compose + Room + MapLibre | `examples/android/` |
+| Package | `dev.foss.expeditiongauge` | minSdk 24 |
+| License | MIT | Pure FOSS, no Play Services in APK |
+
+## Template Stack (maintainer reference)
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|

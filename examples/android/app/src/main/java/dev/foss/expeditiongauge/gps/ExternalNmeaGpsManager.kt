@@ -79,6 +79,9 @@ class ExternalNmeaGpsManager(
             val line = reader.readLine() ?: break
             val fix = NmeaParser.parseLine(line) ?: continue
             _fix.value = _fix.value.merge(fix)
+            if (fix.valid) {
+                GpsTelemetryLog.publish(_fix.value, source = "external")
+            }
             if (buffer.length > 4096) buffer.clear()
             buffer.appendLine(line)
         }

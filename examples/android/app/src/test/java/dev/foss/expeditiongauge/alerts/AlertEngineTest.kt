@@ -34,4 +34,37 @@ class AlertEngineTest {
         val kmpl = engine.computeFuelEconomyKmpl(speedMps = 27.78f, fuelRateLph = 10f)
         assertEquals(10f, kmpl!!, 0.1f)
     }
+
+    @Test
+    fun firesPitchAndRollAlerts() {
+        val engine = AlertEngine(AlertThresholds(masterEnabled = true, maxPitchDeg = 10f, maxRollDeg = 12f))
+        val events = engine.evaluate(
+            TelemetrySnapshot(timestampMs = 1000L, pitchDeg = 15f, rollDeg = -13f),
+        )
+        assertEquals(2, events.size)
+        assertTrue(events.any { it.type == AlertType.PITCH })
+        assertTrue(events.any { it.type == AlertType.ROLL })
+    }
+
+    @Test
+    fun rpmOnlyWhenObdEvaluated() {
+        val engine = AlertEngine(AlertThresholds(masterEnabled = true, maxRpm = 3000f))
+        val withoutObd = engine.evaluate(TelemetrySnapshot(timestampMs = 1000L, rpm = 4000f))
+        assertTrue(withoutObd.none { it.type == AlertType.RPM })
+        val withObd = engine.evaluateObd(rpm = 4000f, slipRatio = null, fuelRateLph = null, speedMps = 10f, nowMs = 1000L)
+        assertEquals(1, withObd.size)
+        assertEquals(AlertType.RPM, withObd.first().type)
+    }
+
+    @Test
+    fun tirePressureAlert() {
+        val engine = AlertEngine(AlertThresholds(masterEnabled = true, minTirePressureKpa = 200f))
+        val tracker = TpmsPressureTracker()
+        val tpms = dev.foss.expeditiongauge.telemetry.TpmsSnapshot(
+            frontLeft = dev.foss.expeditiongauge.telemetry.TpmsCornerReading(pressureKpa = 180f),
+        )
+        val events = engine.evaluateTpms(tpms, 1000L, tracker)
+        assertEquals(1, events.size)
+        assertEquals(AlertType.TIRE_PRESSURE, events.first().type)
+    }
 }

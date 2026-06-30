@@ -12,4 +12,12 @@ class DriftAngleEstimatorTest {
         val sample = estimator.currentSample()
         assertEquals(20f, sample.driftAngleDeg, 0.001f)
     }
+
+    @Test
+    fun lowSpeedSuppressesBeta() {
+        val estimator = DriftAngleEstimator()
+        estimator.onFusionSample(yawDeg = 90f, yawRateDegPerSec = 0f, timestampMs = 1000L)
+        estimator.onGpsSample(velocityHeadingDeg = 0f, speedMps = 1f)
+        assertEquals(0f, estimator.currentSample().driftAngleDeg, 0.001f)
+    }
 }

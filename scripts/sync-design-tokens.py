@@ -27,6 +27,8 @@ def token_hash(tokens: dict) -> str:
 def hex_to_compose(name: str, hex_color: str, *, private: bool = False) -> str:
     h = hex_color.lstrip("#")
     prefix = "private val " if private else "val "
+    if len(h) == 8:
+        return f"{prefix}{name} = Color(0x{h.upper()})"
     return f"{prefix}{name} = Color(0xFF{h.upper()})"
 
 
@@ -103,29 +105,26 @@ def _kebab(key: str) -> str:
     return "".join(out)
 
 
+def _gauge_color_name(key: str) -> str:
+    mapping = {
+        "background": "GaugeBackground",
+        "scaleWhite": "GaugeScaleWhite",
+        "green": "GaugeGreen",
+        "yellow": "GaugeYellow",
+        "red": "GaugeRed",
+        "ball": "GaugeBall",
+    }
+    return mapping.get(key, f"Gauge{camel_case(key)}")
+
+
+def _playback_color_name(key: str) -> str:
+    return f"Playback{key[0].upper()}{key[1:]}"
+
+
 def generate_color_kt(tokens: dict, digest: str) -> str:
     colors = tokens["color"]
-    light_entries = []
-    dark_entries = []
-    for key in colors:
-        role = color_role_name(key)
-        light_entries.append(hex_to_compose(f"Light{role.capitalize() if role[0].islower() else role}", colors[key]["light"]))
-        dark_entries.append(hex_to_compose(f"Dark{role[0].upper()}{role[1:]}" if role else role, colors[key]["dark"]))
-
-    # Fix naming: primary -> LightPrimary, DarkPrimary
-    light_vals = []
-    dark_vals = []
-    scheme_light = []
-    scheme_dark = []
-    for key in colors:
-        role = color_role_name(key)
-        light_name = f"Gp{role[0].upper()}{role[1:]}"
-        dark_name = light_name
-        light_vals.append(hex_to_compose(f"GpLight{role[0].upper()}{role[1:]}", colors[key]["light"]))
-        dark_vals.append(hex_to_compose(f"GpDark{role[0].upper()}{role[1:]}", colors[key]["dark"]))
-        scheme_light.append(f"        {role} = GpLight{role[0].upper()}{role[1:]},")
-        scheme_dark.append(f"        {role} = GpDark{role[0].upper()}{role[1:]},")
-
+    gauge = tokens.get("gauge", {})
+    playback = tokens.get("playback", {})
     lines = [
         f"// {HEADER}",
         f"// source-hash: {digest}",
@@ -144,29 +143,108 @@ def generate_color_kt(tokens: dict, digest: str) -> str:
         lines.append(hex_to_compose(f"GpDark{cap}", colors[key]["dark"], private=True))
     lines.extend([
         "",
-        "val LightGoldenPathColors = lightColorScheme(",
+        "val LightExpeditionGaugeColors = lightColorScheme(",
         *[f"    {color_role_name(k)} = GpLight{color_role_name(k)[0].upper()}{color_role_name(k)[1:]}," for k in colors],
         ")",
         "",
-        "val DarkGoldenPathColors = darkColorScheme(",
+        "val DarkExpeditionGaugeColors = darkColorScheme(",
         *[f"    {color_role_name(k)} = GpDark{color_role_name(k)[0].upper()}{color_role_name(k)[1:]}," for k in colors],
+        ")",
+        "",
+        "// Gauge HUD palette (from design-tokens.json → gauge)",
+    ])
+    for key, hex_color in gauge.items():
+        lines.append(hex_to_compose(_gauge_color_name(key), hex_color))
+    if playback:
+        lines.extend([
+            "",
+            "// Playback / map overlay palette (from design-tokens.json → playback)",
+        ])
+        for key, hex_color in playback.items():
+            lines.append(hex_to_compose(_playback_color_name(key), hex_color))
+    lines.extend([
+        "",
+        "// High-contrast accessibility palette (Sprint 17)",
+        "val HighContrastExpeditionGaugeColors = darkColorScheme(",
+        "    primary = Color(0xFFFFFFFF),",
+        "    onPrimary = Color(0xFF000000),",
+        "    primaryContainer = Color(0xFF000000),",
+        "    onPrimaryContainer = Color(0xFFFFFFFF),",
+        "    secondary = Color(0xFFFFFF00),",
+        "    onSecondary = Color(0xFF000000),",
+        "    secondaryContainer = Color(0xFF000000),",
+        "    onSecondaryContainer = Color(0xFFFFFF00),",
+        "    tertiary = Color(0xFFFFFFFF),",
+        "    onTertiary = Color(0xFF000000),",
+        "    error = Color(0xFFFF0000),",
+        "    onError = Color(0xFFFFFFFF),",
+        "    background = Color(0xFF000000),",
+        "    onBackground = Color(0xFFFFFFFF),",
+        "    surface = Color(0xFF000000),",
+        "    onSurface = Color(0xFFFFFFFF),",
+        "    surfaceVariant = Color(0xFF1A1A1A),",
+        "    onSurfaceVariant = Color(0xFFFFFFFF),",
+        "    outline = Color(0xFFFFFFFF),",
+        ")",
+        "",
+        "// Day brightness: higher contrast for outdoor readability",
+        "val DayExpeditionGaugeColors = darkColorScheme(",
+        "    primary = GpDarkPrimary,",
+        "    onPrimary = GpDarkOnPrimary,",
+        "    primaryContainer = GpDarkPrimaryContainer,",
+        "    onPrimaryContainer = GpDarkOnPrimaryContainer,",
+        "    secondary = Color(0xFFB8D4FF),",
+        "    onSecondary = Color(0xFF000000),",
+        "    secondaryContainer = GpDarkSecondaryContainer,",
+        "    onSecondaryContainer = GpDarkOnSecondaryContainer,",
+        "    tertiary = GpDarkTertiary,",
+        "    onTertiary = GpDarkOnTertiary,",
+        "    error = GpDarkError,",
+        "    onError = GpDarkOnError,",
+        "    background = Color(0xFF000000),",
+        "    onBackground = Color(0xFFFFFFFF),",
+        "    surface = Color(0xFF0A0A0A),",
+        "    onSurface = Color(0xFFFFFFFF),",
+        "    surfaceVariant = GpDarkSurfaceVariant,",
+        "    onSurfaceVariant = Color(0xFFE0E0E0),",
+        "    outline = Color(0xFFCCCCCC),",
         ")",
         "",
     ])
     return "\n".join(lines)
 
 
+def _text_style(name: str, scale: dict) -> str:
+    lh = scale["sizeSp"] * scale["lineHeight"]
+    return (
+        f"val {name} = TextStyle(\n"
+        f"    fontSize = {scale['sizeSp']}.sp,\n"
+        f"    lineHeight = {lh:.1f}.sp,\n"
+        f"    fontWeight = FontWeight({scale['weight']}),\n"
+        f")"
+    )
+
+
 def generate_type_kt(tokens: dict, digest: str) -> str:
     scale = tokens["typography"]["scale"]
-    entries = []
+    display = tokens["typography"].get("displayScale", {})
+    m3_entries = []
     for key, val in scale.items():
-        entries.append(
+        m3_entries.append(
             f"    {key} = TextStyle(\n"
             f"        fontSize = {val['sizeSp']}.sp,\n"
             f"        lineHeight = {(val['sizeSp'] * val['lineHeight']):.1f}.sp,\n"
             f"        fontWeight = FontWeight({val['weight']}),\n"
             f"    ),"
         )
+    display_lines = []
+    display_names = {
+        "speedLarge": "GaugeSpeedTextStyle",
+        "headingLarge": "GaugeHeadingTextStyle",
+        "gaugeLabel": "GaugeLabelTextStyle",
+    }
+    for key, val in display.items():
+        display_lines.append(_text_style(display_names.get(key, camel_case(key)), val))
     return "\n".join([
         f"// {HEADER}",
         f"// source-hash: {digest}",
@@ -177,9 +255,12 @@ def generate_type_kt(tokens: dict, digest: str) -> str:
         "import androidx.compose.ui.text.font.FontWeight",
         "import androidx.compose.ui.unit.sp",
         "",
-        "val GoldenPathTypography = Typography(",
-        *entries,
+        "val ExpeditionGaugeTypography = Typography(",
+        *m3_entries,
         ")",
+        "",
+        "// Gauge display typography (from design-tokens.json → typography.displayScale)",
+        *display_lines,
         "",
     ])
 

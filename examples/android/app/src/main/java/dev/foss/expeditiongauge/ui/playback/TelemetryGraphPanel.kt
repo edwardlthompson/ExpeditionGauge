@@ -21,43 +21,19 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
-import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.playback.GraphSeries
+import dev.foss.expeditiongauge.playback.ScrubberMarkerType
 import dev.foss.expeditiongauge.playback.PlaybackState
+import dev.foss.expeditiongauge.playback.TelemetryGraphRenderer
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
+import dev.foss.expeditiongauge.ui.theme.PlaybackAlertLine
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 enum class GraphTab { SPEED, ATTITUDE, TIRES }
-
-data class GraphSeries(
-    val label: String,
-    val values: List<Float>,
-    val color: Color,
-)
-
-object TelemetryGraphRenderer {
-    private const val MAX_POINTS = 2000
-
-    fun decimate(samples: List<SampleEntity>, selector: (SampleEntity) -> Float?): GraphSeries? {
-        val points = samples.mapNotNull { s -> selector(s)?.let { s.timestampMs to it } }
-        if (points.isEmpty()) return null
-        val step = (points.size / MAX_POINTS).coerceAtLeast(1)
-        val decimated = points.filterIndexed { index, _ -> index % step == 0 }
-        return GraphSeries(
-            label = "",
-            values = decimated.map { it.second },
-            color = Color.Unspecified,
-        )
-    }
-
-    fun speedSeries(samples: List<SampleEntity>): GraphSeries? =
-        decimate(samples) { it.speedMps * 3.6f }?.copy(label = "speed")
-
-    fun latGSeries(samples: List<SampleEntity>): GraphSeries? =
-        decimate(samples) { it.latG }?.copy(label = "latG")
-}
 
 @Composable
 fun TelemetryGraphPanel(
@@ -67,36 +43,64 @@ fun TelemetryGraphPanel(
 ) {
     var tab by remember { mutableIntStateOf(0) }
     val samples = state.samples
-    Column(modifier = modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface)) {
+    val series = remember(samples, tab) {
+        when (tab) {
+            GraphTab.SPEED.ordinal -> TelemetryGraphRenderer.speedTabSeries(samples)
+            GraphTab.ATTITUDE.ordinal -> TelemetryGraphRenderer.attitudeTabSeries(samples)
+            else -> TelemetryGraphRenderer.tireTabSeries(samples)
+        }
+    }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .testTag("telemetry_graph_panel"),
+    ) {
         TabRow(selectedTabIndex = tab) {
-            Tab(selected = tab == 0, onClick = { tab = 0 }, text = { Text(stringResource(R.string.graph_tab_speed)) })
-            Tab(selected = tab == 1, onClick = { tab = 1 }, text = { Text(stringResource(R.string.graph_tab_attitude)) })
-            Tab(selected = tab == 2, onClick = { tab = 2 }, text = { Text(stringResource(R.string.graph_tab_tires)) })
-        }
-        val series = when (tab) {
-            0 -> listOfNotNull(TelemetryGraphRenderer.speedSeries(samples))
-            1 -> listOfNotNull(
-                TelemetryGraphRenderer.latGSeries(samples),
-                TelemetryGraphRenderer.decimate(samples) { it.pitchDeg },
+            Tab(
+                selected = tab == GraphTab.SPEED.ordinal,
+                onClick = { tab = GraphTab.SPEED.ordinal },
+                text = { Text(stringResource(R.string.graph_tab_speed)) },
             )
-            else -> emptyList()
+            Tab(
+                selected = tab == GraphTab.ATTITUDE.ordinal,
+                onClick = { tab = GraphTab.ATTITUDE.ordinal },
+                text = { Text(stringResource(R.string.graph_tab_attitude)) },
+            )
+            Tab(
+                selected = tab == GraphTab.TIRES.ordinal,
+                onClick = { tab = GraphTab.TIRES.ordinal },
+                text = { Text(stringResource(R.string.graph_tab_tires)) },
+            )
         }
-        GraphCanvas(
-            series = series,
-            cursorIndex = state.currentIndex,
-            totalPoints = samples.size,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(SpacingMd)
-                .pointerInput(samples.size) {
-                    detectTapGestures { offset ->
-                        if (samples.isEmpty()) return@detectTapGestures
-                        val fraction = (offset.x / size.width).coerceIn(0f, 1f)
-                        onSeek((fraction * samples.lastIndex).toInt())
-                    }
-                },
-        )
+        GraphLegend(series = series)
+        if (series.isEmpty()) {
+            Text(
+                text = stringResource(R.string.graph_no_data),
+                modifier = Modifier.padding(SpacingMd),
+            )
+        } else {
+            GraphCanvas(
+                series = series,
+                cursorIndex = state.currentIndex,
+                totalPoints = samples.size,
+                alertIndices = state.markers
+                    .filter { it.type == ScrubberMarkerType.ALERT }
+                    .map { it.sampleIndex },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .padding(SpacingMd)
+                    .testTag("telemetry_graph_canvas")
+                    .pointerInput(samples.size) {
+                        detectTapGestures { offset ->
+                            if (samples.isEmpty()) return@detectTapGestures
+                            val fraction = (offset.x / size.width).coerceIn(0f, 1f)
+                            onSeek((fraction * samples.lastIndex).toInt())
+                        }
+                    },
+            )
+        }
     }
 }
 
@@ -105,14 +109,15 @@ private fun GraphCanvas(
     series: List<GraphSeries>,
     cursorIndex: Int,
     totalPoints: Int,
+    alertIndices: List<Int> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     Canvas(modifier = modifier) {
         if (series.isEmpty() || totalPoints == 0) return@Canvas
         val w = size.width
         val h = size.height
-        series.forEachIndexed { idx, s ->
-            if (s.values.isEmpty()) return@forEachIndexed
+        series.forEach { s ->
+            if (s.values.isEmpty()) return@forEach
             val min = s.values.min()
             val max = s.values.max()
             val range = (max - min).coerceAtLeast(0.01f)
@@ -122,7 +127,12 @@ private fun GraphCanvas(
                 val y = h - ((v - min) / range) * h
                 if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
             }
-            drawPath(path, if (idx == 0) GaugeYellow else Color.Cyan, style = androidx.compose.ui.graphics.drawscope.Stroke(2f))
+            val strokeColor = if (s.color != Color.Unspecified) s.color else GaugeYellow
+            drawPath(path, strokeColor, style = androidx.compose.ui.graphics.drawscope.Stroke(2f))
+        }
+        alertIndices.forEach { index ->
+            val alertX = index.toFloat() / totalPoints.coerceAtLeast(1) * w
+            drawLine(PlaybackAlertLine, Offset(alertX, 0f), Offset(alertX, h), strokeWidth = 1.5f)
         }
         val cursorX = cursorIndex.toFloat() / totalPoints.coerceAtLeast(1) * w
         drawLine(Color.Red, Offset(cursorX, 0f), Offset(cursorX, h), strokeWidth = 2f)

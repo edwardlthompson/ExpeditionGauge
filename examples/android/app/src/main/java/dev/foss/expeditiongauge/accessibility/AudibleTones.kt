@@ -17,6 +17,8 @@ private val Context.accessibilityDataStore: DataStore<Preferences> by preference
 
 private val HIGH_CONTRAST_KEY = booleanPreferencesKey("high_contrast")
 private val AUDIBLE_TONES_KEY = booleanPreferencesKey("audible_tones")
+private val LARGE_TEXT_KEY = booleanPreferencesKey("large_text")
+private val TTS_READOUT_KEY = booleanPreferencesKey("tts_readout")
 
 class AccessibilityPreferences(private val context: Context) {
     val highContrastEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
@@ -25,6 +27,14 @@ class AccessibilityPreferences(private val context: Context) {
 
     val audibleTonesEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
         prefs[AUDIBLE_TONES_KEY] ?: false
+    }
+
+    val largeTextEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
+        prefs[LARGE_TEXT_KEY] ?: false
+    }
+
+    val ttsReadoutEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
+        prefs[TTS_READOUT_KEY] ?: false
     }
 
     suspend fun setHighContrastEnabled(enabled: Boolean) {
@@ -38,9 +48,20 @@ class AccessibilityPreferences(private val context: Context) {
             prefs[AUDIBLE_TONES_KEY] = enabled
         }
     }
+
+    suspend fun setLargeTextEnabled(enabled: Boolean) {
+        context.accessibilityDataStore.edit { prefs ->
+            prefs[LARGE_TEXT_KEY] = enabled
+        }
+    }
+
+    suspend fun setTtsReadoutEnabled(enabled: Boolean) {
+        context.accessibilityDataStore.edit { prefs ->
+            prefs[TTS_READOUT_KEY] = enabled
+        }
+    }
 }
 
-/** Stub for alert / mark-event audible tones (Sprint 17). */
 class AudibleTones(private val context: Context) {
     private var toneGenerator: ToneGenerator? = null
 

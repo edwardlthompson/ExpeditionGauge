@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.presets.DashboardPreset
@@ -22,7 +23,7 @@ fun PresetSwitcherChip(
     modifier: Modifier = Modifier,
 ) {
     FlowRow(
-        modifier = modifier,
+        modifier = modifier.testTag("preset_switcher"),
         horizontalArrangement = Arrangement.spacedBy(dev.foss.expeditiongauge.ui.theme.SpacingMd),
     ) {
         DashboardPreset.all.forEach { preset ->
@@ -35,7 +36,8 @@ fun PresetSwitcherChip(
                         style = MaterialTheme.typography.labelMedium,
                     )
                 },
-                enabled = isRecording || activePresetId == preset.id,
+                enabled = true,
+                modifier = Modifier.testTag("preset_chip_${preset.id.name.lowercase()}"),
             )
         }
     }

@@ -35,7 +35,7 @@ import dev.foss.expeditiongauge.recording.RecordingMode
         SessionEventEntity::class,
         SettingsProfileEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 @TypeConverters(RecordingModeConverter::class)

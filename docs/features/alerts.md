@@ -15,9 +15,10 @@
 
 | Layer | Path |
 |-------|------|
-| Logic | `alerts/AlertEngine.kt`, `alerts/AlertThresholds.kt` |
+| Logic | `alerts/AlertEngine.kt`, `alerts/AlertThresholds.kt`, `alerts/AlertService.kt` |
 | Feedback | `alerts/AlertFeedback.kt` |
-| Data | `AlertEventEntity` |
+| Settings | `alerts/AlertThresholdsPreferences.kt`, `ui/settings/SettingsAlertOptions.kt` |
+| Playback | `ui/playback/AlertSummaryPanel.kt`, scrubber `ALERT` markers |
 | Tests | `alerts/AlertEngineTest.kt` |
 
 ## Definition of Done

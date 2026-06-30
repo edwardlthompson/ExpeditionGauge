@@ -5,10 +5,19 @@ import dev.foss.expeditiongauge.ble.BleConnectionBudget
 import dev.foss.expeditiongauge.ble.BleImuManager
 import dev.foss.expeditiongauge.ble.BleScanCoordinator
 import dev.foss.expeditiongauge.ble.tpms.BleTpmsManager
+import dev.foss.expeditiongauge.alerts.AlertService
+import dev.foss.expeditiongauge.alerts.AlertThresholdsPreferences
+import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.calibration.CalibrationStore
+import dev.foss.expeditiongauge.calibration.CalibrationWizardStore
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.drift.DriftAngleEstimator
+import dev.foss.expeditiongauge.export.EnhancedExportService
 import dev.foss.expeditiongauge.export.ExportService
+import dev.foss.expeditiongauge.video.DefaultVideoSyncEngine
+import dev.foss.expeditiongauge.video.VideoBurnInExporter
+import dev.foss.expeditiongauge.video.VideoSyncEngine
+import dev.foss.expeditiongauge.video.VideoSyncEngineStub
 import dev.foss.expeditiongauge.fusion.SensorFusionEngine
 import dev.foss.expeditiongauge.gps.ExternalNmeaGpsManager
 import dev.foss.expeditiongauge.gps.FusedGpsLocationProvider
@@ -18,6 +27,8 @@ import dev.foss.expeditiongauge.obd.ObdClassicManager
 import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
+import dev.foss.expeditiongauge.recording.SessionMetadataRepository
+import dev.foss.expeditiongauge.timing.LapTimingService
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
 import dev.foss.expeditiongauge.sensors.PhoneSensorProvider
@@ -53,12 +64,30 @@ class ExpeditionGaugeServices(
     val database = ExpeditionGaugeDatabase.create(appContext)
     val recordingWriter = RecordingWriter(telemetryBus, database, scope)
     val exportService = ExportService(database)
+    val enhancedExportService = EnhancedExportService(database, exportService, appContext)
+    val videoSyncEngine: VideoSyncEngine = if (FeatureFlags.videoSyncEnabled) {
+        DefaultVideoSyncEngine(appContext, database.recordingSessionDao())
+    } else {
+        VideoSyncEngineStub()
+    }
+    val videoBurnInExporter = VideoBurnInExporter(appContext)
+    val calibrationWizardStore = CalibrationWizardStore(appContext)
     val playbackEngine = PlaybackEngine()
     val settingsProfileRepository = SettingsProfileRepository(appContext, database.settingsProfileDao())
     val sessionEventRecorder = SessionEventRecorder(database.sessionEventDao())
+    val sessionMetadataRepository = SessionMetadataRepository(database.recordingSessionDao())
+    val lapTimingService = LapTimingService(database, settingsPreferences)
     val liveTelemetryModule = LiveTelemetryModule(telemetryBus)
+    val alertThresholdsPreferences = AlertThresholdsPreferences(appContext)
+    lateinit var alertService: AlertService
 
-    fun initialize(scope: CoroutineScope) {
+    fun initialize(scope: CoroutineScope, accessibilityPreferences: AccessibilityPreferences) {
+        alertService = AlertService(
+            context = appContext,
+            alertEventDao = database.alertEventDao(),
+            thresholdsPreferences = alertThresholdsPreferences,
+            scope = scope,
+        )
         phoneSensorProvider = PhoneSensorProvider(
             context = appContext,
             fusionEngine = fusionEngine,
@@ -85,6 +114,7 @@ class ExpeditionGaugeServices(
             scope = scope,
         )
         telemetryOrchestrator.start()
+        bindLifecycleFlows(scope, accessibilityPreferences)
     }
 
     fun startSensors() {

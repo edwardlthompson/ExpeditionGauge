@@ -1,0 +1,1 @@
+v1.1.0 polish wave 1: session metadata, crawling mode, lap timing, telemetry graphs, route heatmaps, driving line, ghost lap compare, configurable alerts. Core phone-only HUD unchanged when optional toggles stay off.

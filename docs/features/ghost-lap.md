@@ -5,18 +5,18 @@
 ## Acceptance criteria
 
 - ✅ Load ghost lap sample stream alongside primary
-- ✅ Semi-transparent route overlay (map layer stub)
-- ✅ Delta time at scrubber position
-- ✅ Warn and disable when startLine mismatch > 50 m
-- ✅ Side-by-side sector metrics table (playback UI stub)
+- ✅ Semi-transparent route overlay on map (`RouteGeoJsonBuilder.buildGhostRouteGeoJson`)
+- ✅ Distance-aligned delta time at scrubber
+- ✅ Warn and disable when start/finish mismatch > 50 m
+- ✅ Side-by-side sector metrics table (`GhostLapComparePanel`)
 
 ## Container map
 
 | Layer | Path |
 |-------|------|
-| Logic | `ghost/GhostLapOverlay.kt` |
-| Coordinator | `playback/PlaybackEngine.loadGhost()` |
-| Tests | `ghost/GhostLapOverlayTest.kt` |
+| Logic | `ghost/GhostLapOverlay.kt`, `GhostLapComparer.kt` |
+| UI | `ui/playback/GhostLapComparePanel.kt` |
+| Loader | `playback/PlaybackSessionLoader.loadWithGhost()` |
 
 ## Definition of Done
 

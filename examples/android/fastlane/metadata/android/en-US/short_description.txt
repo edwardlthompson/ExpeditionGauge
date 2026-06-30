@@ -1,1 +1,1 @@
-Golden Path FOSS Android stub for agent-project-bootstrap template.
+Offline automotive HUD — recording, drift angle, lap timing, graphs, alerts

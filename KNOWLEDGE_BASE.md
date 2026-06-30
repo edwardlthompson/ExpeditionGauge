@@ -91,3 +91,30 @@
 | **Cause** | Usually a reproducibility regression (non-hermetic timestamp, path, or dependency drift). Rare runner flakes are possible but treated as failures to catch real regressions early |
 | **Fix** | Rebuild locally with `SOURCE_DATE_EPOCH=1700000000 ./gradlew clean assembleRelease` twice; compare `sha256sum` of release APK. Align `build.gradle.kts`, `gradle.properties`, and dependency lockfiles with `modules/android/MODULE.md` |
 | **Prevention** | Keep `SOURCE_DATE_EPOCH` pinned in CI; use `scripts/verify-reproducible-apk.sh --strict` before release tags. Do not downgrade the job to WARN — strict compare is intentional (M17 P2) |
+
+### KB-010 — Concurrent BLE scan: OBD Classic + IMU + TPMS (Sprint 5b)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | TPMS or IMU advertisements missed while OBD Classic SPP is active; scan appears intermittent |
+| **Cause** | Android shares one `BluetoothLeScanner` callback via `BleScanCoordinator`; Classic BT (OBD on ELM327) competes for radio time on some chipsets (validated OnePlus 12) |
+| **Fix** | Demux all BLE scan results in `BleScanCoordinator`; TPMS is advertisement-only (no GATT connections); IMU capped at 4 GATT links via `BleConnectionBudget`; OBD uses separate `ClassicBluetoothBudget` |
+| **Prevention** | Start TPMS scan on record when enabled; assign corners before session; expect ~1 Hz TPMS updates — sufficient for logging at 20 Hz with last-known merge. Document hardware matrix in `docs/COMPATIBLE_HARDWARE.md` |
+
+### KB-011 — External GPS + OBD + BLE concurrent use (Sprint 5c)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | External NMEA fix stalls when OBD SPP reconnects; HUD flips EXTERNAL → PHONE intermittently |
+| **Cause** | `ClassicBluetoothBudget` allows one OBD + one external GPS SPP; reconnect storms or stale NMEA (>2 s) trigger phone fallback in `FusedGpsLocationProvider` |
+| **Fix** | Route phone fixes through fusion (`PhoneGpsProvider` callback); prefer external when `NmeaFix.valid` and fresh; log via `ExpeditionGauge/Gps` tag for ADB validation |
+| **Prevention** | Enable external GPS in Settings before session; pair GLO 2 / Dual XGPS in system BT first; expect phone fallback under cover or when external receiver sleeps |
+
+### KB-012 — Phone-only 20-min thermal baseline (Sprint 8)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Need confidence that core v1 recording is thermally safe on phone-only path before F-Droid ship |
+| **Cause** | 30 s `thermal-recording` ADB smoke is regression-only; does not stress CPU/GPS for extended sessions |
+| **Fix** | Manual 20 min phone-only recording at default 50 Hz; log `dumpsys thermalservice` every 5 min; note HUD thermal banner |
+| **Prevention** | Lower log rate in Settings (20→10→5 Hz); connect external IMU to offload phone sensors; see `docs/THERMAL_PERFORMANCE.md` |

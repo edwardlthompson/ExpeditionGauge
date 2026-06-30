@@ -1,10 +1,7 @@
-package dev.foss.expeditiongauge.ui
+package dev.foss.expeditiongauge.ui.dashboard
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,8 +20,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.FeatureFlags
@@ -32,19 +32,14 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonationsConfig
 import dev.foss.expeditiongauge.ui.about.AboutScreen
 import dev.foss.expeditiongauge.ui.components.ThemeToggle
-import dev.foss.expeditiongauge.ui.components.gauge.AttitudeGMeterGauge
-import dev.foss.expeditiongauge.ui.components.gauge.GpsReadoutPanel
-import dev.foss.expeditiongauge.ui.components.gauge.GpsStatusChip
-import dev.foss.expeditiongauge.ui.components.gauge.HeadingReadout
 import dev.foss.expeditiongauge.ui.components.gauge.ImuStatusStrip
 import dev.foss.expeditiongauge.ui.components.gauge.RecordControls
-import dev.foss.expeditiongauge.ui.components.gauge.SpeedometerGauge
-import dev.foss.expeditiongauge.ui.components.gauge.StatusIcons
-import dev.foss.expeditiongauge.ui.components.gauge.TirePressurePanel
-import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
-import dev.foss.expeditiongauge.ui.dashboard.PresetSwitcherChip
 import dev.foss.expeditiongauge.ui.live.LivePairingSheet
+import dev.foss.expeditiongauge.timing.PredictiveTimingState
+import dev.foss.expeditiongauge.ui.components.LapTimerStrip
 import dev.foss.expeditiongauge.ui.recording.MarkEventFab
+import dev.foss.expeditiongauge.ui.recording.RecordingAdvancedSheet
+import dev.foss.expeditiongauge.ui.recording.RecordingLiveStrip
 import dev.foss.expeditiongauge.ui.settings.SettingsScreen
 import dev.foss.expeditiongauge.ui.theme.GaugeBackground
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -80,15 +75,26 @@ fun DashboardScreen(
     onMarkEvent: () -> Unit,
     onStartLive: () -> Unit,
     onStopLive: () -> Unit,
+    tpmsEnabled: Boolean = false,
+    pressureUnit: dev.foss.expeditiongauge.settings.PressureUnit = dev.foss.expeditiongauge.settings.PressureUnit.PSI,
+    tempUnit: dev.foss.expeditiongauge.settings.TempUnit = dev.foss.expeditiongauge.settings.TempUnit.CELSIUS,
+    logIntervalMs: Long = 20L,
+    lapTimingEnabled: Boolean = false,
+    lapTimingState: PredictiveTimingState = PredictiveTimingState(),
+    attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
+        dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
     val preset = uiState.activePreset
+    var showRecordingAdvanced by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = GaugeBackground,
         floatingActionButton = {
-            MarkEventFab(visible = uiState.recording, onMarkEvent = onMarkEvent)
+            if (FeatureFlags.markEventEnabled) {
+                MarkEventFab(visible = uiState.recording, onMarkEvent = onMarkEvent)
+            }
         },
         topBar = {
             TopAppBar(
@@ -160,11 +166,32 @@ fun DashboardScreen(
                     .background(GaugeBackground)
                     .padding(innerPadding),
             ) {
-                ImuStatusStrip(
-                    statuses = telemetry.imuStatuses,
-                    onManageClick = onImuManage,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                if (uiState.recording) {
+                    RecordingLiveStrip()
+                    if (uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING) {
+                        Text(
+                            text = stringResource(R.string.recording_mode_crawl),
+                            color = GaugeYellow,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = SpacingMd)
+                                .testTag("crawl_badge"),
+                        )
+                    }
+                    LapTimerStrip(
+                        state = lapTimingState,
+                        visible = lapTimingEnabled && FeatureFlags.lapTimingEnabled,
+                        modifier = Modifier.testTag("lap_timer_strip"),
+                    )
+                }
+                if (!uiState.recording) {
+                    ImuStatusStrip(
+                        statuses = telemetry.imuStatuses,
+                        onManageClick = onImuManage,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 if (uiState.thermalStatus != dev.foss.expeditiongauge.thermal.ThermalStatus.Normal) {
                     Text(
                         text = stringResource(R.string.thermal_warning),
@@ -172,14 +199,21 @@ fun DashboardScreen(
                         modifier = Modifier.fillMaxWidth().padding(SpacingMd),
                     )
                 }
-                PresetSwitcherChip(
-                    activePresetId = preset.id,
-                    isRecording = uiState.recording,
-                    onPresetSelected = viewModel::selectPreset,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = SpacingMd),
-                )
+                if (FeatureFlags.dashboardPresetsEnabled) {
+                    PresetSwitcherChip(
+                        activePresetId = preset.id,
+                        isRecording = uiState.recording,
+                        onPresetSelected = viewModel::selectPreset,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = SpacingMd),
+                    )
+                }
                 if (liveTelemetryEnabled && FeatureFlags.liveTelemetryEnabled && !uiState.isLive) {
-                    TextButton(onClick = onStartLive, modifier = Modifier.padding(horizontal = SpacingMd)) {
+                    TextButton(
+                        onClick = onStartLive,
+                        modifier = Modifier
+                            .padding(horizontal = SpacingMd)
+                            .testTag("live_start_button"),
+                    ) {
                         Text(stringResource(R.string.live_start))
                     }
                 }
@@ -190,76 +224,34 @@ fun DashboardScreen(
                         onStopLive = onStopLive,
                     )
                 }
-                Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                    if (preset.showAttitude && preset.weights.attitude > 0f) {
-                        Box(
-                            modifier = Modifier.weight(preset.weights.attitude).fillMaxHeight(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            AttitudeGMeterGauge(
-                                pitchDeg = telemetry.pitchDeg,
-                                rollDeg = telemetry.rollDeg,
-                                onCalibrate = viewModel::calibrateLevel,
-                            )
-                        }
-                    }
-                    if (preset.showSpeed || preset.showHeading || preset.showGps) {
-                        Column(
-                            modifier = Modifier.weight(preset.weights.center.coerceAtLeast(0.1f)).fillMaxHeight(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            if (preset.showSpeed) SpeedometerGauge(speedMps = telemetry.speedMps)
-                            if (preset.showHeading) HeadingReadout(headingDeg = telemetry.headingDeg)
-                            if (preset.showGps) {
-                                GpsStatusChip(
-                                    gpsFix = telemetry.gpsFix,
-                                    gpsSource = telemetry.gpsSource,
-                                    numSatellites = telemetry.numSatellites,
-                                    hdop = telemetry.hdop,
-                                )
-                                GpsReadoutPanel(
-                                    latitude = telemetry.latitude,
-                                    longitude = telemetry.longitude,
-                                    altitudeM = telemetry.altitudeM,
-                                    driftAngleDeg = telemetry.driftAngleDeg,
-                                    showDriftAngle = uiState.showDriftAngle || preset.emphasizeDrift,
-                                )
-                            }
-                            telemetry.slipRatio?.let { slip ->
-                                Text(
-                                    text = stringResource(R.string.gauge_slip_ratio, slip),
-                                    color = GaugeYellow,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                            }
-                        }
-                    }
-                    if (preset.showTirePressure && FeatureFlags.tpmsEnabled) {
-                        Column(modifier = Modifier.weight(preset.weights.side.coerceAtLeast(0.1f)).fillMaxHeight()) {
-                            TirePressurePanel(
-                                frontLeft = telemetry.frontLeftPressure,
-                                frontRight = telemetry.frontRightPressure,
-                                rearLeft = telemetry.rearLeftPressure,
-                                rearRight = telemetry.rearRightPressure,
-                                modifier = Modifier.weight(1f),
-                            )
-                            StatusIcons(gpsFix = telemetry.gpsFix, batteryVoltage = telemetry.batteryVoltage)
-                        }
-                    }
-                }
+                DashboardHudLayout(
+                    telemetry = telemetry,
+                    preset = preset,
+                    showDriftAngle = uiState.showDriftAngle,
+                    onCalibrate = viewModel::calibrateLevel,
+                    recording = uiState.recording,
+                    crawlingMode = uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING,
+                    tpmsEnabled = tpmsEnabled,
+                    pressureUnit = pressureUnit,
+                    tempUnit = tempUnit,
+                    attitudeGaugeMode = attitudeGaugeMode,
+                    activeAlerts = uiState.activeAlerts,
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                )
                 RecordControls(
                     recording = uiState.recording,
                     onRecord = viewModel::startRecording,
                     onStop = viewModel::stopRecording,
                     onSessions = onSessionsOpen,
+                    onAdvancedOptions = { showRecordingAdvanced = true },
+                )
+                RecordingAdvancedSheet(
+                    visible = showRecordingAdvanced && uiState.recording,
+                    logIntervalHz = (1000 / logIntervalMs.coerceAtLeast(1)).toInt(),
+                    onDismiss = { showRecordingAdvanced = false },
                 )
                 if (!isOnline) {
-                    Text(
-                        text = stringResource(R.string.app_status_offline),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = GaugeYellow,
-                        modifier = Modifier.padding(SpacingMd),
-                    )
+                    DashboardOfflineBanner()
                 }
             }
         }

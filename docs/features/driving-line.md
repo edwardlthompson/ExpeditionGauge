@@ -13,8 +13,9 @@
 
 | Layer | Path |
 |-------|------|
-| Logic | `drivingline/DrivingLineAnalyzer.kt` |
-| Tests | `drivingline/DrivingLineAnalyzerTest.kt` |
+| Logic | `drivingline/DrivingLineAnalyzer.kt`, `DrivingLineGeoJsonBuilder.kt` |
+| Map | `ui/playback/PlaybackMapView.kt` |
+| Controls | `ui/playback/PlaybackOverlayControls.kt` |
 
 ## Definition of Done
 

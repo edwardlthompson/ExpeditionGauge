@@ -5,6 +5,7 @@ import dev.foss.expeditiongauge.ble.tpms.BleTpmsManager
 import dev.foss.expeditiongauge.gps.ExternalNmeaGpsManager
 import dev.foss.expeditiongauge.gps.FusedGpsLocationProvider
 import dev.foss.expeditiongauge.obd.ObdClassicManager
+import dev.foss.expeditiongauge.obd.ObdTelemetryLog
 import dev.foss.expeditiongauge.slip.TireSlipCalculator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -66,8 +67,16 @@ class TelemetryOrchestrator(
                 obdConnected = obd.connected,
                 slipRatio = slip.slipRatio,
                 rearSlipRatio = slip.rearSlipRatio,
+                slipSource = slip.source,
+                speedFromObd = obd.connected && obd.speedKmh != null,
                 speedMps = if (obd.speedKmh != null) obd.speedKmh / 3.6f else current.speedMps,
             ),
+        )
+        ObdTelemetryLog.publish(
+            snapshot = obd,
+            slipRatio = slip.slipRatio,
+            rearSlipRatio = slip.rearSlipRatio,
+            betaDeg = current.driftAngleDeg,
         )
     }
 
@@ -93,8 +102,17 @@ class TelemetryOrchestrator(
     private fun mergeImu() {
         val current = telemetryBus.snapshots.value
         val fusion = bleImuManager.fuseWithPhone(current.headingDeg)
-        val statuses = bleImuManager.statusList().map {
-            ImuStatusEntry(it.deviceId, it.displayName, it.placement.label, it.connected, it.signalQuality.name)
+        val statuses = bleImuManager.currentSessions().map { session ->
+            ImuStatusEntry(
+                deviceId = session.deviceId,
+                label = session.displayName,
+                placement = session.placement.label,
+                connected = session.connected,
+                signalQuality = session.signalQuality.name,
+                rawYawDeg = session.filter.rawYawDeg(),
+                filteredYawDeg = session.filter.yawDeg(),
+                latG = session.filter.latG(),
+            )
         }
         telemetryBus.publish(
             current.copy(

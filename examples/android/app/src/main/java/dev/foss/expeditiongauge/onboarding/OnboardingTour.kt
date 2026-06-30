@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -23,6 +24,7 @@ import dev.foss.expeditiongauge.ui.theme.SpacingMd
 fun OnboardingTour(
     onComplete: () -> Unit,
     onSkip: () -> Unit,
+    onRequestPermissions: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val steps = OnboardingStep.entries
@@ -32,7 +34,8 @@ fun OnboardingTour(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(SpacingMd),
+            .padding(SpacingMd)
+            .testTag("onboarding_tour"),
         verticalArrangement = Arrangement.spacedBy(SpacingMd, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -46,6 +49,9 @@ fun OnboardingTour(
         )
         Button(
             onClick = {
+                if (step == OnboardingStep.Permissions) {
+                    onRequestPermissions()
+                }
                 if (stepIndex >= steps.lastIndex) {
                     onComplete()
                 } else {
@@ -61,7 +67,7 @@ fun OnboardingTour(
                 },
             )
         }
-        TextButton(onClick = onSkip) {
+        TextButton(onClick = onSkip, modifier = Modifier.testTag("onboarding_skip")) {
             Text(stringResource(R.string.onboarding_skip))
         }
     }
@@ -72,4 +78,6 @@ private fun stepText(step: OnboardingStep): String = when (step) {
     OnboardingStep.Permissions -> stringResource(R.string.onboarding_permissions)
     OnboardingStep.MountLevel -> stringResource(R.string.onboarding_mount)
     OnboardingStep.FirstRecording -> stringResource(R.string.onboarding_record)
+    OnboardingStep.LiveSessionTip -> stringResource(R.string.onboarding_live)
+    OnboardingStep.PlaybackReview -> stringResource(R.string.onboarding_playback)
 }

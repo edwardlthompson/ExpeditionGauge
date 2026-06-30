@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "golden-path-android"
+rootProject.name = "expedition-gauge-android"
 include(":app")

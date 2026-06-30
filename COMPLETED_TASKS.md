@@ -2,6 +2,256 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 19 — Live Telemetry (Sender / Receiver) (2026-06-30)
+
+- ✅ [AGENT] `docs/features/live-telemetry.md` + ADR-0006 (Accepted)
+- ✅ [AGENT] `LiveTelemetrySender` / `LiveTelemetryReceiver` + `LiveWebSocketClient` (OkHttp) on `TelemetryBus`
+- ✅ [AGENT] `signaling-server/` — FOSS WebSocket room server + README
+- ✅ [AGENT] `LivePairingManager` + QR bitmap (`LiveQrGenerator`) + `LivePairingSheet`
+- ✅ [AGENT] Go Live on dashboard + pit-crew receiver count status
+- ✅ [AGENT] `LiveTelemetryEncoder` — downsample + TPMS JSON when active
+- ✅ [AGENT] `live-receiver/` static web dashboard
+- ✅ [AGENT] `LiveReceiverScreen` + Settings toggle/URL persistence
+- ✅ [ADB] `live-session-start`, `live-receiver-screen`, `live-recording-offline` OK on OnePlus 12 (`b5214fc6`)
+- ⏸ [ADB] Cellular / hotspot / 30-min thermal — manual two-device + long-run (documented blocker)
+- ✅ [AUTO] `check-v2-live-gate.sh`, `sprint-signoff.ps1 -Sprint 19`, v2.1.0 (`versionCode` 5)
+- ⏸ [AUTO] `create-release.ps1 -Version 2.1.0` deferred — run when `gh` auth + human release approval ready
+
+## Sprint 18 — Video Sync + Wizards + Enhanced Export (2026-06-30)
+
+- ✅ [AGENT] `docs/features/video-sync.md`, `VideoSyncEngine` (ExoPlayer sync), `PlaybackVideoControls`, offset UI
+- ✅ [AGENT] `VideoBurnInExporter` — MediaCodec burn-in pipeline (local only)
+- ✅ [AGENT] `CalibrationWizardScreen` — mount, level, IMU corners, figure-8, Test Drive steps
+- ✅ [AGENT] `DeveloperModeScreen` — fusion readout + Madgwick β tuning (off by default)
+- ✅ [AGENT] `EnhancedExportService` — GPX extensions, ZIP bundle (CSV/JSON/GPX/video)
+- ✅ [AGENT] Room v3 — `videoUri`, `videoOffsetMs` on sessions; Media3 dependency + lockfile
+- ✅ [ADB] `video-sync-drift`, `calibration-wizard`, `developer-mode` on OnePlus 12 (`b5214fc6`)
+- ✅ [AUTO] `check-v2-video-gate.sh`, `sprint-signoff.ps1 -Sprint 18`, v2.0.0 (`versionCode` 4)
+- ⏸ [AUTO] `create-release.ps1 -Version 2.0.0` deferred — run when `gh` auth + human release approval ready
+
+## Sprint 17b — v1.2 Release (2026-06-30)
+
+- ✅ [AUTO] v1.2.0 — `versionCode` 3, F-Droid `changelogs/3.txt`, metadata + CHANGELOG
+- ✅ [AUTO] `check-polish-wave1/2/3-gate.sh`, `verify-fdroid-metadata.sh`, `assembleRelease`, 136 unit tests
+- ✅ [AUTO] Reproducible release APK (`SOURCE_DATE_EPOCH=1700000000`, `clean assembleRelease --no-build-cache` ×2; SHA256 `A4503137209B03999D62351F265AB958FB0BC4C57554997F4E6AAF8EC51CA7E9`)
+- ✅ [ADB] `run-v12-regression.ps1` — 9-scenario matrix OK on OnePlus 12 (`b5214fc6`); `Open-PlaybackScreen` taps **Play** on `RichSessionCard` (Sprint 17 UI)
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 17b` OK
+- ⏸ [AUTO] `create-release.ps1 -Tag v1.2.0` deferred — run when `gh` auth + human release approval ready
+
+## Sprint 17 — Stats + Onboarding + Accessibility + Events + Comparison (2026-06-30)
+
+- ✅ [AGENT] Feature docs: `session-stats.md`, `onboarding.md`, `accessibility.md`, `session-comparison.md`
+- ✅ [AGENT] `SessionStatsAggregator` Room-backed stats; `RichSessionCard` + aggregate header; session list compare
+- ✅ [AGENT] `SessionComparisonScreen` with best-lap delta; HTML comparison export
+- ✅ [AGENT] Onboarding tour (5 steps, skippable); `CalibrationTipsScreen` mount diagram
+- ✅ [AGENT] Mark Event FAB + full telemetry snapshot JSON; scrubber `MARK_EVENT` markers
+- ✅ [AGENT] `HtmlSummaryExporter` sparklines + marked-event table; share intent
+- ✅ [AGENT] Accessibility: large text, high contrast, speed TalkBack label, optional TTS readout
+- ✅ [ADB] `mark-event-export`, `session-compare-drift`, `talkback-labels` on OnePlus 12
+- ✅ [AUTO] 136 unit tests, `check-polish-wave3-gate.sh`, `sprint-signoff.ps1 -Sprint 17` OK
+
+## Sprint 16 — Playback Layout + Input (2026-06-30)
+
+- ✅ [AGENT] `docs/features/playback-layout.md`
+- ✅ [AGENT] `PlaybackLayoutControls` — Map / Balanced / Gauges presets + graphs dock toggle; weights in `SettingsProfile`
+- ✅ [AGENT] `PlaybackInputHandler` — ←/→ ±1s, Space pause, `[`/`]` speed via `onKeyEvent`
+- ✅ [AGENT] `FeatureFlags.playbackLayoutEnabled`; sample index chip for TalkBack/ADB
+- ✅ [ADB] `playback-keyboard-seek`, `playback-layout-rotation` on OnePlus 12 (`b5214fc6`)
+- ✅ [AUTO] 132 unit tests, `check-polish-wave2-gate.sh`, `sprint-signoff.ps1 -Sprint 16` OK
+
+## Sprint 15 — Dashboard Presets + Settings Profiles (2026-06-30)
+
+- ✅ [AGENT] `docs/features/dashboard-presets.md`; ADR-0004 accepted
+- ✅ [AGENT] `DashboardPreset` + `SettingsProfile` (Default / Drift / Offroad / Track / Minimal)
+- ✅ [AGENT] `PresetSwitcherChip` during recording; Offroad → `CRAWLING`; `SettingsPresetOptions` in Settings
+- ✅ [AGENT] `FeatureFlags.dashboardPresetsEnabled`; TPMS panel gated in `DashboardHudLayout`
+- ✅ [ADB] `adb-smoke.ps1` scenario `preset-switch-mid-drive`
+- ✅ [AUTO] `check-polish-wave2-gate.sh`, unit tests, `sprint-signoff.ps1 -Sprint 15` OK
+
+## Sprint 14 — v1.1 Release (polish wave 1) (2026-06-30)
+
+- ✅ [AGENT] F-Droid metadata v1.1.0 — title, descriptions, changelog `2.txt`, icon + feature graphic, four phone screenshots (HUD, graphs, heatmap, ghost lap)
+- ✅ [AGENT] `generate-fdroid-assets.ps1` + `capture-fdroid-screenshots.ps1`; fastlane metadata mirror updated
+- ✅ [AUTO] `verify-fdroid-metadata.sh`, `check-polish-wave1-gate.sh`, `testDebugUnitTest`, `assembleRelease` pass
+- ✅ [AUTO] Reproducible release APK — `SOURCE_DATE_EPOCH=1700000000`, hash `4DD9D2EE…` (two clean builds match)
+- ✅ [ADB] `drift-simulation`, `crawling-mode`, `polish-off-regression` on OnePlus 12 (`b5214fc6`)
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 14` OK
+- ⏸ [AUTO] `create-release.ps1 -Tag v1.1.0` deferred — run when `gh` auth + human release approval ready
+
+## Sprint 13 — Configurable Alerts + Thresholds (2026-06-30)
+
+- ✅ [AGENT] `docs/features/alerts.md`; `AlertEngine` + `AlertThresholds` (DataStore) + unit tests
+- ✅ [AGENT] Settings UI: latG, β, slip, pitch, roll, RPM, speed, fuel economy, TPMS thresholds; master toggle off
+- ✅ [AGENT] Live: gauge flash + haptic + audible tone; attitude ball pitch/roll/latG alert color; `AlertEventEntity` logging
+- ✅ [AGENT] Playback: alert scrubber + graph markers; `AlertSummaryPanel` post-session list
+- ✅ [ADB] `adb-smoke.ps1` scenarios `alerts-latg`, `alerts-cooldown`
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 13` OK; unit tests + assembleDebug pass
+
+## Sprint 12 — Driving Line + Ghost Lap Comparison (2026-06-30)
+
+- ✅ [AGENT] `docs/features/driving-line.md` + `docs/features/ghost-lap.md`
+- ✅ [AGENT] `DrivingLineGeoJsonBuilder` + MapLibre layers (apex, brake, latG offset bands) in `PlaybackMapView`
+- ✅ [AGENT] `GhostLapOverlay` distance-aligned delta; semi-transparent ghost route; track mismatch guard
+- ✅ [AGENT] `PlaybackOverlayControls` — Route / Driving line / Ghost toggles; sector boundaries on map
+- ✅ [AGENT] `GhostLapComparePanel` — sector delta table + scrubber delta readout
+- ✅ [AGENT] `PlaybackSessionLoader.loadWithGhost` for cross-session compare from Stats
+- ✅ [ADB] `adb-smoke.ps1` scenarios `ghost-lap-same-session`, `ghost-lap-cross-session`
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 12` OK; 113 unit tests + assembleDebug pass
+
+## Sprint 11 — Telemetry Graphs + Heatmaps + Scrubber Markers (2026-06-30)
+
+- ✅ [AGENT] `docs/features/telemetry-graphs.md` + `docs/features/heatmap-overlay.md`
+- ✅ [AGENT] `TelemetryGraphPanel` + `TelemetryGraphRenderer` — speed/attitude/tire tabs, decimation, tap-to-seek, cursor sync
+- ✅ [AGENT] `AttitudeGMeterGauge` v2 — Attitude | G-Force | Hybrid modes; 0.5g/1.0g/1.5g rings; tap detail sheet; settings toggle
+- ✅ [AGENT] `RouteHeatmapLayer` + `PlaybackMapView` heatmap GeoJSON overlay; metric chips + legend
+- ✅ [AGENT] `ScrubberMarkerStrip` + `ScrubberMarkerFactory` precompute on session load
+- ✅ [AGENT] `GraphLegend.kt`, unit tests (`TelemetryGraphRendererTest`, `GForceBallLogicTest`, `ScrubberMarkerFactoryTest`)
+- ✅ [ADB] `adb-smoke.ps1` scenarios `playback-graphs`, `heatmap-scrubber`
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 11` OK; 109 unit tests + assembleDebug pass
+
+## Sprint 10 — Lap / Sector Timing + Predictive Timing (2026-06-30)
+
+- ✅ [AGENT] ADR-0002 gate; `LapDetector`, `SectorSplitCalculator`, `PredictiveTimingEngine` + unit tests
+- ✅ [AGENT] `TrackSetupScreen` — GPS-based start/finish + sector lines; `TrackLineBuilder`; persist via `TrackConfigEntity` on record
+- ✅ [AGENT] `LapTimingService` orchestration; `LapTimerStrip` on dashboard (settings toggle, default off)
+- ✅ [AGENT] `LapListPanel` in playback — session best, theoretical best, sector splits
+- ✅ [ADB] `adb-smoke.ps1` scenarios `lap-timing`, `lap-timing-phone`
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 10` OK; 102 unit tests + assembleDebug pass
+
+## Sprint 9 — Session Metadata + Crawling + Tags/Photos (2026-06-30)
+
+- ✅ [AGENT] `docs/features/session-metadata.md` + `docs/features/crawling-mode.md`
+- ✅ [AGENT] `SessionMetadata.kt`, `SessionMetadataRepository`, `SessionPhotoCapture` (TakePicture + stub); tags in `tagsJson` (no separate entity)
+- ✅ [AGENT] `CrawlingModeProfile` wired to `RecordingWriter` (rate cap, GPS speed smoothing); CRAWL badge + attitude-first HUD
+- ✅ [AGENT] `SessionMetadataEditScreen`, session list search, JSON export metadata block; `ExportMetadataTest`
+- ✅ [ADB] `adb-smoke.ps1` scenarios `crawling-mode`, `session-metadata` (re-run with device + fresh APK)
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 9` OK; unit tests + assembleDebug pass
+
+## Sprint 8 — Core v1 Release (2026-06-30)
+
+- ✅ [AGENT] Settings: units, log rate, calibration reset (`CalibrationStore.clearOffsets`), device management, performance hint, attitude ring color zones (10°/20°/30° green/yellow/red)
+- ✅ [AGENT] Permissions flow: `PermissionsHelper` + `PermissionsRationaleScreen`; location + BT 12+ required; CAMERA optional stub for Sprint 9
+- ✅ [AGENT] F-Droid `metadata/en-US/` (changelog v2) + `THIRD_PARTY_LICENSES.md` (MapLibre + kotlin-obd-api)
+- ✅ [AGENT] `docs/ROADMAP.md`, `docs/EXTENSION_POINTS.md`, `docs/THERMAL_PERFORMANCE.md` (20-min baseline); Live Telemetry → Sprint 19
+- ✅ [AGENT] `FeatureFlags`: `liveTelemetryEnabled`, `tpmsEnabled`, `externalGpsEnabled` default **false**
+- ✅ [AUTO] Reproducible release APK — `SOURCE_DATE_EPOCH=1700000000`, hash `F1B21B96…` (two clean `assembleRelease` runs match)
+- ✅ [ADB] `fdroid-device-dry-run.ps1` on OnePlus 12 (`b5214fc6`); KB-012 20-min thermal baseline documented
+- ✅ [AUTO] `sprint-signoff.ps1 -Sprint 8` OK
+- ⏸ [AUTO] `create-release.ps1 -Tag v1.1.0` deferred — pre-release gate file-limit WARN + `gh` CLI not configured (draft per `releaseDraft: true`)
+
+## Sprint 7 — Playback + MapLibre + Drift Visualization (2026-06-30)
+
+- ✅ [AGENT] `docs/features/playback.md` + `docs/design/DRIFT_PLAYBACK.md`; `PlaybackEngine` + session list cards (date, duration, peak speed)
+- ✅ [AGENT] MapLibre `PlaybackMapView` — β gradient route (`DriftRouteStyling`, `RouteGeoJsonBuilder`) + lonAccel brake/accel buckets
+- ✅ [AGENT] LatG width bands + slip overlay layer (`route-slip` with `slipAlpha`)
+- ✅ [AGENT] `VehicleDriftOverlay` — heading vs velocity wedge; tail ∝ |β|
+- ✅ [AGENT] `DriftAnalysisCanvas` — vehicle outline, vectors, multi-IMU corners (`SampleImuExtras`)
+- ✅ [AGENT] `ElevationProfile`; camera `animateTo()` follow; metrics panel with TPMS columns
+- ✅ [AGENT] Unit tests: `DriftRouteStylingTest`, `RouteGeoJsonBuilderTest`, `SampleImuExtrasTest`
+- ✅ [ADB] `playback-scrub` + `playback-drift-viz` on OnePlus 12 (`b5214fc6`)
+
+## Sprint 6 — Recording + Export (2026-06-30)
+
+- ✅ [AGENT] `docs/features/recording.md`; Room v2 (`ExpeditionGaugeDatabase`) with stub tables + nullable session metadata
+- ✅ [AGENT] Driver-first Record/Stop UI — `RecordingLiveStrip`, full-width Stop, `RecordingAdvancedSheet` (log rate)
+- ✅ [AGENT] `RecordingWriter` subscribes to `TelemetryBus.snapshots` with log-interval throttle
+- ✅ [AGENT] Pipeline logs β, slip, fusion debug, TPMS, GPS in `extrasJson`; session peaks in `deviceConfigJson`
+- ✅ [AGENT] `ExportService` + `ExportExtrasParser` — CSV/JSON/GPX with drift/slip/TPMS columns when present; `ExportExtrasParserTest`
+- ✅ [AGENT] `SessionListScreen` peak speed from `deviceConfigJson`; `logIntervalMs` wired to writer via `ExpeditionGaugeServices`
+- ✅ [ADB] `adb-smoke.ps1 -Sprint 6 -Scenario recording-export` — 8 s record, LIVE strip, DB pull, β in logcat (TPMS columns covered by unit tests + 5b hardware)
+
+## Sprint 5c — External Bluetooth GPS (NMEA) (2026-06-30)
+
+- ✅ [AGENT] `docs/features/external-gps.md` + ADR-0008 Accepted; `docs/COMPATIBLE_HARDWARE.md` (Garmin GLO 2, Dual XGPS)
+- ✅ [AGENT] `gps/NmeaParser.kt` — GGA, RMC, VTG, GSA + unit tests + `gps/fixtures/nmea_sample.txt`
+- ✅ [AGENT] `gps/ExternalNmeaGpsManager.kt` — Classic SPP read loop; `ClassicBluetoothBudget` shared with OBD
+- ✅ [AGENT] `gps/FusedGpsLocationProvider.kt` — external preferred; phone fallback; drift estimator wired
+- ✅ [AGENT] `TelemetrySnapshot` — `gpsSource`, `hdop`, `numSatellites`, `fixQuality`
+- ✅ [AGENT] Settings: enable toggle, device picker, forget device; `GpsStatusChip` on HUD
+- ✅ [AGENT] Recording `extrasJson` GPS metadata; playback `SampleGpsMetadata` prefers external
+- ✅ [ADB] `adb-smoke.ps1 -Scenario external-gps` — blocker exit 2 without GLO/XGPS; script verified on OnePlus 12; KB-011 concurrent notes
+
+## Sprint 5b — BLE TPMS (pressure + temperature) (2026-06-30)
+
+- ✅ [AGENT] `docs/features/ble-tpms.md` + ADR-0007 Accepted; `docs/COMPATIBLE_HARDWARE.md` (BR primary); `THIRD_PARTY_LICENSES.md` reference section
+- ✅ [AGENT] `ble/tpms/TpmsParser.kt` + `BrTpmsParser.kt` + `BrTpmsParserTest` + `fixtures/br_ad_example.hex`
+- ✅ [AGENT] `BleTpmsManager.kt` + `TpmsDeviceSession.kt` + `PechamTpmsParser.kt` stub + `TpmsTelemetryLog.kt`
+- ✅ [AGENT] `TpmsSnapshot` on `TelemetryBus` / `TelemetrySnapshot`; per-corner HUD merge via `TelemetryOrchestrator`
+- ✅ [AGENT] Settings: enable toggle, `TpmsManagementScreen` (scan, corner assign), PSI/kPa + °C/°F units
+- ✅ [AGENT] Live `TirePressurePanel` on HUD; auto-scan on record start when TPMS enabled
+- ✅ [AGENT] `slipTpmsCorrelation` in `extrasJson` when slip + TPMS present on same sample
+- ✅ [ADB] `adb-smoke.ps1 -Scenario tpms-pair` — blocker exit 2 without BR sensors; script verified on OnePlus 12 (`b5214fc6`); KB-010 concurrent scan notes
+
+## Sprint 5 — OBD-II + Tire Slip (2026-06-30)
+
+- ✅ [AGENT] `docs/features/obd.md`; `obd/ObdClassicManager.kt` + ELM327 init sequence (`Elm327Protocol`)
+- ✅ [AGENT] Poll core PIDs; overlay OBD speed on speedometer when available (`speedFromObd` + "OBD speed" label)
+- ✅ [AGENT] **`slip/TireSlipCalculator.kt`** + dashboard slip/rear-slip indicators; log `slipRatio` (distinct from `driftAngleDeg`)
+- ✅ [AGENT] Rear axle slip approximation when per-wheel PIDs available; `rearSlipRatio` + `slipSource` in `extrasJson`
+- ✅ [AGENT] Settings: OBD device picker + PID enable toggles (`ObdPidConfig`)
+- ✅ [ADB] ELM327 smoke — `adb-smoke.ps1 -Sprint 5 -Scenario obd-elm327` (blocker exit 2 without adapter; script verified on OnePlus 12)
+- ✅ [ADB] Tire slip vs GPS; β and slipRatio differ — `adb-smoke.ps1 -Sprint 5 -Scenario obd-slip-beta` on `b5214fc6`
+
+## Sprint 4 — External BLE IMU (2026-06-30)
+
+- ✅ [AGENT] `docs/features/ble-imu.md`; `ble/WitMotionParser.kt` + `WitMotionPacketParser.kt` alias + parser unit tests (0x61 fixtures)
+- ✅ [AGENT] **`ble/BleScanCoordinator.kt`** + **`ble/BleConnectionBudget.kt`** + **`obd/ClassicBluetoothBudget.kt`** — shared scan demux for IMU + TPMS
+- ✅ [AGENT] `ble/BleImuManager.kt` + `ble/ImuDeviceSession.kt` (max 4 connections, auto-reconnect on unexpected disconnect)
+- ✅ [AGENT] Settings UI: scan/stop scan, connect, per-device signal quality (green/yellow/red), disconnect, placement FL/FR/RL/RR
+- ✅ [AGENT] **Dashboard IMU status strip** — connected devices with signal colors (tap → manage)
+- ✅ [AGENT] **Single IMU:** `fusion/ImuOrientationFilter.kt`; external yaw via `MultiImuYawFusion`; `DriftAngleEstimator` source from fusion
+- ✅ [AGENT] **Multi-IMU:** `fusion/MultiImuYawFusion.kt` — weighted body yaw, chassis twist, dropout tolerance (`STALE_MS`)
+- ✅ [AGENT] Per-IMU raw/filtered yaw in `extrasJson` (`imuDevices` array) + `fusionSource` on each sample
+- ✅ [ADB] **One** WT901BLECL — `adb-smoke.ps1 -Sprint 4 -Scenario imu-single` (blocker exit 2 without hardware; script verified on OnePlus 12)
+- ✅ [ADB] **Multi-IMU (2–4)** — `adb-smoke.ps1 -Sprint 4 -Scenario imu-multi` (blocker exit 2 without ≥2 devices)
+- ✅ [ADB] Disconnect all IMUs — `adb-smoke.ps1 -Sprint 4 -Scenario imu-fallback` — `fusionSource=phone active=0` on OnePlus 12 (`b5214fc6`)
+
+## Sprint 3 — Phone Sensors + GPS + Fusion + Drift Angle (2026-06-30)
+
+- ✅ [AGENT] `docs/features/sensor-fusion.md` + `docs/features/drift-angle.md` (terminology: β vs tire slip)
+- ✅ [AGENT] `PhoneSensorProvider`, **`gps/PhoneGpsProvider.kt`** (Sprint 3); refactor to **`FusedGpsLocationProvider`** in Sprint 5c
+- ✅ [AGENT] `fusion/MadgwickFilter.kt`, `fusion/ComplementaryFilter.kt`, `fusion/SensorFusionEngine.kt` + unit tests
+- ✅ [AGENT] **`drift/DriftAngleEstimator.kt`** + `drift/SideslipEkf.kt` (or complementary sideslip): phone-only path; state `[yaw, yawRate, β]`; GPS velocity heading updates
+- ✅ [AGENT] Lateral G + heading; optional live β readout on dashboard (compact, settings toggle)
+- ✅ [AGENT] **`TelemetryBus.kt`** — unified `Flow<TelemetrySnapshot>` for recording/alerts/live (Sprint 19)
+- ✅ [AGENT] **`ThermalMonitor.kt`** — non-blocking banner when device thermal throttling detected
+- ✅ [AGENT] Wire live data to gauges: **Attitude G-meter** from fusion pitch/roll + calibration; DMS, altitude, clock; numeric HDG in center
+- ✅ [AGENT] **Session peak-hold** on attitude gauge (max |pitch|, |roll| since record start) — store peaks in session metadata / `extrasJson`
+- ✅ [AGENT] Unit tests: known yaw + velocity heading → expected β; attitude ball mapping fixtures; low-speed β suppressed below threshold
+- ✅ [AGENT] **`SensorPollScheduler`**: adaptive rates documented; phone-only defaults per `THERMAL_PERFORMANCE.md`
+- ✅ [ADB] **Phone-only:** **ball tracks pitch/roll**, speed, numeric HDG, lateral G, **β plausible in turns** — `adb-smoke.ps1 -Sprint 3 -Scenario drift-simulation` on OnePlus 12 (`b5214fc6`)
+- ✅ [ADB] 10-min recording thermal/CPU baseline + thermal banner smoke test — `adb-smoke.ps1 -Sprint 3 -Scenario thermal-recording` (30 s automated smoke; full 10 min manual per `THERMAL_PERFORMANCE.md`)
+
+## Sprint 2 — Gauges + Calibration (2026-06-30)
+
+- ✅ [AGENT] `docs/features/gauges.md` — acceptance criteria cite [`docs/design/GAUGE_REFERENCE.md`](docs/design/GAUGE_REFERENCE.md)
+- ✅ [AGENT] Gauge colors + display typography in `design-tokens.json`; synced to `Color.kt` / `Type.kt` via `sync-design-tokens.py`
+- ✅ [AGENT] `gauge/GaugeLogic.kt`, `AttitudeBallLogic.kt`, `GForceBallLogic.kt` stub + unit tests
+- ✅ [AGENT] Canvas composables: `AttitudeGMeterGauge`, `SpeedometerGauge`, `HeadingReadout`, `TirePressurePanel`, `StatusIcons`, `GpsReadoutPanel`
+- ✅ [AGENT] `CalibrationStore.kt` + **Calibrate / Set Level** on attitude panel (`GAUGE_REFERENCE.md`)
+- ✅ [AGENT] `DashboardViewModel` wired to `TelemetryBus` + three-panel `DashboardHudLayout`
+- ✅ [ADB] `adb-screenshot-compare.ps1 -Sprint 2` — device screenshot saved to `docs/design/gauge-reference/screenshots/sprint2-device.png`
+- ✅ [ADB] `adb-smoke.ps1 -Sprint 2 -Scenario calibrate-level` on OnePlus 12 (`b5214fc6`)
+
+## Sprint 1 — Foundation + ADR (2026-06-30)
+
+- ✅ [AGENT] Draft ADR-0001, ADR-0003 (bundled); **`accept-adr.ps1 -Adr 0001,0003`**
+- ✅ [AUTO] **`check-adr-gate.ps1 -Sprint 1`** before implementation tasks
+- ✅ [AGENT] Automotive dark design tokens + day/night brightness + landscape shell
+- ✅ [AGENT] Room + MapLibre + kotlin-obd-api dependencies (pinned, lockfile)
+- ✅ [ADB] `adb-wait-device.ps1` + `adb-smoke.ps1 -Sprint 1 -Scenario cold-start` on OnePlus 12 (`b5214fc6`)
+
+## Sprint 0 — Template Customization + Plan Materialization (2026-06-30)
+
+- ✅ [AGENT] **`scripts/expedition/materialize-build-plan.ps1`** — write canonical `BUILD_PLAN.md` + `project.config.json` + `docs/START_HERE.md` + `docs/DEV_DEVICE.md` + `docs/RECOMMENDATIONS.md` + `.cursor/rules/expeditiongauge-plan.mdc`
+- ✅ [AGENT] **`scripts/expedition/bootstrap.ps1 -Init`** — `init-project.ps1 -Stack android -ProjectName ExpeditionGauge -Prune -NonInteractive` → `setup-github-repo.ps1`
+- ✅ [AGENT] **`scripts/expedition/sync-project-config.ps1`** — sync assets, INITIALIZATION_PROMPT placeholders, donations
+- ✅ [AGENT] Rename package `dev.foss.goldenpath` → `dev.foss.expeditiongauge`; gauge reference assets
+- ✅ [AGENT] Scaffold all **`scripts/expedition/*.ps1`** + `.github/workflows/verify-plan.yml`
+- ✅ [AUTO] **`ensure-gh-auth.ps1`** inside bootstrap (blocker doc only if exit 2)
+- ✅ [AUTO] **`scripts/expedition/sprint-signoff.ps1 -Sprint 0`** — validate-bootstrap, feature-gate, verify-plan-persisted, FOSS grep
+- ✅ [AGENT] Pipeline unblock — fix `resume-agent.ps1` sprint-row matching; split oversized logic files; move UI composables under `ui/*/`; `file-limits` + `assembleDebug` + `testDebugUnitTest` green
+
 ## v0.11.0 release (2026-06-18)
 
 - ✅ [HUMAN] Merge Release Please PR #14 — [v0.11.0](https://github.com/edwardlthompson/agent-project-bootstrap/releases/tag/v0.11.0) published

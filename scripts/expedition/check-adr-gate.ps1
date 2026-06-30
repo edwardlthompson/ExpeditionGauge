@@ -38,4 +38,4 @@ foreach ($adr in $map[$key]) {
     }
 }
 
-Write-Host "check-adr-gate Sprint $Sprint: OK" -ForegroundColor Green
+Write-Host "check-adr-gate Sprint ${Sprint}: OK" -ForegroundColor Green

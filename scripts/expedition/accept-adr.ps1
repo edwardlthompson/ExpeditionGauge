@@ -24,7 +24,8 @@ foreach ($id in $adrIds) {
     }
     $file = $files[0].FullName
     $content = Get-Content $file -Raw
-    $content = $content -replace '- \*\*Status:\*\* Proposed.*', "- **Status:** Accepted"
+    $content = $content -replace '\*\*Status:\*\* Proposed', '**Status:** Accepted'
+    $content = $content -replace '- \*\*Status:\*\* Proposed.*', '- **Status:** Accepted'
     $content = $content -replace '- \*\*Date:\*\* YYYY-MM-DD', "- **Date:** $today"
     $content = $content -replace '\*\*Selected pattern:\*\* 🔲 MVVM', '**Selected pattern:** MVVM ✓'
     Write-Utf8NoBom $file $content

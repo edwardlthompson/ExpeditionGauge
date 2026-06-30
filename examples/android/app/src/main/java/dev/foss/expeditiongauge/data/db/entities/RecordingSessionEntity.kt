@@ -18,4 +18,6 @@ data class RecordingSessionEntity(
     val vehicleConfigJson: String? = null,
     val tagsJson: String? = null,
     val photoUri: String? = null,
+    val videoUri: String? = null,
+    val videoOffsetMs: Long = 0L,
 )

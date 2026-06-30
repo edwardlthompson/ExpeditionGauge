@@ -11,7 +11,7 @@ data class CrawlingModeProfile(
     val maxPhoneOnlyRateHz: Int = 15,
 ) {
     fun effectiveImuRateHz(externalImuConnected: Boolean): Int =
-        if (externalImuConnected) imuSampleRateHz else minOf( imuSampleRateHz, maxPhoneOnlyRateHz)
+        if (externalImuConnected) imuSampleRateHz else minOf(imuSampleRateHz, maxPhoneOnlyRateHz)
 
     companion object {
         val Default = CrawlingModeProfile()

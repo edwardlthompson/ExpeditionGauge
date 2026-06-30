@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
+import dev.foss.expeditiongauge.ui.theme.GaugeHeadingTextStyle
+import dev.foss.expeditiongauge.ui.theme.GaugeLabelTextStyle
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
@@ -25,11 +27,12 @@ fun HeadingReadout(
         Text(
             text = GaugeLogic.formatHeading(headingDeg),
             color = GaugeScaleWhite,
-            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
+            style = GaugeHeadingTextStyle,
         )
         Text(
             text = stringResource(R.string.gauge_hdg_label),
             color = GaugeYellow,
+            style = GaugeLabelTextStyle,
         )
     }
 }

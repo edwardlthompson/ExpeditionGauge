@@ -34,12 +34,14 @@ data class SessionMetadata(
         )
 
     fun toExportJson(): JSONObject = JSONObject().apply {
-        putOpt("notes", notes)
-        putOpt("driverName", driverName)
-        putOpt("conditions", conditions)
+        notes?.let { put("notes", it) }
+        driverName?.let { put("driverName", it) }
+        conditions?.let { put("conditions", it) }
         put("tags", JSONArray(tags))
-        putOpt("photoUri", photoUri)
-        put("vehicleConfig", JSONObject(vehicleConfig))
+        photoUri?.let { put("photoUri", it) }
+        val vehicle = JSONObject()
+        vehicleConfig.forEach { (key, value) -> vehicle.put(key, value) }
+        put("vehicleConfig", vehicle)
     }
 
     companion object {

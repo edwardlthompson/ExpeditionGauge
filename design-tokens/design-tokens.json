@@ -1,8 +1,8 @@
 {
   "meta": {
-    "name": "GoldenPath",
+    "name": "ExpeditionGauge",
     "themeColorLight": "#F5F5FA",
-    "themeColorDark": "#1a1a2e"
+    "themeColorDark": "#000000"
   },
   "color": {
     "primary": { "light": "#B3263E", "dark": "#e94560" },
@@ -10,20 +10,20 @@
     "primaryContainer": { "light": "#FFDAD6", "dark": "#8B1A35" },
     "onPrimaryContainer": { "light": "#410009", "dark": "#FFDAD6" },
     "secondary": { "light": "#4A5F82", "dark": "#9BB8E8" },
-    "onSecondary": { "light": "#FFFFFF", "dark": "#1a1a2e" },
-    "secondaryContainer": { "light": "#D8E3FF", "dark": "#2a3a5c" },
+    "onSecondary": { "light": "#FFFFFF", "dark": "#000000" },
+    "secondaryContainer": { "light": "#D8E3FF", "dark": "#1a1a2e" },
     "onSecondaryContainer": { "light": "#1a1a2e", "dark": "#D8E3FF" },
     "tertiary": { "light": "#6B5778", "dark": "#D4BEE8" },
-    "onTertiary": { "light": "#FFFFFF", "dark": "#1a1a2e" },
+    "onTertiary": { "light": "#FFFFFF", "dark": "#000000" },
     "error": { "light": "#BA1A1A", "dark": "#FFB4AB" },
     "onError": { "light": "#FFFFFF", "dark": "#690005" },
-    "background": { "light": "#FFFFFF", "dark": "#12121f" },
-    "onBackground": { "light": "#1a1a2e", "dark": "#E6E6F0" },
-    "surface": { "light": "#F5F5FA", "dark": "#1a1a2e" },
-    "onSurface": { "light": "#1a1a2e", "dark": "#E6E6F0" },
-    "surfaceVariant": { "light": "#E2E2EC", "dark": "#2a2a42" },
-    "onSurfaceVariant": { "light": "#45465A", "dark": "#C4C4D4" },
-    "outline": { "light": "#767680", "dark": "#8E8EA0" }
+    "background": { "light": "#FFFFFF", "dark": "#000000" },
+    "onBackground": { "light": "#1a1a2e", "dark": "#FFFFFF" },
+    "surface": { "light": "#F5F5FA", "dark": "#0A0A0A" },
+    "onSurface": { "light": "#1a1a2e", "dark": "#FFFFFF" },
+    "surfaceVariant": { "light": "#E2E2EC", "dark": "#1A1A1A" },
+    "onSurfaceVariant": { "light": "#45465A", "dark": "#E0E0E0" },
+    "outline": { "light": "#767680", "dark": "#CCCCCC" }
   },
   "typography": {
     "fontFamily": { "sans": "system-ui, -apple-system, sans-serif" },
@@ -33,7 +33,46 @@
       "bodyLarge": { "sizeSp": 16, "sizeRem": 1.0, "lineHeight": 1.5, "weight": 400 },
       "bodyMedium": { "sizeSp": 14, "sizeRem": 0.875, "lineHeight": 1.43, "weight": 400 },
       "labelLarge": { "sizeSp": 14, "sizeRem": 0.875, "lineHeight": 1.43, "weight": 500 }
+    },
+    "displayScale": {
+      "speedLarge": { "sizeSp": 48, "lineHeight": 1.1, "weight": 400 },
+      "headingLarge": { "sizeSp": 32, "lineHeight": 1.2, "weight": 500 },
+      "gaugeLabel": { "sizeSp": 14, "lineHeight": 1.43, "weight": 500 }
     }
+  },
+  "gauge": {
+    "background": "#000000",
+    "scaleWhite": "#FFFFFF",
+    "green": "#33CC33",
+    "yellow": "#FFCC00",
+    "red": "#FF3333",
+    "ball": "#FFFFFF"
+  },
+  "playback": {
+    "mapRouteCasing": "#1A1A1A",
+    "mapGhostRoute": "#88FFFFFF",
+    "heatmapHigh": "#FF3333",
+    "heatmapMid": "#FFAA00",
+    "heatmapLow": "#88CC44",
+    "heatmapNeutral": "#555555",
+    "sectorBoundary": "#FFFF00",
+    "offsetHigh": "#FF4444",
+    "offsetMid": "#FFAA00",
+    "offsetLow": "#44FF88",
+    "offsetNeutral": "#888888",
+    "markerApex": "#00FFFF",
+    "markerBrake": "#FF4444",
+    "scrubberHighBeta": "#00FFFF",
+    "scrubberHighSlip": "#FF8800",
+    "scrubberAlert": "#FF0000",
+    "scrubberLapCrossing": "#FFFF00",
+    "scrubberMarkEvent": "#FF66FF",
+    "driftWedgeLeft": "#8800CCFF",
+    "driftWedgeRight": "#88FF00CC",
+    "driftOverlayLeft": "#6600CCFF",
+    "driftOverlayRight": "#66FF00CC",
+    "elevationFill": "#33FFCC00",
+    "alertLine": "#FF4444"
   },
   "spacing": { "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32 },
   "radius": { "sm": 4, "md": 8, "lg": 16 },

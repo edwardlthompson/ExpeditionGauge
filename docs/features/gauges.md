@@ -1,10 +1,10 @@
 # Gauges — Sprint 2 Acceptance
 
-Visual contract: [`docs/design/GAUGE_REFERENCE.md`](../design/GAUGE_REFERENCE.md)
+Visual contract: [`docs/design/GAUGE_REFERENCE.md`](../design/GAUGE_REFERENCE.md) (layout, palette, calibration, deviations).
 
 ## Layout
 
-Landscape three-panel `Row` on `#000000` (`GaugeBackground`):
+Landscape three-panel `Row` per [GAUGE_REFERENCE § Layout](../design/GAUGE_REFERENCE.md#layout):
 
 | Left | Center | Right |
 |------|--------|-------|

@@ -21,7 +21,7 @@
 | Layer | Path |
 |-------|------|
 | View | `ui/playback/TelemetryGraphPanel.kt` |
-| Renderer | `TelemetryGraphRenderer` (in same file) |
+| Renderer | `playback/TelemetryGraphRenderer.kt` |
 | Coordinator | `playback/PlaybackEngine.kt` |
 
 ## Definition of Done

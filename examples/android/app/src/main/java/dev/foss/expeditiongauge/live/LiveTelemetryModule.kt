@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.live
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -12,21 +13,31 @@ import kotlinx.coroutines.launch
 class LiveTelemetryModule(
     private val telemetryBus: TelemetryBus,
 ) {
+    val webSocketClient = LiveWebSocketClient()
     val pairingManager = LivePairingManager()
-    val sender = LiveTelemetrySender(telemetryBus)
-    val receiver = LiveTelemetryReceiver()
+    val sender = LiveTelemetrySender(telemetryBus, webSocketClient)
+    val receiver = LiveTelemetryReceiver(webSocketClient)
+
+    val receiverCount: StateFlow<Int> = webSocketClient.receiverCount
 
     fun isEnabled(): Boolean = FeatureFlags.liveTelemetryEnabled
 
     fun startSender(scope: CoroutineScope, session: LivePairingSession) {
         if (!isEnabled()) return
         sender.subscribe(scope)
-        scope.launch {
-            sender.startSession(session)
-        }
+        sender.startSession(scope, session)
     }
 
-    suspend fun stopSender() {
+    fun stopSender() {
         sender.stopSession()
+    }
+
+    fun joinReceiver(scope: CoroutineScope, sessionId: String, code: String, signalWss: String) {
+        if (!isEnabled()) return
+        receiver.joinSession(scope, sessionId, code, signalWss)
+    }
+
+    fun stopReceiver() {
+        receiver.disconnect()
     }
 }

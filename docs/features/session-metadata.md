@@ -20,10 +20,11 @@
 
 | Layer | Path |
 |-------|------|
-| Logic | `recording/SessionMetadata.kt` |
+| Logic | `recording/SessionMetadata.kt`, `recording/SessionMetadataRepository.kt` |
 | Data | `data/db/entities/RecordingSessionEntity.kt` |
-| Photo stub | `recording/SessionPhotoStub.kt` |
-| Tests | `recording/SessionMetadataTest.kt` |
+| Photo | `recording/SessionPhotoCapture.kt`, `recording/SessionPhotoStub.kt` |
+| UI | `ui/playback/SessionMetadataEditScreen.kt`, `ui/playback/SessionListScreen.kt` |
+| Tests | `recording/SessionMetadataTest.kt`, `export/ExportMetadataTest.kt` |
 
 ## Definition of Done
 

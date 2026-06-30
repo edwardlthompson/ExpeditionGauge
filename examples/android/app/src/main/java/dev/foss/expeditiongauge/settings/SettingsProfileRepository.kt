@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import dev.foss.expeditiongauge.data.db.dao.SettingsProfileDao
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
+import dev.foss.expeditiongauge.recording.RecordingMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -48,6 +49,23 @@ class SettingsProfileRepository(
         val profile = SettingsProfile.fromEntity(entity).copy(
             presetId = presetId,
             recordingMode = preset.recordingMode,
+        )
+        dao.update(profile.toEntity())
+    }
+
+    suspend fun updateRecordingMode(mode: RecordingMode) {
+        val profileId = activeProfileId.first()
+        val entity = dao.getById(profileId) ?: SettingsProfile.defaultProfile().toEntity()
+        val profile = SettingsProfile.fromEntity(entity).copy(recordingMode = mode)
+        dao.update(profile.toEntity())
+    }
+
+    suspend fun updatePlaybackLayout(mapWeight: Float, graphsExpanded: Boolean) {
+        val profileId = activeProfileId.first()
+        val entity = dao.getById(profileId) ?: SettingsProfile.defaultProfile().toEntity()
+        val profile = SettingsProfile.fromEntity(entity).copy(
+            playbackMapWeight = mapWeight.coerceIn(0.2f, 0.8f),
+            playbackGraphsExpanded = graphsExpanded,
         )
         dao.update(profile.toEntity())
     }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="live_start">Start live session</string>
+    <string name="live_stop">Stop live</string>
+    <string name="live_banner">LIVE</string>
+    <string name="live_qr_stub">Scan QR to connect pit crew receiver</string>
+    <string name="live_qr_placeholder">QR</string>
+    <string name="live_code">Code: %1$s</string>
+    <string name="live_receiver_count">Live to Pit Crew (%1$d connected)</string>
+    <string name="live_qr_content_desc">Live session QR code</string>
+    <string name="live_signal_url_hint">Signaling WebSocket URL</string>
+    <string name="live_receiver_title">Live receiver</string>
+    <string name="live_receiver_session_hint">Session ID</string>
+    <string name="live_receiver_code_hint">6-digit code</string>
+    <string name="live_receiver_join">Join session</string>
+    <string name="live_receiver_disconnect">Disconnect</string>
+    <string name="live_receiver_readout">%.0f km/h · %.2f g lat · β %.0f°</string>
+    <string name="live_receiver_open">Open live receiver</string>
+</resources>

@@ -21,12 +21,24 @@ object PermissionsHelper {
         return base.toTypedArray()
     }
 
+    /** Sprint 9 session photos — declared in manifest; requested only when feature is used. */
+    fun optionalPermissions(): Array<String> = arrayOf(Manifest.permission.CAMERA)
+
     fun hasAll(context: Context): Boolean =
         requiredPermissions().all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
 
-    fun request(activity: ComponentActivity, launcher: ActivityResultLauncher<Array<String>>) {
+    fun missingRequired(context: Context): List<String> =
+        requiredPermissions().filter {
+            ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+    fun requestRequired(activity: ComponentActivity, launcher: ActivityResultLauncher<Array<String>>) {
         launcher.launch(requiredPermissions())
+    }
+
+    fun requestOptional(activity: ComponentActivity, launcher: ActivityResultLauncher<Array<String>>) {
+        launcher.launch(optionalPermissions())
     }
 }

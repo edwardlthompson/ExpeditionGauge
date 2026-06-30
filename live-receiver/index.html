@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ExpeditionGauge Live Receiver</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="app">
+    <header>
+      <h1>ExpeditionGauge Live</h1>
+      <p class="subtitle">Pit crew receiver — scan driver QR or enter session details</p>
+    </header>
+    <section id="join-panel">
+      <label>Session ID<input id="sessionId" type="text" autocomplete="off" /></label>
+      <label>Code<input id="code" type="text" inputmode="numeric" maxlength="6" /></label>
+      <label>Signaling URL<input id="signalWss" type="url" value="ws://127.0.0.1:8787/live" /></label>
+      <button id="joinBtn" type="button">Join session</button>
+      <p id="status" role="status"></p>
+    </section>
+    <section id="gauges" hidden>
+      <div class="gauge"><span class="label">Speed</span><span id="speed" class="value">—</span><span class="unit">km/h</span></div>
+      <div class="gauge"><span class="label">Lat G</span><span id="latG" class="value">—</span></div>
+      <div class="gauge"><span class="label">Beta</span><span id="beta" class="value">—</span><span class="unit">°</span></div>
+      <div class="gauge"><span class="label">Pitch</span><span id="pitch" class="value">—</span></div>
+      <div class="gauge"><span class="label">Roll</span><span id="roll" class="value">—</span></div>
+      <button id="disconnectBtn" type="button">Disconnect</button>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

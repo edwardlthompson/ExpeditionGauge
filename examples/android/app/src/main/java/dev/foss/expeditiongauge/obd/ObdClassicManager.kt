@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
+import dev.foss.expeditiongauge.settings.ObdPidConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,6 +42,8 @@ class ObdClassicManager(
     private var pollJob: Job? = null
     private var selectedAddress: String? = null
 
+    var pidConfig: ObdPidConfig = ObdPidConfig()
+
     private val _snapshot = MutableStateFlow(ObdSnapshot())
     val snapshot: StateFlow<ObdSnapshot> = _snapshot.asStateFlow()
 
@@ -59,7 +62,7 @@ class ObdClassicManager(
                 sock.connect()
                 socket = sock
                 classicBudget.onConnected(ClassicBluetoothBudget.Slot.OBD)
-                initElm327(sock)
+                Elm327Protocol.init(sock)
                 pollJob = scope.launch(Dispatchers.IO) { pollLoop(sock) }
             } catch (_: Exception) {
                 disconnect()
@@ -82,74 +85,18 @@ class ObdClassicManager(
     fun pairedDevices(): List<Pair<String, String>> =
         adapter?.bondedDevices?.map { it.address to (it.name ?: it.address) } ?: emptyList()
 
-    private fun initElm327(sock: BluetoothSocket) {
-        val writer = OutputStreamWriter(sock.outputStream)
-        val reader = BufferedReader(InputStreamReader(sock.inputStream))
-        listOf("ATZ", "ATE0", "ATL0", "ATSP0").forEach { cmd ->
-            writer.write("$cmd\r")
-            writer.flush()
-            readUntilPrompt(reader)
-        }
-    }
-
     private suspend fun pollLoop(sock: BluetoothSocket) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
         while (scope.coroutineContext.isActive) {
-            val rpm = queryPid(reader, writer, "010C")?.let { parseRpm(it) }
-            val speed = queryPid(reader, writer, "010D")?.let { parseSingleByte(it) }
-            val throttle = queryPid(reader, writer, "0111")?.let { parseSingleByte(it) * 100f / 255f }
-            val load = queryPid(reader, writer, "0104")?.let { parseSingleByte(it) * 100f / 255f }
-            val voltage = queryPid(reader, writer, "0142")?.let { parseVoltage(it) }
-            _snapshot.value = ObdSnapshot(
-                connected = true,
-                rpm = rpm,
-                speedKmh = speed,
-                throttlePct = throttle,
-                engineLoadPct = load,
-                wheelSpeedKmh = speed,
-                batteryVoltage = voltage,
+            _snapshot.value = ObdPollHelper.pollSnapshot(
+                reader = reader,
+                writer = writer,
+                config = pidConfig,
+                previous = _snapshot.value,
             )
             delay(POLL_INTERVAL_MS)
         }
-    }
-
-    private fun queryPid(reader: BufferedReader, writer: OutputStreamWriter, pid: String): String? {
-        writer.write("$pid\r")
-        writer.flush()
-        return readUntilPrompt(reader)?.filter { it.isLetterOrDigit() }?.uppercase()
-    }
-
-    private fun readUntilPrompt(reader: BufferedReader): String? {
-        val sb = StringBuilder()
-        repeat(20) {
-            if (!reader.ready()) return@repeat
-            val c = reader.read().toChar()
-            sb.append(c)
-            if (c == '>') return sb.toString()
-        }
-        return sb.toString().ifBlank { null }
-    }
-
-    private fun parseRpm(response: String): Float? {
-        val idx = response.indexOf("410C")
-        if (idx < 0 || idx + 8 > response.length) return null
-        val a = response.substring(idx + 4, idx + 6).toIntOrNull(16) ?: return null
-        val b = response.substring(idx + 6, idx + 8).toIntOrNull(16) ?: return null
-        return (a * 256 + b) / 4f
-    }
-
-    private fun parseSingleByte(response: String): Float {
-        val hex = response.takeLast(2)
-        return hex.toIntOrNull(16)?.toFloat() ?: 0f
-    }
-
-    private fun parseVoltage(response: String): Float? {
-        val idx = response.indexOf("4142")
-        if (idx < 0 || idx + 8 > response.length) return null
-        val a = response.substring(idx + 4, idx + 6).toIntOrNull(16) ?: return null
-        val b = response.substring(idx + 6, idx + 8).toIntOrNull(16) ?: return null
-        return (a * 256 + b) / 1000f
     }
 
     companion object {

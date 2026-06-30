@@ -1,6 +1,6 @@
 # ADR-0008: External Bluetooth GPS via NMEA SPP
 
-**Status:** Proposed  
+**Status:** Accepted  
 **Date:** 2026-06-29  
 **Sprint:** 5c
 

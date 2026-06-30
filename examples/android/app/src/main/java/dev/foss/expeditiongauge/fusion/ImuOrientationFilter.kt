@@ -20,6 +20,7 @@ class ImuOrientationFilter {
     }
 
     fun yawDeg(): Float = lastSample?.yawDeg ?: 0f
+    fun rawYawDeg(): Float? = lastSample?.yawDeg
     fun pitchDeg(): Float = lastSample?.pitchDeg ?: 0f
     fun rollDeg(): Float = lastSample?.rollDeg ?: 0f
     fun latG(): Float = (lastSample?.ayG ?: 0f)
