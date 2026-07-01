@@ -17,6 +17,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +37,9 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.AttitudeBallLogic
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.gauge.BallPosition
+import dev.foss.expeditiongauge.gauge.GBallTrailBuffer
 import dev.foss.expeditiongauge.gauge.GForceBallLogic
+import dev.foss.expeditiongauge.gauge.GaugeDisplayRotation
 import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.gauge.GaugeZone
 import dev.foss.expeditiongauge.ui.theme.GaugeBall
@@ -47,6 +50,7 @@ import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
 import kotlin.math.hypot
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,10 +71,29 @@ fun AttitudeGMeterGauge(
     rollAlertActive: Boolean = false,
     latGAlertActive: Boolean = false,
     gaugeSizeDp: Dp = 180.dp,
+    displayRotation: Int = 0,
+    recording: Boolean = false,
 ) {
-    val ball = remember(pitchDeg, rollDeg, latG, lonG, mode) { ballForMode(mode, pitchDeg, rollDeg, latG, lonG) }
+    val trailBuffer = remember { GBallTrailBuffer() }
+    val ball = remember(pitchDeg, rollDeg, latG, lonG, mode, displayRotation) {
+        ballForMode(mode, pitchDeg, rollDeg, latG, lonG, displayRotation)
+    }
+    val showTrail = mode == AttitudeGaugeMode.G_FORCE || mode == AttitudeGaugeMode.HYBRID
+    var trailPoints by remember { mutableStateOf<List<Pair<Float, Float>>>(emptyList()) }
+    LaunchedEffect(ball.normalizedX, ball.normalizedY, showTrail) {
+        if (showTrail) {
+            trailBuffer.add(ball.normalizedX, ball.normalizedY)
+            trailPoints = trailBuffer.snapshot()
+        }
+    }
+    LaunchedEffect(recording) {
+        if (!recording) {
+            trailBuffer.clear()
+            trailPoints = emptyList()
+        }
+    }
     val peakBall = if (showPeakHold && (peakAbsPitchDeg > 0f || peakAbsRollDeg > 0f)) {
-        AttitudeBallLogic.mapPitchRoll(peakPitchDeg, peakRollDeg)
+        GaugeDisplayRotation.mapAttitude(peakPitchDeg, peakRollDeg, displayRotation)
     } else {
         null
     }
@@ -78,6 +101,8 @@ fun AttitudeGMeterGauge(
     val calibrateLabel = stringResource(R.string.gauge_calibrate)
     val attitudeAlert = pitchAlertActive || rollAlertActive
     val gaugeAlert = attitudeAlert || latGAlertActive
+    val latGText = GaugeLogic.formatWholeG(latG)
+    val lonGText = GaugeLogic.formatWholeG(lonG)
 
     Column(
         modifier = modifier.padding(SpacingSm),
@@ -107,6 +132,17 @@ fun AttitudeGMeterGauge(
             }
             drawLine(GaugeScaleWhite, Offset(center.x - radius, center.y), Offset(center.x + radius, center.y), 1f)
             drawLine(GaugeScaleWhite, Offset(center.x, center.y - radius), Offset(center.x, center.y + radius), 1f)
+            if (showTrail && trailPoints.isNotEmpty()) {
+                trailPoints.forEachIndexed { index, (nx, ny) ->
+                    val alpha = (index + 1).toFloat() / trailPoints.size * 0.45f
+                    val trailCenter = Offset(center.x + nx * radius, center.y + ny * radius)
+                    drawCircle(
+                        color = GaugeBall.copy(alpha = alpha),
+                        radius = 4f,
+                        center = trailCenter,
+                    )
+                }
+            }
             val ballColor = when {
                 pitchAlertActive || rollAlertActive || latGAlertActive -> GaugeRed
                 ball.zone == GaugeZone.Safe -> GaugeGreen
@@ -140,11 +176,15 @@ fun AttitudeGMeterGauge(
             )
         }
         if (mode == AttitudeGaugeMode.G_FORCE || mode == AttitudeGaugeMode.HYBRID) {
-            Text(text = stringResource(R.string.gauge_lat_g, latG), color = GaugeScaleWhite)
-            Text(text = stringResource(R.string.gauge_lon_g, lonG), color = GaugeScaleWhite)
+            Text(text = stringResource(R.string.gauge_lat_g, latGText), color = GaugeScaleWhite)
+            Text(text = stringResource(R.string.gauge_lon_g, lonGText), color = GaugeScaleWhite)
         }
         Button(
-            onClick = onCalibrate,
+            onClick = {
+                trailBuffer.clear()
+                trailPoints = emptyList()
+                onCalibrate()
+            },
             modifier = Modifier
                 .testTag("gauge_calibrate")
                 .semantics { contentDescription = calibrateLabel },
@@ -174,11 +214,11 @@ fun AttitudeGMeterGauge(
                     stringResource(R.string.gauge_roll, GaugeLogic.formatSignedDegrees(rollDeg)),
                     color = GaugeScaleWhite,
                 )
-                Text(stringResource(R.string.gauge_lat_g, latG), color = GaugeScaleWhite)
-                Text(stringResource(R.string.gauge_lon_g, lonG), color = GaugeScaleWhite)
+                Text(stringResource(R.string.gauge_lat_g, latGText), color = GaugeScaleWhite)
+                Text(stringResource(R.string.gauge_lon_g, lonGText), color = GaugeScaleWhite)
                 val magnitude = hypot(latG.toDouble(), lonG.toDouble()).toFloat()
                 Text(
-                    stringResource(R.string.gauge_g_magnitude, magnitude),
+                    stringResource(R.string.gauge_g_magnitude, magnitude.roundToInt()),
                     color = GaugeScaleWhite,
                 )
             }
@@ -192,18 +232,20 @@ private fun ballForMode(
     rollDeg: Float,
     latG: Float,
     lonG: Float,
+    displayRotation: Int,
 ): BallPosition = when (mode) {
-    AttitudeGaugeMode.ATTITUDE -> AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg)
-    AttitudeGaugeMode.G_FORCE -> GForceBallLogic.mapLatLonG(latG, lonG)
+    AttitudeGaugeMode.ATTITUDE -> GaugeDisplayRotation.mapAttitude(pitchDeg, rollDeg, displayRotation)
+    AttitudeGaugeMode.G_FORCE -> GaugeDisplayRotation.mapGForce(latG, lonG, displayRotation)
     AttitudeGaugeMode.HYBRID -> {
         val attitude = AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg)
         val gForce = GForceBallLogic.mapLatLonG(latG, lonG)
         val zone = if (attitude.zone.ordinal >= gForce.zone.ordinal) attitude.zone else gForce.zone
-        BallPosition(
+        val combined = BallPosition(
             normalizedX = ((attitude.normalizedX + gForce.normalizedX) / 2f).coerceIn(-1f, 1f),
             normalizedY = ((attitude.normalizedY + gForce.normalizedY) / 2f).coerceIn(-1f, 1f),
             zone = zone,
         )
+        GaugeDisplayRotation.rotateBall(combined, displayRotation)
     }
 }
 

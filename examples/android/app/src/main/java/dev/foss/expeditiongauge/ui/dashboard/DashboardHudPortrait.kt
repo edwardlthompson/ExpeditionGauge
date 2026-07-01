@@ -47,6 +47,8 @@ fun DashboardHudPortrait(
                 rollAlertActive = AlertType.ROLL in props.activeAlerts,
                 latGAlertActive = AlertType.LAT_G in props.activeAlerts,
                 gaugeSizeDp = attitudeSize,
+                displayRotation = props.displayRotation,
+                recording = props.recording,
             )
         }
         Row(
@@ -73,20 +75,18 @@ fun DashboardHudPortrait(
                             numSatellites = telemetry.numSatellites,
                             hdop = telemetry.hdop,
                         )
-                        if (!spec.useCompactGps) {
-                            GpsReadoutPanel(
-                                latitude = telemetry.latitude,
-                                longitude = telemetry.longitude,
-                                altitudeM = telemetry.altitudeM,
-                                driftAngleDeg = telemetry.driftAngleDeg,
-                                showDriftAngle = props.showDriftAngle || preset.emphasizeDrift,
-                            )
-                        }
+                        GpsReadoutPanel(
+                            latitude = telemetry.latitude,
+                            longitude = telemetry.longitude,
+                            altitudeM = telemetry.altitudeM,
+                            driftAngleDeg = telemetry.driftAngleDeg,
+                            showDriftAngle = props.showDriftAngle || preset.emphasizeDrift,
+                        )
                     }
                 }
             }
         }
-        if (preset.showTirePressure && props.tpmsEnabled && FeatureFlags.tpmsEnabled) {
+        if (preset.showTirePressure && FeatureFlags.tpmsEnabled) {
             TirePressurePanel(
                 frontLeft = telemetry.frontLeftPressure,
                 frontRight = telemetry.frontRightPressure,

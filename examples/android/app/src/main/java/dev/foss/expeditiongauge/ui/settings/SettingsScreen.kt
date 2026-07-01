@@ -84,6 +84,14 @@ fun SettingsScreen(
         dev.foss.expeditiongauge.settings.MediaCompressionQuality.BALANCED,
     onMediaCompressionSelect: (dev.foss.expeditiongauge.settings.MediaCompressionQuality) -> Unit = {},
     mediaStorageBytes: Long = 0L,
+    autoRecordEnabled: Boolean = false,
+    autoRecordDeviceAddresses: Set<String> = emptySet(),
+    onAutoRecordEnabledChange: (Boolean) -> Unit = {},
+    onAutoRecordDeviceToggle: (String, Boolean) -> Unit = { _, _ -> },
+    sessionStoragePercent: Int = 25,
+    sessionStorageUsedBytes: Long = 0L,
+    sessionStorageAllowedBytes: Long = 0L,
+    onSessionStoragePercentChange: (Int) -> Unit = {},
     brightnessMode: BrightnessMode = BrightnessMode.Auto,
     onBrightnessModeSelect: (BrightnessMode) -> Unit = {},
     recordingMode: RecordingMode = RecordingMode.NORMAL,
@@ -219,6 +227,18 @@ fun SettingsScreen(
             compressionQuality = mediaCompressionQuality,
             onCompressionSelect = onMediaCompressionSelect,
             storageBytes = mediaStorageBytes,
+        )
+        SettingsStorageOptions(
+            storagePercent = sessionStoragePercent,
+            usedBytes = sessionStorageUsedBytes,
+            allowedBytes = sessionStorageAllowedBytes,
+            onPercentChange = onSessionStoragePercentChange,
+        )
+        SettingsRecordingOptions(
+            autoRecordEnabled = autoRecordEnabled,
+            selectedAddresses = autoRecordDeviceAddresses,
+            onAutoRecordEnabledChange = onAutoRecordEnabledChange,
+            onDeviceToggle = onAutoRecordDeviceToggle,
         )
         SettingsHardwareOptions(
             tpmsEnabled = tpmsEnabled,

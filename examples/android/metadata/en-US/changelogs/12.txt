@@ -1,0 +1,1 @@
+Dashboard HUD v2: rotation-aware G-meter trail, hamburger drawer, top-bar Play/Stop, portrait GPS/TPMS, storage loop cap with protect session, Bluetooth auto-record triggers.

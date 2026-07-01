@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.settings
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.recording.SessionStorageBudget
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -70,6 +71,24 @@ class SettingsPreferences(private val context: Context) {
         runCatching { MediaCompressionQuality.valueOf(raw) }.getOrDefault(MediaCompressionQuality.BALANCED)
     }
 
+    val autoRecordEnabled: Flow<Boolean> = context.settingsDataStore.data.map {
+        it[keys.autoRecordEnabled] ?: false
+    }
+
+    val autoRecordDeviceAddresses: Flow<Set<String>> = context.settingsDataStore.data.map { prefs ->
+        prefs[keys.autoRecordDevices]
+            ?.split(',')
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?.toSet()
+            ?: emptySet()
+    }
+
+    val sessionStorageFreePercent: Flow<Int> = context.settingsDataStore.data.map {
+        (it[keys.sessionStorageFreePercent] ?: SessionStorageBudget.DEFAULT_PERCENT)
+            .coerceIn(SessionStorageBudget.MIN_PERCENT, SessionStorageBudget.MAX_PERCENT)
+    }
+
     suspend fun setSpeedUnit(unit: SpeedUnit) = store.setSpeedUnit(unit)
     suspend fun setLogIntervalMs(ms: Long) = store.setLogIntervalMs(ms)
     suspend fun setObdDeviceAddress(address: String?) = store.setObdDeviceAddress(address)
@@ -93,5 +112,8 @@ class SettingsPreferences(private val context: Context) {
     suspend fun setAndroidAutoMetricAllowlist(allowlist: Set<String>) = store.setAndroidAutoMetricAllowlist(allowlist)
     suspend fun toggleAndroidAutoMetric(key: String) = store.toggleAndroidAutoMetric(key)
     suspend fun setMediaCompressionQuality(quality: MediaCompressionQuality) = store.setMediaCompressionQuality(quality)
+    suspend fun setAutoRecordEnabled(enabled: Boolean) = store.setAutoRecordEnabled(enabled)
+    suspend fun setAutoRecordDeviceAddresses(addresses: Set<String>) = store.setAutoRecordDeviceAddresses(addresses)
+    suspend fun setSessionStorageFreePercent(percent: Int) = store.setSessionStorageFreePercent(percent)
     suspend fun resetCalibrationFlag() = store.resetCalibrationFlag()
 }

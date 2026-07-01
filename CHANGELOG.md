@@ -79,11 +79,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.10.0] — Dashboard HUD v2 (2026-06-30)
+
+### Added
+
+* G-ball trail and display-rotation-aware axes (`GaugeDisplayRotation`, `GBallTrailBuffer`)
+* Hamburger drawer + top-bar Play/Stop record control; portrait HUD shows full GPS, altitude, TPMS placeholders
+* Bluetooth auto-record on bonded device connect; auto-stop on trigger disconnect (3s debounce)
+* Session storage cap (% of free space) with dashcam loop prune; **Protect from loop delete** on sessions (Room v6)
+* Settings UI for auto-record devices and storage cap (`SettingsRecordingOptions`, `SettingsStorageOptions`)
+* Feature doc [`docs/features/dashboard-hud-v2.md`](docs/features/dashboard-hud-v2.md)
+
 ### Changed
 
+* Whole-number lat/lon G readouts; portrait gauge 148dp; `useCompactGps = false` in portrait
+* ADB smokes use `record_play` / `record_stop` test tags on top bar
 * Bump `actions/checkout` to v7 and `actions/upload-artifact` to v7 across workflows
-* Disable Release Please on child repo (ExpeditionGauge uses Gradle `versionName` releases)
-* Sync exemplar config stubs in all Android CI jobs
+
+### Security & privacy
+
+* [`docs/PRIVACY.md`](docs/PRIVACY.md) — auto-record ACL behavior and local loop-delete policy documented
 
 ## [2.9.1] — Post-audit hardening (2026-06-30)
 

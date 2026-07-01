@@ -4,10 +4,10 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.9.1** (`versionCode` 11).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27). Archive: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.10.0** (`versionCode` 12).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32). Archive: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
 - **Post-audit hardening (2026-06-30):** complete — see board below.
-- **Next:** Publish v2.9.1 draft release; optional F-Droid submit. Dependabot alerts enabled — zero open Critical/High.
+- **Next:** Publish v2.10.0 release; optional F-Droid submit. Dependabot alerts enabled — zero open Critical/High.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
@@ -69,18 +69,15 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | 19b–21 | v2.1.1–v2.3 insets / orientation / AA | same |
 | 22–27 | v2.4–v2.9 Relive wave | same |
 | Audit 2026-06-30 | post v2.9.0 hardening | same |
+| Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 
 ---
 
-## Active board — Post-audit hardening
-
-| # | Owner | Task | Status |
-|---|-------|------|--------|
-| 1 | [AGENT] | `allowBackup=false` + finalize [`docs/PRIVACY.md`](docs/PRIVACY.md) (F-005) | ✅ |
-| 2 | [AGENT] | `.trivyignore` for AGP test-harness Netty CVEs + KB-014 (F-007) | ✅ |
-| 3 | [AGENT] | Export pipeline unit tests; split `adb-smoke.ps1` → `_adb-smoke-lib.ps1` + `adb-scenarios/relive.ps1` (F-008) | ✅ |
+## Active board
 
 No open `[AGENT]` rows. New work: add rows here or in [`docs/ROADMAP.md`](docs/ROADMAP.md) deferred section.
+
+> **Dashboard HUD v2** archived in COMPLETED_TASKS.md @ `v2.10.0`.
 
 ---
 

@@ -667,9 +667,9 @@ switch ($Scenario) {
         }
         $record = Find-TapTarget -Content $content -Label "Record"
         if (-not $record) {
-            $matched = $content -match 'resource-id="record_start"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'
+            $matched = $content -match 'resource-id="record_play"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'
             if (-not $matched) {
-                $matched = $content -match 'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*resource-id="record_start"'
+                $matched = $content -match 'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"[^>]*resource-id="record_play"'
             }
             if ($matched) {
                 $record = @{
@@ -768,7 +768,7 @@ switch ($Scenario) {
         }
         $record = Find-TapTarget -Content $content -Label "Record"
         if (-not $record) {
-            $matched = $content -match 'resource-id="record_start"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'
+            $matched = $content -match 'resource-id="record_play"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"'
             if ($matched) {
                 $record = @{
                     X = [int](([int]$Matches[1] + [int]$Matches[3]) / 2)

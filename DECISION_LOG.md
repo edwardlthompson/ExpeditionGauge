@@ -109,3 +109,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Close bulk PR; keep pinned FOSS stack on main. Apply github-actions group bump on main. Release Please disabled for ExpeditionGauge child repo (`if: github.repository == 'edwardlthompson/agent-project-bootstrap'`)
 - **Alternatives considered:** Merge partial bumps only (deferred — needs dedicated regression pass); keep Release Please for template semver in child repo (rejected — conflicts with app v2.9.x releases)
 - **Consequences:** Zero open Critical/High Dependabot alerts after Trivy ignore + alert enablement; android-dependencies group revisit in dedicated BUILD_PLAN row when AGP/Kotlin upgrade is scoped
+
+### 2026-06-30 — Dashboard HUD v2.10.0
+- **Status:** Accepted
+- **Context:** User-requested HUD cleanup: G-trail, rotation-aware axes, portrait telemetry, minimal chrome, storage loop, BT auto-record
+- **Decision:** Ship `versionCode` 12 / `versionName` 2.10.0 with `GaugeDisplayRotation`, drawer + top-bar Play/Stop, Room v6 protect/trigger columns, `SessionStorageBudget`, `AutoRecordMonitor`
+- **Alternatives considered:** Static portrait axis swap (rejected — mount orientation varies); stop recording when storage full (rejected — dashcam loop deletes oldest unprotected)
+- **Consequences:** ADB smokes use `record_play`/`record_stop`; destructive Room migration on dev upgrades; acceptance doc `docs/features/dashboard-hud-v2.md`

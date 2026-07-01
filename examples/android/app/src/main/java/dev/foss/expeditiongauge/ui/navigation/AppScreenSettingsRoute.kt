@@ -73,8 +73,18 @@ fun AppScreenSettingsRoute(
     val mediaCompressionQuality by services.settingsPreferences.mediaCompressionQuality
         .collectAsStateWithLifecycle(initialValue = MediaCompressionQuality.BALANCED)
     var mediaStorageBytes by remember { mutableLongStateOf(0L) }
+    var sessionStorageUsed by remember { mutableLongStateOf(0L) }
+    var sessionStorageAllowed by remember { mutableLongStateOf(0L) }
+    val autoRecordEnabled by services.settingsPreferences.autoRecordEnabled
+        .collectAsStateWithLifecycle(initialValue = false)
+    val autoRecordDevices by services.settingsPreferences.autoRecordDeviceAddresses
+        .collectAsStateWithLifecycle(initialValue = emptySet())
+    val sessionStoragePercent by services.settingsPreferences.sessionStorageFreePercent
+        .collectAsStateWithLifecycle(initialValue = 25)
     LaunchedEffect(Unit) {
         mediaStorageBytes = services.sessionMediaRepository.totalStorageBytes()
+        sessionStorageUsed = services.sessionStorageBudget.usedBytes()
+        sessionStorageAllowed = services.sessionStorageBudget.allowedBytes()
     }
     SettingsScreen(
         themeMode = themeMode,
@@ -117,6 +127,27 @@ fun AppScreenSettingsRoute(
             scope.launch { services.settingsPreferences.setMediaCompressionQuality(quality) }
         },
         mediaStorageBytes = mediaStorageBytes,
+        autoRecordEnabled = autoRecordEnabled,
+        autoRecordDeviceAddresses = autoRecordDevices,
+        onAutoRecordEnabledChange = { enabled ->
+            scope.launch { services.settingsPreferences.setAutoRecordEnabled(enabled) }
+        },
+        onAutoRecordDeviceToggle = { address, selected ->
+            scope.launch {
+                val next = autoRecordDevices.toMutableSet()
+                if (selected) next.add(address) else next.remove(address)
+                services.settingsPreferences.setAutoRecordDeviceAddresses(next)
+            }
+        },
+        sessionStoragePercent = sessionStoragePercent,
+        sessionStorageUsedBytes = sessionStorageUsed,
+        sessionStorageAllowedBytes = sessionStorageAllowed,
+        onSessionStoragePercentChange = { percent ->
+            scope.launch {
+                services.settingsPreferences.setSessionStorageFreePercent(percent)
+                sessionStorageAllowed = services.sessionStorageBudget.allowedBytes()
+            }
+        },
         brightnessMode = brightnessMode,
         onBrightnessModeSelect = onBrightnessModeSelect,
         onSpeedUnitSelect = { unit -> scope.launch { services.settingsPreferences.setSpeedUnit(unit) } },

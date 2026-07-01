@@ -13,6 +13,7 @@ data class SessionMetadata(
     val tags: List<String> = emptyList(),
     val photoUri: String? = null,
     val activityType: ActivityType = ActivityType.DRIVE,
+    val protectedFromLoop: Boolean = false,
 ) {
     fun toEntityPatch(): (RecordingSessionEntity) -> RecordingSessionEntity = { entity ->
         entity.copy(
@@ -23,6 +24,7 @@ data class SessionMetadata(
             tagsJson = tagsToJson(tags),
             photoUri = photoUri,
             activityType = activityType,
+            protectedFromLoop = protectedFromLoop,
         )
     }
 
@@ -35,6 +37,7 @@ data class SessionMetadata(
             tagsJson = tagsToJson(tags),
             photoUri = photoUri,
             activityType = activityType,
+            protectedFromLoop = protectedFromLoop,
         )
 
     fun toExportJson(): JSONObject = JSONObject().apply {
@@ -59,6 +62,7 @@ data class SessionMetadata(
                 tags = parseTags(entity.tagsJson),
                 photoUri = entity.photoUri,
                 activityType = entity.activityType,
+                protectedFromLoop = entity.protectedFromLoop,
             )
 
         fun vehicleConfigToJson(config: Map<String, String>): String? {

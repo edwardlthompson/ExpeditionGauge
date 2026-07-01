@@ -47,7 +47,7 @@ fun DashboardHudLandscape(
         GaugeLogic.formatSignedDegrees(telemetry.pitchDeg),
         GaugeLogic.formatSignedDegrees(telemetry.rollDeg),
         GaugeLogic.formatHeading(telemetry.headingDeg),
-        telemetry.latG,
+        GaugeLogic.formatWholeG(telemetry.latG),
         GaugeLogic.formatSpeedMps(telemetry.speedMps, useMetric = true),
     )
     Row(modifier = modifier.semantics { contentDescription = hudDescription }) {
@@ -72,6 +72,8 @@ fun DashboardHudLandscape(
                     rollAlertActive = AlertType.ROLL in props.activeAlerts,
                     latGAlertActive = AlertType.LAT_G in props.activeAlerts,
                     gaugeSizeDp = attitudeSize,
+                    displayRotation = props.displayRotation,
+                    recording = props.recording,
                 )
             }
         }
@@ -97,7 +99,7 @@ fun DashboardHudLandscape(
                 if (preset.showHeading) {
                     HeadingReadout(headingDeg = telemetry.headingDeg)
                     Text(
-                        text = stringResource(R.string.gauge_lat_g, telemetry.latG),
+                        text = stringResource(R.string.gauge_lat_g, GaugeLogic.formatWholeG(telemetry.latG)),
                         color = if (AlertType.LAT_G in props.activeAlerts) GaugeRed else GaugeScaleWhite,
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -135,7 +137,7 @@ fun DashboardHudLandscape(
                 }
             }
         }
-        if (preset.showTirePressure && props.tpmsEnabled && FeatureFlags.tpmsEnabled) {
+        if (preset.showTirePressure && FeatureFlags.tpmsEnabled) {
             Column(modifier = Modifier.weight(preset.weights.side.coerceAtLeast(0.1f)).fillMaxHeight()) {
                 TirePressurePanel(
                     frontLeft = telemetry.frontLeftPressure,

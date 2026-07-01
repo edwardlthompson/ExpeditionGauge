@@ -49,6 +49,17 @@ interface RecordingSessionDao {
     @Query("SELECT * FROM recording_sessions WHERE id = :id")
     suspend fun getById(id: Long): RecordingSessionEntity?
 
+    @Query(
+        """
+        SELECT * FROM recording_sessions
+        WHERE protectedFromLoop = 0
+          AND (:excludeId IS NULL OR id != :excludeId)
+        ORDER BY startTimeMs ASC
+        LIMIT 1
+        """,
+    )
+    suspend fun oldestUnprotectedSession(excludeId: Long?): RecordingSessionEntity?
+
     @Query("DELETE FROM recording_sessions WHERE id = :id")
     suspend fun deleteById(id: Long)
 

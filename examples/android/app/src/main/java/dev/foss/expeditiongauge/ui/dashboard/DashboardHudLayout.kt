@@ -33,6 +33,7 @@ fun DashboardHudLayout(
     tempUnit: TempUnit = TempUnit.CELSIUS,
     attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
     activeAlerts: Set<AlertType> = emptySet(),
+    displayRotation: Int = 0,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -50,6 +51,7 @@ fun DashboardHudLayout(
             attitudeGaugeMode = attitudeGaugeMode,
             activeAlerts = activeAlerts,
             layoutSpec = spec,
+            displayRotation = displayRotation,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

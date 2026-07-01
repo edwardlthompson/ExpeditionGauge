@@ -17,12 +17,12 @@ class OrientationLayoutEngineTest {
     }
 
     @Test
-    fun portraitSpec_usesCompactLayout() {
+    fun portraitSpec_usesFullGpsLayout() {
         val spec = OrientationLayoutEngine.spec(widthDp = 400f, heightDp = 800f)
         assertFalse(spec.isLandscape)
-        assertEquals(132f, spec.attitudeGaugeSizeDp, 0.01f)
+        assertEquals(148f, spec.attitudeGaugeSizeDp, 0.01f)
         assertEquals(120f, spec.speedometerGaugeSizeDp, 0.01f)
-        assertTrue(spec.useCompactGps)
+        assertFalse(spec.useCompactGps)
     }
 
     @Test

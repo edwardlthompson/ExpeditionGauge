@@ -54,4 +54,12 @@
     <string name="settings_android_auto_heading">Android Auto</string>
     <string name="settings_android_auto_enable">Show telemetry on Android Auto</string>
     <string name="settings_android_auto_metrics">Metrics on head unit</string>
+    <string name="settings_storage_heading">Session storage</string>
+    <string name="settings_storage_summary">Using %1$s of %2$s allowed (%3$d%% of free space)</string>
+    <string name="settings_storage_loop_hint">When full, oldest drives are deleted automatically to make room (loop recording).</string>
+    <string name="settings_storage_percent_label">Cap: %1$d%% of free space</string>
+    <string name="settings_auto_record_heading">Auto-record</string>
+    <string name="settings_auto_record_toggle">Auto-record when trigger device connects</string>
+    <string name="settings_auto_record_hint">Disconnecting the trigger device stops the session after a short delay.</string>
+    <string name="settings_auto_record_no_devices">No bonded Bluetooth devices found.</string>
 </resources>

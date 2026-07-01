@@ -24,9 +24,9 @@ object OrientationLayoutEngine {
         } else {
             OrientationLayoutSpec(
                 isLandscape = false,
-                attitudeGaugeSizeDp = 132f,
+                attitudeGaugeSizeDp = 148f,
                 speedometerGaugeSizeDp = 120f,
-                useCompactGps = true,
+                useCompactGps = false,
             )
         }
     }

@@ -40,7 +40,7 @@ import dev.foss.expeditiongauge.recording.RecordingMode
         SessionMediaEntity::class,
         SettingsProfileEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false,
 )
 @TypeConverters(RecordingModeConverter::class, SessionMediaKindConverter::class, ActivityTypeConverter::class)

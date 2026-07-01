@@ -2,31 +2,31 @@ package dev.foss.expeditiongauge.recording
 
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
-import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
 
 class RecordingWriter(
     private val telemetryBus: TelemetryBus,
     private val database: ExpeditionGaugeDatabase,
     private val scope: CoroutineScope,
     private var logIntervalMs: Long = DEFAULT_LOG_INTERVAL_MS,
+    private val storageBudget: SessionStorageBudget? = null,
 ) {
     private val sessionDao = database.recordingSessionDao()
     private val sampleDao = database.sampleDao()
+    private val crawlSmoother = RecordingCrawlSmoother()
+    private val peaks = RecordingSessionPeaks()
 
     private val _activeSessionId = MutableStateFlow<Long?>(null)
     val activeSessionId: StateFlow<Long?> = _activeSessionId.asStateFlow()
@@ -34,29 +34,40 @@ class RecordingWriter(
     private val _recording = MutableStateFlow(false)
     val recording: StateFlow<Boolean> = _recording.asStateFlow()
 
+    private val _storageBlocked = MutableStateFlow(false)
+    val storageBlocked: StateFlow<Boolean> = _storageBlocked.asStateFlow()
+
+    var autoRecordTriggerAddress: String? = null
+        private set
+
     private var writerJob: Job? = null
-    private var peakSpeed = 0f
-    private var peakDrift = 0f
-    private var peakAbsPitch = 0f
-    private var peakAbsRoll = 0f
-    private var crawlProfile: CrawlingModeProfile? = null
-    private val speedSamples = ArrayDeque<Pair<Long, Float>>()
+    private var samplesSincePruneCheck = 0
 
     suspend fun startRecording(
         recordingMode: RecordingMode = RecordingMode.NORMAL,
         externalImuConnected: Boolean = false,
+        autoRecordTriggerAddress: String? = null,
+        manualStart: Boolean = true,
     ): Long {
         if (_recording.value) return _activeSessionId.value ?: -1L
-        crawlProfile = if (recordingMode == RecordingMode.CRAWLING) {
+        val hasSpace = storageBudget?.ensureSpaceForNewSession() ?: true
+        if (!hasSpace) {
+            _storageBlocked.value = true
+            throw StorageCapBlockedException()
+        }
+        _storageBlocked.value = false
+        val crawlProfile = if (recordingMode == RecordingMode.CRAWLING) {
             CrawlingModeProfile.forMode(recordingMode, externalImuConnected)
         } else {
             null
         }
         crawlProfile?.let { profile ->
-            val hz = profile.effectiveImuRateHz(externalImuConnected)
-            logIntervalMs = (1000L / hz).coerceIn(MIN_INTERVAL_MS, MAX_INTERVAL_MS)
+            logIntervalMs = (1000L / profile.effectiveImuRateHz(externalImuConnected))
+                .coerceIn(MIN_INTERVAL_MS, MAX_INTERVAL_MS)
         }
-        speedSamples.clear()
+        crawlSmoother.reset(crawlProfile)
+        samplesSincePruneCheck = 0
+        this.autoRecordTriggerAddress = if (manualStart) null else autoRecordTriggerAddress
         val now = System.currentTimeMillis()
         val name = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(now))
         val id = sessionDao.insert(
@@ -64,14 +75,12 @@ class RecordingWriter(
                 name = name,
                 startTimeMs = now,
                 recordingMode = recordingMode,
+                autoRecordTriggerAddress = if (manualStart) null else autoRecordTriggerAddress,
             ),
         )
         _activeSessionId.value = id
         _recording.value = true
-        peakSpeed = 0f
-        peakDrift = 0f
-        peakAbsPitch = 0f
-        peakAbsRoll = 0f
+        peaks.reset()
         telemetryBus.publish(telemetryBus.snapshots.value.copy(recordingActive = true))
         writerJob = scope.launch { writeLoop(id) }
         return id
@@ -82,22 +91,16 @@ class RecordingWriter(
         writerJob = null
         val id = _activeSessionId.value ?: return
         val session = sessionDao.getById(id) ?: return
-        val sessionPeaks = JSONObject().apply {
-            put("peakAbsPitchDeg", peakAbsPitch)
-            put("peakAbsRollDeg", peakAbsRoll)
-            put("peakSpeedMps", peakSpeed)
-            put("peakDriftDeg", peakDrift)
-        }
         sessionDao.update(
             session.copy(
                 endTimeMs = System.currentTimeMillis(),
-                deviceConfigJson = sessionPeaks.toString(),
+                deviceConfigJson = peaks.toDeviceConfigJson(),
             ),
         )
         _recording.value = false
         _activeSessionId.value = null
-        crawlProfile = null
-        speedSamples.clear()
+        autoRecordTriggerAddress = null
+        crawlSmoother.reset(null)
         telemetryBus.publish(telemetryBus.snapshots.value.copy(recordingActive = false))
     }
 
@@ -113,34 +116,23 @@ class RecordingWriter(
             if (now - lastWriteMs < logIntervalMs) return@collectLatest
             writeSample(sessionId, snapshot)
             lastWriteMs = now
+            if (++samplesSincePruneCheck >= PRUNE_CHECK_SAMPLE_INTERVAL) {
+                samplesSincePruneCheck = 0
+                storageBudget?.pruneOldestUntilUnderCap(excludeSessionId = sessionId)
+            }
         }
     }
 
     private suspend fun writeSample(sessionId: Long, snapshot: TelemetrySnapshot) {
-        val smoothed = smoothSpeedIfCrawling(snapshot)
-        peakSpeed = maxOf(peakSpeed, smoothed.speedMps)
-        smoothed.driftAngleDeg?.let { peakDrift = maxOf(peakDrift, abs(it)) }
-        peakAbsPitch = maxOf(peakAbsPitch, smoothed.peakAbsPitchDeg)
-        peakAbsRoll = maxOf(peakAbsRoll, smoothed.peakAbsRollDeg)
+        val smoothed = crawlSmoother.smooth(snapshot)
+        peaks.observe(smoothed)
         sampleDao.insert(RecordingSampleWriter.toEntity(smoothed, sessionId))
-    }
-
-    private fun smoothSpeedIfCrawling(snapshot: TelemetrySnapshot): TelemetrySnapshot {
-        val profile = crawlProfile ?: return snapshot
-        val now = snapshot.timestampMs
-        speedSamples.addLast(now to snapshot.speedMps)
-        val cutoff = now - profile.gpsSmoothingWindowMs
-        while (speedSamples.isNotEmpty() && speedSamples.first().first < cutoff) {
-            speedSamples.removeFirst()
-        }
-        if (speedSamples.isEmpty()) return snapshot
-        val avg = speedSamples.map { it.second }.average().toFloat()
-        return snapshot.copy(speedMps = avg)
     }
 
     companion object {
         const val DEFAULT_LOG_INTERVAL_MS = 20L
         const val MIN_INTERVAL_MS = 10L
         const val MAX_INTERVAL_MS = 1000L
+        private const val PRUNE_CHECK_SAMPLE_INTERVAL = 1500
     }
 }

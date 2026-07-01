@@ -21,4 +21,5 @@ data class DashboardHudProps(
     val attitudeGaugeMode: AttitudeGaugeMode,
     val activeAlerts: Set<AlertType>,
     val layoutSpec: OrientationLayoutSpec,
+    val displayRotation: Int = 0,
 )

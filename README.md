@@ -2,7 +2,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.9.1-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.10.0-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -12,15 +12,16 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 
 | Area | Capabilities |
 |------|----------------|
-| **Live HUD** | Speed, G-forces, drift angle (β), pitch/roll, configurable gauge layouts |
+| **Live HUD** | Rotation-aware G-meter with trail, speed, drift (β), pitch/roll, DMS coords, TPMS grid |
+| **Dashboard chrome** | Hamburger menu, top-bar Play/Stop recording, minimal main column (Set Level only) |
 | **Sensors** | Phone IMU/GPS, BLE IMU, TPMS, external NMEA GPS, OBD-II (Classic Bluetooth) |
-| **Recording** | Room-backed sessions, alerts, lap timing, crawling mode, thermal-aware logging |
+| **Recording** | Room sessions, dashcam loop storage cap, protect session, BT auto-record triggers |
 | **Playback** | MapLibre route map, scrubber, elevation profile, ghost lap, media markers |
 | **Export & share** | GPX/ZIP, playback video burn-in, 3D flyover MP4, stats card share sheet |
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | Live metrics via AndroidX Car App Library (user-installed host app) |
 
-Shipped through **v2.9.1** — Relive wave (media → elevation → library → video export → 3D flyover → sharing). See [`CHANGELOG.md`](CHANGELOG.md) and [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
+Shipped through **v2.10.0** — Dashboard HUD v2 (G-trail, rotation axes, drawer chrome, storage loop, auto-record). See [`CHANGELOG.md`](CHANGELOG.md) and [`docs/features/dashboard-hud-v2.md`](docs/features/dashboard-hud-v2.md).
 
 ## Quick start
 
@@ -50,11 +51,13 @@ Connect hardware via USB ADB, then:
 pwsh scripts/expedition/adb-smoke.ps1 -Scenario cold-start
 ```
 
-Scenario list: `scripts/expedition/adb-smoke.ps1` (Relive scenarios in `adb-scenarios/relive.ps1`).
+Recording uses top-bar `record_play` / `record_stop` icons (not bottom buttons). Scenario list: `scripts/expedition/adb-smoke.ps1`.
 
 ## Privacy & security
 
 - **Local-first** — session data stays on device unless you export or enable live telemetry
+- **Loop recording** — oldest unprotected sessions auto-deleted when storage cap is reached; protect drives in session metadata
+- **Auto-record** — optional start/stop when a bonded Bluetooth trigger device connects/disconnects (local ACL only)
 - **`allowBackup=false`** — sessions are not included in Android cloud backup
 - **Opt-in network** — update checks and live telemetry are off by default
 
@@ -78,17 +81,9 @@ Resume the next task: `pwsh scripts/expedition/resume-agent.ps1`
 ```
 examples/android/   ExpeditionGauge app (Compose, Room, MapLibre)
 docs/               Agent docs, design specs, ADRs, feature specs
-scripts/expedition/ ADB smokes, sprint sign-off, release helpers
-modules/android/    Stack-specific agent rules
+scripts/            Gates, CI helpers, ADB smokes
 ```
 
-## Distribution
+## License
 
-- **GitHub Releases** — primary channel ([`edwardlthompson/ExpeditionGauge`](https://github.com/edwardlthompson/ExpeditionGauge))
-- **F-Droid** — metadata under `examples/android/metadata/` (submission optional)
-
-## Contributing
-
-MIT licensed. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
-
-Built on agent-project-bootstrap **0.11.1** (template maintainer docs: [`docs/MAINTAINING_THE_TEMPLATE.md`](docs/MAINTAINING_THE_TEMPLATE.md)).
+MIT — see [`LICENSE`](LICENSE).

@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +56,7 @@ fun SessionMetadataEditScreen(
     var tagsText by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<String?>(null) }
     var activityType by remember { mutableStateOf(ActivityType.DRIVE) }
+    var protectedFromLoop by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(sessionId) {
@@ -65,6 +67,7 @@ fun SessionMetadataEditScreen(
             tagsText = meta.tags.joinToString(", ")
             photoUri = meta.photoUri
             activityType = meta.activityType
+            protectedFromLoop = meta.protectedFromLoop
         }
     }
 
@@ -132,6 +135,18 @@ fun SessionMetadataEditScreen(
                 }
             }
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+        ) {
+            Text(text = stringResource(R.string.session_protect_loop))
+            Switch(
+                checked = protectedFromLoop,
+                onCheckedChange = { protectedFromLoop = it },
+                modifier = Modifier.testTag("session_protect_loop"),
+            )
+        }
         Button(
             onClick = {
                 scope.launch {
@@ -145,6 +160,7 @@ fun SessionMetadataEditScreen(
                             tags = tags,
                             photoUri = photoUri,
                             activityType = activityType,
+                            protectedFromLoop = protectedFromLoop,
                         ),
                     )
                     onSaved()

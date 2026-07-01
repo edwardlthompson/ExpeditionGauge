@@ -29,6 +29,9 @@ internal object SettingsPreferencesKeys {
     val androidAutoEnabled = booleanPreferencesKey("android_auto_enabled")
     val androidAutoMetrics = stringPreferencesKey("android_auto_metrics")
     val mediaCompression = stringPreferencesKey("media_compression")
+    val autoRecordEnabled = booleanPreferencesKey("auto_record_enabled")
+    val autoRecordDevices = stringPreferencesKey("auto_record_device_addresses")
+    val sessionStorageFreePercent = androidx.datastore.preferences.core.intPreferencesKey("session_storage_free_percent")
 
     fun speedUnitFrom(prefs: Preferences): SpeedUnit =
         if (prefs[speedUnit] == "imperial") SpeedUnit.IMPERIAL else SpeedUnit.METRIC

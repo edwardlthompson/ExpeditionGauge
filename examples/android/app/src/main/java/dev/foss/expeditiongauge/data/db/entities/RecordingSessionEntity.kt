@@ -22,4 +22,6 @@ data class RecordingSessionEntity(
     val photoUri: String? = null,
     val videoUri: String? = null,
     val videoOffsetMs: Long = 0L,
+    val protectedFromLoop: Boolean = false,
+    val autoRecordTriggerAddress: String? = null,
 )

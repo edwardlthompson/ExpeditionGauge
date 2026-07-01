@@ -28,6 +28,7 @@ import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
 import dev.foss.expeditiongauge.recording.SessionMetadataRepository
+import dev.foss.expeditiongauge.recording.createRecordingServices
 import dev.foss.expeditiongauge.timing.LapTimingService
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
@@ -62,7 +63,12 @@ class ExpeditionGaugeServices(
     lateinit var telemetryOrchestrator: TelemetryOrchestrator
 
     val database = ExpeditionGaugeDatabase.create(appContext)
-    val recordingWriter = RecordingWriter(telemetryBus, database, scope)
+    private val recordingBundle = createRecordingServices(appContext, database, telemetryBus, settingsPreferences, scope)
+    val sessionMediaRepository get() = recordingBundle.sessionMediaRepository
+    val sessionDeleteService get() = recordingBundle.sessionDeleteService
+    val sessionStorageBudget get() = recordingBundle.sessionStorageBudget
+    val recordingWriter get() = recordingBundle.recordingWriter
+    val autoRecordMonitor get() = recordingBundle.autoRecordMonitor
     val exportService = ExportService(database)
     val enhancedExportService = EnhancedExportService(database, exportService, appContext)
     val videoSyncEngine: VideoSyncEngine = if (FeatureFlags.videoSyncEnabled) {
@@ -76,14 +82,6 @@ class ExpeditionGaugeServices(
     val settingsProfileRepository = SettingsProfileRepository(appContext, database.settingsProfileDao())
     val sessionEventRecorder = SessionEventRecorder(database.sessionEventDao())
     val sessionMetadataRepository = SessionMetadataRepository(database.recordingSessionDao())
-    val sessionMediaRepository = dev.foss.expeditiongauge.media.SessionMediaRepository(
-        appContext,
-        database.sessionMediaDao(),
-    )
-    val sessionDeleteService = dev.foss.expeditiongauge.media.SessionDeleteService(
-        database.recordingSessionDao(),
-        sessionMediaRepository,
-    )
     val lapTimingService = LapTimingService(database, settingsPreferences)
     val liveTelemetryModule = LiveTelemetryModule(telemetryBus)
     val alertThresholdsPreferences = AlertThresholdsPreferences(appContext)
@@ -122,6 +120,7 @@ class ExpeditionGaugeServices(
             scope = scope,
         )
         telemetryOrchestrator.start()
+        autoRecordMonitor.start()
         bindLifecycleFlows(scope, accessibilityPreferences)
     }
 

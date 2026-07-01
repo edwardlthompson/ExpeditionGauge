@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.settings
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.recording.SessionStorageBudget
 
 internal class SettingsPreferencesStore(
     private val context: Context,
@@ -114,6 +115,25 @@ internal class SettingsPreferencesStore(
 
     suspend fun setMediaCompressionQuality(quality: MediaCompressionQuality) {
         context.settingsDataStore.edit { it[keys.mediaCompression] = quality.name }
+    }
+
+    suspend fun setAutoRecordEnabled(enabled: Boolean) {
+        context.settingsDataStore.edit { it[keys.autoRecordEnabled] = enabled }
+    }
+
+    suspend fun setAutoRecordDeviceAddresses(addresses: Set<String>) {
+        context.settingsDataStore.edit {
+            if (addresses.isEmpty()) {
+                it.remove(keys.autoRecordDevices)
+            } else {
+                it[keys.autoRecordDevices] = addresses.joinToString(",")
+            }
+        }
+    }
+
+    suspend fun setSessionStorageFreePercent(percent: Int) {
+        val clamped = percent.coerceIn(SessionStorageBudget.MIN_PERCENT, SessionStorageBudget.MAX_PERCENT)
+        context.settingsDataStore.edit { it[keys.sessionStorageFreePercent] = clamped }
     }
 
     suspend fun resetCalibrationFlag() {

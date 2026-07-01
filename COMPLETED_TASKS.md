@@ -2,6 +2,14 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Dashboard HUD v2 (2026-06-30)
+
+- ✅ [AGENT] G-trail + `GaugeDisplayRotation` + portrait telemetry + rounded G readouts
+- ✅ [AGENT] Hamburger drawer + top-bar Play/Stop; remove main-column clutter
+- ✅ [AGENT] Session storage loop + `protectedFromLoop` (Room v6)
+- ✅ [AGENT] Bluetooth auto-record connect/stop + Settings UI
+- ✅ [AGENT] Docs (`GAUGE_REFERENCE`, `PRIVACY`, `dashboard-hud-v2`) + ADB smoke tags
+
 ## Audit Sprint — Post v2.9.0 review (2026-06-30)
 
 - ✅ [AGENT] Refresh BUILD_PLAN current state + approval gate (F-001)

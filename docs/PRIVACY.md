@@ -14,6 +14,17 @@ ExpeditionGauge is a local-first off-road telemetry app. No account is required.
 
 All session data stays on your device by default. Exports (GPX, video, share cards) are written only when you request them.
 
+## Local recording storage
+
+- Session data (Room DB, `filesDir/sessions/`, export cache) stays on device
+- **Storage cap:** Settings → choose 5–90% of current free space (default 25%)
+- **Loop recording:** when over cap, oldest **unprotected** sessions are deleted automatically; active recording is never stopped
+- **Protect session:** toggle in session metadata skips a drive from loop delete (manual delete still available)
+
+## Bluetooth auto-record (opt-in)
+
+When enabled in Settings, recording starts when a selected bonded Bluetooth device connects and stops when that trigger device disconnects (3s debounce). Manual Play/Stop is unaffected. No cloud trigger — ACL events are handled locally only.
+
 ## Optional network features
 
 | Feature | Default | Data sent |

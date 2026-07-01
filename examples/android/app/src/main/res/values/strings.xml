@@ -40,8 +40,8 @@
     <string name="gauge_coords_line2">%1$s</string>
     <string name="gauge_altitude">Alt: %1$d m</string>
     <string name="gauge_drift">β: %1$.1f°</string>
-    <string name="gauge_lat_g">Lat G: %1$.2f</string>
-    <string name="gauge_hud_a11y">Pitch: %1$s Roll: %2$s HDG %3$s Lat G: %4$.2f Speed %5$s</string>
+    <string name="gauge_lat_g">Lat G: %1$s</string>
+    <string name="gauge_hud_a11y">Pitch: %1$s Roll: %2$s HDG %3$s Lat G: %4$s Speed %5$s</string>
     <string name="thermal_warning">Phone warming up — consider external IMU or lower log rate</string>
     <string name="preset_default">Default</string>
     <string name="preset_drift">Drift</string>
@@ -185,9 +185,14 @@
     <string name="heatmap_slip">Slip</string>
     <string name="heatmap_legend">Intensity</string>
     <string name="graph_no_data">No graph data for this tab</string>
-    <string name="gauge_lon_g">Lon G: %1$.2f</string>
+    <string name="gauge_lon_g">Lon G: %1$s</string>
+    <string name="gauge_g_magnitude">Total G: %1$d</string>
+    <string name="dashboard_menu_title">Menu</string>
+    <string name="dashboard_menu_open">Open menu</string>
+    <string name="dashboard_menu_preset">Dashboard preset</string>
+    <string name="storage_cap_blocked">Free space — unprotect or delete a session to start recording</string>
+    <string name="session_protect_loop">Protect from loop delete</string>
     <string name="gauge_detail_title">G-meter detail</string>
-    <string name="gauge_g_magnitude">Total G: %1$.2f</string>
     <string name="session_metadata_notes">Session notes</string>
     <string name="session_metadata_tags">Tags (comma-separated)</string>
     <string name="session_metadata_driver">Driver name</string>

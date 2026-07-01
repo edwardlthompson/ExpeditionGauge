@@ -1,5 +1,7 @@
 package dev.foss.expeditiongauge.gauge
 
+import kotlin.math.roundToInt
+
 enum class GaugeZone {
     Safe,
     Caution,
@@ -27,6 +29,8 @@ object GaugeLogic {
     }
 
     fun speedUnitLabel(useMetric: Boolean = true): String = if (useMetric) "KM/H" else "MPH"
+
+    fun formatWholeG(value: Float): String = value.roundToInt().toString()
 
     fun zoneForAngle(magnitudeDeg: Float, safeThreshold: Float, cautionThreshold: Float): GaugeZone = when {
         magnitudeDeg >= cautionThreshold -> GaugeZone.Critical

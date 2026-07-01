@@ -43,6 +43,8 @@ data class DashboardUiState(
     val liveSession: LivePairingSession? = null,
     val liveReceiverCount: Int = 0,
     val isLive: Boolean = false,
+    val displayRotation: Int = 0,
+    val storageBlocked: Boolean = false,
 )
 
 class DashboardViewModel(
@@ -58,6 +60,7 @@ class DashboardViewModel(
     private val alertService: AlertService,
 ) : ViewModel() {
     private val liveState = MutableStateFlow(LiveUi(session = null, receiverCount = 0))
+    private val displayRotation = MutableStateFlow(0)
     private var receiverCountJob: Job? = null
 
     val lapTimingState: StateFlow<PredictiveTimingState> = lapTimingService.liveState
@@ -71,11 +74,17 @@ class DashboardViewModel(
         ) { telemetry, thermal, recording, sessionId ->
             CoreState(telemetry, thermal, recording, sessionId)
         },
-        settingsProfileRepository.activeProfile,
-        liveState,
-        alertService.activeAlerts,
-    ) { core, profile, live, alerts ->
-        val preset = profile.dashboardPreset
+        combine(
+            settingsProfileRepository.activeProfile,
+            liveState,
+            alertService.activeAlerts,
+            displayRotation,
+            recordingWriter.storageBlocked,
+        ) { profile, live, alerts, rotation, storageBlocked ->
+            AuxState(profile, live, alerts, rotation, storageBlocked)
+        },
+    ) { core, aux ->
+        val preset = aux.profile.dashboardPreset
         DashboardUiState(
             telemetry = core.telemetry,
             thermalStatus = core.thermal,
@@ -84,11 +93,13 @@ class DashboardViewModel(
             recording = core.recording,
             activeSessionId = core.sessionId,
             activePreset = preset,
-            recordingMode = profile.recordingMode,
-            activeAlerts = alerts,
-            liveSession = live.session,
-            liveReceiverCount = live.receiverCount,
-            isLive = live.session != null,
+            recordingMode = aux.profile.recordingMode,
+            activeAlerts = aux.alerts,
+            liveSession = aux.live.session,
+            liveReceiverCount = aux.live.receiverCount,
+            isLive = aux.live.session != null,
+            displayRotation = aux.rotation,
+            storageBlocked = aux.storageBlocked,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -103,6 +114,10 @@ class DashboardViewModel(
 
     fun refreshThermal() = thermalMonitor.refresh()
 
+    fun updateDisplayRotation(rotation: Int) {
+        displayRotation.value = rotation
+    }
+
     fun calibrateLevel() {
         viewModelScope.launch {
             val snapshot = telemetryBus.snapshots.value
@@ -114,12 +129,16 @@ class DashboardViewModel(
         viewModelScope.launch {
             val profile = settingsProfileRepository.activeProfile.first()
             val externalImu = telemetryBus.snapshots.value.imuStatuses.any { it.connected }
-            val sessionId = recordingWriter.startRecording(
-                recordingMode = profile.recordingMode,
-                externalImuConnected = externalImu,
-            )
-            if (settingsPreferences.lapTimingEnabled.first()) {
-                lapTimingService.onRecordingStarted(sessionId)
+            runCatching {
+                recordingWriter.startRecording(
+                    recordingMode = profile.recordingMode,
+                    externalImuConnected = externalImu,
+                    manualStart = true,
+                )
+            }.onSuccess { sessionId ->
+                if (settingsPreferences.lapTimingEnabled.first()) {
+                    lapTimingService.onRecordingStarted(sessionId)
+                }
             }
         }
     }
@@ -173,6 +192,14 @@ class DashboardViewModel(
         val thermal: ThermalStatus,
         val recording: Boolean,
         val sessionId: Long?,
+    )
+
+    private data class AuxState(
+        val profile: SettingsProfile,
+        val live: LiveUi,
+        val alerts: Set<dev.foss.expeditiongauge.alerts.AlertType>,
+        val rotation: Int,
+        val storageBlocked: Boolean,
     )
 
     private data class LiveUi(val session: LivePairingSession?, val receiverCount: Int)
