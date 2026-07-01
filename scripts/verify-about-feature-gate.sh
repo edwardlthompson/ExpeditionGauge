@@ -39,6 +39,11 @@ trap restore EXIT
 
 echo "=== About feature gate verification ==="
 
+if [ ! -d "$WEB_SRC" ]; then
+  echo "SKIP: examples/web not present (android-only child repo)"
+  exit 0
+fi
+
 echo "1/2 Gate with About feature present..."
 bash scripts/feature-gate.sh --stack web --step about-with
 

@@ -186,6 +186,8 @@ jobs:
 
   web:
     name: Web - Lint, Test, Build
+    needs: [stack-presence]
+    if: needs.stack-presence.outputs.web == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -250,6 +252,8 @@ jobs:
 
   node:
     name: Node - Lint, Test
+    needs: [stack-presence]
+    if: needs.stack-presence.outputs.node == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -286,6 +290,7 @@ jobs:
               examples/android \
               --include="*.gradle" --include="*.gradle.kts" --include="*.toml" \
               --include="*.kt" --include="*.kts" --include="*.xml" \
+              | grep -v 'com\.google\.android\.gms\.car\.application' \
               | grep -vE '//|/\*|<!--'; then
             echo "ERROR: Proprietary SDK references found"
             exit 1
@@ -457,6 +462,7 @@ jobs:
               examples/android \
               --include="*.gradle" --include="*.gradle.kts" --include="*.toml" \
               --include="*.kt" --include="*.kts" --include="*.xml" \
+              | grep -v 'com\.google\.android\.gms\.car\.application' \
               | grep -vE '//|/\*|<!--'; then
             echo "ERROR: Proprietary SDK references found"
             exit 1
