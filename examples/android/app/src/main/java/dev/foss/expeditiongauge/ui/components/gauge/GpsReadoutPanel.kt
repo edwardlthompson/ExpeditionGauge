@@ -36,16 +36,25 @@ fun GpsReadoutPanel(
     compact: Boolean = false,
     showTime: Boolean = true,
     showAltitude: Boolean = true,
+    hudCube: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val pad = if (compact) 2.dp else SpacingSm
-    val coordStyle = if (compact) {
-        MaterialTheme.typography.bodySmall.copy(
+    val pad = when {
+        hudCube -> 4.dp
+        compact -> 2.dp
+        else -> SpacingSm
+    }
+    val coordStyle = when {
+        hudCube -> MaterialTheme.typography.bodyLarge.copy(
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold,
+            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight * 1.05f,
+        )
+        compact -> MaterialTheme.typography.bodySmall.copy(
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Medium,
         )
-    } else {
-        MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace)
+        else -> MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace)
     }
     Column(modifier = modifier.padding(pad)) {
         if (showTime) {

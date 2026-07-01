@@ -25,6 +25,8 @@
     <string name="gauge_calibrate">Calibrate / Set Level</string>
     <string name="gauge_speed_unit">%1$s</string>
     <string name="gauge_hdg_label">HDG</string>
+    <string name="gauge_hud_pitch_short">P %1$s</string>
+    <string name="gauge_hud_roll_short">R %1$s</string>
     <string name="gauge_tire_fl">FL</string>
     <string name="gauge_tire_fr">FR</string>
     <string name="gauge_tire_rl">RL</string>

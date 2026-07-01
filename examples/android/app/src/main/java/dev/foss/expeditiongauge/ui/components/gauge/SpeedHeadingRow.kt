@@ -29,16 +29,19 @@ fun SpeedHeadingRow(
     useMetric: Boolean,
     showSpeed: Boolean,
     showHeading: Boolean,
+    enlarged: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     if (!showSpeed && !showHeading) return
     val scale = LocalTextScale.current
+    val baseDigit = if (enlarged) 40f else 28f
     val digitStyle = androidx.compose.ui.text.TextStyle(
-        fontSize = (28f * scale).sp,
-        lineHeight = (32f * scale).sp,
+        fontSize = (baseDigit * scale).sp,
+        lineHeight = (baseDigit * 1.15f * scale).sp,
         fontWeight = FontWeight.Bold,
         fontFamily = FontFamily.Monospace,
     )
+    val unitSize = if (enlarged) 13f else 11f
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -51,6 +54,7 @@ fun SpeedHeadingRow(
                 value = GaugeLogic.formatSpeedPadded(speedMps, useMetric),
                 unit = GaugeLogic.speedUnitLabel(useMetric),
                 digitStyle = digitStyle,
+                unitSizeSp = unitSize,
                 modifier = Modifier.widthIn(min = 88.dp),
             )
         }
@@ -59,6 +63,7 @@ fun SpeedHeadingRow(
                 value = GaugeLogic.formatHeadingPadded(headingDeg),
                 unit = stringResource(R.string.gauge_hdg_label),
                 digitStyle = digitStyle,
+                unitSizeSp = unitSize,
                 modifier = Modifier.widthIn(min = 72.dp),
             )
         }
@@ -70,6 +75,7 @@ private fun HudCompactDigitColumn(
     value: String,
     unit: String,
     digitStyle: androidx.compose.ui.text.TextStyle,
+    unitSizeSp: Float,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -80,7 +86,7 @@ private fun HudCompactDigitColumn(
         Text(
             text = unit,
             color = GaugeYellow,
-            style = GaugeLabelTextStyle.copy(fontSize = (11f * LocalTextScale.current).sp),
+            style = GaugeLabelTextStyle.copy(fontSize = (unitSizeSp * LocalTextScale.current).sp),
         )
     }
 }

@@ -79,6 +79,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.7] — Telemetry cube density (2026-06-30)
+
+### Added
+
+* `TelemetryHudMetaRow` — altitude + clock time + GPS source/sats/HDOP in telemetry cube
+* `TelemetryHudAttitudeRow` — compact pitch/roll and drift β readouts
+* `TelemetryHudVehicleRow` — RPM, battery voltage, total G, slip when OBD/sensors available
+
+### Changed
+
+* Enlarged speed/HDG digits (40sp base) and bold monospace DMS coords in cube mode
+* Telemetry cube uses `SpaceEvenly` layout; altitude/time always visible in cube
+
 ## [2.11.6] — HUD layout insets and TPMS polish (2026-06-30)
 
 ### Added

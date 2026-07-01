@@ -130,3 +130,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 14 / `versionName` 2.11.0 with `ui/dashboard/hud/` cube framework, edge numerals, `UnitDisplay`, `TpmsPressureBands`, menu nav inset
 - **Alternatives considered:** Keep row layout with borders only (rejected — inconsistent small-screen behavior); router-level calibrate button (rejected — detail sheet sufficient)
 - **Consequences:** TWO_TILE fallback below 480dp portrait; portrait-only `isPortraitLayout` axis remap; settings/playback/live use unit-aware labels
+
+### 2026-06-30 — Telemetry cube density v2.11.7
+- **Status:** Accepted
+- **Context:** OnePlus 12 feedback after v2.11.6: telemetry cube had dead vertical space; speed/HDG and coords felt small
+- **Decision:** Ship `versionCode` 21 / `versionName` 2.11.7 with enlarged digits, `TelemetryHudMetaRow` (alt/time/GPS meta), attitude and OBD extras rows, `SpaceEvenly` cube layout
+- **Alternatives considered:** Show lat G in cube (rejected — user removed in v2.11.5); hide alt/time during crawling recording in cube (rejected — wastes tile space)
+- **Consequences:** `SpeedHeadingRow.enlarged`, `GpsReadoutPanel.hudCube`; GAUGE_REFERENCE center section updated
