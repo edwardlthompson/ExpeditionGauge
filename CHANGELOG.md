@@ -79,6 +79,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.9.1] — Post-audit hardening (2026-06-30)
+
+### Added
+
+* Export pipeline unit tests (`PlaybackVideoExporterTest`, `FlyoverVideoExporterTest`)
+* `.trivyignore` for AGP test-harness Netty CVEs (KB-014)
+* `scripts/sync-app-update-from-config.sh` — CI sync of gitignored `app-update.json`
+* Always-on `android-unit-test` CI job
+* ADB smoke split: `_adb-smoke-lib.ps1` + `adb-scenarios/relive.ps1`
+
+### Changed
+
+* ExpeditionGauge [`docs/PRIVACY.md`](docs/PRIVACY.md); `android:allowBackup="false"`
+* Trim [`BUILD_PLAN.md`](BUILD_PLAN.md) to active board (~120 lines); archive audit sprint
+* Narrow FileProvider paths; burn-in MP4 under `cache/exports/`
+* `create-release.ps1` reads Gradle `versionName`
+* F-Droid changelog for versionCode 11
+
+### Fixed
+
+* `ReleaseTagFetcherTest` expects `edwardlthompson/ExpeditionGauge`
+* `sharing-video-card` ADB scenario early-exit returns success correctly
+
 ## [0.11.1](https://github.com/edwardlthompson/agent-project-bootstrap/compare/v0.11.0...v0.11.1) (2026-06-21)
 
 

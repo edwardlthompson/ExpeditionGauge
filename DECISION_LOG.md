@@ -95,3 +95,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 10 / `versionName` 2.9.0 with draft GitHub release; archive BUILD_PLAN Relive wave to `COMPLETED_TASKS.md`
 - **Alternatives considered:** Staggered 2.2–2.9 point releases (rejected: single integrated Relive wave commit matches sprint archive)
 - **Consequences:** `project.config.json` enables all v2 sprint toggles; F-Droid changelog `10.txt` added
+
+### 2026-06-30 — Post-audit hardening v2.9.1
+- **Status:** Accepted
+- **Context:** `/audit` deferred F-005 (privacy/backup), F-007 (Trivy Netty), F-008 (export tests + adb-smoke split); BUILD_PLAN grew to ~280 lines with duplicate archive headers
+- **Decision:** Ship `versionCode` 11 / `versionName` 2.9.1 with `allowBackup=false`, ExpeditionGauge `PRIVACY.md`, `.trivyignore` for AGP test-harness Netty only, export unit tests, adb-smoke modular split, BUILD_PLAN trim to ~120 lines
+- **Alternatives considered:** AGP bump to resolve Netty transitives (deferred — lockfile churn); keep template README (rejected — child repo should describe the app)
+- **Consequences:** Security Scan should pass; README reflects ExpeditionGauge; KB-014 documents Trivy ignore rationale

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <!-- cache_root: Robolectric + FileProvider root resolution (see UpdateApplierTest) -->
-    <cache-path name="cache_root" path="." />
     <cache-path name="updates" path="updates/" />
     <cache-path name="exports" path="exports/" />
     <files-path name="session_photos" path="sessions/" />

@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.about
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -16,8 +17,8 @@ class ReleaseTagFetcherTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun loadReleaseRepoReturnsNullWhenEmpty() {
-        assertNull(ReleaseTagFetcher.loadReleaseRepo(context))
+    fun loadReleaseRepoFromSyncedAssets() {
+        assertEquals("edwardlthompson/ExpeditionGauge", ReleaseTagFetcher.loadReleaseRepo(context))
     }
 
     @Test

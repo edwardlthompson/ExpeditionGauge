@@ -1172,6 +1172,13 @@
       "owner": "maintainer"
     },
     {
+      "path": "scripts/sync-app-update-from-config.sh",
+      "purpose": "Sync gitignored app-update assets from project.config.json",
+      "read_when": "session_start",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
       "path": "scripts/cursor-feature-radar.sh",
       "purpose": "Weekly Cursor docs diff vs registry (soft-fail)",
       "read_when": "maintainer",

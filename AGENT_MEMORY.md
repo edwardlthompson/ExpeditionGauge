@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.9.0** Relive wave. **Dev device:** OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.9.1** (Relive wave + post-audit hardening). **Dev device:** OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -16,6 +16,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | v2 live | 2.1.0 | ✅ Sprint 19 |
 | Insets + orientation + Auto | 2.2.0–2.3.0 | ✅ Sprints 19b–21 |
 | Relive wave | 2.4.0–2.9.0 | ✅ Sprints 22–27 |
+| Post-audit hardening | 2.9.1 | ✅ Audit sprint 2026-06-30 |
 
 ## Tech Stack (ExpeditionGauge)
 

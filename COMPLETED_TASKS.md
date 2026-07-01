@@ -2,6 +2,17 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Audit Sprint — Post v2.9.0 review (2026-06-30)
+
+- ✅ [AGENT] Refresh BUILD_PLAN current state + approval gate (F-001)
+- ✅ [AGENT] CI sync `app-update.json` from `project.config.json` via `sync-app-update-from-config.sh` (F-003)
+- ✅ [AGENT] Narrow FileProvider paths; burn-in under `exports/` (F-004)
+- ✅ [AGENT] Add always-on `android-unit-test` CI job (F-006)
+- ✅ [AUTO] Gates green; `create-release.ps1` reads Gradle `versionName` (F-002 partial)
+- ✅ [AGENT] `allowBackup=false` + ExpeditionGauge `docs/PRIVACY.md` (F-005)
+- ✅ [AGENT] `.trivyignore` for AGP test-harness Netty CVEs; KB-014 (F-007)
+- ✅ [AGENT] `PlaybackVideoExporterTest` + `FlyoverVideoExporterTest`; adb-smoke split into `_adb-smoke-lib.ps1` + `adb-scenarios/relive.ps1` (F-008)
+
 ## Sprint 27 — Sharing polish (2026-06-30)
 
 - ✅ [AGENT] `docs/features/sharing-polish.md`

@@ -118,3 +118,21 @@
 | **Cause** | 30 s `thermal-recording` ADB smoke is regression-only; does not stress CPU/GPS for extended sessions |
 | **Fix** | Manual 20 min phone-only recording at default 50 Hz; log `dumpsys thermalservice` every 5 min; note HUD thermal banner |
 | **Prevention** | Lower log rate in Settings (20→10→5 Hz); connect external IMU to offload phone sensors; see `docs/THERMAL_PERFORMANCE.md` |
+
+### KB-013 — Gitignored app-update assets + FileProvider scope (Audit 2026-06-30)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | In-app update check always null; CI FOSS/FileProvider audit flags broad cache exposure |
+| **Cause** | `app-update.json` is gitignored; fresh clones ship placeholder `OWNER/REPO`. `file_paths.xml` had `cache_root` path `.` exposing all cache files to share intents |
+| **Fix** | Run `bash scripts/sync-app-update-from-config.sh` (also wired in CI before Android builds/tests). Removed `cache_root`; route burn-in MP4 to `cache/exports/` |
+| **Prevention** | Keep `project.config.json` `releaseRepo` as `github.com/owner/repo`; CI sync step must run before Gradle. FileProvider paths: `updates/`, `exports/`, `files/sessions/` only |
+
+### KB-014 — AGP test-harness Netty CVEs in Trivy (Audit 2026-06-30)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Security Scan fails with 10+ HIGH CVEs on `io.netty:*` in `examples/android/app/gradle.lockfile` |
+| **Cause** | Android Gradle Plugin `unified-test-platform-*` pulls Netty 4.1.110/4.1.93 for emulator/test plugins — not packaged in release APK |
+| **Fix** | Root `.trivyignore` lists affected CVE IDs; revisit when AGP bumps transitive Netty |
+| **Prevention** | Do not ignore Netty in runtime classpath; prefer AGP upgrade over blanket ignore when fix version ships |

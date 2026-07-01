@@ -87,7 +87,8 @@ fun AppScreenPlaybackRoute(
             scope.launch {
                 val uri = services.videoSyncEngine.videoUri ?: return@launch
                 val sessionId = playbackState.sessionId ?: return@launch
-                val output = File(context.cacheDir, "session_${sessionId}_burnin.mp4")
+                        val output = File(context.cacheDir, "exports/session_${sessionId}_burnin.mp4")
+                        output.parentFile?.mkdirs()
                 services.videoBurnInExporter.export(
                     videoUri = uri,
                     samples = playbackState.samples,
