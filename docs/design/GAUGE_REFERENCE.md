@@ -52,8 +52,8 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 
 ## Right — Tire pressures
 
-- Top-down **vehicle schematic** centered; four corner blocks per reference layout
-- Each corner: white label chip (`FL tire ›`), bold pressure, temperature, **battery icon**
+- Top-down **sedan schematic** centered (tapered hood, cabin glass, four wheels)
+- Each corner: label chip (dark mode: **black / white text**), bold pressure, temperature, **battery icon**
 - Battery fill from BLE `batteryPct` when sensors connected (see [`TPMS_LAYOUT.md`](TPMS_LAYOUT.md))
 - Center low-pressure icon (blink unless reduced motion / high contrast)
 - High-contrast white-on-black regardless of app light/dark theme
