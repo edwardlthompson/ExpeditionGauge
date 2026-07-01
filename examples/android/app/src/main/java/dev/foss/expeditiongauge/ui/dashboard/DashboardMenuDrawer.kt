@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -27,6 +28,8 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.ui.components.ThemeToggle
+import dev.foss.expeditiongauge.ui.theme.GaugeBackground
+import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
@@ -67,7 +70,11 @@ fun DashboardMenuDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
         drawerContent = {
-            ModalDrawerSheet(modifier = Modifier.fillMaxHeight()) {
+            ModalDrawerSheet(
+                modifier = Modifier.fillMaxHeight(),
+                drawerContainerColor = GaugeBackground,
+                drawerContentColor = GaugeScaleWhite,
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -158,12 +165,16 @@ private fun DrawerNavItem(
     onClose: () -> Unit = {},
 ) {
     NavigationDrawerItem(
-        label = { Text(stringResource(labelRes)) },
+        label = { Text(stringResource(labelRes), color = GaugeScaleWhite) },
         selected = false,
         onClick = {
             onClose()
             onClick()
         },
+        colors = NavigationDrawerItemDefaults.colors(
+            unselectedTextColor = GaugeScaleWhite,
+            unselectedContainerColor = GaugeBackground,
+        ),
     )
 }
 
@@ -182,7 +193,7 @@ private fun PresetDrawerRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(selected = selected, onClick = onSelect)
-        Text(text = presetDrawerLabel(presetId))
+        Text(text = presetDrawerLabel(presetId), color = GaugeScaleWhite)
     }
 }
 

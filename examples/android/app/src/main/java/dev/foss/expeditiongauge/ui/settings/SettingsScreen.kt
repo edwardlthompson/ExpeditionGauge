@@ -24,7 +24,11 @@ import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.recording.RecordingMode
 import dev.foss.expeditiongauge.settings.SpeedUnit
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
+import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
+import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
+import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
@@ -109,15 +113,18 @@ fun SettingsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .padding(SpacingMd)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(SpacingMd),
-    ) {
+    GaugeMenuSurface(modifier = modifier) {
+        GaugeBackHandler(onBack = onBack)
+        Column(
+            modifier = Modifier
+                .padding(SpacingMd)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(SpacingMd),
+        ) {
         Text(
             text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = GaugeYellow,
         )
         SettingsGeneralSections(
             themeMode = themeMode,
@@ -264,6 +271,7 @@ fun SettingsScreen(
         )
         Button(onClick = onBack) {
             Text(stringResource(R.string.settings_close))
+        }
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.ui.dashboard
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -82,6 +83,7 @@ fun DashboardScreen(
     tpmsEnabled: Boolean = false,
     pressureUnit: dev.foss.expeditiongauge.settings.PressureUnit = dev.foss.expeditiongauge.settings.PressureUnit.PSI,
     tempUnit: dev.foss.expeditiongauge.settings.TempUnit = dev.foss.expeditiongauge.settings.TempUnit.CELSIUS,
+    speedUnit: dev.foss.expeditiongauge.settings.SpeedUnit = dev.foss.expeditiongauge.settings.SpeedUnit.METRIC,
     logIntervalMs: Long = 20L,
     lapTimingEnabled: Boolean = false,
     lapTimingState: PredictiveTimingState = PredictiveTimingState(),
@@ -98,6 +100,8 @@ fun DashboardScreen(
     LaunchedEffect(displayRotation) {
         viewModel.updateDisplayRotation(displayRotation)
     }
+
+    BackHandler(enabled = drawerOpen) { drawerOpen = false }
 
     DashboardMenuDrawer(
         drawerOpen = drawerOpen,
@@ -268,6 +272,7 @@ fun DashboardScreen(
                         tpmsEnabled = tpmsEnabled,
                         pressureUnit = pressureUnit,
                         tempUnit = tempUnit,
+                        speedUnit = speedUnit,
                         attitudeGaugeMode = attitudeGaugeMode,
                         activeAlerts = uiState.activeAlerts,
                         displayRotation = uiState.displayRotation,

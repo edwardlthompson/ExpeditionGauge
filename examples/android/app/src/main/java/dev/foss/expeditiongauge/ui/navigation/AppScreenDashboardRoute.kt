@@ -21,6 +21,7 @@ import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.settings.MediaCompressionQuality
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsLogic
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.stats.SessionAggregateStats
 import dev.foss.expeditiongauge.ui.AppScreen
@@ -58,6 +59,7 @@ fun AppScreenDashboardRoute(
     tpmsEnabled: Boolean,
     pressureUnit: PressureUnit,
     tempUnit: TempUnit,
+    speedUnit: SpeedUnit,
     logInterval: Long,
     lapTimingEnabled: Boolean,
     lapTimingState: dev.foss.expeditiongauge.timing.PredictiveTimingState,
@@ -173,6 +175,7 @@ fun AppScreenDashboardRoute(
         tpmsEnabled = tpmsEnabled,
         pressureUnit = pressureUnit,
         tempUnit = tempUnit,
+        speedUnit = speedUnit,
         logIntervalMs = logInterval,
         lapTimingEnabled = lapTimingEnabled,
         lapTimingState = lapTimingState,

@@ -13,6 +13,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonationsConfig
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
+import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
+import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
+import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -27,24 +31,27 @@ fun AboutScreen(
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
-    Column(
-        modifier = modifier.padding(SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(SpacingMd),
-    ) {
+    GaugeMenuSurface(modifier = modifier) {
+        GaugeBackHandler(onBack = onBack)
+        Column(
+            modifier = Modifier.padding(SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(SpacingMd),
+        ) {
         Text(
             text = stringResource(R.string.about_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = GaugeYellow,
         )
-        Text(text = stringResource(R.string.about_version, version))
-        Text(text = stringResource(R.string.about_format, installedFormat))
-        Text(text = updateStatus)
+        Text(text = stringResource(R.string.about_version, version), color = GaugeScaleWhite)
+        Text(text = stringResource(R.string.about_format, installedFormat), color = GaugeScaleWhite)
+        Text(text = updateStatus, color = GaugeScaleWhite)
         if (canApplyUpdate) {
             Button(onClick = onApplyUpdate) {
                 Text(stringResource(R.string.about_update_apply))
             }
         }
         if (donations.enabled && donations.links.isNotEmpty()) {
-            Text(text = donations.message)
+            Text(text = donations.message, color = GaugeScaleWhite)
             donations.links.forEach { link ->
                 Text(
                     text = link.label,
@@ -55,6 +62,7 @@ fun AboutScreen(
         }
         Button(onClick = onBack) {
             Text(stringResource(R.string.about_close))
+        }
         }
     }
 }

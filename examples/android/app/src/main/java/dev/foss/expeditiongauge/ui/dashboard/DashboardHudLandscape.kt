@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import dev.foss.expeditiongauge.FeatureFlags
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.GaugeLogic
@@ -41,14 +41,14 @@ fun DashboardHudLandscape(
     val hideGpsDetail = props.crawlingMode && props.recording
     val attitudeWeight = if (emphasizeAttitude) preset.weights.attitude.coerceAtLeast(1.5f) else preset.weights.attitude
     val attitudeSize = spec.attitudeGaugeSizeDp.dp
-    val speedSize = spec.speedometerGaugeSizeDp.dp
+    val useMetric = props.speedUnit == SpeedUnit.METRIC
     val hudDescription = stringResource(
         R.string.gauge_hud_a11y,
         GaugeLogic.formatSignedDegrees(telemetry.pitchDeg),
         GaugeLogic.formatSignedDegrees(telemetry.rollDeg),
         GaugeLogic.formatHeading(telemetry.headingDeg),
         GaugeLogic.formatWholeG(telemetry.latG),
-        GaugeLogic.formatSpeedMps(telemetry.speedMps, useMetric = true),
+        GaugeLogic.formatSpeedMps(telemetry.speedMps, useMetric),
     )
     Row(modifier = modifier.semantics { contentDescription = hudDescription }) {
         if (preset.showAttitude && attitudeWeight > 0f) {
@@ -86,7 +86,7 @@ fun DashboardHudLandscape(
                     SpeedometerGauge(
                         speedMps = telemetry.speedMps,
                         speedFromObd = telemetry.speedFromObd,
-                        gaugeSizeDp = speedSize,
+                        useMetric = useMetric,
                     )
                     telemetry.rpm?.let { rpm ->
                         Text(
@@ -118,6 +118,7 @@ fun DashboardHudLandscape(
                             altitudeM = telemetry.altitudeM,
                             driftAngleDeg = telemetry.driftAngleDeg,
                             showDriftAngle = props.showDriftAngle || preset.emphasizeDrift,
+                            useMetric = useMetric,
                         )
                     }
                 }
@@ -137,7 +138,7 @@ fun DashboardHudLandscape(
                 }
             }
         }
-        if (preset.showTirePressure && FeatureFlags.tpmsEnabled) {
+        if (preset.showTirePressure) {
             Column(modifier = Modifier.weight(preset.weights.side.coerceAtLeast(0.1f)).fillMaxHeight()) {
                 TirePressurePanel(
                     frontLeft = telemetry.frontLeftPressure,

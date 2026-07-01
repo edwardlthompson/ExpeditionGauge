@@ -57,7 +57,7 @@ class PhoneGpsProvider(
             headingDeg = heading,
             latitude = location.latitude,
             longitude = location.longitude,
-            altitudeM = location.altitude,
+            altitudeM = AltitudeNormalizer.fromLocation(location),
             gpsFix = true,
             gpsSource = "phone",
             driftAngleDeg = driftEstimator.currentSample().driftAngleDeg,

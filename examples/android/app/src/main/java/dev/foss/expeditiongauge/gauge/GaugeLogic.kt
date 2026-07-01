@@ -18,6 +18,19 @@ object GaugeLogic {
         return "$sign${"%.1f".format(value)}°"
     }
 
+    fun formatWholeDegrees(value: Float): String {
+        val sign = if (value >= 0f) "+" else ""
+        return "$sign${value.roundToInt()}°"
+    }
+
+    fun formatAltitude(meters: Double, useMetric: Boolean): String {
+        return if (useMetric) {
+            "${meters.roundToInt()} m"
+        } else {
+            "${(meters * 3.28084).roundToInt()} ft"
+        }
+    }
+
     fun formatHeading(headingDeg: Float): String {
         val normalized = ((headingDeg % 360f) + 360f) % 360f
         return "${normalized.toInt()}°"

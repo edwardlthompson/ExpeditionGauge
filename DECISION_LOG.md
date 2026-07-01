@@ -116,3 +116,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 12 / `versionName` 2.10.0 with `GaugeDisplayRotation`, drawer + top-bar Play/Stop, Room v6 protect/trigger columns, `SessionStorageBudget`, `AutoRecordMonitor`
 - **Alternatives considered:** Static portrait axis swap (rejected — mount orientation varies); stop recording when storage full (rejected — dashcam loop deletes oldest unprotected)
 - **Consequences:** ADB smokes use `record_play`/`record_stop`; destructive Room migration on dev upgrades; acceptance doc `docs/features/dashboard-hud-v2.md`
+
+### 2026-06-30 — HUD readability v2.10.1
+- **Status:** Accepted
+- **Context:** OnePlus 12 field feedback after v2.10.0: imperial speed not wired, canvas speed arc cluttered, elevation below MSL, menus too bright, TPMS layout unclear
+- **Decision:** Ship `versionCode` 13 / `versionName` 2.10.1 with digital-only speed, `speedUnit` through HUD, `AltitudeNormalizer` (API 34+ MSL + EGM96 fallback), `GaugeMenuSurface` dark chrome, TPMS 2×2 grid, whole-number pitch/roll
+- **Alternatives considered:** Ship cube layout in same release (rejected — combined roadmap splits Phase A/B); router-level BackHandler (rejected — exceeds 300-line static gate)
+- **Consequences:** 193 unit tests pass; nav-bar inset deferred to v2.11.0 cube work; combined HUD roadmap Phase B next

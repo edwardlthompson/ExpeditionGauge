@@ -79,6 +79,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.10.1] — HUD readability and units (2026-06-30)
+
+### Added
+
+* `AltitudeNormalizer` — API 34+ MSL altitude with EGM96 geoid fallback for consistent elevation readouts
+* `GaugeMenuSurface` dark menu chrome; `GaugeBackHandler` on settings/sessions/about sub-screens
+* Drawer `BackHandler` closes menu before exiting dashboard
+* Imperial/metric speed unit wired through HUD (`speedUnit` → `GpsReadoutPanel`, `SpeedometerGauge`)
+* TPMS 2×2 grid with wheel icons; `--` when sensor disconnected
+* Unit tests: `AltitudeNormalizerTest`, `GaugeLogicAltitudeTest`, `TirePressurePanelTest`
+
+### Changed
+
+* Speedometer — digital-only readout (removed canvas arc)
+* Pitch/roll HUD labels — whole-number degrees via `formatWholeDegrees`
+* Settings Imperial chip also sets °F/°C temperature unit
+* `gauge_altitude` string format supports unit-aware display
+
 ## [2.10.0] — Dashboard HUD v2 (2026-06-30)
 
 ### Added

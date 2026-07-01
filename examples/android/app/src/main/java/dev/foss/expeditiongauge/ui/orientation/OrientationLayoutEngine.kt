@@ -6,7 +6,6 @@ package dev.foss.expeditiongauge.ui.orientation
 data class OrientationLayoutSpec(
     val isLandscape: Boolean,
     val attitudeGaugeSizeDp: Float,
-    val speedometerGaugeSizeDp: Float,
     val useCompactGps: Boolean,
 )
 
@@ -18,14 +17,12 @@ object OrientationLayoutEngine {
             OrientationLayoutSpec(
                 isLandscape = true,
                 attitudeGaugeSizeDp = 180f,
-                speedometerGaugeSizeDp = 160f,
                 useCompactGps = false,
             )
         } else {
             OrientationLayoutSpec(
                 isLandscape = false,
                 attitudeGaugeSizeDp = 148f,
-                speedometerGaugeSizeDp = 120f,
                 useCompactGps = false,
             )
         }

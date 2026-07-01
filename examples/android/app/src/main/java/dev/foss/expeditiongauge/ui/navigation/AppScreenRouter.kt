@@ -130,6 +130,7 @@ fun AppScreenRouter(
             tpmsEnabled = tpmsEnabled,
             pressureUnit = pressureUnit,
             tempUnit = tempUnit,
+            speedUnit = speedUnit,
             logInterval = logInterval,
             lapTimingEnabled = lapTimingEnabled,
             lapTimingState = lapTimingState,

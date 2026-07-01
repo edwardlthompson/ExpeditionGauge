@@ -29,6 +29,8 @@ import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import dev.foss.expeditiongauge.ui.stats.RichSessionCard
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
+import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
@@ -60,11 +62,13 @@ fun SessionListScreen(
     val sessions by sessionsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     val summaryById = remember(statsSummaries) { statsSummaries.associateBy { it.sessionId } }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(SpacingMd),
-    ) {
+    GaugeMenuSurface(modifier = modifier) {
+        GaugeBackHandler(onBack = onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SpacingMd),
+        ) {
         Text(
             text = stringResource(R.string.playback_sessions),
             style = MaterialTheme.typography.headlineSmall,
@@ -118,6 +122,7 @@ fun SessionListScreen(
         }
         Button(onClick = onBack) {
             Text(stringResource(R.string.settings_close))
+        }
         }
     }
 }

@@ -167,11 +167,11 @@ fun AttitudeGMeterGauge(
         }
         if (mode == AttitudeGaugeMode.ATTITUDE || mode == AttitudeGaugeMode.HYBRID) {
             Text(
-                text = stringResource(R.string.gauge_pitch, GaugeLogic.formatSignedDegrees(pitchDeg)),
+                text = stringResource(R.string.gauge_pitch, GaugeLogic.formatWholeDegrees(pitchDeg)),
                 color = GaugeScaleWhite,
             )
             Text(
-                text = stringResource(R.string.gauge_roll, GaugeLogic.formatSignedDegrees(rollDeg)),
+                text = stringResource(R.string.gauge_roll, GaugeLogic.formatWholeDegrees(rollDeg)),
                 color = GaugeScaleWhite,
             )
         }
@@ -207,11 +207,11 @@ fun AttitudeGMeterGauge(
             ) {
                 Text(stringResource(R.string.gauge_detail_title), color = GaugeYellow)
                 Text(
-                    stringResource(R.string.gauge_pitch, GaugeLogic.formatSignedDegrees(pitchDeg)),
+                    stringResource(R.string.gauge_pitch, GaugeLogic.formatWholeDegrees(pitchDeg)),
                     color = GaugeScaleWhite,
                 )
                 Text(
-                    stringResource(R.string.gauge_roll, GaugeLogic.formatSignedDegrees(rollDeg)),
+                    stringResource(R.string.gauge_roll, GaugeLogic.formatWholeDegrees(rollDeg)),
                     color = GaugeScaleWhite,
                 )
                 Text(stringResource(R.string.gauge_lat_g, latGText), color = GaugeScaleWhite)

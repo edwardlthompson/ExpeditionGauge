@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.ui.components.gauge.AttitudeGMeterGauge
 import dev.foss.expeditiongauge.ui.components.gauge.GpsReadoutPanel
 import dev.foss.expeditiongauge.ui.components.gauge.GpsStatusChip
@@ -25,7 +25,7 @@ fun DashboardHudPortrait(
     val telemetry = props.telemetry
     val spec = props.layoutSpec
     val attitudeSize = spec.attitudeGaugeSizeDp.dp
-    val speedSize = spec.speedometerGaugeSizeDp.dp
+    val useMetric = props.speedUnit == SpeedUnit.METRIC
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,7 +59,7 @@ fun DashboardHudPortrait(
                 SpeedometerGauge(
                     speedMps = telemetry.speedMps,
                     speedFromObd = telemetry.speedFromObd,
-                    gaugeSizeDp = speedSize,
+                    useMetric = useMetric,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -81,12 +81,13 @@ fun DashboardHudPortrait(
                             altitudeM = telemetry.altitudeM,
                             driftAngleDeg = telemetry.driftAngleDeg,
                             showDriftAngle = props.showDriftAngle || preset.emphasizeDrift,
+                            useMetric = useMetric,
                         )
                     }
                 }
             }
         }
-        if (preset.showTirePressure && FeatureFlags.tpmsEnabled) {
+        if (preset.showTirePressure) {
             TirePressurePanel(
                 frontLeft = telemetry.frontLeftPressure,
                 frontRight = telemetry.frontRightPressure,

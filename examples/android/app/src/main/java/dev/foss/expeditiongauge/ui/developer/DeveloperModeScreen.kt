@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -29,6 +30,7 @@ fun DeveloperModeScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    GaugeBackHandler(onBack = onBack)
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -25,7 +25,11 @@ import dev.foss.expeditiongauge.ble.BleImuManager
 import dev.foss.expeditiongauge.ble.ImuDeviceSession
 import dev.foss.expeditiongauge.ble.ImuPlacement
 import dev.foss.expeditiongauge.ble.SignalQuality
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeGreen
+import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
+import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
+import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -37,15 +41,18 @@ fun ImuManagementScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(SpacingMd),
-    ) {
+    GaugeMenuSurface(modifier = modifier) {
+        GaugeBackHandler(onBack = onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(SpacingMd),
+        ) {
         Text(
             text = stringResource(R.string.imu_management_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = GaugeYellow,
         )
         Button(
             onClick = { bleImuManager.startScan() },
@@ -63,6 +70,7 @@ fun ImuManagementScreen(
         }
         Button(onClick = onBack) {
             Text(stringResource(R.string.settings_close))
+        }
         }
     }
 }

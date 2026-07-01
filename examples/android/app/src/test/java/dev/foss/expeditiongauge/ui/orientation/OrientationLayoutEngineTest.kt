@@ -12,7 +12,6 @@ class OrientationLayoutEngineTest {
         val spec = OrientationLayoutEngine.spec(widthDp = 800f, heightDp = 400f)
         assertTrue(spec.isLandscape)
         assertEquals(180f, spec.attitudeGaugeSizeDp, 0.01f)
-        assertEquals(160f, spec.speedometerGaugeSizeDp, 0.01f)
         assertFalse(spec.useCompactGps)
     }
 
@@ -21,7 +20,6 @@ class OrientationLayoutEngineTest {
         val spec = OrientationLayoutEngine.spec(widthDp = 400f, heightDp = 800f)
         assertFalse(spec.isLandscape)
         assertEquals(148f, spec.attitudeGaugeSizeDp, 0.01f)
-        assertEquals(120f, spec.speedometerGaugeSizeDp, 0.01f)
         assertFalse(spec.useCompactGps)
     }
 

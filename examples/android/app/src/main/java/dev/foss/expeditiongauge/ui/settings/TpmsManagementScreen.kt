@@ -23,6 +23,10 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.ble.ImuPlacement
 import dev.foss.expeditiongauge.ble.tpms.BleTpmsManager
 import dev.foss.expeditiongauge.ble.tpms.TpmsDeviceSession
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
+import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
+import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
+import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -32,15 +36,18 @@ fun TpmsManagementScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(SpacingMd),
-        verticalArrangement = Arrangement.spacedBy(SpacingMd),
-    ) {
+    GaugeMenuSurface(modifier = modifier) {
+        GaugeBackHandler(onBack = onBack)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SpacingMd),
+            verticalArrangement = Arrangement.spacedBy(SpacingMd),
+        ) {
         Text(
             text = stringResource(R.string.tpms_management_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = GaugeYellow,
         )
         Button(
             onClick = { bleTpmsManager.startScan() },
@@ -58,6 +65,7 @@ fun TpmsManagementScreen(
         }
         Button(onClick = onBack) {
             Text(stringResource(R.string.settings_close))
+        }
         }
     }
 }

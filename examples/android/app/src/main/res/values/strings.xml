@@ -38,7 +38,7 @@
     <string name="gauge_time">%1$s</string>
     <string name="gauge_coords_line1">%1$s</string>
     <string name="gauge_coords_line2">%1$s</string>
-    <string name="gauge_altitude">Alt: %1$d m</string>
+    <string name="gauge_altitude">Alt: %1$s</string>
     <string name="gauge_drift">β: %1$.1f°</string>
     <string name="gauge_lat_g">Lat G: %1$s</string>
     <string name="gauge_hud_a11y">Pitch: %1$s Roll: %2$s HDG %3$s Lat G: %4$s Speed %5$s</string>

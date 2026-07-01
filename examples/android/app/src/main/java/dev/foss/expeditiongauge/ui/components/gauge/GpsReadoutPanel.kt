@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
@@ -21,6 +22,7 @@ fun GpsReadoutPanel(
     altitudeM: Double?,
     driftAngleDeg: Float?,
     showDriftAngle: Boolean,
+    useMetric: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(SpacingSm)) {
@@ -40,7 +42,7 @@ fun GpsReadoutPanel(
         }
         altitudeM?.let {
             Text(
-                text = stringResource(R.string.gauge_altitude, it.toInt()),
+                text = stringResource(R.string.gauge_altitude, GaugeLogic.formatAltitude(it, useMetric)),
                 color = GaugeScaleWhite,
             )
         }

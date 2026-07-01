@@ -150,7 +150,14 @@ fun AppScreenSettingsRoute(
         },
         brightnessMode = brightnessMode,
         onBrightnessModeSelect = onBrightnessModeSelect,
-        onSpeedUnitSelect = { unit -> scope.launch { services.settingsPreferences.setSpeedUnit(unit) } },
+        onSpeedUnitSelect = { unit ->
+            scope.launch {
+                services.settingsPreferences.setSpeedUnit(unit)
+                services.settingsPreferences.setTempUnit(
+                    if (unit == SpeedUnit.IMPERIAL) TempUnit.FAHRENHEIT else TempUnit.CELSIUS,
+                )
+            }
+        },
         onLogIntervalSelect = { ms -> scope.launch { services.settingsPreferences.setLogIntervalMs(ms) } },
         onObdDeviceSelect = { address ->
             scope.launch {

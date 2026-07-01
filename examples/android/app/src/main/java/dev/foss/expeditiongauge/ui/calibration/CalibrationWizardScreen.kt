@@ -28,6 +28,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.calibration.CalibrationWizardStep
 import dev.foss.expeditiongauge.calibration.CalibrationWizardStore
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeGreen
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -47,6 +48,8 @@ fun CalibrationWizardScreen(
     var stepIndex by remember { mutableIntStateOf(0) }
     val step = steps[stepIndex]
     val scope = rememberCoroutineScope()
+
+    GaugeBackHandler(onBack = onBack)
 
     Column(
         modifier = modifier

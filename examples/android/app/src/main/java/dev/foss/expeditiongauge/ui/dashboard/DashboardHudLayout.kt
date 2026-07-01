@@ -14,6 +14,7 @@ import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutEngine
@@ -31,6 +32,7 @@ fun DashboardHudLayout(
     tpmsEnabled: Boolean = false,
     pressureUnit: PressureUnit = PressureUnit.PSI,
     tempUnit: TempUnit = TempUnit.CELSIUS,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
     activeAlerts: Set<AlertType> = emptySet(),
     displayRotation: Int = 0,
@@ -48,6 +50,7 @@ fun DashboardHudLayout(
             tpmsEnabled = tpmsEnabled,
             pressureUnit = pressureUnit,
             tempUnit = tempUnit,
+            speedUnit = speedUnit,
             attitudeGaugeMode = attitudeGaugeMode,
             activeAlerts = activeAlerts,
             layoutSpec = spec,
