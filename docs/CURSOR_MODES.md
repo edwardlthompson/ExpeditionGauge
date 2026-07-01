@@ -7,10 +7,9 @@
 | Mode | When | Artifact | Do not use for |
 |------|------|----------|----------------|
 | **Ask** | Read-only exploration, architecture questions, index lookup | [`TEMPLATE_INDEX.json`](../TEMPLATE_INDEX.json), [`KNOWLEDGE_BASE.md`](../KNOWLEDGE_BASE.md) | Editing files |
-| **Plan** | Non-trivial work: features, ADRs, parallel scope, schema changes | BUILD_PLAN row + mandatory `### Critique` | Mechanical lint fixes |
+| **Plan** | Non-trivial work: features, ADRs, parallel scope, schema changes | BUILD_PLAN row + mandatory `### Critique` + `### Parallelization` | Mechanical lint fixes |
 | **Agent** | Approved plan execution, `[AGENT]` BUILD_PLAN rows, gate autofix | [`watch-agent-gates.sh`](../scripts/watch-agent-gates.sh) | Unapproved architecture |
 | **Debug** | Unknown root cause: CI red, flaky tests, 3-strike failures | Runtime logs + KB + [`FOR_AGENTS.md`](FOR_AGENTS.md) Failure Playbook | Pre-release checklists |
-
 Full BUILD_PLAN owner labels (`AGENT`/`HUMAN`/`ADB`/`AUTO`) are orthogonal — see [`BUILD_PLAN.md`](../BUILD_PLAN.md).
 
 ## Trivial vs non-trivial
@@ -22,7 +21,6 @@ Full BUILD_PLAN owner labels (`AGENT`/`HUMAN`/`ADB`/`AUTO`) are orthogonal — s
 | New feature container, ADR, parallel scope | **Plan** | Sprint 2 `docs/features/{name}.md` row |
 | Same fix failed 3× or CI red, unknown cause | **Debug** | Lighthouse flake (KB-004); Playwright hang (KB-005) |
 | Mid-task architecture pivot | **Plan** | Shared type change during feature work |
-
 If uncertain, default to **Plan** and note "uncertain trivial" for human correction.
 
 ## When to switch
@@ -37,7 +35,6 @@ If uncertain, default to **Plan** and note "uncertain trivial" for human correct
 | Debug | Agent | Root cause confirmed; fix approach agreed |
 | Debug | Plan | Fix requires architectural change |
 | Any | Ask | Exploratory question mid-session |
-
 Do not debug in Plan Mode. Do not edit in Ask Mode.
 
 ```mermaid
@@ -51,6 +48,7 @@ flowchart TD
   Agent -->|Gate fail or 3-strike| Debug[Debug Mode]
   Debug -->|Root cause found| Agent
   Agent -->|Scope creep| Plan
+
 ```
 
 ## Prompt shortcuts
@@ -62,7 +60,6 @@ flowchart TD
 | 20 | Debug | Defect investigation |
 | 21 | Agent | Approved BUILD_PLAN execution |
 | 3 | Agent | Pre-release audit (not Debug) |
-
 Pre-release audit: [`INITIALIZATION_PROMPT.md`](INITIALIZATION_PROMPT.md) §7a. Defect triage: §7b.
 
 ## Batch commands
@@ -73,5 +70,4 @@ Slash commands in `.cursor/commands/` load recipes when you type `/audit`, `/boo
 |----------|-----|
 | Humans (first time) | [`docs/help/BATCH_COMMANDS.md`](help/BATCH_COMMANDS.md) |
 | Agents / maintainers | [`docs/BATCH_COMMANDS.md`](BATCH_COMMANDS.md) |
-
 Bare words (`audit`) also work via `.cursor/rules/batch-commands.mdc`; prefer `/` menu when bare words fail.

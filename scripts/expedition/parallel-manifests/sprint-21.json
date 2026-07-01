@@ -1,0 +1,54 @@
+{
+  "sprint": "21",
+  "sequentialLockStep": 4,
+  "sequentialLockPattern": "CarTelemetryHost",
+  "mergeBeforeStep": 5,
+  "parallelAfterStep": 4,
+  "agents": [
+    {
+      "id": "A",
+      "slug": "car-telemetry-pane",
+      "branch": "feature/agent-car-telemetry-pane",
+      "owner": "AGENT",
+      "task": "TelemetryPaneScreen — PaneTemplate + thresholds",
+      "scopes": [
+        "examples/android/car/src/main/java/dev/foss/expeditiongauge/car/ui/TelemetryPaneScreen.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/android-auto.md"
+    },
+    {
+      "id": "B",
+      "slug": "car-settings",
+      "branch": "feature/agent-car-settings",
+      "owner": "AGENT",
+      "task": "Settings — Android Auto toggle + metric allowlist UI",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/settings/SettingsAndroidAutoOptions.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/android-auto.md"
+    },
+    {
+      "id": "C",
+      "slug": "car-feature-flag",
+      "branch": "feature/agent-car-feature-flag",
+      "owner": "AGENT",
+      "task": "FeatureFlags.androidAutoEnabled — graceful no-op when disabled",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/FeatureFlags.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/android-auto.md"
+    }
+  ],
+  "sequentialOnly": [
+    "BUILD_PLAN.md",
+    "examples/android/settings.gradle.kts",
+    "examples/android/car/build.gradle.kts",
+    "examples/android/car/src/main/java/dev/foss/expeditiongauge/car/ExpeditionGaugeCarAppService.kt",
+    "examples/android/car/src/main/java/dev/foss/expeditiongauge/car/CarTelemetryHost.kt",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/recording"
+  ],
+  "postParallelAuto": []
+}

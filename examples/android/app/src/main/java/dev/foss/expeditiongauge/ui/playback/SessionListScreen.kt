@@ -19,10 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
+import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import dev.foss.expeditiongauge.ui.stats.RichSessionCard
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -40,11 +44,20 @@ fun SessionListScreen(
     modifier: Modifier = Modifier,
 ) {
     var searchQuery by remember { mutableStateOf("") }
-    val sessions by if (searchQuery.isBlank()) {
-        database.recordingSessionDao().observeAll()
-    } else {
-        database.recordingSessionDao().observeSearch(searchQuery)
-    }.collectAsStateWithLifecycle(initialValue = emptyList())
+    var activityFilter by remember { mutableStateOf<ActivityType?>(null) }
+    val sessionsFlow = remember(searchQuery, activityFilter) {
+        if (FeatureFlags.activityLibraryEnabled) {
+            database.recordingSessionDao().observeFiltered(
+                activityType = activityFilter?.name.orEmpty(),
+                query = searchQuery.trim(),
+            )
+        } else if (searchQuery.isBlank()) {
+            database.recordingSessionDao().observeAll()
+        } else {
+            database.recordingSessionDao().observeSearch(searchQuery)
+        }
+    }
+    val sessions by sessionsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     val summaryById = remember(statsSummaries) { statsSummaries.associateBy { it.sessionId } }
 
     Column(
@@ -67,6 +80,12 @@ fun SessionListScreen(
                 .testTag("session_search"),
             singleLine = true,
         )
+        if (FeatureFlags.activityLibraryEnabled) {
+            ActivityTypeFilterRow(
+                selected = activityFilter,
+                onSelected = { activityFilter = it },
+            )
+        }
         LazyColumn(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(SpacingMd),
@@ -86,6 +105,7 @@ fun SessionListScreen(
                         onExport = onSessionExportZip?.let { export ->
                             { export(session.id) }
                         },
+                        onEdit = { onSessionEdit(session.id) },
                     )
                 } else {
                     FallbackSessionCard(
@@ -109,7 +129,7 @@ private fun FallbackSessionCard(
     onEdit: () -> Unit,
 ) {
     RichSessionCard(
-        summary = dev.foss.expeditiongauge.stats.SessionStatsSummary(
+        summary = SessionStatsSummary(
             sessionId = session.id,
             name = session.name,
             durationMs = ((session.endTimeMs ?: session.startTimeMs) - session.startTimeMs).coerceAtLeast(0),
@@ -117,10 +137,16 @@ private fun FallbackSessionCard(
             peakLatG = null,
             slipEventCount = 0,
             eventCount = 0,
+            activityType = session.activityType,
         ),
         onPlay = onPlay,
     )
-    Button(onClick = onEdit, modifier = Modifier.testTag("session_edit")) {
+    Button(
+        onClick = onEdit,
+        modifier = Modifier
+            .testTag("session_edit")
+            .semantics { contentDescription = "Edit metadata" },
+    ) {
         Text(stringResource(R.string.session_metadata_edit))
     }
 }

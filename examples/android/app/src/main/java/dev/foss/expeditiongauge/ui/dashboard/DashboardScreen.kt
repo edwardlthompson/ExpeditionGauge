@@ -13,7 +13,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import dev.foss.expeditiongauge.ui.layout.InsetAwareScaffold
+import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -30,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonationsConfig
+import dev.foss.expeditiongauge.stats.SessionAggregateStats
 import dev.foss.expeditiongauge.ui.about.AboutScreen
 import dev.foss.expeditiongauge.ui.components.ThemeToggle
 import dev.foss.expeditiongauge.ui.components.gauge.ImuStatusStrip
@@ -73,6 +75,9 @@ fun DashboardScreen(
     onSessionsOpen: () -> Unit,
     onStatsOpen: () -> Unit,
     onMarkEvent: () -> Unit,
+    onAttachMediaCamera: (() -> Unit)? = null,
+    onAttachMediaGallery: (() -> Unit)? = null,
+    onAttachMediaStub: (() -> Unit)? = null,
     onStartLive: () -> Unit,
     onStopLive: () -> Unit,
     tpmsEnabled: Boolean = false,
@@ -83,17 +88,22 @@ fun DashboardScreen(
     lapTimingState: PredictiveTimingState = PredictiveTimingState(),
     attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
         dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE,
+    statsAggregate: SessionAggregateStats = SessionAggregateStats(0, 0L, null),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
     val preset = uiState.activePreset
     var showRecordingAdvanced by remember { mutableStateOf(false) }
 
-    Scaffold(
+    InsetAwareScaffold(
         containerColor = GaugeBackground,
         floatingActionButton = {
             if (FeatureFlags.markEventEnabled) {
-                MarkEventFab(visible = uiState.recording, onMarkEvent = onMarkEvent)
+                MarkEventFab(
+                    visible = uiState.recording,
+                    onMarkEvent = onMarkEvent,
+                    modifier = Modifier.navigationBarBottomPadding(),
+                )
             }
         },
         topBar = {
@@ -192,6 +202,9 @@ fun DashboardScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
+                if (!uiState.recording && FeatureFlags.activityLibraryEnabled) {
+                    HomeQuickStatsStrip(aggregate = statsAggregate)
+                }
                 if (uiState.thermalStatus != dev.foss.expeditiongauge.thermal.ThermalStatus.Normal) {
                     Text(
                         text = stringResource(R.string.thermal_warning),
@@ -249,6 +262,9 @@ fun DashboardScreen(
                     visible = showRecordingAdvanced && uiState.recording,
                     logIntervalHz = (1000 / logIntervalMs.coerceAtLeast(1)).toInt(),
                     onDismiss = { showRecordingAdvanced = false },
+                    onAttachCamera = onAttachMediaCamera,
+                    onAttachGallery = onAttachMediaGallery,
+                    onAttachStub = onAttachMediaStub,
                 )
                 if (!isOnline) {
                     DashboardOfflineBanner()

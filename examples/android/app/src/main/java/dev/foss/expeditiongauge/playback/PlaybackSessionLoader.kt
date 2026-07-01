@@ -10,11 +10,29 @@ object PlaybackSessionLoader {
     private suspend fun loadMarkEventTimestamps(services: ExpeditionGaugeServices, sessionId: Long): List<Long> =
         services.database.sessionEventDao().getBySession(sessionId).map { it.timestampMs }
 
+    private suspend fun loadMediaAttachments(
+        services: ExpeditionGaugeServices,
+        sessionId: Long,
+    ): List<MediaAttachmentMarker> =
+        services.sessionMediaRepository.listForSession(sessionId).map { entity ->
+            MediaAttachmentMarker(
+                mediaId = entity.id,
+                timestampMs = entity.timestampMs,
+                label = if (entity.mediaKind.name == "VIDEO") "Video" else "Photo",
+            )
+        }
+
     suspend fun load(services: ExpeditionGaugeServices, sessionId: Long) {
         val samples = services.database.sampleDao().getBySession(sessionId)
         val alertTimestamps = loadAlertTimestamps(services, sessionId)
         val markTimestamps = loadMarkEventTimestamps(services, sessionId)
-        val markers = PlaybackEngine.computeMarkers(samples, alertTimestamps, markTimestamps)
+        val mediaAttachments = loadMediaAttachments(services, sessionId)
+        val markers = PlaybackEngine.computeMarkers(
+            samples,
+            alertTimestamps,
+            markTimestamps,
+            mediaAttachments,
+        )
         val config = services.lapTimingService.getTrackConfig(sessionId)
         services.playbackEngine.loadSession(sessionId, samples, markers)
         services.playbackEngine.setSectorLinesGeoJson(config?.sectorLinesGeoJson)
@@ -33,7 +51,13 @@ object PlaybackSessionLoader {
         val ghostConfig = services.lapTimingService.getTrackConfig(ghostSessionId)
         val alertTimestamps = loadAlertTimestamps(services, primarySessionId)
         val markTimestamps = loadMarkEventTimestamps(services, primarySessionId)
-        val markers = PlaybackEngine.computeMarkers(primarySamples, alertTimestamps, markTimestamps)
+        val mediaAttachments = loadMediaAttachments(services, primarySessionId)
+        val markers = PlaybackEngine.computeMarkers(
+            primarySamples,
+            alertTimestamps,
+            markTimestamps,
+            mediaAttachments,
+        )
         services.playbackEngine.loadSession(primarySessionId, primarySamples, markers)
         services.playbackEngine.setSectorLinesGeoJson(primaryConfig?.sectorLinesGeoJson)
         val overlay = GhostLapOverlay().buildState(

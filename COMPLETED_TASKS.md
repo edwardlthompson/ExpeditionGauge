@@ -2,6 +2,103 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 27 — Sharing polish (2026-06-30)
+
+- ✅ [AGENT] `docs/features/sharing-polish.md`
+- ✅ [AGENT] `share/ShareCardGenerator.kt` — map thumb + stats card
+- ✅ [AGENT] Rich share sheet preview
+- ✅ [ADB] Share exported video + card via system intent (`sharing-video-card`)
+- ✅ [AUTO] `check-v2-sharing-gate.sh` + `sprint-signoff.ps1 -Sprint 27` (v2.9.0)
+
+## Sprint 26 — 3D route flyover video (2026-06-30)
+
+- ✅ [AGENT] `docs/features/3d-flyover.md`
+- ✅ [AGENT] MapLibre 3D terrain + tile source docs (`docs/design/maplibre-3d-terrain.md`)
+- ✅ [AGENT] `flyover/FlyoverCameraPath.kt` + `MapLibreFlyoverRenderer.kt`
+- ✅ [AGENT] v1 overlay: speed + elevation; v2: β/latG route color + photo waypoints
+- ✅ [AGENT] **Create 3D Video** UI; WorkManager + thermal throttle
+- ✅ [ADB] 30 s flyover on device; output plays in gallery (`flyover-video-export`)
+- ✅ [AUTO] `check-v2-flyover-gate.sh` + `sprint-signoff.ps1 -Sprint 26` (v2.8.0)
+
+## Sprint 25 — Playback video export (2026-06-30)
+
+- ✅ [AGENT] `docs/features/playback-video-export.md` + ADR-0012 playback capture path
+- ✅ [AGENT] `export/PlaybackVideoExporter.kt` + `VideoFrameCapturer.kt`
+- ✅ [AGENT] MediaCodec pipeline (reuse `VideoBurnInExporter` patterns)
+- ✅ [AGENT] Overlay layer (speed, latG, β, pitch/roll) + export settings UI
+- ✅ [AGENT] WorkManager progress + share intent
+- ✅ [ADB] Export 2-min clip on OnePlus 12; overlay alignment (`playback-video-export`)
+- ✅ [AUTO] `check-v2-playback-export-gate.sh` + `sprint-signoff.ps1 -Sprint 25` (v2.7.0)
+
+## Sprint 24 — Activity library & organization (2026-06-30)
+
+- ✅ [AGENT] `docs/features/activity-library.md`
+- ✅ [AGENT] Activity type tags on `RecordingSessionEntity` (Room v5, `ActivityType` enum)
+- ✅ [AGENT] `stats/SessionThumbnailGenerator.kt`
+- ✅ [AGENT] Session list — thumbnails, filter chips, search
+- ✅ [AGENT] Home quick-stats strip
+- ✅ [ADB] Filter by tag; thumbnail on card (`library-filter-tag`)
+- ✅ [AUTO] `check-v2-library-gate.sh` + `sprint-signoff.ps1 -Sprint 24` (v2.6.0)
+
+## Sprint 23 — Elevation profile (2026-06-30)
+
+- ✅ [AGENT] `docs/features/elevation-profile.md`
+- ✅ [AGENT] `playback/ElevationProfileBuilder.kt` + smoothing
+- ✅ [AGENT] `playback/ElevationProfilePanel.kt` — scrub sync with `PlaybackEngine`
+- ✅ [AGENT] Stats: min/max, ascent/descent; playback dock integration
+- ✅ [ADB] `elevation-playback-scrub` — scrub playback; elevation indicator tracks map
+- ✅ [AUTO] `check-v2-elevation-gate.sh`, `sprint-signoff.ps1 -Sprint 23` (v2.5.0)
+
+## Sprint 22 — Photo & video attachment (2026-06-30)
+
+- ✅ [AGENT] `docs/features/media-attachments.md` + ADR-0011 (Accepted)
+- ✅ [AGENT] Room v4 — `SessionMediaEntity`, `SessionMediaDao`; DB version 4
+- ✅ [AGENT] `SessionMediaRepository` + `MediaCompressor`; FileProvider `sessions/` paths
+- ✅ [AGENT] Camera/gallery attach during recording via Recording options sheet
+- ✅ [AGENT] `MEDIA_ATTACHMENT` scrubber markers + `MediaViewerSheet`
+- ✅ [AGENT] `SettingsMediaOptions` — compression preset + storage usage
+- ✅ [AGENT] `SessionMediaMarkerTest`; `SessionDeleteService`
+- ⏸ [ADB] `media-attach-recording` — attach + file write verified on device; delete step pending reinstall (Edit metadata ✅)
+- ✅ [AUTO] `check-v2-media-gate.sh`, `sprint-signoff.ps1 -Sprint 22`, v2.4.0 (`versionCode` 9)
+- ⏸ [AUTO] `create-release.ps1 -Version 2.4.0` deferred — run with `/ship` when ready
+
+## Sprint 21 — Android Auto integration (2026-06-30)
+
+- ✅ [AGENT] `docs/features/android-auto.md` + ADR-0010 (Accepted)
+- ✅ [AGENT] Gradle `:car` module + `androidx.car.app:1.4.0` (lockfile); FOSS — no Play Services SDK
+- ✅ [AGENT] `ExpeditionGaugeCarAppService` + `CarSession`; `automotive_app_desc.xml`
+- ✅ [AGENT] `CarTelemetryHost` — metric priority → template rows; `AndroidAutoBridge` on `TelemetryBus`
+- ✅ [AGENT] Parallel — `TelemetryPaneScreen` (Record/Stop/Mark), `SettingsAndroidAutoOptions`, `FeatureFlags`
+- ✅ [AGENT] `CarTelemetryHostTest`, `AndroidAutoBridgeMetricsTest`
+- ✅ [ADB] `aa-service-registered` OK on OnePlus 12 (`b5214fc6`)
+- ⏸ [ADB] Live metrics / record-from-car / disconnect — requires DHU or physical Android Auto head unit
+- ✅ [AUTO] `check-v2-car-gate.sh`, `sprint-signoff.ps1 -Sprint 21`, v2.3.0 (`versionCode` 8)
+- ⏸ [AUTO] `create-release.ps1 -Version 2.3.0` deferred — run with `/ship` when ready
+
+## Sprint 20 — Dual-orientation responsive HUD (2026-06-30)
+
+- ✅ [AGENT] `docs/features/dual-orientation.md` + ADR-0009
+- ✅ [AGENT] Unlock manifest (`fullUser`); `configChanges`; `ExpeditionGaugeApplication` services scope
+- ✅ [AGENT] `OrientationLayoutEngine.kt` — window dp → layout spec
+- ✅ [AGENT] Parallel — `DashboardHudLandscape`, `DashboardHudPortrait`, `DrivingModePreferences`
+- ✅ [AGENT] Size-aware `AttitudeGMeterGauge` / `SpeedometerGauge`; dashboard routes via `OrientationLayoutEngine`
+- ✅ [AGENT] `OrientationLayoutEngineTest`
+- ✅ [ADB] `orientation-rotate-recording`, `orientation-cold-flow` OK on OnePlus 12 (`b5214fc6`)
+- ✅ [AUTO] `check-v2-orientation-gate.sh`, `sprint-signoff.ps1 -Sprint 20`, v2.2.0 (`versionCode` 7)
+- ⏸ [AUTO] `create-release.ps1 -Tag v2.2.0` deferred — run with `/ship` when ready
+
+## Sprint 19b — System UI / navigation bar insets (2026-06-30)
+
+- ✅ [AGENT] `docs/features/system-ui-insets.md` — inset contract + screen audit checklist
+- ✅ [AGENT] Audit screens: Dashboard, Playback, Settings, sessions, `LivePairingSheet`, onboarding, permissions, About
+- ✅ [AGENT] `ui/layout/InsetAwareScaffold.kt` — selective status + navigation insets
+- ✅ [AGENT] Wire scaffold in `ExpeditionGaugeApp` / `AppScreenRouter` for every route
+- ✅ [AGENT] Parallel inset scopes — record controls, scrubber, MapLibre ornaments, attitude/recording sheets
+- ✅ [AGENT] Robolectric / compose tests — `NavigationBarBottomPaddingTest`
+- ✅ [ADB] `nav-insets-3button`, `nav-insets-gesture`, `nav-insets-landscape` OK on OnePlus 12 (`b5214fc6`)
+- ✅ [AUTO] `check-system-insets-gate.sh`, `sprint-signoff.ps1 -Sprint 19b`, v2.1.1 (`versionCode` 6)
+- ⏸ [AUTO] `create-release.ps1 -Tag v2.1.1` deferred — run with `/ship` when commit + release approval ready
+
 ## Sprint 19 — Live Telemetry (Sender / Receiver) (2026-06-30)
 
 - ✅ [AGENT] `docs/features/live-telemetry.md` + ADR-0006 (Accepted)
@@ -896,4 +993,3 @@ Post-M19 review: close prompt/read-order gaps and enforce CURSOR_MODES in bootst
 - ✅ [AGENT] Android About parity: DonationsLoader, ReleaseTagFetcher, GoldenPathApp composition root
 - ✅ [AGENT] Opt-in update checks default `off`; About interval UI removed (Settings toggle only)
 - ✅ [AGENT] CI/release: CodeQL java-kotlin, node SBOM + health-check audit
-

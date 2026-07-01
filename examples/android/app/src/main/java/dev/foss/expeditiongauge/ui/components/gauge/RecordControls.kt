@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
+import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -30,6 +31,7 @@ fun RecordControls(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .navigationBarBottomPadding()
             .padding(SpacingMd),
         verticalArrangement = Arrangement.spacedBy(SpacingMd),
     ) {

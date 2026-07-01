@@ -1,13 +1,18 @@
 package dev.foss.expeditiongauge.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.presets.DashboardPresetId
+import dev.foss.expeditiongauge.settings.MediaCompressionQuality
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsLogic
 import dev.foss.expeditiongauge.settings.SpeedUnit
@@ -61,6 +66,16 @@ fun AppScreenSettingsRoute(
 ) {
     val developerModeEnabled by services.settingsPreferences.developerModeEnabled
         .collectAsStateWithLifecycle(initialValue = false)
+    val androidAutoEnabled by services.settingsPreferences.androidAutoEnabled
+        .collectAsStateWithLifecycle(initialValue = false)
+    val androidAutoMetrics by services.settingsPreferences.androidAutoMetricAllowlist
+        .collectAsStateWithLifecycle(initialValue = emptySet())
+    val mediaCompressionQuality by services.settingsPreferences.mediaCompressionQuality
+        .collectAsStateWithLifecycle(initialValue = MediaCompressionQuality.BALANCED)
+    var mediaStorageBytes by remember { mutableLongStateOf(0L) }
+    LaunchedEffect(Unit) {
+        mediaStorageBytes = services.sessionMediaRepository.totalStorageBytes()
+    }
     SettingsScreen(
         themeMode = themeMode,
         updateCheckEnabled = SettingsLogic.isUpdateCheckEnabled(checkInterval),
@@ -86,6 +101,22 @@ fun AppScreenSettingsRoute(
         onLiveSignalWssUrlChange = onLiveSignalWssUrlChange,
         onLiveReceiverOpen = { onScreenChange(AppScreen.LiveReceiver) },
         onAudibleTonesChange = onAudibleTonesChange,
+        androidAutoEnabled = androidAutoEnabled,
+        androidAutoMetrics = androidAutoMetrics,
+        onAndroidAutoEnabledChange = { enabled ->
+            scope.launch {
+                services.settingsPreferences.setAndroidAutoEnabled(enabled)
+                FeatureFlags.androidAutoEnabled = enabled
+            }
+        },
+        onAndroidAutoMetricToggle = { metric ->
+            scope.launch { services.settingsPreferences.toggleAndroidAutoMetric(metric) }
+        },
+        mediaCompressionQuality = mediaCompressionQuality,
+        onMediaCompressionSelect = { quality ->
+            scope.launch { services.settingsPreferences.setMediaCompressionQuality(quality) }
+        },
+        mediaStorageBytes = mediaStorageBytes,
         brightnessMode = brightnessMode,
         onBrightnessModeSelect = onBrightnessModeSelect,
         onSpeedUnitSelect = { unit -> scope.launch { services.settingsPreferences.setSpeedUnit(unit) } },

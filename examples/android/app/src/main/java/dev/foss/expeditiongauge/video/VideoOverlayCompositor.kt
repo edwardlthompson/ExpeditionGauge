@@ -33,6 +33,29 @@ object VideoOverlayCompositor {
         )
     }
 
+    fun playbackExportLines(sample: SampleEntity?): List<String> {
+        if (sample == null) return listOf("ExpeditionGauge")
+        val base = overlayLines(sample)
+        return base + listOf(
+            "pitch %.1f°".format(sample.pitchDeg),
+            "roll %.1f°".format(sample.rollDeg),
+        )
+    }
+
+    fun drawPlaybackExportOverlay(canvas: Canvas, sample: SampleEntity?) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            textSize = (canvas.width.coerceAtLeast(1) / 24f).coerceIn(24f, 64f)
+            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            setShadowLayer(4f, 2f, 2f, Color.BLACK)
+        }
+        var y = paint.textSize * 1.5f
+        playbackExportLines(sample).forEach { line ->
+            canvas.drawText(line, 24f, y, paint)
+            y += paint.textSize * 1.2f
+        }
+    }
+
     fun drawOverlay(canvas: Canvas, sample: SampleEntity?) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE

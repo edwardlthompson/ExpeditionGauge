@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,11 +15,13 @@ import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.accessibility.AudibleTones
 import dev.foss.expeditiongauge.onboarding.OnboardingPreferences
 import dev.foss.expeditiongauge.permissions.PermissionsHelper
+import dev.foss.expeditiongauge.settings.DrivingModePreferences
 import dev.foss.expeditiongauge.stats.SessionStatsAggregator
 import dev.foss.expeditiongauge.ui.navigation.ExpeditionGaugeApp
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModelFactory
 import dev.foss.expeditiongauge.ui.theme.BrightnessPreferences
 import dev.foss.expeditiongauge.ui.theme.ThemePreferences
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -39,11 +42,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         permissionsGranted = PermissionsHelper.hasAll(this)
-        services = ExpeditionGaugeServices(applicationContext, lifecycleScope)
+        val app = application as ExpeditionGaugeApplication
+        services = app.services
         val accessibilityPreferences = AccessibilityPreferences(applicationContext)
-        services.initialize(lifecycleScope, accessibilityPreferences)
 
         val themePreferences = ThemePreferences(applicationContext)
+        val drivingModePreferences = DrivingModePreferences(applicationContext)
         val onboardingPreferences = OnboardingPreferences(applicationContext)
         val appUpdatePreferences = AppUpdatePreferences(applicationContext)
         val brightnessPreferences = BrightnessPreferences(applicationContext)
@@ -55,6 +59,22 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             appUpdatePreferences.clearPendingRestart()
             appUpdatePreferences.ensureInstalledFormat()
+        }
+
+        lifecycleScope.launch {
+            combine(
+                drivingModePreferences.drivingModeEnabled,
+                drivingModePreferences.lockLandscapeWhileRecording,
+                services.recordingWriter.recording,
+            ) { drivingMode, lockLandscape, recording ->
+                Triple(drivingMode, lockLandscape, recording)
+            }.collect { (drivingMode, lockLandscape, recording) ->
+                requestedOrientation = when {
+                    drivingMode && lockLandscape && recording ->
+                        ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                    else -> ActivityInfo.SCREEN_ORIENTATION_FULL_USER
+                }
+            }
         }
 
         val dashboardViewModelFactory = DashboardViewModelFactory(

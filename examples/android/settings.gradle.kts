@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "expedition-gauge-android"
 include(":app")
+include(":car")

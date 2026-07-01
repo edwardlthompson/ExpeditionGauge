@@ -13,6 +13,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
@@ -30,6 +31,7 @@ fun SpeedometerGauge(
     modifier: Modifier = Modifier,
     useMetric: Boolean = true,
     speedFromObd: Boolean = false,
+    gaugeSizeDp: Dp = 160.dp,
 ) {
     Column(
         modifier = modifier
@@ -39,7 +41,7 @@ fun SpeedometerGauge(
             },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Canvas(modifier = Modifier.size(160.dp)) {
+        Canvas(modifier = Modifier.size(gaugeSizeDp)) {
             val stroke = 3f
             val arcSize = Size(size.width - stroke, size.height - stroke)
             drawArc(

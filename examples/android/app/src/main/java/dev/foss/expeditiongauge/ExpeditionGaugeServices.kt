@@ -76,6 +76,14 @@ class ExpeditionGaugeServices(
     val settingsProfileRepository = SettingsProfileRepository(appContext, database.settingsProfileDao())
     val sessionEventRecorder = SessionEventRecorder(database.sessionEventDao())
     val sessionMetadataRepository = SessionMetadataRepository(database.recordingSessionDao())
+    val sessionMediaRepository = dev.foss.expeditiongauge.media.SessionMediaRepository(
+        appContext,
+        database.sessionMediaDao(),
+    )
+    val sessionDeleteService = dev.foss.expeditiongauge.media.SessionDeleteService(
+        database.recordingSessionDao(),
+        sessionMediaRepository,
+    )
     val lapTimingService = LapTimingService(database, settingsPreferences)
     val liveTelemetryModule = LiveTelemetryModule(telemetryBus)
     val alertThresholdsPreferences = AlertThresholdsPreferences(appContext)

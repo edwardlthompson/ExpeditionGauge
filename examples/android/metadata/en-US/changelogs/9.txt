@@ -1,0 +1,1 @@
+Photo and video attachments during recording — timestamped media markers on the playback scrubber with optional JPEG compression.

@@ -32,6 +32,8 @@ def load():
         "stack": stack,
         "current_feature": None,
         "build_plan_step": None,
+        "parallel_steps_completed": [],
+        "parallel_sprint_done": [],
         "last_gate": None,
         "strikes": 0,
         "autofix_attempts": 0,
@@ -86,7 +88,7 @@ def parse_record_args(a):
     return out
 
 if not args:
-    print("Usage: agent-progress.sh status|record|next|set-feature [--json]", file=sys.stderr)
+    print("Usage: agent-progress.sh status|record|next|set-feature|set-step|set-parallel-sprint-done [--json]", file=sys.stderr)
     sys.exit(1)
 
 cmd = args[0]
@@ -116,6 +118,45 @@ if cmd == "set-feature":
     data = load()
     data["current_feature"] = name or None
     save(data)
+    sys.exit(0)
+
+if cmd == "set-step":
+    step_name = ""
+    i = 1
+    while i < len(args):
+        if args[i] == "--name" and i + 1 < len(args):
+            step_name = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    data = load()
+    completed = data.get("parallel_steps_completed") or []
+    if step_name and step_name not in completed:
+        completed.append(step_name)
+    data["parallel_steps_completed"] = completed
+    data["build_plan_step"] = step_name or data.get("build_plan_step")
+    save(data)
+    if json_out:
+        print(json.dumps({"parallel_steps_completed": completed}, indent=2))
+    sys.exit(0)
+
+if cmd == "set-parallel-sprint-done":
+    sprint_name = ""
+    i = 1
+    while i < len(args):
+        if args[i] == "--sprint" and i + 1 < len(args):
+            sprint_name = args[i + 1]
+            i += 2
+        else:
+            i += 1
+    data = load()
+    done = data.get("parallel_sprint_done") or []
+    if sprint_name and sprint_name not in done:
+        done.append(sprint_name)
+    data["parallel_sprint_done"] = done
+    save(data)
+    if json_out:
+        print(json.dumps({"parallel_sprint_done": done}, indent=2))
     sys.exit(0)
 
 if cmd == "record":

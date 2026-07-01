@@ -28,6 +28,7 @@
     <string name="playback_rpm">RPM: %1$.0f</string>
     <string name="playback_throttle">Throttle: %1$.0f%%</string>
     <string name="playback_elevation">Elevation</string>
+    <string name="playback_elevation_stats">Min %1$d m · Max %2$d m · ↑ %3$d m · ↓ %4$d m</string>
     <string name="playback_no_sample">No samples loaded</string>
     <string name="playback_speed_up">Faster</string>
     <string name="playback_speed_down">Slower</string>

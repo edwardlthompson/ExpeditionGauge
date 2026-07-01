@@ -30,8 +30,27 @@ interface RecordingSessionDao {
     )
     fun observeSearch(query: String): Flow<List<RecordingSessionEntity>>
 
+    @Query(
+        """
+        SELECT * FROM recording_sessions
+        WHERE (:activityType = '' OR activityType = :activityType)
+          AND (
+            :query = ''
+            OR notes LIKE '%' || :query || '%'
+            OR driverName LIKE '%' || :query || '%'
+            OR tagsJson LIKE '%' || :query || '%'
+            OR name LIKE '%' || :query || '%'
+          )
+        ORDER BY startTimeMs DESC
+        """,
+    )
+    fun observeFiltered(activityType: String, query: String): Flow<List<RecordingSessionEntity>>
+
     @Query("SELECT * FROM recording_sessions WHERE id = :id")
     suspend fun getById(id: Long): RecordingSessionEntity?
+
+    @Query("DELETE FROM recording_sessions WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query(
         """

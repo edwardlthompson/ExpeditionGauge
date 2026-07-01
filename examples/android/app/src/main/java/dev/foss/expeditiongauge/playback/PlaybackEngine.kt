@@ -127,12 +127,14 @@ class PlaybackEngine {
             samples: List<SampleEntity>,
             alertTimestamps: List<Long> = emptyList(),
             markEventTimestamps: List<Long> = emptyList(),
+            mediaAttachments: List<MediaAttachmentMarker> = emptyList(),
             betaThreshold: Float = 15f,
             slipThreshold: Float = 0.15f,
         ): List<ScrubberMarker> = ScrubberMarkerFactory.computeMarkers(
             samples,
             alertTimestamps,
             markEventTimestamps,
+            mediaAttachments,
             betaThreshold,
             slipThreshold,
         )

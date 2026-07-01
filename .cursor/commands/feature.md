@@ -2,10 +2,13 @@
 
 Execute the active BUILD_PLAN feature row only (one feature per task). See @docs/FEATURE_MODULES.md.
 
+When invoked from @.cursor/commands/build.md: execute all open rows for the active feature without stopping; no user prompts.
+
 After each AGENT step:
 
 ```bash
 bash scripts/watch-agent-gates.sh --once --autofix --step scaffold
+
 ```
 
 Use `--step tests` or `--step wire` when appropriate. On exit 2, use `/debug` or escalate.

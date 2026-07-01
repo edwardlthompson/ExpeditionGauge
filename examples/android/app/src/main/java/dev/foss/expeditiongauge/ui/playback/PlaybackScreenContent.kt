@@ -24,6 +24,7 @@ import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.playback.RouteHeatmapLayer
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
+import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -33,9 +34,18 @@ internal fun PlaybackBottomSection(
     heatmapMetric: HeatmapMetric,
     onHeatmapMetricChange: (HeatmapMetric) -> Unit,
     onBack: () -> Unit,
+    onMediaMarkerTap: ((dev.foss.expeditiongauge.playback.ScrubberMarker) -> Unit)? = null,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(SpacingMd)) {
-        ElevationProfile(samples = state.samples, currentIndex = state.currentIndex)
+    Column(
+        modifier = Modifier.navigationBarBottomPadding(),
+        verticalArrangement = Arrangement.spacedBy(SpacingMd),
+    ) {
+        if (FeatureFlags.elevationProfileEnabled) {
+            ElevationProfilePanel(
+                state = state,
+                onSeek = { engine.seekToIndex(it) },
+            )
+        }
         if (FeatureFlags.telemetryGraphsEnabled && state.samples.isNotEmpty() && state.graphsExpanded) {
             TelemetryGraphPanel(state = state, onSeek = { engine.seekToIndex(it) })
         }
@@ -53,6 +63,7 @@ internal fun PlaybackBottomSection(
                 markers = state.markers,
                 totalSamples = state.samples.size,
                 onSeek = { engine.seekToIndex(it) },
+                onMediaMarkerTap = onMediaMarkerTap,
             )
         }
         Slider(

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.testTag
@@ -59,11 +57,26 @@ fun PlaybackScreen(
     onImportVideo: (() -> Unit)? = null,
     onExportBurnIn: (() -> Unit)? = null,
     onVideoOffsetChange: ((Long) -> Unit)? = null,
+    exportPreset: dev.foss.expeditiongauge.export.PlaybackVideoExportSettings =
+        dev.foss.expeditiongauge.export.PlaybackVideoExportSettings.PRESET_120S,
+    onExportPresetChange: ((dev.foss.expeditiongauge.export.PlaybackVideoExportSettings) -> Unit)? = null,
+    exportWorkInfo: androidx.work.WorkInfo? = null,
+    onStartPlaybackExport: (() -> Unit)? = null,
+    onSharePlaybackExport: ((String) -> Unit)? = null,
+    flyoverPreset: dev.foss.expeditiongauge.flyover.FlyoverVideoExportSettings =
+        dev.foss.expeditiongauge.flyover.FlyoverVideoExportSettings.PRESET_30S,
+    onFlyoverPresetChange: ((dev.foss.expeditiongauge.flyover.FlyoverVideoExportSettings) -> Unit)? = null,
+    flyoverWorkInfo: androidx.work.WorkInfo? = null,
+    onStartFlyoverExport: (() -> Unit)? = null,
+    onShareFlyoverExport: ((String) -> Unit)? = null,
+    sessionMediaRepository: dev.foss.expeditiongauge.media.SessionMediaRepository? = null,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by engine.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    var selectedMedia by remember { mutableStateOf<dev.foss.expeditiongauge.data.db.entities.SessionMediaEntity?>(null) }
+    var mediaById by remember { mutableStateOf<Map<Long, dev.foss.expeditiongauge.data.db.entities.SessionMediaEntity>>(emptyMap()) }
     val sample = state.currentSample
     var heatmapMetric by remember { mutableStateOf(HeatmapMetric.DRIFT_ANGLE) }
     var lapSummary by remember { mutableStateOf<dev.foss.expeditiongauge.timing.LapTimingSummary?>(null) }
@@ -77,6 +90,9 @@ fun PlaybackScreen(
 
     LaunchedEffect(state.sessionId) {
         lapSummary = state.sessionId?.let { lapTimingService.loadSummary(it) }
+        mediaById = state.sessionId?.let { sessionId ->
+            sessionMediaRepository?.listForSession(sessionId)?.associateBy { it.id }.orEmpty()
+        } ?: emptyMap()
     }
 
     LaunchedEffect(settingsProfileRepository, state.sessionId) {
@@ -153,16 +169,25 @@ fun PlaybackScreen(
             onToggleDrivingLine = { engine.toggleDrivingLine() },
             onToggleGhost = { engine.toggleGhost() },
         )
-        if (FeatureFlags.videoSyncEnabled && videoSyncEngine != null && onImportVideo != null) {
-            PlaybackVideoControls(
-                videoSyncEngine = videoSyncEngine,
-                hasVideo = hasVideo,
-                videoOffsetMs = videoOffsetMs,
-                onImportVideo = onImportVideo,
-                onExportBurnIn = onExportBurnIn ?: {},
-                onVideoOffsetChange = onVideoOffsetChange ?: {},
-            )
-        }
+        PlaybackScreenVideoAndExportSections(
+            state = state,
+            videoSyncEngine = videoSyncEngine,
+            hasVideo = hasVideo,
+            videoOffsetMs = videoOffsetMs,
+            onImportVideo = onImportVideo,
+            onExportBurnIn = onExportBurnIn,
+            onVideoOffsetChange = onVideoOffsetChange,
+            exportPreset = exportPreset,
+            onExportPresetChange = onExportPresetChange,
+            exportWorkInfo = exportWorkInfo,
+            onStartPlaybackExport = onStartPlaybackExport,
+            onSharePlaybackExport = onSharePlaybackExport,
+            flyoverPreset = flyoverPreset,
+            onFlyoverPresetChange = onFlyoverPresetChange,
+            flyoverWorkInfo = flyoverWorkInfo,
+            onStartFlyoverExport = onStartFlyoverExport,
+            onShareFlyoverExport = onShareFlyoverExport,
+        )
         if (FeatureFlags.playbackLayoutEnabled) {
             PlaybackLayoutControls(
                 mapWeight = state.mapWeight,
@@ -186,18 +211,10 @@ fun PlaybackScreen(
                 },
             )
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(SpacingMd),
-            modifier = Modifier.semantics { contentDescription = "Drift Analysis" },
-        ) {
-            Text(stringResource(R.string.playback_drift_analysis), color = GaugeScaleWhite)
-            Switch(
-                checked = state.showDriftAnalysis,
-                onCheckedChange = { engine.toggleDriftAnalysis() },
-                modifier = Modifier.testTag("playback_drift_toggle"),
-            )
-        }
+        PlaybackDriftAnalysisToggle(
+            showDriftAnalysis = state.showDriftAnalysis,
+            engine = engine,
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -264,6 +281,12 @@ fun PlaybackScreen(
             heatmapMetric = heatmapMetric,
             onHeatmapMetricChange = { heatmapMetric = it },
             onBack = onBack,
+            onMediaMarkerTap = { marker ->
+                marker.mediaId?.let { id -> selectedMedia = mediaById[id] }
+            },
         )
+        sessionMediaRepository?.let { repo ->
+            MediaViewerSheet(media = selectedMedia, repository = repo, onDismiss = { selectedMedia = null })
+        }
     }
 }

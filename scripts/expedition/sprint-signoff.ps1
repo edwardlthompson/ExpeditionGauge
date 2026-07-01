@@ -43,6 +43,49 @@ if ($Sprint -eq "17b") {
     }
 }
 
+if ($Sprint -eq "22") {
+    Invoke-Gate "v2-media-gate" { Invoke-BootstrapBash "scripts/check-v2-media-gate.sh" }
+    Invoke-Gate "v2-car-gate" { Invoke-BootstrapBash "scripts/check-v2-car-gate.sh" }
+    Invoke-Gate "fdroid-metadata" { Invoke-BootstrapBash "scripts/verify-fdroid-metadata.sh" }
+    Invoke-Gate "android-release-build" {
+        Push-Location (Join-Path $Root "examples\android")
+        & .\gradlew.bat :app:testDebugUnitTest assembleRelease --quiet
+        Pop-Location
+    }
+}
+
+if ($Sprint -eq "21") {
+    Invoke-Gate "v2-car-gate" { Invoke-BootstrapBash "scripts/check-v2-car-gate.sh" }
+    Invoke-Gate "v2-orientation-gate" { Invoke-BootstrapBash "scripts/check-v2-orientation-gate.sh" }
+    Invoke-Gate "fdroid-metadata" { Invoke-BootstrapBash "scripts/verify-fdroid-metadata.sh" }
+    Invoke-Gate "android-release-build" {
+        Push-Location (Join-Path $Root "examples\android")
+        & .\gradlew.bat :app:testDebugUnitTest :car:testDebugUnitTest assembleRelease --quiet
+        Pop-Location
+    }
+}
+
+if ($Sprint -eq "20") {
+    Invoke-Gate "v2-orientation-gate" { Invoke-BootstrapBash "scripts/check-v2-orientation-gate.sh" }
+    Invoke-Gate "system-insets-gate" { Invoke-BootstrapBash "scripts/check-system-insets-gate.sh" }
+    Invoke-Gate "fdroid-metadata" { Invoke-BootstrapBash "scripts/verify-fdroid-metadata.sh" }
+    Invoke-Gate "android-release-build" {
+        Push-Location (Join-Path $Root "examples\android")
+        & .\gradlew.bat assembleRelease testDebugUnitTest --quiet
+        Pop-Location
+    }
+}
+
+if ($Sprint -eq "19b") {
+    Invoke-Gate "system-insets-gate" { Invoke-BootstrapBash "scripts/check-system-insets-gate.sh" }
+    Invoke-Gate "fdroid-metadata" { Invoke-BootstrapBash "scripts/verify-fdroid-metadata.sh" }
+    Invoke-Gate "android-release-build" {
+        Push-Location (Join-Path $Root "examples\android")
+        & .\gradlew.bat assembleRelease testDebugUnitTest --quiet
+        Pop-Location
+    }
+}
+
 if ($Sprint -eq "19") {
     Invoke-Gate "v2-live-gate" { Invoke-BootstrapBash "scripts/check-v2-live-gate.sh" }
     Invoke-Gate "v2-video-gate" { Invoke-BootstrapBash "scripts/check-v2-video-gate.sh" }
@@ -86,6 +129,16 @@ if ($null -ne $sprintNum -and $sprintNum -ge 1) {
     & "$PSScriptRoot\check-adr-gate.ps1" -Sprint $sprintNum
     if ($LASTEXITCODE -ne 0 -and $sprintNum -notin @(2,3,4,5,6,7,8,9,11,12,13,14,16,17)) {
         # only fail if check-adr-gate returned 1
+    }
+}
+
+if ($Sprint -eq "27") {
+    Invoke-Gate "v2-sharing-gate" { Invoke-BootstrapBash "scripts/check-v2-sharing-gate.sh" }
+    Invoke-Gate "fdroid-metadata" { Invoke-BootstrapBash "scripts/verify-fdroid-metadata.sh" }
+    Invoke-Gate "android-release-build" {
+        Push-Location (Join-Path $Root "examples\android")
+        & .\gradlew.bat :app:testDebugUnitTest assembleRelease --quiet
+        Pop-Location
     }
 }
 

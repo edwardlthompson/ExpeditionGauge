@@ -18,8 +18,8 @@ android {
         applicationId = "dev.foss.expeditiongauge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 5
-        versionName = "2.1.0"
+        versionCode = 10
+        versionName = "2.9.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -48,6 +48,8 @@ dependencyLocking {
 }
 
 dependencies {
+    implementation(project(":car"))
+
     val composeBom = platform("androidx.compose:compose-bom:2026.05.01")
     val roomVersion = "2.7.2"
     implementation(composeBom)
@@ -68,6 +70,8 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
+
     // Pinned FOSS stack — Sprint 1; versions mirrored in app/gradle.lockfile
     implementation("org.maplibre.compose:maplibre-compose:0.13.0")
     implementation("com.github.eltonvs:kotlin-obd-api:1.4.1")
@@ -77,6 +81,7 @@ dependencies {
     implementation("com.google.zxing:core:3.5.3")
 
     testImplementation("androidx.test:core:1.6.1")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")

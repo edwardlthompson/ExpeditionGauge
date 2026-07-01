@@ -37,7 +37,6 @@ Every task row in `BUILD_PLAN.md` and checklist in module docs, PR template, and
 | 🔲 | Open — default for new tasks |
 | ✅ | Done — swap 🔲 when complete; archive sprint to `COMPLETED_TASKS.md` |
 | ❌ | Blocked — swap 🔲 and append reason |
-
 **Format:** `🔲 Description` (or `🔲 [OWNER] Description` on BUILD_PLAN) · do not use `- [ ]` GitHub checkboxes.
 
 ## Repo hygiene
@@ -49,10 +48,11 @@ Every task row in `BUILD_PLAN.md` and checklist in module docs, PR template, and
 
 ## Parallel Guardrails
 
-- Branch: `feature/agent-[task-name]` per agent, separate worktree
+- Branch: `feature/agent-[task-name]` per agent, separate worktree under `.cursor/worktrees/sprint-<id>/`
 - No overlapping file scopes (run `scripts/check-parallel-scope.sh` before dispatch)
 - Shared schema/types: sequential agent only first
 - Scope map: `docs/PARALLEL_AGENT_SCOPES.md`
+- **Auto-dispatch:** when the sequential lock step is ✅, `mark-task.ps1` and `resume-agent.ps1` run `scripts/expedition/dispatch-parallel-agents.ps1` (5 agents for Sprint 19b). Requires Cursor headless CLI (`CURSOR_API_KEY`) or `-UseSdk` with `cursor-sdk`.
 
 ## 3-Strike Rule
 
@@ -79,6 +79,7 @@ After each `[AGENT]` BUILD_PLAN step in a feature row:
 
 ```bash
 bash scripts/watch-agent-gates.sh --once --autofix
+
 ```
 
 - Exit `0`: proceed to next step
@@ -89,6 +90,7 @@ Extended sessions:
 
 ```bash
 bash scripts/watch-agent-gates.sh --interval 60 --max-attempts 10 --autofix
+
 ```
 
 Mechanical fixers run first via `feature-autofix.sh`. Push to remote still requires human approval (`destructive-ops.mdc`).
@@ -104,6 +106,7 @@ Use **Debug Mode** (`docs/CURSOR_MODES.md`, PROMPT_LIBRARY Entry 20) when CI or 
 ```bash
 bash scripts/check-github-ci.sh --wait 300
 # Windows: pwsh scripts/check-github-ci.ps1 -WaitSeconds 300
+
 ```
 
 Required green workflows: **CI**, **Security Scan**, **CodeQL**.
@@ -132,6 +135,7 @@ Before launching parallel agents:
 
 ```bash
 bash scripts/check-parallel-scope.sh
+
 ```
 
 If overlap is reported, split tasks or serialize the conflicting rows in BUILD_PLAN.

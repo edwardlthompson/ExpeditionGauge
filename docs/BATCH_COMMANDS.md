@@ -10,10 +10,9 @@
 |---------|-------|-------------|----------------|-------|
 | `/bootstrap` | init → prune → setup → gates | Agent | 42 | No |
 | `/verify` | docs → gates → ci | Agent | 43 | No |
-| `/build` | plan → approval → feature → gates → cleanup | Plan then Agent | 44 | No |
+| `/build` | Autonomous BUILD_PLAN sprint chain — automates HUMAN/ADB first, backlog on failure | Agent | 44 | No |
 | `/ship` | prerelease → push → regress | Agent | 45 | **Yes** |
 | `/maintain` | triage → dependabot → audit | Agent | 46 | No |
-
 ## Atomic commands
 
 | Command | Workflow | Super parent | PROMPT_LIBRARY |
@@ -38,8 +37,7 @@
 | `/plan` | Feature/ADR plan + Critique | build | 19 |
 | `/restore` | Restore from `.cursor-session-state.json` | — | 13 |
 | `/compact` | Save session state before clearing chat | — | 13 |
-| `/scope` | Parallel scope map before dispatch | — | 14 |
-
+| `/scope` | Parallel manifest + auto Task dispatch | — | 14 |
 ## Decision tree
 
 ```
@@ -50,6 +48,7 @@ Ready to publish?   → /ship   (or /prerelease then /push)
 Weekly maintenance? → /maintain (heavy) or /triage + /verify (light)
 Bug with evidence?  → /debug  (not /audit)
 Long chat session?  → /compact before clear · /restore after
+
 ```
 
 ## `/verify` vs `/gates` vs `/push` vs `/ship`
@@ -60,7 +59,6 @@ Long chat session?  → /compact before clear · /restore after
 | `/verify` | docs + gates + CI (pre-merge) |
 | `/push` | Full release workflow with explicit push approval |
 | `/ship` | prerelease + push + regress (preferred publish path) |
-
 ## File layout
 
 | Path | Role |
@@ -71,5 +69,4 @@ Long chat session?  → /compact before clear · /restore after
 | `CODE_REVIEW.md.example` | Audit output template |
 | `RELEASE_NOTES.md.example` | Release draft template |
 | `scripts/check-batch-commands.sh` | Registry ↔ filesystem sync |
-
 Validation: `bash scripts/check-batch-commands.sh` (also via `validate-bootstrap.sh --quick`).

@@ -40,7 +40,6 @@ import org.maplibre.compose.layers.CircleLayer
 import org.maplibre.compose.layers.LineLayer
 import org.maplibre.compose.map.MapOptions
 import org.maplibre.compose.map.MaplibreMap
-import org.maplibre.compose.map.OrnamentOptions
 import org.maplibre.compose.sources.GeoJsonData
 import org.maplibre.compose.sources.GeoJsonOptions
 import org.maplibre.compose.sources.rememberGeoJsonSource
@@ -139,12 +138,14 @@ fun PlaybackMapView(
         )
     }
 
+    val mapOrnaments = rememberPlaybackMapOrnamentOptions()
+
     Box(modifier = modifier) {
         MaplibreMap(
             modifier = Modifier.fillMaxSize(),
             baseStyle = BaseStyle.Uri("https://demotiles.maplibre.org/style.json"),
             cameraState = camera,
-            options = MapOptions(ornamentOptions = OrnamentOptions.OnlyLogo),
+            options = MapOptions(ornamentOptions = mapOrnaments),
         ) {
             val routeSource = rememberGeoJsonSource(
                 data = GeoJsonData.JsonString(routeJson),

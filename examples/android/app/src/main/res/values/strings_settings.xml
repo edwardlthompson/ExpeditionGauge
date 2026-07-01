@@ -51,4 +51,7 @@
     <string name="settings_attitude_mode_hybrid">Hybrid</string>
     <string name="settings_recording_mode_label">Recording mode</string>
     <string name="settings_alerts_title">Alert thresholds</string>
+    <string name="settings_android_auto_heading">Android Auto</string>
+    <string name="settings_android_auto_enable">Show telemetry on Android Auto</string>
+    <string name="settings_android_auto_metrics">Metrics on head unit</string>
 </resources>

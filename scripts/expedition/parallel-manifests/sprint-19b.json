@@ -1,0 +1,85 @@
+{
+  "sprint": "19b",
+  "sequentialLockStep": 4,
+  "sequentialLockPattern": "Wire scaffold",
+  "mergeBeforeStep": 5,
+  "parallelAfterStep": 4,
+  "agents": [
+    {
+      "id": "A",
+      "slug": "insets-record-chrome",
+      "branch": "feature/agent-insets-record-chrome",
+      "owner": "AGENT",
+      "task": "Record controls + mark-event FAB — apply navigationBars padding for bottom chrome",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/components/gauge/RecordControls.kt"
+      ],
+      "alsoEdit": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/recording/MarkEventFab.kt"
+      ],
+      "spec": "docs/features/system-ui-insets.md"
+    },
+    {
+      "id": "B",
+      "slug": "insets-scrubber",
+      "branch": "feature/agent-insets-scrubber",
+      "owner": "AGENT",
+      "task": "Playback scrubber bar — apply navigationBars padding",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/playback/ScrubberMarkerStrip.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/system-ui-insets.md"
+    },
+    {
+      "id": "C",
+      "slug": "insets-maplibre",
+      "branch": "feature/agent-insets-maplibre",
+      "owner": "AGENT",
+      "task": "MapLibre playback map — setPadding from WindowInsets on map attach",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/playback/PlaybackMapView.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/system-ui-insets.md"
+    },
+    {
+      "id": "D",
+      "slug": "insets-gmeter-sheet",
+      "branch": "feature/agent-insets-gmeter-sheet",
+      "owner": "AGENT",
+      "task": "Attitude G-meter ModalBottomSheet — contentWindowInsets",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/components/gauge/AttitudeGMeterGauge.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/system-ui-insets.md"
+    },
+    {
+      "id": "E",
+      "slug": "insets-live-sheet",
+      "branch": "feature/agent-insets-live-sheet",
+      "owner": "AGENT",
+      "task": "Recording live strip ModalBottomSheet — contentWindowInsets",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/recording/RecordingLiveStrip.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/system-ui-insets.md"
+    }
+  ],
+  "sequentialOnly": [
+    "BUILD_PLAN.md",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/navigation/ExpeditionGaugeApp.kt",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/navigation/AppScreenRouter.kt",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/layout/InsetAwareScaffold.kt",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/MainActivity.kt"
+  ],
+  "postParallelAuto": [
+    {
+      "owner": "AUTO",
+      "task": "Nav inset screenshot regression",
+      "script": "scripts/expedition/adb-screenshot-compare.ps1"
+    }
+  ]
+}

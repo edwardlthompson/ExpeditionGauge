@@ -32,3 +32,25 @@ if ($content -notmatch "✅ \[$([regex]::Escape($Pattern))\]") {
 
 Write-Utf8NoBom $planPath $content
 Write-Host "mark-task: updated pattern matching '$Pattern'"
+
+if ($Status -eq "done") {
+    $manifestDir = Join-Path $Root "scripts/expedition/parallel-manifests"
+    if (Test-Path $manifestDir) {
+        Get-ChildItem $manifestDir -Filter "sprint-*.json" | ForEach-Object {
+            $manifest = Get-Content $_.FullName -Raw | ConvertFrom-Json
+            if ($Pattern -notmatch [regex]::Escape($manifest.sequentialLockPattern)) { return }
+            $statePath = Join-Path $Root ".cursor/parallel-dispatch/sprint-$($manifest.sprint).json"
+            if (Test-Path $statePath) {
+                Write-Host "mark-task: parallel dispatch already recorded for sprint $($manifest.sprint)" -ForegroundColor DarkGray
+                return
+            }
+            Write-Host "mark-task: sequential lock done — writing parallel scope lock for sprint $($manifest.sprint)..." -ForegroundColor Magenta
+            $null = Invoke-BootstrapBash "scripts/plan-parallel-dispatch.sh" @("--write-lock", "--json", "--feature", $manifest.sprint)
+            if ($LASTEXITCODE -ne 0) {
+                Write-Warning "plan-parallel-dispatch lock write failed (exit $LASTEXITCODE) — run /scope manually"
+            } else {
+                Write-Host "mark-task: run /scope to auto-dispatch Task subagents (or pwsh scripts/expedition/dispatch-parallel-agents.ps1 -Sprint $($manifest.sprint))" -ForegroundColor Cyan
+            }
+        }
+    }
+}

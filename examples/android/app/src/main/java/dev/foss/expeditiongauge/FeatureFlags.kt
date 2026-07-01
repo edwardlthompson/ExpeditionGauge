@@ -11,6 +11,8 @@ object FeatureFlags {
     var tpmsEnabled: Boolean = false
     var externalGpsEnabled: Boolean = false
     var liveTelemetryEnabled: Boolean = false
+    var androidAutoEnabled: Boolean = false
+    const val androidAutoCapable: Boolean = true
 
     const val sessionMetadataEnabled: Boolean = wave1PolishEnabled
     const val crawlingModeEnabled: Boolean = wave1PolishEnabled
@@ -28,5 +30,11 @@ object FeatureFlags {
     const val onboardingEnabled: Boolean = wave2PolishEnabled
     const val accessibilityPackEnabled: Boolean = wave2PolishEnabled
     const val videoSyncEnabled: Boolean = true
+    const val mediaAttachmentsEnabled: Boolean = true
+    const val elevationProfileEnabled: Boolean = true
+    const val activityLibraryEnabled: Boolean = true
+    const val playbackVideoExportEnabled: Boolean = true
+    const val flyover3dEnabled: Boolean = true
+    const val sharingPolishEnabled: Boolean = true
     var developerModeEnabled: Boolean = false
 }

@@ -1,0 +1,1 @@
+Android Auto integration — live speed, G, and attitude on the head unit via AndroidX Car App Library (opt-in).

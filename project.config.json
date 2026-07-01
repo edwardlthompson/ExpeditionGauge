@@ -14,14 +14,14 @@
     "wave2_polish": true,
     "core_v1": true,
     "system_ui_insets": true,
-    "v2_dual_orientation": false,
-    "v2_android_auto": false,
-    "v2_media_attach": false,
-    "v2_elevation_profile": false,
-    "v2_activity_library": false,
-    "v2_playback_export": false,
-    "v2_3d_flyover": false,
-    "v2_sharing_polish": false
+    "v2_dual_orientation": true,
+    "v2_android_auto": true,
+    "v2_media_attach": true,
+    "v2_elevation_profile": true,
+    "v2_activity_library": true,
+    "v2_playback_export": true,
+    "v2_3d_flyover": true,
+    "v2_sharing_polish": true
   },
   "projectName": "ExpeditionGauge",
   "devDevice": {

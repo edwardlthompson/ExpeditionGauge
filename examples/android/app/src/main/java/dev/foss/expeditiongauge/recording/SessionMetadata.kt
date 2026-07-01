@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.recording
 
+import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import org.json.JSONArray
 import org.json.JSONObject
@@ -11,6 +12,7 @@ data class SessionMetadata(
     val vehicleConfig: Map<String, String> = emptyMap(),
     val tags: List<String> = emptyList(),
     val photoUri: String? = null,
+    val activityType: ActivityType = ActivityType.DRIVE,
 ) {
     fun toEntityPatch(): (RecordingSessionEntity) -> RecordingSessionEntity = { entity ->
         entity.copy(
@@ -20,6 +22,7 @@ data class SessionMetadata(
             vehicleConfigJson = vehicleConfigToJson(vehicleConfig),
             tagsJson = tagsToJson(tags),
             photoUri = photoUri,
+            activityType = activityType,
         )
     }
 
@@ -31,6 +34,7 @@ data class SessionMetadata(
             vehicleConfigJson = vehicleConfigToJson(vehicleConfig),
             tagsJson = tagsToJson(tags),
             photoUri = photoUri,
+            activityType = activityType,
         )
 
     fun toExportJson(): JSONObject = JSONObject().apply {
@@ -38,6 +42,7 @@ data class SessionMetadata(
         driverName?.let { put("driverName", it) }
         conditions?.let { put("conditions", it) }
         put("tags", JSONArray(tags))
+        put("activityType", activityType.name)
         photoUri?.let { put("photoUri", it) }
         val vehicle = JSONObject()
         vehicleConfig.forEach { (key, value) -> vehicle.put(key, value) }
@@ -53,6 +58,7 @@ data class SessionMetadata(
                 vehicleConfig = parseVehicleConfig(entity.vehicleConfigJson),
                 tags = parseTags(entity.tagsJson),
                 photoUri = entity.photoUri,
+                activityType = entity.activityType,
             )
 
         fun vehicleConfigToJson(config: Map<String, String>): String? {

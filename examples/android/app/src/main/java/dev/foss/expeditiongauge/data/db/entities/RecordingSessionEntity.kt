@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.data.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.recording.RecordingMode
 
 @Entity(tableName = "recording_sessions")
@@ -11,6 +12,7 @@ data class RecordingSessionEntity(
     val startTimeMs: Long,
     val endTimeMs: Long? = null,
     val recordingMode: RecordingMode = RecordingMode.NORMAL,
+    val activityType: ActivityType = ActivityType.DRIVE,
     val deviceConfigJson: String? = null,
     val notes: String? = null,
     val driverName: String? = null,

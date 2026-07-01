@@ -1,117 +1,60 @@
-# Parallel Agent Scopes
+# Parallel agent scope map
 
-> Isolated file scopes for BUILD_PLAN Parallel lane. No two agents may touch the same path prefix.
+Read @docs/PARALLEL_AGENT_SCOPES.md and BUILD_PLAN Parallel table.
+Run `bash scripts/check-parallel-scope.sh`; abort dispatch on overlap.
+Assign one branch per agent: `feature/agent-<task-slug>`. Shared schema stays Sequential-only.
 
+## ExpeditionGauge forbidden paths (orchestrator + parallel agents)
+
+| Path | Reason |
+|------|--------|
+| `BUILD_PLAN.md` | Sequential owner only |
+| `COMPLETED_TASKS.md` | Sequential owner only |
+| `examples/android/.../MainActivity.kt` | Composition root |
+| `examples/android/.../ui/navigation/ExpeditionGaugeApp.kt` | App shell |
+| `examples/android/.../ui/navigation/AppScreenRouter.kt` | Route wiring |
+| `examples/android/.../ExpeditionGaugeServices.kt` | Service bootstrap |
+| `examples/android/.../ui/layout/InsetAwareScaffold.kt` | Shared layout primitive (Sprint 19b lock) |
+Canonical list: `FORBIDDEN_PATHS` in `scripts/lib/parallel_scope.py`.
+
+## Sprint 19b — System UI insets (active)
+
+> Dispatch after Sequential step **4** (`InsetAwareScaffold` wired). Merge before Sequential step **5** (inset tests). **agent_count_target: 5**
+
+| Agent | Task | Isolated scope |
+|-------|------|----------------|
+| A — Record chrome | Record controls + mark-event FAB padding | `examples/android/.../ui/components/gauge/RecordControls.kt` (+ `MarkEventFab.kt`, same agent) |
+| B — Scrubber | Playback scrubber bar padding | `examples/android/.../ui/playback/ScrubberMarkerStrip.kt` |
+| C — Map | MapLibre `setPadding` on map attach | `examples/android/.../ui/playback/PlaybackMapView.kt` |
+| D — G-meter sheet | Attitude `ModalBottomSheet` insets | `examples/android/.../ui/components/gauge/AttitudeGMeterGauge.kt` |
+| E — Live sheet | Recording live strip sheet insets | `examples/android/.../ui/recording/RecordingLiveStrip.kt` |
+**Dispatch:** `bash scripts/plan-parallel-dispatch.sh --require-sequential-clear --write-lock --json --feature 19b` then `/scope`.
+
+## Sprint 20 — Dual-orientation HUD
+
+> Dispatch after Sequential step **3**. **agent_count_target: 3**
+
+| Agent | Task | Isolated scope |
+|-------|------|----------------|
+| A — Landscape HUD | `DashboardHudLandscape` | `examples/android/.../ui/dashboard/DashboardHudLandscape.kt` |
+| B — Portrait HUD | `DashboardHudPortrait` | `examples/android/.../ui/dashboard/DashboardHudPortrait.kt` |
+| C — Driving Mode | DataStore preference | `examples/android/.../settings/DrivingModePreferences.kt` |
+## Sprint 21 — Android Auto
+
+> Dispatch after Sequential step **4**. **agent_count_target: 3**
+
+| Agent | Task | Isolated scope |
+|-------|------|----------------|
+| A — Car pane | `TelemetryPaneScreen` | `examples/android/car/.../car/ui/TelemetryPaneScreen.kt` |
+| B — Settings | Android Auto toggle UI | `examples/android/.../ui/settings/SettingsAndroidAutoOptions.kt` |
+| C — Feature flag | `FeatureFlags.androidAutoEnabled` | `examples/android/.../FeatureFlags.kt` |
 ## Rules
 
 1. One branch per agent: `feature/agent-<task-slug>`
-2. Run `scripts/check-parallel-scope.sh` before dispatch
+2. Run `bash scripts/check-parallel-scope.sh` before dispatch
 3. Shared types/schemas: **Sequential agent only**
-4. Never edit `BUILD_PLAN.md` from parallel agents (sequential owner)
-
-## Sprint 1 (child repo) defaults
-
-| Stack | Isolated scope |
-|-------|----------------|
-| web | `examples/web/**` |
-| python | `examples/python/**` |
-| android | `examples/android/**` |
-| node | `examples/node/**` |
-| multi | One scope per stack row; no overlap |
-| none | Match `AGENT_MEMORY.md` checked modules |
-
-## Sprint M13 (template maintainer) — archived
-
-> Completed 2026-06-15. Branch protection verify, init `--stack`, local APK hash wrapper.
-
-| Agent | Scope |
-|-------|-------|
-| A — Branch protection | `scripts/verify-branch-protection.sh`, `.ps1`, `run-maintainer-gates.sh` |
-| B — Init CLI | `scripts/init-project.sh`, `scripts/init-project.ps1` |
-| C — APK reproducibility | `scripts/verify-reproducible-apk.sh`, `.ps1`, `modules/android/MODULE.md` |
-
-## Sprint M14 (template maintainer) — archived
-
-> Completed 2026-06-15. Version sync, init.ps1 fix, gate wiring, web/Android hardening. See `COMPLETED_TASKS.md`.
-
-## Sprint M15 (template maintainer) — archived
-
-> Completed 2026-06-15. P2 backlog post-0.9.0. See `COMPLETED_TASKS.md`.
-
-## Sprint M17 (template maintainer) — archived
-
-> Completed 2026-06-15. Post-M16 code review. See `COMPLETED_TASKS.md`.
-
-## Sprint M18 (template maintainer) — archived
-
-> Completed 2026-06-16. Post-P2 code review on `f59023c`. See `COMPLETED_TASKS.md`.
-
-## Sprint M18 P2 backlog (template maintainer) — archived
-
-> Completed 2026-06-16. See `COMPLETED_TASKS.md`.
-
-## Sprint M16 (template maintainer) — archived
-
-> Completed 2026-06-15. Tag-gate timing, SBOM version validation, CI/docs parity, P2 backlog. See `COMPLETED_TASKS.md`.
-
-| Agent | Scope |
-|-------|-------|
-| A — Release + CI gates | `release.yml`, `check-github-ci.sh`, `ci.yml` |
-| B — Init + upgrade sim | `init-project.sh`, `init-project.ps1`, `simulate-template-upgrade.sh` |
-| C — Web a11y + e2e | `AboutPanel.ts`, `e2e/app.spec.ts`, `appBootstrap.test.ts` |
-| D — Docs hygiene | `OPTIONAL_STACKS.md`, `MAINTAINING_THE_TEMPLATE.md`, `SECURITY_TRIAGE.md` |
-
-## Sprint M12 (template maintainer) — archived
-
-> Completed 2026-06-15. CodeQL init order + Kotlin 2.3.20 pin; tag gate `--jobs`; bootstrap coverage.
-
-| Agent | Scope |
-|-------|-------|
-| A — CodeQL + release gate | `.github/workflows/codeql.yml`, `release.yml`, `scripts/check-github-ci.ps1` |
-| B — Android tests + restart UI | `examples/android/app/src/test/**`, `src/androidTest/**`, `ui/GoldenPathApp.kt` |
-| C — Web bootstrap | `examples/web/src/appBootstrap.ts`, `vitest.config.ts` |
-| D — Docs + CHANGELOG | `docs/FEATURE_MODULES.md`, `CHANGELOG.md`, `.cursor/rules/feature-modules.mdc` |
-
-## Sprint M11 (template maintainer) — archived
-
-> Completed 2026-06-15. CI blocker fixes on `9163dab` follow-up.
-
-## Sprint M10 (template maintainer) — archived
-
-> Completed 2026-06-15. Reference scopes for future maintainer parallel work.
-
-| Agent | Scope |
-|-------|-------|
-| A — Web settings | `examples/web/src/components/SettingsPanel.ts`, `examples/web/src/locales/**`, `examples/web/src/style.css`, `examples/web/e2e/**` |
-| B — Android settings/About | `examples/android/app/src/main/java/dev/foss/goldenpath/ui/**`, `examples/android/app/src/main/res/**`, `examples/android/app/src/main/assets/**` |
-| C — Init + gates | `scripts/init-project.sh`, `scripts/init-project.ps1`, `scripts/init-stack-sync.py`, `scripts/setup-github-repo.sh`, `scripts/check-security-triage.sh`, `scripts/pre-release-gate.sh`, `scripts/run-maintainer-gates.sh` |
-| D — Docs | `docs/**`, `modules/**`, `SECURITY.md` |
-
-**Sequential-only (no Parallel):** `BUILD_PLAN.md`, `examples/web/src/AppShell.ts`, `examples/web/src/main.ts`, `MainActivity.kt`, `.github/workflows/release.yml`
-
-## Sprint M9 (template maintainer) — archived
-
-> Completed 2026-06-15. Reference scopes for future maintainer parallel work.
-
-| Agent | Scope |
-|-------|-------|
-| A — Web | `examples/web/src/**`, `examples/web/e2e/**` |
-| B — Android | `examples/android/app/**` |
-| C — Gates/CI | `scripts/feature-gate.sh`, `scripts/feature-autofix.sh`, `scripts/run-maintainer-gates.sh`, `scripts/pre-release-gate.sh`, `scripts/check-security-triage.sh`, `.github/workflows/release.yml`, `.github/workflows/ci.yml` |
-| D — Docs | `docs/**`, `.cursor/rules/**`, `TEMPLATE_INDEX.json`, `modules/**` |
-
-**Sequential-only (no Parallel):** `BUILD_PLAN.md`, `scripts/agent-progress.sh`, `scripts/watch-agent-gates.sh`, shared `design-tokens/`
-
-## Sprint M1 (template maintainer) — archived
-
-| Task | Scope |
-|------|-------|
-| Web bundle + snapshots | `examples/web/**`, `scripts/check-bundle-size.sh` |
-| Python pyright | `examples/python/**` |
-| Android metadata | `examples/android/fastlane/**`, `examples/android/README.md` |
-| Cursor rules | `.cursor/rules/testing.mdc`, `.cursor/rules/ci-gates.mdc` |
-| Scorecard | `.github/workflows/scorecard.yml` |
-| Parallel checker | `scripts/check-parallel-scope.sh`, `docs/PARALLEL_AGENT_SCOPES.md` |
+4. Never edit `BUILD_PLAN.md` from parallel agents
+5. **Auto-dispatch:** `/scope` reads `plan-parallel-dispatch.sh` manifest and launches Task subagents; CLI fallback: `scripts/expedition/dispatch-parallel-agents.ps1`
 
 ## Collision Response
 

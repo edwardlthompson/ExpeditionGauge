@@ -1,0 +1,1 @@
+Dual-orientation dashboard — portrait and landscape HUD layouts with optional driving-mode landscape lock while recording.

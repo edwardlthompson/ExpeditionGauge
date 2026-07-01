@@ -3,14 +3,17 @@ package dev.foss.expeditiongauge.ui.playback
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,7 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.recording.SessionMetadata
 import dev.foss.expeditiongauge.recording.SessionMetadataRepository
 import dev.foss.expeditiongauge.recording.SessionPhotoCapture
@@ -39,6 +46,7 @@ fun SessionMetadataEditScreen(
     context: Context,
     onSaved: () -> Unit,
     onBack: () -> Unit,
+    onDeleteSession: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     var notes by remember { mutableStateOf("") }
@@ -46,6 +54,7 @@ fun SessionMetadataEditScreen(
     var conditions by remember { mutableStateOf("") }
     var tagsText by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<String?>(null) }
+    var activityType by remember { mutableStateOf(ActivityType.DRIVE) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(sessionId) {
@@ -55,6 +64,7 @@ fun SessionMetadataEditScreen(
             conditions = meta.conditions.orEmpty()
             tagsText = meta.tags.joinToString(", ")
             photoUri = meta.photoUri
+            activityType = meta.activityType
         }
     }
 
@@ -100,6 +110,53 @@ fun SessionMetadataEditScreen(
             label = { Text(stringResource(R.string.session_metadata_tags)) },
             modifier = Modifier.fillMaxWidth().testTag("session_metadata_tags"),
         )
+        if (FeatureFlags.activityLibraryEnabled) {
+            Text(
+                text = stringResource(R.string.session_metadata_activity),
+                style = MaterialTheme.typography.titleSmall,
+                color = GaugeYellow,
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(SpacingMd),
+            ) {
+                ActivityType.entries.forEach { type ->
+                    FilterChip(
+                        selected = activityType == type,
+                        onClick = { activityType = type },
+                        label = { Text(activityTypeLabel(type)) },
+                        modifier = Modifier.testTag("activity_type_${type.name}"),
+                    )
+                }
+            }
+        }
+        Button(
+            onClick = {
+                scope.launch {
+                    val tags = tagsText.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                    repository.save(
+                        sessionId,
+                        SessionMetadata(
+                            notes = notes.ifBlank { null },
+                            driverName = driverName.ifBlank { null },
+                            conditions = conditions.ifBlank { null },
+                            tags = tags,
+                            photoUri = photoUri,
+                            activityType = activityType,
+                        ),
+                    )
+                    onSaved()
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("session_metadata_save")
+                .semantics { contentDescription = "Save metadata" },
+        ) {
+            Text(stringResource(R.string.session_metadata_save))
+        }
         Button(
             onClick = {
                 val uri = SessionPhotoCapture.photoUri(context, sessionId)
@@ -118,26 +175,16 @@ fun SessionMetadataEditScreen(
         photoUri?.let {
             Text(text = stringResource(R.string.session_metadata_photo_attached), style = MaterialTheme.typography.bodySmall)
         }
-        Button(
-            onClick = {
-                scope.launch {
-                    val tags = tagsText.split(',').map { it.trim() }.filter { it.isNotEmpty() }
-                    repository.save(
-                        sessionId,
-                        SessionMetadata(
-                            notes = notes.ifBlank { null },
-                            driverName = driverName.ifBlank { null },
-                            conditions = conditions.ifBlank { null },
-                            tags = tags,
-                            photoUri = photoUri,
-                        ),
-                    )
-                    onSaved()
-                }
-            },
-            modifier = Modifier.fillMaxWidth().testTag("session_metadata_save"),
-        ) {
-            Text(stringResource(R.string.session_metadata_save))
+        onDeleteSession?.let { delete ->
+            Button(
+                onClick = delete,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("session_delete")
+                    .semantics { contentDescription = "Delete session" },
+            ) {
+                Text(stringResource(R.string.session_delete))
+            }
         }
         Button(onClick = onBack) {
             Text(stringResource(R.string.settings_close))

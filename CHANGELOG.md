@@ -56,13 +56,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Session metadata, crawling mode, lap timing, telemetry graphs, route heatmaps, driving line, ghost lap, configurable alerts (Sprints 9–13)
 * F-Droid store assets: icon, feature graphic, phone screenshots
 
-## [Unreleased]
+## [2.9.0] — ExpeditionGauge Relive wave (2026-06-30)
+
+### Added
+
+* System UI insets — navigation bar padding for record controls, scrubber, and map ornaments (Sprint 19b)
+* Dual-orientation dashboard — portrait/landscape HUD with driving-mode lock (Sprint 20)
+* Android Auto — live speed, G, and attitude via AndroidX Car App Library (Sprint 21)
+* Photo & video attachments — timestamped media markers on playback scrubber (Sprint 22)
+* Elevation profile — scrub-synced ascent/descent panel (Sprint 23)
+* Activity library — thumbnails, filter chips, quick-stats strip (Sprint 24)
+* Playback video export — MediaCodec clip with telemetry overlay (Sprint 25)
+* 3D route flyover — perspective MP4 with speed/elevation HUD (Sprint 26)
+* Sharing polish — stats card preview + multi-file share intent (Sprint 27)
+* F-Droid changelog for versionCode 10
 
 ### Changed
 
-* Trim `BUILD_PLAN.md` to active board (Sprints 19b–27); archive Sprints 0–19 in `COMPLETED_TASKS.md`
-* Split oversized Kotlin/XML files for CI file-limit compliance
-* Playback map overlay colors migrated to design tokens (`Playback*` palette)
+* Trim `BUILD_PLAN.md` to active board; archive Sprints 0–27 in `COMPLETED_TASKS.md`
+* Split oversized Kotlin files for CI file-limit compliance
+* Template sync to agent-project-bootstrap main (M30 FOSS layer, autonomous build stack)
+
+## [Unreleased]
 
 ## [0.11.1](https://github.com/edwardlthompson/agent-project-bootstrap/compare/v0.11.0...v0.11.1) (2026-06-21)
 

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -28,6 +30,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.AttitudeBallLogic
@@ -63,6 +66,7 @@ fun AttitudeGMeterGauge(
     pitchAlertActive: Boolean = false,
     rollAlertActive: Boolean = false,
     latGAlertActive: Boolean = false,
+    gaugeSizeDp: Dp = 180.dp,
 ) {
     val ball = remember(pitchDeg, rollDeg, latG, lonG, mode) { ballForMode(mode, pitchDeg, rollDeg, latG, lonG) }
     val peakBall = if (showPeakHold && (peakAbsPitchDeg > 0f || peakAbsRollDeg > 0f)) {
@@ -82,7 +86,7 @@ fun AttitudeGMeterGauge(
     ) {
         Canvas(
             modifier = Modifier
-                .size(180.dp)
+                .size(gaugeSizeDp)
                 .then(
                     if (gaugeAlert) {
                         Modifier.border(3.dp, GaugeRed, CircleShape)
@@ -153,6 +157,7 @@ fun AttitudeGMeterGauge(
         ModalBottomSheet(
             onDismissRequest = { showDetail = false },
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            contentWindowInsets = { WindowInsets.navigationBars },
         ) {
             Column(
                 modifier = Modifier

@@ -3,7 +3,7 @@ param(
     [Parameter(Mandatory = $true)]
     [int]$Sprint,
     [Parameter(Mandatory = $true)]
-    [ValidateSet("cold-start", "calibrate-level", "drift-simulation", "thermal-recording", "recording-export", "playback-scrub", "playback-drift-viz", "playback-graphs", "playback-keyboard-seek", "playback-layout-rotation", "heatmap-scrubber", "ghost-lap-same-session", "ghost-lap-cross-session", "imu-fallback", "imu-single", "imu-multi", "obd-elm327", "obd-slip-beta", "tpms-pair", "external-gps", "crawling-mode", "session-metadata", "lap-timing", "lap-timing-phone", "alerts-latg", "alerts-cooldown", "polish-off-regression", "preset-switch-mid-drive", "mark-event-export", "session-compare-drift", "talkback-labels", "video-sync-drift", "calibration-wizard", "developer-mode", "live-session-start", "live-receiver-screen", "live-recording-offline")]
+    [ValidateSet("cold-start", "calibrate-level", "drift-simulation", "thermal-recording", "recording-export", "playback-scrub", "playback-drift-viz", "playback-graphs", "elevation-playback-scrub", "playback-keyboard-seek", "playback-layout-rotation", "heatmap-scrubber", "ghost-lap-same-session", "ghost-lap-cross-session", "imu-fallback", "imu-single", "imu-multi", "obd-elm327", "obd-slip-beta", "tpms-pair", "external-gps", "crawling-mode", "session-metadata", "library-filter-tag", "playback-video-export", "flyover-video-export", "sharing-video-card", "lap-timing", "lap-timing-phone", "alerts-latg", "alerts-cooldown", "polish-off-regression", "preset-switch-mid-drive", "mark-event-export", "session-compare-drift", "talkback-labels", "video-sync-drift", "calibration-wizard", "developer-mode", "live-session-start", "live-receiver-screen", "live-recording-offline", "nav-insets-3button", "nav-insets-gesture", "nav-insets-landscape", "orientation-rotate-recording", "orientation-cold-flow", "aa-service-registered", "aa-live-metrics", "aa-record-from-car", "aa-disconnect-mid-drive", "media-attach-recording")]
     [string]$Scenario,
     [string]$Serial = ""
 )
@@ -46,21 +46,27 @@ function Get-UiDumpContent {
 function Find-TapTarget {
     param([string]$Content, [string]$Label)
     $escaped = [regex]::Escape($Label)
-    $matched = $Content -match "text=`"$escaped`"[^>]*bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`""
-    if (-not $matched) {
-        $matched = $Content -match "bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`"[^>]*text=`"$escaped`""
+    $patterns = @(
+        "text=`"$escaped`"[^>]*bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`""
+        "bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`"[^>]*text=`"$escaped`""
+        "content-desc=`"$escaped`"[^>]*bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`""
+        "bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`"[^>]*content-desc=`"$escaped`""
+    )
+    foreach ($pattern in $patterns) {
+        $matches = [regex]::Matches($Content, $pattern)
+        foreach ($match in $matches) {
+            $left = [int]$match.Groups[1].Value
+            $top = [int]$match.Groups[2].Value
+            $right = [int]$match.Groups[3].Value
+            $bottom = [int]$match.Groups[4].Value
+            if ($right -le $left -or $bottom -le $top) { continue }
+            return @{
+                X = [int](($left + $right) / 2)
+                Y = [int](($top + $bottom) / 2)
+            }
+        }
     }
-    if (-not $matched) {
-        $matched = $Content -match "content-desc=`"$escaped`"[^>]*bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`""
-    }
-    if (-not $matched) {
-        $matched = $Content -match "bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`"[^>]*content-desc=`"$escaped`""
-    }
-    if (-not $matched) { return $null }
-    return @{
-        X = [int](([int]$Matches[1] + [int]$Matches[3]) / 2)
-        Y = [int](([int]$Matches[2] + [int]$Matches[4]) / 2)
-    }
+    return $null
 }
 
 function Find-SessionCard {
@@ -173,6 +179,120 @@ function Restore-DeviceRotation {
     Invoke-AdbCommand shell settings put system user_rotation 0 | Out-Null
     Invoke-AdbCommand shell settings put system accelerometer_rotation 1 | Out-Null
     Start-Sleep -Seconds 1
+}
+
+function Get-TapTargetBounds {
+    param([string]$Content, [string]$Label)
+    $escaped = [regex]::Escape($Label)
+    $patterns = @(
+        "text=`"$escaped`"[^>]*bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`""
+        "bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`"[^>]*text=`"$escaped`""
+        "content-desc=`"$escaped`"[^>]*bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`""
+        "bounds=`"\[(\d+),(\d+)\]\[(\d+),(\d+)\]`"[^>]*content-desc=`"$escaped`""
+    )
+    foreach ($pattern in $patterns) {
+        if ($Content -match $pattern) {
+            return @{
+                Left = [int]$Matches[1]
+                Top = [int]$Matches[2]
+                Right = [int]$Matches[3]
+                Bottom = [int]$Matches[4]
+            }
+        }
+    }
+    return $null
+}
+
+function Get-ScreenHeightPx {
+    $out = (Invoke-AdbCommand shell wm size 2>$null | Out-String)
+    if ($out -match '(\d+)x(\d+)') {
+        return [int]$Matches[2]
+    }
+    return 2400
+}
+
+function Get-NavBarReservePx {
+    param([ValidateSet("three-button", "gesture")][string]$Mode)
+    $densityOut = (Invoke-AdbCommand shell wm density 2>$null | Out-String)
+    $density = 420
+    if ($densityOut -match '(\d+)') { $density = [int]$Matches[1] }
+    $dp = if ($Mode -eq "gesture") { 48 } else { 96 }
+    return [int](($dp * $density) / 160)
+}
+
+function Set-NavigationMode {
+    param([ValidateSet("three-button", "gesture")][string]$Mode)
+    $value = if ($Mode -eq "gesture") { 2 } else { 0 }
+    Invoke-AdbCommand shell settings put secure navigation_mode $value | Out-Null
+    Start-Sleep -Seconds 2
+}
+
+function Open-DashboardForInsets {
+    Invoke-AdbCommand shell am force-stop $pkg | Out-Null
+    Grant-RequiredPermissions
+    Invoke-AdbCommand shell am start -n "$pkg/.MainActivity" | Out-Null
+    Start-Sleep -Seconds 4
+    Dismiss-OnboardingIfPresent
+    return Get-UiDumpContent
+}
+
+function Assert-BottomChromeAboveNavBar {
+    param(
+        [string]$Content,
+        [string]$Label,
+        [ValidateSet("three-button", "gesture")][string]$NavMode
+    )
+    $bounds = Get-TapTargetBounds -Content $Content -Label $Label
+    if (-not $bounds) {
+        Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "$Label not found in UI dump" } 1
+    }
+    $screenH = Get-ScreenHeightPx
+    $reserve = Get-NavBarReservePx -Mode $NavMode
+    $maxBottom = $screenH - $reserve
+    if ($bounds.Bottom -gt $maxBottom) {
+        Write-JsonResult @{
+            status = "fail"
+            scenario = $Scenario
+            reason = "$Label bottom=$($bounds.Bottom) overlaps nav zone (screen=$screenH reserve=$reserve mode=$NavMode)"
+        } 1
+    }
+    $tapY = [int](($bounds.Top + $bounds.Bottom) / 2)
+    if ($tapY -gt $maxBottom) {
+        Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "$Label tap center in nav zone" } 1
+    }
+}
+
+function Assert-PlaybackScrubberAboveNavBar {
+    param(
+        [string]$Content,
+        [ValidateSet("three-button", "gesture")][string]$NavMode
+    )
+    if ($Content -notmatch 'content-desc="playback index \d+ of \d+"') {
+        Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "playback screen not open for scrubber check" } 1
+    }
+    $screenH = Get-ScreenHeightPx
+    $reserve = Get-NavBarReservePx -Mode $NavMode
+    $maxBottom = $screenH - $reserve
+    if ($Content -match 'text="Play"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"') {
+        $playBottom = [int]$Matches[4]
+        if ($playBottom -gt $maxBottom) {
+            Write-JsonResult @{
+                status = "fail"
+                scenario = $Scenario
+                reason = "playback Play control bottom=$playBottom overlaps nav zone"
+            } 1
+        }
+    }
+    if ($Content -match 'text="Close"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"') {
+        $closeBottom = [int]$Matches[4]
+        if ($closeBottom -gt $maxBottom) {
+            Write-JsonResult @{
+                status = "fail"
+                scenario = $Scenario
+                reason = "playback Close control bottom=$closeBottom overlaps nav zone"
+            } 1
+        }
+    }
 }
 
 function Open-ImuManagement {
@@ -356,6 +476,20 @@ function Count-WitMotionDevices {
     if ($Content -match "WitMotion") { $names += "WitMotion" }
     if ($Content -match "WT61") { $names += "WT61" }
     return $names.Count
+}
+
+function Test-RecordingUiActive {
+    param([string]$Content)
+    if ($Content -match 'recording_live_strip') { return $true }
+    if ($Content -match 'text="Stop"') { return $true }
+    if ($Content -match 'record_stop') { return $true }
+    if ($Content -match 'text="Record"' -and $Content -match 'crawl_badge') { return $true }
+    return $false
+}
+
+function Test-RecordingSessionEnded {
+    param([string]$Content)
+    return ($Content -match 'text="Record"' -and $Content -notmatch 'recording_live_strip')
 }
 
 switch ($Scenario) {
@@ -796,6 +930,22 @@ switch ($Scenario) {
         $content = Open-PlaybackScreen
         if ($content -notmatch "Speed" -or $content -notmatch "Attitude") {
             Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "telemetry graph tabs not visible" } 1
+        }
+        Assert-ActivityVisible
+    }
+    "elevation-playback-scrub" {
+        $content = Open-PlaybackScreen
+        if ($content -notmatch "Elevation" -or $content -notmatch "Min" -or $content -notmatch "Max") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "elevation profile stats not visible" } 1
+        }
+        Invoke-AdbCommand shell input swipe 400 1200 2400 1200 300 | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+        if (-not (Test-PlaybackScreenOpen -Content $content)) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "playback UI lost after elevation scrub" } 1
+        }
+        if ($content -notmatch "Elevation") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "elevation panel missing after scrub" } 1
         }
         Assert-ActivityVisible
     }
@@ -1344,6 +1494,464 @@ switch ($Scenario) {
             Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Stop button not found while recording" } 1
         }
         Invoke-AdbCommand shell input tap $stop.X $stop.Y | Out-Null
+        Assert-ActivityVisible
+    }
+    "nav-insets-3button" {
+        Set-NavigationMode -Mode "three-button"
+        $content = Open-DashboardForInsets
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Record" -NavMode "three-button"
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Sessions" -NavMode "three-button"
+        Assert-ActivityVisible
+    }
+    "nav-insets-gesture" {
+        Set-NavigationMode -Mode "gesture"
+        $content = Open-DashboardForInsets
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Record" -NavMode "gesture"
+        Set-NavigationMode -Mode "three-button"
+        $content = Open-DashboardForInsets
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Record" -NavMode "three-button"
+        Set-NavigationMode -Mode "gesture"
+        $content = Open-DashboardForInsets
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Record" -NavMode "gesture"
+        Assert-ActivityVisible
+    }
+    "nav-insets-landscape" {
+        Set-NavigationMode -Mode "three-button"
+        Set-DeviceRotation -Rotation 1
+        $content = Open-DashboardForInsets
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Record" -NavMode "three-button"
+        $content = Open-PlaybackScreen
+        Assert-PlaybackScrubberAboveNavBar -Content $content -NavMode "three-button"
+        Set-NavigationMode -Mode "gesture"
+        $content = Open-DashboardForInsets
+        Assert-BottomChromeAboveNavBar -Content $content -Label "Record" -NavMode "gesture"
+        $content = Open-PlaybackScreen
+        Assert-PlaybackScrubberAboveNavBar -Content $content -NavMode "gesture"
+        Restore-DeviceRotation
+        Set-NavigationMode -Mode "gesture"
+        Assert-ActivityVisible
+    }
+    "orientation-rotate-recording" {
+        Restore-DeviceRotation
+        Invoke-AdbCommand shell am force-stop $pkg | Out-Null
+        Grant-RequiredPermissions
+        Invoke-AdbCommand shell settings put system user_rotation 0 | Out-Null
+        Invoke-AdbCommand shell settings put system accelerometer_rotation 0 | Out-Null
+        Invoke-AdbCommand shell am start -n "$pkg/.MainActivity" | Out-Null
+        Start-Sleep -Seconds 4
+        Dismiss-OnboardingIfPresent
+        $content = Get-UiDumpContent
+        $record = Find-TapTarget -Content $content -Label "Record"
+        if (-not $record) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Record button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $record.X $record.Y | Out-Null
+        Start-Sleep -Seconds 3
+        $content = Get-UiDumpContent
+        if (-not (Test-RecordingUiActive -Content $content)) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "recording not started before rotation" } 1
+        }
+        Set-DeviceRotation -Rotation 1
+        Start-Sleep -Seconds 4
+        $content = Get-UiDumpContent
+        if (Test-RecordingSessionEnded -Content $content) {
+            Restore-DeviceRotation
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "session dropped after landscape rotation" } 1
+        }
+        Set-DeviceRotation -Rotation 0
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+        $stop = Find-TapTarget -Content $content -Label "Stop"
+        if ($stop) {
+            Invoke-AdbCommand shell input tap $stop.X $stop.Y | Out-Null
+        }
+        Restore-DeviceRotation
+        Assert-ActivityVisible
+    }
+    "orientation-cold-flow" {
+        Restore-DeviceRotation
+        Invoke-AdbCommand shell settings put system user_rotation 0 | Out-Null
+        Invoke-AdbCommand shell settings put system accelerometer_rotation 0 | Out-Null
+        Invoke-AdbCommand shell am force-stop $pkg | Out-Null
+        Grant-RequiredPermissions
+        Invoke-AdbCommand shell am start -n "$pkg/.MainActivity" | Out-Null
+        Start-Sleep -Seconds 4
+        Dismiss-OnboardingIfPresent
+        Set-DeviceRotation -Rotation 1
+        $content = Get-UiDumpContent
+        $calibrate = Find-TapTarget -Content $content -Label "Calibrate / Set Level"
+        if (-not $calibrate) {
+            $calibrate = Find-TapTarget -Content $content -Label "Calibrate"
+        }
+        if ($calibrate) {
+            Invoke-AdbCommand shell input tap $calibrate.X $calibrate.Y | Out-Null
+            Start-Sleep -Seconds 1
+        }
+        $content = Get-UiDumpContent
+        $record = Find-TapTarget -Content $content -Label "Record"
+        if (-not $record) {
+            Restore-DeviceRotation
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Record not found after rotate+calibrate" } 1
+        }
+        Invoke-AdbCommand shell input tap $record.X $record.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $stop = Find-TapTarget -Content (Get-UiDumpContent) -Label "Stop"
+        if (-not $stop) {
+            Restore-DeviceRotation
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Stop not found after record" } 1
+        }
+        Invoke-AdbCommand shell input tap $stop.X $stop.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Open-PlaybackScreen
+        if (-not (Test-PlaybackScreenOpen -Content $content)) {
+            Restore-DeviceRotation
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "playback not opened" } 1
+        }
+        Restore-DeviceRotation
+        Assert-ActivityVisible
+    }
+    "aa-service-registered" {
+        $dump = (Invoke-AdbCommand shell dumpsys package $pkg) -join "`n"
+        if ($dump -notmatch "ExpeditionGaugeCarAppService") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "ExpeditionGaugeCarAppService not in package dump" } 1
+        }
+        if ($dump -notmatch "androidx\.car\.app\.CarAppService") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "CarAppService intent filter missing" } 1
+        }
+    }
+    "aa-live-metrics" {
+        $carHost = (Invoke-AdbCommand shell dumpsys activity services) -join "`n"
+        if ($carHost -notmatch "car\.app|Gearhead|Android Auto") {
+            Write-JsonResult @{
+                status = "blocker"
+                scenario = $Scenario
+                reason = "Android Auto host not connected — run DHU or connect to head unit"
+            } 2
+        }
+    }
+    "aa-record-from-car" {
+        Write-JsonResult @{
+            status = "blocker"
+            scenario = $Scenario
+            reason = "Requires DHU or physical Android Auto head unit"
+        } 2
+    }
+    "aa-disconnect-mid-drive" {
+        Write-JsonResult @{
+            status = "blocker"
+            scenario = $Scenario
+            reason = "Requires DHU or physical Android Auto head unit"
+        } 2
+    }
+    "media-attach-recording" {
+        Invoke-AdbCommand shell am force-stop $pkg | Out-Null
+        Grant-RequiredPermissions
+        $mediaBaseline = @(
+            (Invoke-AdbCommand shell run-as $pkg find files/sessions -type f 2>$null) -split "`n" |
+                Where-Object { $_ -match "photo_" }
+        ).Count
+        Invoke-AdbCommand shell am start -n "$pkg/.MainActivity" | Out-Null
+        Start-Sleep -Seconds 4
+        Dismiss-OnboardingIfPresent
+        $content = Get-UiDumpContent
+        $record = Find-TapTarget -Content $content -Label "Record"
+        if (-not $record) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Record not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $record.X $record.Y | Out-Null
+        Start-Sleep -Seconds 3
+        $content = Get-UiDumpContent
+        $advanced = Find-TapTarget -Content $content -Label "Recording options"
+        if ($advanced) {
+            Invoke-AdbCommand shell input tap $advanced.X $advanced.Y | Out-Null
+            Start-Sleep -Seconds 2
+        }
+        $content = Get-UiDumpContent
+        $stub = Find-TapTarget -Content $content -Label "Attach test photo"
+        if (-not $stub) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "attach_media_stub not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $stub.X $stub.Y | Out-Null
+        Start-Sleep -Seconds 1
+        Invoke-AdbCommand shell input keyevent 4 | Out-Null
+        Start-Sleep -Seconds 1
+        $mediaBefore = (Invoke-AdbCommand shell run-as $pkg find files/sessions -type f 2>$null) -join "`n"
+        if ($mediaBefore -notmatch "photo_") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "media file not written" } 1
+        }
+        $content = Get-UiDumpContent
+        $stop = Find-TapTarget -Content $content -Label "Stop"
+        if (-not $stop) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Stop not found after attach" } 1
+        }
+        Invoke-AdbCommand shell input tap $stop.X $stop.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+        $sessions = Find-TapTarget -Content $content -Label "Sessions"
+        if (-not $sessions) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Sessions button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $sessions.X $sessions.Y | Out-Null
+        Start-Sleep -Seconds 3
+        $content = Get-UiDumpContent
+        if (-not (Find-TapTarget -Content $content -Label "Play")) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "no session in list" } 1
+        }
+        Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+        Start-Sleep -Seconds 1
+        $content = Get-UiDumpContent
+        $edit = Find-TapTarget -Content $content -Label "Edit metadata"
+        if (-not $edit) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Edit metadata not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $edit.X $edit.Y | Out-Null
+        Start-Sleep -Seconds 2
+        foreach ($unused in 1..3) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+        }
+        $content = Get-UiDumpContent
+        $delete = Find-TapTarget -Content $content -Label "Delete session"
+        if (-not $delete) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Delete session not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $delete.X $delete.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $mediaAfter = @(
+            (Invoke-AdbCommand shell run-as $pkg find files/sessions -type f 2>$null) -split "`n" |
+                Where-Object { $_ -match "photo_" }
+        ).Count
+        if ($mediaAfter -ge ($mediaBaseline + 1)) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "media files remain after delete" } 1
+        }
+        Assert-ActivityVisible
+    }
+    "library-filter-tag" {
+        Invoke-AdbCommand shell am force-stop $pkg | Out-Null
+        Grant-RequiredPermissions
+        Invoke-AdbCommand shell am start -n "$pkg/.MainActivity" | Out-Null
+        Start-Sleep -Seconds 3
+        Dismiss-OnboardingIfPresent
+        $content = Get-UiDumpContent
+        $record = Find-TapTarget -Content $content -Label "Record"
+        if ($record) {
+            Invoke-AdbCommand shell input tap $record.X $record.Y | Out-Null
+            Start-Sleep -Seconds 5
+            $content = Get-UiDumpContent
+            $stop = Find-TapTarget -Content $content -Label "Stop"
+            if ($stop) { Invoke-AdbCommand shell input tap $stop.X $stop.Y | Out-Null }
+            Start-Sleep -Seconds 2
+        }
+        $content = Get-UiDumpContent
+        foreach ($unused in 1..3) {
+            $sessionsBtn = Find-TapTarget -Content $content -Label "Sessions"
+            if ($sessionsBtn) { break }
+            Invoke-AdbCommand shell input swipe 1580 1800 1580 600 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+            $content = Get-UiDumpContent
+        }
+        $sessionsBtn = Find-TapTarget -Content $content -Label "Sessions"
+        if (-not $sessionsBtn) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Sessions button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $sessionsBtn.X $sessionsBtn.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+        if ($content -notmatch "route preview") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "session route thumbnail not visible" } 1
+        }
+        $edit = Find-TapTarget -Content $content -Label "Edit metadata"
+        if (-not $edit) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Edit metadata button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $edit.X $edit.Y | Out-Null
+        Start-Sleep -Seconds 2
+        foreach ($unused in 1..2) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+        }
+        $offroadChip = Find-TapTarget -Content (Get-UiDumpContent) -Label "Off-road"
+        if (-not $offroadChip) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Off-road activity chip not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $offroadChip.X $offroadChip.Y | Out-Null
+        Start-Sleep -Seconds 1
+        foreach ($unused in 1..5) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+        }
+        $content = Get-UiDumpContent
+        $save = Find-TapTarget -Content $content -Label "Save metadata"
+        if (-not $save -and $content -match 'text="Save metadata"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"') {
+            $save = @{
+                X = [int](([int]$Matches[1] + [int]$Matches[3]) / 2)
+                Y = [int](([int]$Matches[2] + [int]$Matches[4]) / 2)
+            }
+        }
+        if (-not $save) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Save metadata button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $save.X $save.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+        $filterOffroad = Find-TapTarget -Content $content -Label "Off-road"
+        if (-not $filterOffroad) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Off-road filter chip not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $filterOffroad.X $filterOffroad.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+        if (-not (Find-TapTarget -Content $content -Label "Play")) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "session not visible after OFFROAD filter" } 1
+        }
+        if ($content -notmatch "route preview") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "route thumbnail missing after filter" } 1
+        }
+        if ($content -notmatch "Activity: Off-road") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "activity type Off-road not shown on card" } 1
+        }
+        Assert-ActivityVisible
+    }
+    "playback-video-export" {
+        $content = Open-PlaybackScreen
+        foreach ($unused in 1..4) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+        }
+        $content = Get-UiDumpContent
+        if ($content -notmatch "Export playback video") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "playback export panel not visible" } 1
+        }
+        $exportBtn = Find-TapTarget -Content $content -Label "Export video"
+        if (-not $exportBtn) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Export video button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $exportBtn.X $exportBtn.Y | Out-Null
+        $complete = $false
+        foreach ($unused in 1..90) {
+            Start-Sleep -Seconds 2
+            $content = Get-UiDumpContent
+            if ($content -match "Export complete") {
+                $complete = $true
+                break
+            }
+            if ($content -match "Encoding") {
+                continue
+            }
+        }
+        if (-not $complete) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "export did not complete within timeout" } 1
+        }
+        if (-not (Find-TapTarget -Content $content -Label "Share video")) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Share video button not found after export" } 1
+        }
+        Assert-ActivityVisible
+    }
+    "flyover-video-export" {
+        $content = Open-PlaybackScreen
+        foreach ($unused in 1..6) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+        }
+        $content = Get-UiDumpContent
+        if ($content -notmatch "3D route flyover") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "flyover export panel not visible" } 1
+        }
+        $createBtn = Find-TapTarget -Content $content -Label "Create 3D video"
+        if (-not $createBtn) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Create 3D video button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $createBtn.X $createBtn.Y | Out-Null
+        $complete = $false
+        foreach ($unused in 1..120) {
+            Start-Sleep -Seconds 2
+            $content = Get-UiDumpContent
+            if ($content -match "Flyover complete") {
+                $complete = $true
+                break
+            }
+        }
+        if (-not $complete) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "flyover export did not complete within timeout" } 1
+        }
+        if (-not (Find-TapTarget -Content $content -Label "Share flyover")) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Share flyover button not found" } 1
+        }
+        Assert-ActivityVisible
+    }
+    "sharing-video-card" {
+        $content = Open-PlaybackScreen
+        foreach ($unused in 1..4) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 400 300 | Out-Null
+            Start-Sleep -Milliseconds 400
+        }
+        $content = Get-UiDumpContent
+        if ($content -notmatch "Export playback video") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "playback export panel not visible" } 1
+        }
+        $shareBtn = Find-TapTarget -Content $content -Label "Share video"
+        if ($shareBtn) {
+            Invoke-AdbCommand shell input tap $shareBtn.X $shareBtn.Y | Out-Null
+            Start-Sleep -Seconds 1
+            $content = Get-UiDumpContent
+            if ($content -notmatch "Share session") {
+                Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "share preview sheet not shown" } 1
+            }
+            foreach ($unused in 1..2) {
+                Invoke-AdbCommand shell input swipe 500 1800 500 900 250 | Out-Null
+                Start-Sleep -Milliseconds 300
+            }
+            $content = Get-UiDumpContent
+            $confirmBtn = Find-TapTarget -Content $content -Label "Share video and card"
+            if (-not $confirmBtn) {
+                Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "share preview confirm button not found" } 1
+            }
+            Invoke-AdbCommand shell input tap $confirmBtn.X $confirmBtn.Y | Out-Null
+            Start-Sleep -Seconds 2
+            Assert-ActivityVisible
+            return
+        }
+        $exportBtn = Find-TapTarget -Content $content -Label "Export video"
+        if (-not $exportBtn) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Export video button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $exportBtn.X $exportBtn.Y | Out-Null
+        $complete = $false
+        foreach ($unused in 1..90) {
+            Start-Sleep -Seconds 2
+            $content = Get-UiDumpContent
+            if ($content -match "Export complete") {
+                $complete = $true
+                break
+            }
+        }
+        if (-not $complete) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "export did not complete within timeout" } 1
+        }
+        $shareBtn = Find-TapTarget -Content $content -Label "Share video"
+        if (-not $shareBtn) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "Share video button not found after export" } 1
+        }
+        Invoke-AdbCommand shell input tap $shareBtn.X $shareBtn.Y | Out-Null
+        Start-Sleep -Seconds 1
+        $content = Get-UiDumpContent
+        if ($content -notmatch "Share session") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "share preview sheet not shown" } 1
+        }
+        if ($content -notmatch "Stats card preview") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "stats card preview label not found" } 1
+        }
+        foreach ($unused in 1..2) {
+            Invoke-AdbCommand shell input swipe 500 1800 500 900 250 | Out-Null
+            Start-Sleep -Milliseconds 300
+        }
+        $content = Get-UiDumpContent
+        $confirmBtn = Find-TapTarget -Content $content -Label "Share video and card"
+        if (-not $confirmBtn) {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "share preview confirm button not found" } 1
+        }
+        Invoke-AdbCommand shell input tap $confirmBtn.X $confirmBtn.Y | Out-Null
+        Start-Sleep -Seconds 2
         Assert-ActivityVisible
     }
     default {

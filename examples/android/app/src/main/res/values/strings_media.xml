@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="attach_media_camera">Attach photo (camera)</string>
+    <string name="attach_media_gallery">Attach photo (gallery)</string>
+    <string name="attach_media_stub">Attach test photo</string>
+    <string name="settings_media_heading">Session media</string>
+    <string name="settings_media_storage">Media storage: %1$s</string>
+    <string name="settings_media_compression">Photo compression</string>
+    <string name="settings_media_compression_original">Original</string>
+    <string name="settings_media_compression_balanced">Balanced</string>
+    <string name="settings_media_compression_compact">Compact</string>
+    <string name="media_viewer_title">Media at %1$d ms</string>
+    <string name="media_viewer_photo">Attached photo</string>
+    <string name="session_delete">Delete session</string>
+</resources>

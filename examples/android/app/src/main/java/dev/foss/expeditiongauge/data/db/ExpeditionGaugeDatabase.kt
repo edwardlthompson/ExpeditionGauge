@@ -12,6 +12,7 @@ import dev.foss.expeditiongauge.data.db.dao.RecordingSessionDao
 import dev.foss.expeditiongauge.data.db.dao.SampleDao
 import dev.foss.expeditiongauge.data.db.dao.SectorSplitDao
 import dev.foss.expeditiongauge.data.db.dao.SessionEventDao
+import dev.foss.expeditiongauge.data.db.dao.SessionMediaDao
 import dev.foss.expeditiongauge.data.db.dao.SettingsProfileDao
 import dev.foss.expeditiongauge.data.db.dao.TrackConfigDao
 import dev.foss.expeditiongauge.data.db.entities.AlertEventEntity
@@ -20,8 +21,11 @@ import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import dev.foss.expeditiongauge.data.db.entities.SectorSplitEntity
 import dev.foss.expeditiongauge.data.db.entities.SessionEventEntity
+import dev.foss.expeditiongauge.data.db.entities.SessionMediaEntity
+import dev.foss.expeditiongauge.data.db.entities.SessionMediaKind
 import dev.foss.expeditiongauge.data.db.entities.SettingsProfileEntity
 import dev.foss.expeditiongauge.data.db.entities.TrackConfigEntity
+import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.recording.RecordingMode
 
 @Database(
@@ -33,12 +37,13 @@ import dev.foss.expeditiongauge.recording.RecordingMode
         SectorSplitEntity::class,
         AlertEventEntity::class,
         SessionEventEntity::class,
+        SessionMediaEntity::class,
         SettingsProfileEntity::class,
     ],
-    version = 3,
+    version = 5,
     exportSchema = false,
 )
-@TypeConverters(RecordingModeConverter::class)
+@TypeConverters(RecordingModeConverter::class, SessionMediaKindConverter::class, ActivityTypeConverter::class)
 abstract class ExpeditionGaugeDatabase : RoomDatabase() {
     abstract fun recordingSessionDao(): RecordingSessionDao
     abstract fun sampleDao(): SampleDao
@@ -47,6 +52,7 @@ abstract class ExpeditionGaugeDatabase : RoomDatabase() {
     abstract fun sectorSplitDao(): SectorSplitDao
     abstract fun alertEventDao(): AlertEventDao
     abstract fun sessionEventDao(): SessionEventDao
+    abstract fun sessionMediaDao(): SessionMediaDao
     abstract fun settingsProfileDao(): SettingsProfileDao
 
     companion object {
@@ -63,4 +69,20 @@ class RecordingModeConverter {
 
     @TypeConverter
     fun toMode(value: String): RecordingMode = RecordingMode.valueOf(value)
+}
+
+class SessionMediaKindConverter {
+    @TypeConverter
+    fun fromKind(kind: SessionMediaKind): String = kind.name
+
+    @TypeConverter
+    fun toKind(value: String): SessionMediaKind = SessionMediaKind.valueOf(value)
+}
+
+class ActivityTypeConverter {
+    @TypeConverter
+    fun fromType(type: ActivityType): String = type.name
+
+    @TypeConverter
+    fun toType(value: String): ActivityType = ActivityType.valueOf(value)
 }

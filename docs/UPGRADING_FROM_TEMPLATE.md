@@ -37,7 +37,14 @@ Read the upstream release notes at `github.com/edwardlthompson/agent-project-boo
 | `LICENSE` | Verify MIT still applies | HUMAN |
 | `examples/` | Reference only unless adopting new stack | HUMAN decision |
 | `TEMPLATE_INDEX.json` | Run validate script after merge | AGENT |
-
+| `.cursor/hooks/` + `hooks.json` | Copy FOSS hooks; review `shell-denylist.txt` for child scripts | AGENT |
+| `.cursor/skills/` | Copy parallel-scope, validate-bootstrap, watch-gates-autofix | AGENT |
+| `.cursor/agents/` | Copy explorer, gate-fixer, verifier subagents | AGENT |
+| `scripts/build-sprint-status.sh` + `scripts/lib/build_sprint.py` | Copy; patch playbook marker for child BUILD_PLAN sections | AGENT |
+| `scripts/lib/human_task_automation.py` | Copy; extend with child ADB/AUTO delegates | AGENT |
+| `HUMAN_BACKLOG.md.example` | Copy; never overwrite live `HUMAN_BACKLOG.md` | AGENT |
+| `scripts/expedition/*` | Child-only — do not overwrite from template | HUMAN |
+| `examples/android/` (product app) | Child-only — reference GoldenPath patterns only | HUMAN |
 ## Version Compatibility
 
 | Upgrade | Notes |
@@ -45,7 +52,6 @@ Read the upstream release notes at `github.com/edwardlthompson/agent-project-boo
 | 0.1.x → 0.1.y | Safe PATCH; cherry-pick freely |
 | 0.1.x → 0.2.0 | Check CHANGELOG for new files/schema changes |
 | 0.x → 1.0.0 | Full review; init prompt structure may have changed |
-
 ## Decision Points
 
 - `[HUMAN]` Approve which upstream changes to adopt

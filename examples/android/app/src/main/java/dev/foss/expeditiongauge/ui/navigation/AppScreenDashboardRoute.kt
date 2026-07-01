@@ -1,8 +1,13 @@
 package dev.foss.expeditiongauge.ui.navigation
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
@@ -13,9 +18,11 @@ import dev.foss.expeditiongauge.about.UpdateApplyCoordinator
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.accessibility.MetricTtsReadout
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.settings.MediaCompressionQuality
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsLogic
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.stats.SessionAggregateStats
 import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
@@ -24,6 +31,7 @@ import dev.foss.expeditiongauge.accessibility.AudibleTones
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun AppScreenDashboardRoute(
@@ -55,10 +63,48 @@ fun AppScreenDashboardRoute(
     lapTimingState: dev.foss.expeditiongauge.timing.PredictiveTimingState,
     attitudeGaugeMode: AttitudeGaugeMode,
     ttsReadoutEnabled: Boolean,
+    statsAggregate: SessionAggregateStats,
 ) {
     val telemetry by services.telemetryBus.snapshots.collectAsStateWithLifecycle(
         initialValue = dev.foss.expeditiongauge.telemetry.TelemetrySnapshot.empty(),
     )
+    val compression by services.settingsPreferences.mediaCompressionQuality
+        .collectAsStateWithLifecycle(initialValue = MediaCompressionQuality.BALANCED)
+    var pendingCaptureFile by remember { mutableStateOf<File?>(null) }
+
+    fun attachTimestampMs(): Long = telemetry.timestampMs
+
+    val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (!success) {
+            pendingCaptureFile = null
+            return@rememberLauncherForActivityResult
+        }
+        val sessionId = services.recordingWriter.activeSessionId.value ?: return@rememberLauncherForActivityResult
+        val file = pendingCaptureFile ?: return@rememberLauncherForActivityResult
+        scope.launch {
+            services.sessionMediaRepository.attachPhotoFromFile(
+                sessionId,
+                attachTimestampMs(),
+                file,
+                compression,
+            )
+        }
+        pendingCaptureFile = null
+    }
+
+    val pickGallery = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri ?: return@rememberLauncherForActivityResult
+        val sessionId = services.recordingWriter.activeSessionId.value ?: return@rememberLauncherForActivityResult
+        scope.launch {
+            services.sessionMediaRepository.attachPhotoFromUri(
+                sessionId,
+                attachTimestampMs(),
+                uri,
+                compression,
+            )
+        }
+    }
+
     MetricTtsReadout(enabled = ttsReadoutEnabled && FeatureFlags.accessibilityPackEnabled, snapshot = telemetry)
     DashboardScreen(
         viewModel = dashboardViewModel,
@@ -97,6 +143,31 @@ fun AppScreenDashboardRoute(
                 audibleTones.playMarkEventTone(accessibilityPreferences.audibleTonesEnabled.first())
             }
         },
+        onAttachMediaCamera = if (FeatureFlags.mediaAttachmentsEnabled && activity != null) {
+            {
+                val sessionId = services.recordingWriter.activeSessionId.value ?: return@DashboardScreen
+                val (file, uri) = services.sessionMediaRepository.createCaptureTarget(sessionId)
+                pendingCaptureFile = file
+                takePicture.launch(uri)
+            }
+        } else {
+            null
+        },
+        onAttachMediaGallery = if (FeatureFlags.mediaAttachmentsEnabled) {
+            { pickGallery.launch("image/*") }
+        } else {
+            null
+        },
+        onAttachMediaStub = if (FeatureFlags.mediaAttachmentsEnabled) {
+            {
+                val sessionId = services.recordingWriter.activeSessionId.value ?: return@DashboardScreen
+                scope.launch {
+                    services.sessionMediaRepository.attachStubPhoto(sessionId, attachTimestampMs())
+                }
+            }
+        } else {
+            null
+        },
         onStartLive = { dashboardViewModel.startLiveSession() },
         onStopLive = { dashboardViewModel.stopLiveSession() },
         tpmsEnabled = tpmsEnabled,
@@ -106,5 +177,6 @@ fun AppScreenDashboardRoute(
         lapTimingEnabled = lapTimingEnabled,
         lapTimingState = lapTimingState,
         attitudeGaugeMode = attitudeGaugeMode,
+        statsAggregate = statsAggregate,
     )
 }

@@ -8,6 +8,7 @@ enum class ScrubberMarkerType {
     ALERT,
     LAP_CROSSING,
     MARK_EVENT,
+    MEDIA_ATTACHMENT,
 }
 
 data class ScrubberMarker(
@@ -15,6 +16,7 @@ data class ScrubberMarker(
     val timestampMs: Long,
     val type: ScrubberMarkerType,
     val label: String? = null,
+    val mediaId: Long? = null,
 )
 
 data class PlaybackState(
@@ -60,6 +62,7 @@ object ScrubberMarkerFactory {
         samples: List<SampleEntity>,
         alertTimestamps: List<Long> = emptyList(),
         markEventTimestamps: List<Long> = emptyList(),
+        mediaAttachments: List<MediaAttachmentMarker> = emptyList(),
         betaThreshold: Float = 15f,
         slipThreshold: Float = 0.15f,
     ): List<ScrubberMarker> {
@@ -88,6 +91,24 @@ object ScrubberMarkerFactory {
                 markers += ScrubberMarker(index, ts, ScrubberMarkerType.MARK_EVENT, label = "Mark")
             }
         }
-        return markers.distinctBy { it.sampleIndex to it.type }
+        mediaAttachments.forEach { attachment ->
+            val index = samples.indexOfFirst { it.timestampMs >= attachment.timestampMs }
+            if (index >= 0) {
+                markers += ScrubberMarker(
+                    index,
+                    attachment.timestampMs,
+                    ScrubberMarkerType.MEDIA_ATTACHMENT,
+                    label = attachment.label,
+                    mediaId = attachment.mediaId,
+                )
+            }
+        }
+        return markers.distinctBy { Triple(it.sampleIndex, it.type, it.mediaId) }
     }
 }
+
+data class MediaAttachmentMarker(
+    val mediaId: Long,
+    val timestampMs: Long,
+    val label: String = "Photo",
+)

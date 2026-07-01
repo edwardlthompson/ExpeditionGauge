@@ -5,7 +5,9 @@
 3. **Bootstrap mode:** `docs/INITIALIZATION_PROMPT.md`
 4. **Reference mode:** `docs/FOR_AGENTS.md` + `TEMPLATE_INDEX.json`
 5. **Task board:** `BUILD_PLAN.md` (Sequential before Parallel) — status: 🔲 open · ✅ done · ❌ blocked
-6. **Living memory:** update `AGENT_MEMORY.md` only at milestone boundaries
+6. **Parallel dispatch:** `bash scripts/plan-parallel-dispatch.sh` → `/scope` (Task subagents) — see [`docs/PARALLEL_AGENT_SCOPES.md`](docs/PARALLEL_AGENT_SCOPES.md)
+7. **Autonomous /build:** `scripts/build-sprint-status.sh --lane child`; Expedition ADB/AUTO via `scripts/expedition/*.ps1`; failures → `HUMAN_BACKLOG.md`
+8. **Living memory:** update `AGENT_MEMORY.md` only at milestone boundaries
 
 > Legacy `.cursorrules` is deprecated. Use `.cursor/rules/*.mdc` and this file instead.
 
@@ -38,6 +40,15 @@
 ## Module Activation
 
 Activate only the modules matching your stack. See `modules/*/MODULE.md`.
+
+## Cursor FOSS integrations
+
+Shipped in template (see `docs/CURSOR_INTEGRATIONS.md`):
+
+- **Hooks** — `.cursor/hooks.json` enforces destructive-ops + UTF-8 (fail-open; `/push` session override)
+- **Skills (3)** — `.cursor/skills/` progressive-load companions for `/gates`, `/scope`, `/fix`
+- **Subagents (3)** — `.cursor/agents/` verifier, gate-fixer, explorer
+- **Optional MCP** — copy `.cursor/mcp.foss.example` → gitignored `.cursor/mcp.json`
 
 ## Ecosystem-Specific Rules
 

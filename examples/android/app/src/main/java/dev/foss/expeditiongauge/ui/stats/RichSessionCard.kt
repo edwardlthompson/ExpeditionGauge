@@ -3,6 +3,8 @@ package dev.foss.expeditiongauge.ui.stats
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,20 +23,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
+import dev.foss.expeditiongauge.ui.playback.activityTypeLabel
 import dev.foss.expeditiongauge.ui.theme.GaugeGreen
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.PlaybackMapRouteCasing
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RichSessionCard(
     summary: SessionStatsSummary,
     onPlay: () -> Unit,
     onCompare: (() -> Unit)? = null,
     onExport: (() -> Unit)? = null,
+    onEdit: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -48,6 +54,7 @@ fun RichSessionCard(
             horizontalArrangement = Arrangement.spacedBy(SpacingMd),
         ) {
             SessionRouteThumbnail(
+                routePoints = summary.routeThumb,
                 sparkline = summary.sparklineLatG,
                 modifier = Modifier
                     .width(72.dp)
@@ -59,6 +66,17 @@ fun RichSessionCard(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(text = summary.name, color = GaugeYellow, style = MaterialTheme.typography.titleMedium)
+                if (FeatureFlags.activityLibraryEnabled) {
+                    Text(
+                        text = stringResource(
+                            R.string.activity_type_label,
+                            activityTypeLabel(summary.activityType),
+                        ),
+                        color = GaugeScaleWhite,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.testTag("session_activity_type"),
+                    )
+                }
                 Text(
                     text = stringResource(R.string.stats_duration, summary.durationMs / 1000),
                     color = GaugeScaleWhite,
@@ -95,17 +113,32 @@ fun RichSessionCard(
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
-                    Button(onClick = onPlay, modifier = Modifier.testTag("session_play")) {
-                        Text(stringResource(R.string.stats_play))
-                    }
-                    onCompare?.let { compare ->
-                        Button(onClick = compare, modifier = Modifier.testTag("session_compare")) {
-                            Text(stringResource(R.string.stats_compare_session))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(SpacingMd),
+                        verticalArrangement = Arrangement.spacedBy(SpacingMd),
+                    ) {
+                        Button(onClick = onPlay, modifier = Modifier.testTag("session_play")) {
+                            Text(stringResource(R.string.stats_play))
                         }
-                    }
-                    onExport?.let { export ->
-                        Button(onClick = export, modifier = Modifier.testTag("session_export_zip")) {
-                            Text(stringResource(R.string.export_zip))
+                        onCompare?.let { compare ->
+                            Button(onClick = compare, modifier = Modifier.testTag("session_compare")) {
+                                Text(stringResource(R.string.stats_compare_session))
+                            }
+                        }
+                        onExport?.let { export ->
+                            Button(onClick = export, modifier = Modifier.testTag("session_export_zip")) {
+                                Text(stringResource(R.string.export_zip))
+                            }
+                        }
+                        onEdit?.let { edit ->
+                            Button(
+                                onClick = edit,
+                                modifier = Modifier
+                                    .testTag("session_edit")
+                                    .semantics { contentDescription = "Edit metadata" },
+                            ) {
+                                Text(stringResource(R.string.session_metadata_edit))
+                            }
                         }
                     }
                 }
@@ -115,8 +148,22 @@ fun RichSessionCard(
 }
 
 @Composable
-private fun SessionRouteThumbnail(sparkline: List<Float>, modifier: Modifier = Modifier) {
+private fun SessionRouteThumbnail(
+    routePoints: List<Pair<Float, Float>>,
+    sparkline: List<Float>,
+    modifier: Modifier = Modifier,
+) {
     Canvas(modifier = modifier.semantics { contentDescription = "route preview" }) {
+        if (routePoints.size >= 2) {
+            drawRect(color = PlaybackMapRouteCasing)
+            var previous: Offset? = null
+            routePoints.forEach { (nx, ny) ->
+                val point = Offset(nx * size.width, ny * size.height)
+                previous?.let { drawLine(GaugeGreen, it, point, strokeWidth = 2f) }
+                previous = point
+            }
+            return@Canvas
+        }
         if (sparkline.size < 2) {
             drawRect(color = Color.DarkGray)
             return@Canvas

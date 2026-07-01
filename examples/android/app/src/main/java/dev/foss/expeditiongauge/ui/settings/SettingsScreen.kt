@@ -76,6 +76,14 @@ fun SettingsScreen(
     onLiveSignalWssUrlChange: (String) -> Unit = {},
     onLiveReceiverOpen: () -> Unit = {},
     onAudibleTonesChange: (Boolean) -> Unit = {},
+    androidAutoEnabled: Boolean = false,
+    androidAutoMetrics: Set<String> = emptySet(),
+    onAndroidAutoEnabledChange: (Boolean) -> Unit = {},
+    onAndroidAutoMetricToggle: (String) -> Unit = {},
+    mediaCompressionQuality: dev.foss.expeditiongauge.settings.MediaCompressionQuality =
+        dev.foss.expeditiongauge.settings.MediaCompressionQuality.BALANCED,
+    onMediaCompressionSelect: (dev.foss.expeditiongauge.settings.MediaCompressionQuality) -> Unit = {},
+    mediaStorageBytes: Long = 0L,
     brightnessMode: BrightnessMode = BrightnessMode.Auto,
     onBrightnessModeSelect: (BrightnessMode) -> Unit = {},
     recordingMode: RecordingMode = RecordingMode.NORMAL,
@@ -201,6 +209,17 @@ fun SettingsScreen(
                 Text(stringResource(R.string.live_receiver_open))
             }
         }
+        SettingsAndroidAutoOptions(
+            androidAutoEnabled = androidAutoEnabled,
+            onAndroidAutoEnabledChange = onAndroidAutoEnabledChange,
+            allowedMetrics = androidAutoMetrics,
+            onToggleMetric = onAndroidAutoMetricToggle,
+        )
+        SettingsMediaOptions(
+            compressionQuality = mediaCompressionQuality,
+            onCompressionSelect = onMediaCompressionSelect,
+            storageBytes = mediaStorageBytes,
+        )
         SettingsHardwareOptions(
             tpmsEnabled = tpmsEnabled,
             onTpmsEnabledChange = onTpmsEnabledChange,

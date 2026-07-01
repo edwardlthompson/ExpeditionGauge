@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.stats
 
+import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
@@ -15,6 +16,8 @@ data class SessionStatsSummary(
     val eventCount: Int,
     val bestLapMs: Long? = null,
     val sparklineLatG: List<Float> = emptyList(),
+    val activityType: ActivityType = ActivityType.DRIVE,
+    val routeThumb: List<Pair<Float, Float>> = emptyList(),
 )
 
 data class SessionAggregateStats(
@@ -60,6 +63,7 @@ class SessionStatsAggregator(
         val eventCount = database.sessionEventDao().countBySession(session.id)
         val bestLapMs = lapTimingService.loadSummary(session.id)?.sessionBestMs
         val end = session.endTimeMs ?: System.currentTimeMillis()
+        val routeThumb = SessionThumbnailGenerator.generate(samples).points
         return SessionStatsSummary(
             sessionId = session.id,
             name = session.name,
@@ -70,6 +74,8 @@ class SessionStatsAggregator(
             eventCount = eventCount,
             bestLapMs = bestLapMs,
             sparklineLatG = metrics.sparklineLatG,
+            activityType = session.activityType,
+            routeThumb = routeThumb,
         )
     }
 
@@ -93,6 +99,8 @@ class SessionStatsAggregator(
         slipEventCount: Int = 0,
         bestLapMs: Long? = null,
         sparklineLatG: List<Float> = emptyList(),
+        activityType: ActivityType = ActivityType.DRIVE,
+        routeThumb: List<Pair<Float, Float>> = emptyList(),
     ): SessionStatsSummary {
         val end = session.endTimeMs ?: System.currentTimeMillis()
         return SessionStatsSummary(
@@ -105,6 +113,8 @@ class SessionStatsAggregator(
             eventCount = eventCount,
             bestLapMs = bestLapMs,
             sparklineLatG = sparklineLatG,
+            activityType = activityType,
+            routeThumb = routeThumb,
         )
     }
 

@@ -12,6 +12,7 @@
 - **Decision:** ...
 - **Alternatives considered:** ...
 - **Consequences:** ...
+
 ```
 
 ## Entries
@@ -81,3 +82,16 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Alternatives considered:** `stream-webrtc-android` now (deferred: large binary, audit pending); raw WebSocket-only forever (rejected: no NAT traversal on cellular)
 - **Consequences:** Interim transport relays metrics via signaling server (documented in ADR-0006 / live-telemetry.md); cellular/hotspot E2E remains manual two-device validation
 
+### 2026-06-30 — Template main parity (post-v0.11.1, SHA 1cd2b72)
+- **Status:** Accepted
+- **Context:** Upstream `agent-project-bootstrap` `main` gained M30 Cursor hooks/skills/subagents, autonomous `/build` (`build_sprint.py`), and sprint automation scripts unreleased after tag v0.11.1
+- **Decision:** Cherry-pick Tier-1 template infrastructure; hybrid-merge `/build` and `human_task_automation.py` with Expedition `scripts/expedition/*` ADB/AUTO delegates; retain expedition `FORBIDDEN_PATHS` in `parallel_scope.py`; keep `.template-version` at 0.11.1 until upstream v0.12.0; record SHA in `.template-sync-sha`
+- **Alternatives considered:** Wait for v0.12.0 tag (rejected: user requested recent main updates); blind overwrite BUILD_PLAN/examples/android (rejected: product-specific)
+- **Consequences:** `validate-bootstrap.sh` runs cursor hook/integration gates; orphan `parallel.md` removed; active sprints 23–27 marked `parallel_exception: sequential-only`
+
+### 2026-06-30 — v2.9.0 Relive wave release
+- **Status:** Accepted
+- **Context:** Sprints 19b–27 completed on device (OnePlus 12); Relive-style export/share features ready for GitHub Release
+- **Decision:** Ship `versionCode` 10 / `versionName` 2.9.0 with draft GitHub release; archive BUILD_PLAN Relive wave to `COMPLETED_TASKS.md`
+- **Alternatives considered:** Staggered 2.2–2.9 point releases (rejected: single integrated Relive wave commit matches sprint archive)
+- **Consequences:** `project.config.json` enables all v2 sprint toggles; F-Droid changelog `10.txt` added

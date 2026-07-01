@@ -1,6 +1,12 @@
 package dev.foss.expeditiongauge.ui.navigation
 
 import android.content.Context
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.ui.Modifier
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -172,7 +178,12 @@ fun ExpeditionGaugeApp(
         } else if (!permissionsGranted) {
             PermissionsRationaleScreen(onRequestPermissions = onRequestPermissions)
         } else {
-            AppScreenRouter(
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.statusBars),
+            ) {
+                AppScreenRouter(
                 screen = screen,
                 onScreenChange = { screen = it },
                 context = context,
@@ -260,6 +271,7 @@ fun ExpeditionGaugeApp(
                     scope.launch { services.settingsProfileRepository.updatePresetForActiveProfile(presetId) }
                 },
             )
+            }
         }
     }
 }

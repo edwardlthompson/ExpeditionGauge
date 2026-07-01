@@ -1,0 +1,1 @@
+System UI insets — record controls, scrubber, and map ornaments respect navigation bar padding.

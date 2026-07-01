@@ -26,6 +26,9 @@ internal object SettingsPreferencesKeys {
     val liveTelemetry = booleanPreferencesKey("live_telemetry_enabled")
     val liveSignalWss = stringPreferencesKey("live_signal_wss")
     val calibrationReset = floatPreferencesKey("calibration_reset")
+    val androidAutoEnabled = booleanPreferencesKey("android_auto_enabled")
+    val androidAutoMetrics = stringPreferencesKey("android_auto_metrics")
+    val mediaCompression = stringPreferencesKey("media_compression")
 
     fun speedUnitFrom(prefs: Preferences): SpeedUnit =
         if (prefs[speedUnit] == "imperial") SpeedUnit.IMPERIAL else SpeedUnit.METRIC

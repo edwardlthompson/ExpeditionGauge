@@ -1,0 +1,52 @@
+{
+  "sprint": "20",
+  "sequentialLockStep": 3,
+  "sequentialLockPattern": "OrientationLayoutEngine",
+  "mergeBeforeStep": 4,
+  "parallelAfterStep": 3,
+  "agents": [
+    {
+      "id": "A",
+      "slug": "orientation-hud-landscape",
+      "branch": "feature/agent-orientation-hud-landscape",
+      "owner": "AGENT",
+      "task": "DashboardHudLandscape + shared gauge shell wiring",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/dashboard/DashboardHudLandscape.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/dual-orientation.md"
+    },
+    {
+      "id": "B",
+      "slug": "orientation-hud-portrait",
+      "branch": "feature/agent-orientation-hud-portrait",
+      "owner": "AGENT",
+      "task": "DashboardHudPortrait layout",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/dashboard/DashboardHudPortrait.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/dual-orientation.md"
+    },
+    {
+      "id": "C",
+      "slug": "orientation-driving-mode",
+      "branch": "feature/agent-orientation-driving-mode",
+      "owner": "AGENT",
+      "task": "Driving Mode preference (DataStore) + auto-landscape hook",
+      "scopes": [
+        "examples/android/app/src/main/java/dev/foss/expeditiongauge/settings/DrivingModePreferences.kt"
+      ],
+      "alsoEdit": [],
+      "spec": "docs/features/dual-orientation.md"
+    }
+  ],
+  "sequentialOnly": [
+    "BUILD_PLAN.md",
+    "examples/android/app/src/main/AndroidManifest.xml",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/orientation/OrientationLayoutEngine.kt",
+    "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/components/gauge"
+  ],
+  "postParallelAuto": []
+}

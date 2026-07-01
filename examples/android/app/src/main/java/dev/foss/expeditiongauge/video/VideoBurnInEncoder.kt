@@ -8,12 +8,19 @@ import android.media.MediaMuxer
 import java.io.File
 import java.nio.ByteBuffer
 
-internal object VideoBurnInEncoder {
-    fun encodeFrames(frames: List<Bitmap>, width: Int, height: Int, output: File) {
+object VideoBurnInEncoder {
+    fun encodeFrames(
+        frames: List<Bitmap>,
+        width: Int,
+        height: Int,
+        output: File,
+        frameRate: Int = 10,
+    ) {
+        val frameDurationUs = 1_000_000L / frameRate.coerceAtLeast(1)
         val format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height).apply {
             setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible)
             setInteger(MediaFormat.KEY_BIT_RATE, 4_000_000)
-            setInteger(MediaFormat.KEY_FRAME_RATE, 10)
+            setInteger(MediaFormat.KEY_FRAME_RATE, frameRate)
             setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)
         }
         val encoder = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
@@ -23,7 +30,6 @@ internal object VideoBurnInEncoder {
         var trackIndex = -1
         var muxerStarted = false
         val bufferInfo = MediaCodec.BufferInfo()
-        val frameDurationUs = 100_000L
         frames.forEachIndexed { index, bitmap ->
             val yuv = bitmapToYuv420(bitmap, width, height)
             val inputIndex = encoder.dequeueInputBuffer(10_000)

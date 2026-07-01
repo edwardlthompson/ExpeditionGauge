@@ -135,6 +135,7 @@ fun AppScreenRouter(
             lapTimingState = lapTimingState,
             attitudeGaugeMode = attitudeGaugeMode,
             ttsReadoutEnabled = ttsReadoutEnabled,
+            statsAggregate = statsAggregate,
         )
         AppScreen.Settings -> AppScreenSettingsRoute(
             onScreenChange = onScreenChange,
