@@ -45,6 +45,8 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 ## Center — Speed / GPS / HDG
 
 - Compact row: **000** speed beside **000** heading (always three digits, zero-padded)
+- Split top chrome: menu (start) and record (end) overlay the HUD — no full-width app bar
+- Dashboard content respects **navigation bar** inset; nothing draws behind system nav buttons
 - DMS coordinates always shown (two monospace lines); altitude/time hidden only in crawling-mode recording
 - Yellow unit labels respect imperial/metric setting
 

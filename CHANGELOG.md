@@ -79,6 +79,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.6] — HUD layout insets and TPMS polish (2026-06-30)
+
+### Added
+
+* `DashboardHudTopChrome` — split menu/record overlay frees vertical space for cube tiles
+* Sedan-shaped top-down vehicle diagram (tapered body, cabin glass, four wheels)
+* `TpmsChipColors` — black chip / white text in dark mode
+
+### Fixed
+
+* Dashboard HUD respects **navigation bar** inset; TPMS/GPS no longer hidden behind system buttons
+
 ## [2.11.5] — TPMS reference layout and HUD digits (2026-06-30)
 
 ### Added

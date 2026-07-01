@@ -14,6 +14,7 @@ import dev.foss.expeditiongauge.ui.dashboard.DashboardHudProps
 import dev.foss.expeditiongauge.ui.dashboard.hud.CombinedTelemetryTpmsCube
 import dev.foss.expeditiongauge.ui.dashboard.hud.TelemetryHudCube
 import dev.foss.expeditiongauge.ui.orientation.HudTileMode
+import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
 @Composable
 fun HudCubeLayout(
@@ -78,6 +79,7 @@ fun HudCubeLayout(
             tempUnit = props.tempUnit,
             motionReduced = props.motionReduced,
             highContrast = true,
+            themeMode = props.themeMode,
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -94,6 +96,7 @@ fun HudCubeLayout(
             tempUnit = props.tempUnit,
             motionReduced = props.motionReduced,
             highContrast = true,
+            themeMode = props.themeMode,
             showTpms = preset.showTirePressure,
             modifier = Modifier.fillMaxSize(),
         )

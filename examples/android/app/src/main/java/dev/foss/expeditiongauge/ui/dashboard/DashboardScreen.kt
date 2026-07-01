@@ -2,24 +2,16 @@ package dev.foss.expeditiongauge.ui.dashboard
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import dev.foss.expeditiongauge.ui.layout.InsetAwareScaffold
 import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -126,55 +118,6 @@ fun DashboardScreen(
     ) {
         InsetAwareScaffold(
             containerColor = GaugeBackground,
-            topBar = {
-                TopAppBar(
-                    title = {
-                        when {
-                            uiState.isLive -> Text(text = stringResource(R.string.live_banner), color = GaugeYellow)
-                            uiState.recording -> Text(text = stringResource(R.string.recording_live), color = GaugeRed)
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { drawerOpen = true },
-                            modifier = Modifier.testTag("dashboard_menu"),
-                        ) {
-                            Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.dashboard_menu_open))
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = GaugeBackground,
-                        navigationIconContentColor = GaugeYellow,
-                        actionIconContentColor = GaugeYellow,
-                    ),
-                    actions = {
-                        if (uiState.recording && FeatureFlags.markEventEnabled) {
-                            IconButton(
-                                onClick = onMarkEvent,
-                                modifier = Modifier.testTag("mark_event"),
-                            ) {
-                                Icon(Icons.Filled.Flag, contentDescription = stringResource(R.string.mark_event_fab))
-                            }
-                        }
-                        IconButton(
-                            onClick = {
-                                if (uiState.recording) viewModel.stopRecording() else viewModel.startRecording()
-                            },
-                            modifier = Modifier.testTag(
-                                if (uiState.recording) "record_stop" else "record_play",
-                            ),
-                        ) {
-                            Icon(
-                                imageVector = if (uiState.recording) Icons.Filled.Stop else Icons.Filled.PlayArrow,
-                                contentDescription = stringResource(
-                                    if (uiState.recording) R.string.recording_stop else R.string.recording_start,
-                                ),
-                                tint = if (uiState.recording) GaugeRed else GaugeYellow,
-                            )
-                        }
-                    },
-                )
-            },
         ) { innerPadding ->
             when {
                 showSettings -> SettingsScreen(
@@ -213,70 +156,84 @@ fun DashboardScreen(
                     onBack = onAboutClose,
                     modifier = Modifier.fillMaxSize().padding(innerPadding),
                 )
-                else -> Column(
+                else -> Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(GaugeBackground)
-                        .padding(innerPadding),
+                        .padding(innerPadding)
+                        .navigationBarBottomPadding(),
                 ) {
-                    if (uiState.recording) {
-                        RecordingLiveStrip()
-                        if (uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING) {
+                    Column(Modifier.fillMaxSize()) {
+                        if (uiState.recording) {
+                            RecordingLiveStrip()
+                            if (uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING) {
+                                Text(
+                                    text = stringResource(R.string.recording_mode_crawl),
+                                    color = GaugeYellow,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = SpacingMd)
+                                        .testTag("crawl_badge"),
+                                )
+                            }
+                            LapTimerStrip(
+                                state = lapTimingState,
+                                visible = lapTimingEnabled && FeatureFlags.lapTimingEnabled,
+                                modifier = Modifier.testTag("lap_timer_strip"),
+                            )
+                        }
+                        if (uiState.thermalStatus != dev.foss.expeditiongauge.thermal.ThermalStatus.Normal) {
                             Text(
-                                text = stringResource(R.string.recording_mode_crawl),
+                                text = stringResource(R.string.thermal_warning),
                                 color = GaugeYellow,
-                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.fillMaxWidth().padding(SpacingMd),
+                            )
+                        }
+                        if (uiState.storageBlocked) {
+                            Text(
+                                text = stringResource(R.string.storage_cap_blocked),
+                                color = GaugeRed,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = SpacingMd)
-                                    .testTag("crawl_badge"),
+                                    .testTag("storage_cap_blocked"),
                             )
                         }
-                        LapTimerStrip(
-                            state = lapTimingState,
-                            visible = lapTimingEnabled && FeatureFlags.lapTimingEnabled,
-                            modifier = Modifier.testTag("lap_timer_strip"),
+                        if (uiState.isLive) {
+                            LivePairingSheet(
+                                session = uiState.liveSession,
+                                receiverCount = uiState.liveReceiverCount,
+                                onStopLive = onStopLive,
+                            )
+                        }
+                        DashboardHudLayout(
+                            telemetry = telemetry,
+                            preset = preset,
+                            showDriftAngle = uiState.showDriftAngle,
+                            onCalibrate = viewModel::calibrateLevel,
+                            recording = uiState.recording,
+                            crawlingMode = uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING,
+                            tpmsEnabled = tpmsEnabled,
+                            pressureUnit = pressureUnit,
+                            tempUnit = tempUnit,
+                            speedUnit = speedUnit,
+                            attitudeGaugeMode = attitudeGaugeMode,
+                            activeAlerts = uiState.activeAlerts,
+                            displayRotation = uiState.displayRotation,
+                            themeMode = themeMode,
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
                         )
                     }
-                    if (uiState.thermalStatus != dev.foss.expeditiongauge.thermal.ThermalStatus.Normal) {
-                        Text(
-                            text = stringResource(R.string.thermal_warning),
-                            color = GaugeYellow,
-                            modifier = Modifier.fillMaxWidth().padding(SpacingMd),
-                        )
-                    }
-                    if (uiState.storageBlocked) {
-                        Text(
-                            text = stringResource(R.string.storage_cap_blocked),
-                            color = GaugeRed,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = SpacingMd)
-                                .testTag("storage_cap_blocked"),
-                        )
-                    }
-                    if (uiState.isLive) {
-                        LivePairingSheet(
-                            session = uiState.liveSession,
-                            receiverCount = uiState.liveReceiverCount,
-                            onStopLive = onStopLive,
-                        )
-                    }
-                    DashboardHudLayout(
-                        telemetry = telemetry,
-                        preset = preset,
-                        showDriftAngle = uiState.showDriftAngle,
-                        onCalibrate = viewModel::calibrateLevel,
+                    DashboardHudTopChrome(
                         recording = uiState.recording,
-                        crawlingMode = uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING,
-                        tpmsEnabled = tpmsEnabled,
-                        pressureUnit = pressureUnit,
-                        tempUnit = tempUnit,
-                        speedUnit = speedUnit,
-                        attitudeGaugeMode = attitudeGaugeMode,
-                        activeAlerts = uiState.activeAlerts,
-                        displayRotation = uiState.displayRotation,
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        isLive = uiState.isLive,
+                        onMenuClick = { drawerOpen = true },
+                        onRecordClick = {
+                            if (uiState.recording) viewModel.stopRecording() else viewModel.startRecording()
+                        },
+                        onMarkEvent = onMarkEvent,
+                        modifier = Modifier.align(androidx.compose.ui.Alignment.TopCenter),
                     )
                     RecordingAdvancedSheet(
                         visible = showRecordingAdvanced && uiState.recording,
@@ -287,7 +244,11 @@ fun DashboardScreen(
                         onAttachStub = onAttachMediaStub,
                     )
                     if (!isOnline) {
-                        DashboardOfflineBanner(modifier = Modifier.navigationBarBottomPadding())
+                        DashboardOfflineBanner(
+                            modifier = Modifier
+                                .align(androidx.compose.ui.Alignment.BottomCenter)
+                                .fillMaxWidth(),
+                        )
                     }
                 }
             }

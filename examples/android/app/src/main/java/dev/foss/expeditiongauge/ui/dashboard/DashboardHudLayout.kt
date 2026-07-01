@@ -23,6 +23,7 @@ import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutEngine
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
+import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
 @Composable
 fun DashboardHudLayout(
@@ -41,6 +42,7 @@ fun DashboardHudLayout(
     displayRotation: Int = 0,
     motionReduced: Boolean = false,
     highContrast: Boolean = false,
+    themeMode: ThemeMode = ThemeMode.System,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -66,6 +68,7 @@ fun DashboardHudLayout(
             displayRotation = displayRotation,
             motionReduced = motionReduced || animatorReduced,
             highContrast = highContrast,
+            themeMode = themeMode,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

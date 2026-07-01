@@ -18,6 +18,7 @@ import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.ui.theme.ThemeMode
 import dev.foss.expeditiongauge.ui.components.gauge.GpsReadoutPanel
 import dev.foss.expeditiongauge.ui.components.gauge.GpsStatusChip
 import dev.foss.expeditiongauge.ui.components.gauge.SpeedHeadingRow
@@ -103,6 +104,7 @@ fun CombinedTelemetryTpmsCube(
     motionReduced: Boolean,
     highContrast: Boolean,
     showTpms: Boolean,
+    themeMode: ThemeMode = ThemeMode.System,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -125,7 +127,7 @@ fun CombinedTelemetryTpmsCube(
                 tempUnit = tempUnit,
                 motionReduced = motionReduced,
                 highContrast = highContrast,
-                compact = true,
+                themeMode = themeMode,
                 modifier = Modifier.weight(1f),
             )
         }

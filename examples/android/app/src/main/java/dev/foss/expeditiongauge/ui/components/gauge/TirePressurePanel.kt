@@ -39,6 +39,7 @@ import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
+import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
 @Composable
 fun TirePressurePanel(
@@ -51,6 +52,7 @@ fun TirePressurePanel(
     tempUnit: TempUnit = TempUnit.CELSIUS,
     motionReduced: Boolean = false,
     highContrast: Boolean = false,
+    themeMode: ThemeMode = ThemeMode.System,
     @Suppress("UNUSED_PARAMETER") compact: Boolean = false,
 ) {
     val readings = listOf(frontLeft, frontRight, rearLeft, rearRight)
@@ -69,7 +71,7 @@ fun TirePressurePanel(
         VehicleTopDownDiagram(
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxSize(0.52f),
+                .fillMaxSize(0.58f),
             highContrast = highContrast,
         )
         TpmsCornerBlock(
@@ -80,6 +82,7 @@ fun TirePressurePanel(
             tempUnit = tempUnit,
             alignEnd = false,
             highContrast = highContrast,
+            themeMode = themeMode,
             pressureStyle = pressureStyle,
             tempStyle = tempStyle,
         )
@@ -91,6 +94,7 @@ fun TirePressurePanel(
             tempUnit = tempUnit,
             alignEnd = true,
             highContrast = highContrast,
+            themeMode = themeMode,
             pressureStyle = pressureStyle,
             tempStyle = tempStyle,
         )
@@ -102,6 +106,7 @@ fun TirePressurePanel(
             tempUnit = tempUnit,
             alignEnd = false,
             highContrast = highContrast,
+            themeMode = themeMode,
             pressureStyle = pressureStyle,
             tempStyle = tempStyle,
         )
@@ -113,6 +118,7 @@ fun TirePressurePanel(
             tempUnit = tempUnit,
             alignEnd = true,
             highContrast = highContrast,
+            themeMode = themeMode,
             pressureStyle = pressureStyle,
             tempStyle = tempStyle,
         )
@@ -135,6 +141,7 @@ private fun TpmsCornerBlock(
     tempUnit: TempUnit,
     alignEnd: Boolean,
     highContrast: Boolean,
+    themeMode: ThemeMode,
     pressureStyle: androidx.compose.ui.text.TextStyle,
     tempStyle: androidx.compose.ui.text.TextStyle,
     modifier: Modifier = Modifier,
@@ -143,9 +150,7 @@ private fun TpmsCornerBlock(
     val valueColor = tpmsValueColor(reading, band, highContrast)
     val horizontal = if (alignEnd) Alignment.End else Alignment.Start
     val textAlign = if (alignEnd) TextAlign.End else TextAlign.Start
-    val chipBg = if (highContrast) Color.White else Color.White.copy(alpha = 0.92f)
-    val chipText = Color.Black
-    val chipBorder = if (highContrast) GaugeScaleWhite else GaugeScaleWhite.copy(alpha = 0.7f)
+    val chipColors = tpmsChipColors(themeMode)
 
     Column(
         modifier = modifier.padding(horizontal = 1.dp),
@@ -154,19 +159,19 @@ private fun TpmsCornerBlock(
     ) {
         Row(
             modifier = Modifier
-                .border(1.dp, chipBorder, RoundedCornerShape(6.dp))
-                .background(chipBg, RoundedCornerShape(6.dp))
+                .border(1.dp, chipColors.border, RoundedCornerShape(6.dp))
+                .background(chipColors.background, RoundedCornerShape(6.dp))
                 .padding(horizontal = 6.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = stringResource(labelRes),
-                color = chipText,
+                color = chipColors.foreground,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                 textAlign = textAlign,
             )
-            Text(text = "›", color = chipText, style = MaterialTheme.typography.labelSmall)
+            Text(text = "›", color = chipColors.foreground, style = MaterialTheme.typography.labelSmall)
         }
         Text(
             text = formatPressure(reading, pressureUnit),

@@ -8,6 +8,7 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutSpec
+import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
 data class DashboardHudProps(
     val telemetry: TelemetrySnapshot,
@@ -26,4 +27,5 @@ data class DashboardHudProps(
     val displayRotation: Int = 0,
     val motionReduced: Boolean = false,
     val highContrast: Boolean = false,
+    val themeMode: ThemeMode = ThemeMode.System,
 )
