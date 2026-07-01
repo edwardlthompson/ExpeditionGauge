@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.live.LiveSampleDto
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -33,6 +35,7 @@ fun LiveReceiverScreen(
     onDisconnect: () -> Unit,
     isConnected: Boolean,
     onBack: () -> Unit,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     modifier: Modifier = Modifier,
 ) {
     GaugeBackHandler(onBack = onBack)
@@ -88,7 +91,8 @@ fun LiveReceiverScreen(
             Text(
                 text = stringResource(
                     R.string.live_receiver_readout,
-                    sample.speedMps * 3.6f,
+                    UnitDisplay.speedMpsToDisplay(sample.speedMps, speedUnit),
+                    UnitDisplay.speedUnitLabel(speedUnit),
                     sample.latG,
                     sample.betaDeg ?: 0f,
                 ),

@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import android.provider.Settings
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
@@ -36,9 +39,15 @@ fun DashboardHudLayout(
     attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
     activeAlerts: Set<AlertType> = emptySet(),
     displayRotation: Int = 0,
+    motionReduced: Boolean = false,
+    highContrast: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
+        val context = LocalContext.current
+        val animatorReduced = remember {
+            Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+        }
         val spec = OrientationLayoutEngine.spec(maxWidth.value, maxHeight.value)
         val props = DashboardHudProps(
             telemetry = telemetry,
@@ -55,6 +64,8 @@ fun DashboardHudLayout(
             activeAlerts = activeAlerts,
             layoutSpec = spec,
             displayRotation = displayRotation,
+            motionReduced = motionReduced || animatorReduced,
+            highContrast = highContrast,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

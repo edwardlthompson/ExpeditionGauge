@@ -151,7 +151,7 @@
     <string name="developer_mode_intro">Raw fusion readout and Madgwick filter tuning. Off by default.</string>
     <string name="developer_mode_open">Developer / Advanced mode</string>
     <string name="developer_mode_enable">Enable developer mode</string>
-    <string name="developer_raw_sensors">Pitch %.1f° · Roll %.1f° · latG %.2f · lonG %.2f · Hdg %.0f° · %.0f km/h</string>
+    <string name="developer_raw_sensors">Pitch %1$.1f° · Roll %2$.1f° · latG %3$.2f · lonG %4$.2f · Hdg %5$.0f° · %6$.0f %7$s</string>
     <string name="developer_madgwick_beta">Madgwick beta: %.2f</string>
     <string name="export_zip">Export ZIP bundle</string>
     <string name="export_gpx">Export GPX</string>
@@ -193,6 +193,10 @@
     <string name="storage_cap_blocked">Free space — unprotect or delete a session to start recording</string>
     <string name="session_protect_loop">Protect from loop delete</string>
     <string name="gauge_detail_title">G-meter detail</string>
+    <string name="gauge_peak_pitch">Peak pitch: %1$s</string>
+    <string name="gauge_peak_roll">Peak roll: %1$s</string>
+    <string name="gauge_tpms_low_pressure">Low tire pressure</string>
+    <string name="alerts_max_speed">Max speed (%1$s)</string>
     <string name="session_metadata_notes">Session notes</string>
     <string name="session_metadata_tags">Tags (comma-separated)</string>
     <string name="session_metadata_driver">Driver name</string>
@@ -227,7 +231,7 @@
     <string name="alerts_max_rpm">Max RPM (OBD)</string>
     <string name="alerts_max_speed_kmh">Max speed (km/h)</string>
     <string name="alerts_min_fuel_kmpl">Min fuel economy (km/L, OBD)</string>
-    <string name="alerts_min_pressure_kpa">Min tire pressure (kPa)</string>
+    <string name="alerts_min_pressure_kpa">Min tire pressure (%1$s)</string>
     <string name="alerts_max_temp_c">Max tire temp (°C)</string>
     <string name="alerts_pressure_loss_kpa_min">Rapid pressure loss (kPa/min)</string>
 </resources>

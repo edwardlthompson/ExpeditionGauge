@@ -22,6 +22,22 @@ object GaugeDisplayRotation {
     fun mapGForce(latG: Float, lonG: Float, displayRotation: Int): BallPosition =
         rotateBall(GForceBallLogic.mapLatLonG(latG, lonG), displayRotation)
 
-    fun mapAttitude(pitchDeg: Float, rollDeg: Float, displayRotation: Int): BallPosition =
-        rotateBall(AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg), displayRotation)
+    fun mapAttitude(
+        pitchDeg: Float,
+        rollDeg: Float,
+        displayRotation: Int,
+        isPortraitLayout: Boolean = false,
+    ): BallPosition {
+        val mapped = rotateBall(AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg), displayRotation)
+        return if (isPortraitLayout) portraitAxisRemap(mapped) else mapped
+    }
+
+    /** Extra 90° remap so pitch is vertical on portrait HUD tiles. */
+    fun portraitAxisRemapForBall(position: BallPosition): BallPosition =
+        position.copy(
+            normalizedX = position.normalizedY.coerceIn(-1f, 1f),
+            normalizedY = (-position.normalizedX).coerceIn(-1f, 1f),
+        )
+
+    private fun portraitAxisRemap(position: BallPosition): BallPosition = portraitAxisRemapForBall(position)
 }

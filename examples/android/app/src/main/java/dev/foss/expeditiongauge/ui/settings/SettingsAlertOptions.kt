@@ -14,12 +14,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertThresholds
+import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
 fun SettingsAlertOptions(
     thresholds: AlertThresholds,
     onThresholdsChange: (AlertThresholds) -> Unit,
+    speedUnit: dev.foss.expeditiongauge.settings.SpeedUnit = dev.foss.expeditiongauge.settings.SpeedUnit.METRIC,
+    pressureUnit: dev.foss.expeditiongauge.settings.PressureUnit = dev.foss.expeditiongauge.settings.PressureUnit.PSI,
 ) {
     if (!FeatureFlags.alertsEnabled) return
     Column(verticalArrangement = Arrangement.spacedBy(SpacingMd)) {
@@ -48,14 +51,29 @@ fun SettingsAlertOptions(
         AlertField(R.string.alerts_max_rpm, thresholds.maxRpm, "settings_alerts_rpm") {
             onThresholdsChange(thresholds.copy(maxRpm = it))
         }
-        AlertField(R.string.alerts_max_speed_kmh, thresholds.maxSpeedMps?.times(3.6f), "settings_alerts_speed") {
-            onThresholdsChange(thresholds.copy(maxSpeedMps = it?.div(3.6f)))
+        AlertField(
+            label = stringResource(R.string.alerts_max_speed, UnitDisplay.speedAlertLabel(speedUnit)),
+            value = thresholds.maxSpeedMps?.let { UnitDisplay.speedMpsToDisplay(it, speedUnit) },
+            testTag = "settings_alerts_speed",
+        ) {
+            val factor = UnitDisplay.speedMpsToDisplay(1f, speedUnit)
+            onThresholdsChange(thresholds.copy(maxSpeedMps = it?.div(factor)))
         }
         AlertField(R.string.alerts_min_fuel_kmpl, thresholds.minFuelEconomyKmpl, "settings_alerts_fuel") {
             onThresholdsChange(thresholds.copy(minFuelEconomyKmpl = it))
         }
-        AlertField(R.string.alerts_min_pressure_kpa, thresholds.minTirePressureKpa, "settings_alerts_pressure") {
-            onThresholdsChange(thresholds.copy(minTirePressureKpa = it))
+        AlertField(
+            label = stringResource(R.string.alerts_min_pressure_kpa, UnitDisplay.pressureUnitLabel(pressureUnit)),
+            value = thresholds.minTirePressureKpa?.let { UnitDisplay.pressureKpaToDisplay(it, pressureUnit) },
+            testTag = "settings_alerts_pressure",
+        ) {
+            onThresholdsChange(
+                thresholds.copy(
+                    minTirePressureKpa = it?.let { v ->
+                        if (pressureUnit == dev.foss.expeditiongauge.settings.PressureUnit.KPA) v else v * 6.894757f
+                    },
+                ),
+            )
         }
         AlertField(R.string.alerts_max_temp_c, thresholds.maxTireTempC, "settings_alerts_temp") {
             onThresholdsChange(thresholds.copy(maxTireTempC = it))
@@ -77,13 +95,28 @@ private fun AlertField(
     testTag: String,
     onValue: (Float?) -> Unit,
 ) {
+    AlertField(
+        label = stringResource(labelRes),
+        value = value,
+        testTag = testTag,
+        onValue = onValue,
+    )
+}
+
+@Composable
+private fun AlertField(
+    label: String,
+    value: Float?,
+    testTag: String,
+    onValue: (Float?) -> Unit,
+) {
     OutlinedTextField(
         value = value?.toString().orEmpty(),
         onValueChange = { text ->
             onValue(text.toFloatOrNull())
         },
         modifier = Modifier.fillMaxWidth().testTag(testTag),
-        label = { Text(stringResource(labelRes)) },
+        label = { Text(label) },
         placeholder = { Text(stringResource(R.string.alerts_threshold_off)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         singleLine = true,

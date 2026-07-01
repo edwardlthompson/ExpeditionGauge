@@ -152,6 +152,8 @@ fun SettingsScreen(
         SettingsAlertOptions(
             thresholds = alertThresholds,
             onThresholdsChange = onAlertThresholdsChange,
+            speedUnit = speedUnit,
+            pressureUnit = pressureUnit,
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,

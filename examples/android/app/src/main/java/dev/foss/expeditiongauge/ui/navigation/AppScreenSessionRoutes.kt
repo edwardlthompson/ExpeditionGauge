@@ -8,6 +8,8 @@ import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.export.EnhancedExportFormat
 import dev.foss.expeditiongauge.export.HtmlSummaryExporter
 import dev.foss.expeditiongauge.playback.PlaybackSessionLoader
+import dev.foss.expeditiongauge.settings.PressureUnit
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.stats.SessionAggregateStats
 import dev.foss.expeditiongauge.stats.SessionComparison
 import dev.foss.expeditiongauge.stats.SessionStatsAggregator
@@ -33,6 +35,8 @@ fun AppScreenSessionRoutes(
     sessionStatsAggregator: SessionStatsAggregator,
     editingSessionId: Long?,
     onEditingSessionIdChange: (Long?) -> Unit,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    pressureUnit: PressureUnit = PressureUnit.KPA,
 ) {
     when (screen) {
         AppScreen.Sessions -> SessionListScreen(
@@ -93,6 +97,8 @@ fun AppScreenSessionRoutes(
             services = services,
             statsSummaries = statsSummaries,
             onBack = { onScreenChange(AppScreen.Sessions) },
+            speedUnit = speedUnit,
+            pressureUnit = pressureUnit,
         )
         AppScreen.Stats -> SessionStatsDashboard(
             sessions = statsSummaries,

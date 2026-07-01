@@ -237,6 +237,7 @@ fun AppScreenRouter(
                     scope.launch { services.settingsPreferences.setMadgwickBeta(beta) }
                 },
                 onBack = { onScreenChange(AppScreen.Settings) },
+                speedUnit = speedUnit,
             )
         }
         AppScreen.LiveReceiver -> {
@@ -265,6 +266,7 @@ fun AppScreenRouter(
                     services.liveTelemetryModule.stopReceiver()
                     onScreenChange(AppScreen.Settings)
                 },
+                speedUnit = speedUnit,
             )
         }
         AppScreen.Sessions,
@@ -283,6 +285,8 @@ fun AppScreenRouter(
             comparison = comparison,
             editingSessionId = editingSessionId,
             onEditingSessionIdChange = onEditingSessionIdChange,
+            speedUnit = speedUnit,
+            pressureUnit = pressureUnit,
         )
     }
 }

@@ -1,5 +1,7 @@
 package dev.foss.expeditiongauge.gauge
 
+import kotlin.math.hypot
+
 /**
  * Ring buffer of recent G-ball screen positions for trail rendering.
  */
@@ -10,6 +12,12 @@ class GBallTrailBuffer(private val capacity: Int = DEFAULT_CAPACITY) {
     private var head = 0
 
     fun add(normalizedX: Float, normalizedY: Float) {
+        if (size > 0) {
+            val lastIdx = (head - 1 + capacity) % capacity
+            val dx = normalizedX - xs[lastIdx]
+            val dy = normalizedY - ys[lastIdx]
+            if (hypot(dx.toDouble(), dy.toDouble()) < MIN_SAMPLE_DISTANCE) return
+        }
         xs[head] = normalizedX
         ys[head] = normalizedY
         head = (head + 1) % capacity
@@ -35,5 +43,6 @@ class GBallTrailBuffer(private val capacity: Int = DEFAULT_CAPACITY) {
 
     companion object {
         const val DEFAULT_CAPACITY = 40
+        const val MIN_SAMPLE_DISTANCE = 0.02
     }
 }

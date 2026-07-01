@@ -79,6 +79,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.0] — HUD cube layout v3 (2026-06-30)
+
+### Added
+
+* `HudSquareTile`, `HudCubeStack`, `HudCubeLayout` — rotation-aware 1:1 cube tiles with faint borders
+* `THREE_TILE` / `TWO_TILE` fallback (480dp portrait height / 360dp landscape width)
+* G-meter edge numerals; calibrate moved to detail sheet; trail while recording in all modes
+* `TelemetryHudCube` with clock and elevation icons; `CombinedTelemetryTpmsCube` for 2-tile mode
+* TPMS top-down tire icons, center low-pressure alert with blink + reduced-motion fallback
+* `TpmsPressureBands` and `UnitDisplay` for app-wide imperial/metric formatting
+* `navigationBarBottomPadding` on `GaugeMenuSurface`
+
+### Changed
+
+* Portrait attitude axis remap via `isPortraitLayout`; G-ball trail dedupe (&lt; 0.02 normalized)
+* Settings alert thresholds show user speed/pressure units
+* Playback, live receiver, and developer readouts respect unit prefs
+
 ## [2.10.1] — HUD readability and units (2026-06-30)
 
 ### Added

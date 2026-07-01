@@ -2,7 +2,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.10.1-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.11.0-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -12,7 +12,7 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 
 | Area | Capabilities |
 |------|----------------|
-| **Live HUD** | Rotation-aware G-meter with trail, digital speed (imperial/metric), pitch/roll, DMS coords, TPMS 2×2 grid |
+| **Live HUD** | Cube layout (G-meter, telemetry, TPMS tiles); rotation-aware axes; digital speed; trail while recording |
 | **Dashboard chrome** | Hamburger menu, dark menu surfaces, top-bar Play/Stop recording, Set Level on G-meter |
 | **Sensors** | Phone IMU/GPS, BLE IMU, TPMS, external NMEA GPS, OBD-II (Classic Bluetooth) |
 | **Recording** | Room sessions, dashcam loop storage cap, protect session, BT auto-record triggers |
@@ -21,7 +21,7 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | Live metrics via AndroidX Car App Library (user-installed host app) |
 
-Shipped through **v2.10.1** — HUD readability (digital speed, imperial units, MSL altitude, dark menus, TPMS grid). Prior **v2.10.0** added G-trail, rotation axes, drawer chrome, storage loop, auto-record. See [`CHANGELOG.md`](CHANGELOG.md) and [`docs/features/dashboard-hud-v2.md`](docs/features/dashboard-hud-v2.md).
+Shipped through **v2.11.0** — HUD cube layout v3 (1:1 tiles, G-meter edge numerals, TPMS top-down, global units). Prior **v2.10.1** added readability fixes. See [`CHANGELOG.md`](CHANGELOG.md) and [`docs/design/GAUGE_REFERENCE.md`](docs/design/GAUGE_REFERENCE.md).
 
 ## Quick start
 

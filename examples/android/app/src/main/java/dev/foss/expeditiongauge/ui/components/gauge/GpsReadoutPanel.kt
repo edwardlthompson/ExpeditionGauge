@@ -1,13 +1,19 @@
 package dev.foss.expeditiongauge.ui.components.gauge
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
+import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
@@ -23,28 +29,51 @@ fun GpsReadoutPanel(
     driftAngleDeg: Float?,
     showDriftAngle: Boolean,
     useMetric: Boolean = true,
+    compact: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(SpacingSm)) {
+    val pad = if (compact) SpacingSm / 2 else SpacingSm
+    androidx.compose.foundation.layout.Column(modifier = modifier.padding(pad)) {
         val timeLabel = SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
-        Text(text = stringResource(R.string.gauge_time, timeLabel), color = GaugeYellow)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(R.drawable.ic_clock),
+                contentDescription = null,
+                tint = GaugeYellow,
+                modifier = Modifier.size(14.dp).padding(end = 4.dp),
+            )
+            Text(text = stringResource(R.string.gauge_time, timeLabel), color = GaugeYellow)
+        }
         latitude?.let { lat ->
             longitude?.let { lon ->
                 Text(
                     text = stringResource(R.string.gauge_coords_line1, formatDms(lat, true)),
                     color = GaugeScaleWhite,
                 )
-                Text(
-                    text = stringResource(R.string.gauge_coords_line2, formatDms(lon, false)),
-                    color = GaugeScaleWhite,
-                )
+                if (!compact) {
+                    Text(
+                        text = stringResource(R.string.gauge_coords_line2, formatDms(lon, false)),
+                        color = GaugeScaleWhite,
+                    )
+                }
             }
         }
         altitudeM?.let {
-            Text(
-                text = stringResource(R.string.gauge_altitude, GaugeLogic.formatAltitude(it, useMetric)),
-                color = GaugeScaleWhite,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_elevation),
+                    contentDescription = null,
+                    tint = GaugeYellow,
+                    modifier = Modifier.size(14.dp).padding(end = 4.dp),
+                )
+                Text(
+                    text = stringResource(
+                        R.string.gauge_altitude,
+                        "${UnitDisplay.altitudeMToDisplay(it, useMetric)} ${UnitDisplay.altitudeUnitLabel(useMetric)}",
+                    ),
+                    color = GaugeScaleWhite,
+                )
+            }
         }
         if (showDriftAngle && driftAngleDeg != null) {
             Text(

@@ -19,6 +19,9 @@ import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import dev.foss.expeditiongauge.export.ExportExtrasParser
+import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.settings.PressureUnit
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.playback.HeatmapMetric
 import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.playback.RouteHeatmapLayer
@@ -115,7 +118,11 @@ internal fun PlaybackBottomSection(
 }
 
 @Composable
-internal fun PlaybackMetricsPanel(sample: SampleEntity?) {
+internal fun PlaybackMetricsPanel(
+    sample: SampleEntity?,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    pressureUnit: PressureUnit = PressureUnit.KPA,
+) {
     if (sample == null) {
         Text(stringResource(R.string.playback_no_sample), color = GaugeScaleWhite)
         return
@@ -130,7 +137,13 @@ internal fun PlaybackMetricsPanel(sample: SampleEntity?) {
                 .testTag("playback_beta_readout")
                 .semantics { contentDescription = "beta ${sample.driftAngleDeg ?: 0f}" },
         )
-        Text(stringResource(R.string.playback_speed, sample.speedMps * 3.6f), color = GaugeScaleWhite)
+        Text(
+            stringResource(
+                R.string.playback_speed,
+                "${UnitDisplay.speedMpsToDisplay(sample.speedMps, speedUnit).toInt()} ${UnitDisplay.speedUnitLabel(speedUnit)}",
+            ),
+            color = GaugeScaleWhite,
+        )
         Text(stringResource(R.string.playback_lat_g, sample.latG), color = GaugeScaleWhite)
         Text(stringResource(R.string.playback_slip_ratio, sample.slipRatio ?: 0f), color = GaugeScaleWhite)
         sample.throttle?.let { Text(stringResource(R.string.playback_throttle, it), color = GaugeScaleWhite) }
@@ -150,13 +163,44 @@ internal fun PlaybackMetricsPanel(sample: SampleEntity?) {
             style = MaterialTheme.typography.labelSmall,
         )
         if (tpms.hasAnyData) {
-            Text(stringResource(R.string.playback_tpms_fl, tpms.frontLeft.pressureKpa ?: 0f), color = GaugeScaleWhite)
-            Text(stringResource(R.string.playback_tpms_fr, tpms.frontRight.pressureKpa ?: 0f), color = GaugeScaleWhite)
-            Text(stringResource(R.string.playback_tpms_rl, tpms.rearLeft.pressureKpa ?: 0f), color = GaugeScaleWhite)
-            Text(stringResource(R.string.playback_tpms_rr, tpms.rearRight.pressureKpa ?: 0f), color = GaugeScaleWhite)
+            Text(
+                stringResource(
+                    R.string.playback_tpms_fl,
+                    formatPlaybackPressure(tpms.frontLeft.pressureKpa, pressureUnit),
+                ),
+                color = GaugeScaleWhite,
+            )
+            Text(
+                stringResource(
+                    R.string.playback_tpms_fr,
+                    formatPlaybackPressure(tpms.frontRight.pressureKpa, pressureUnit),
+                ),
+                color = GaugeScaleWhite,
+            )
+            Text(
+                stringResource(
+                    R.string.playback_tpms_rl,
+                    formatPlaybackPressure(tpms.rearLeft.pressureKpa, pressureUnit),
+                ),
+                color = GaugeScaleWhite,
+            )
+            Text(
+                stringResource(
+                    R.string.playback_tpms_rr,
+                    formatPlaybackPressure(tpms.rearRight.pressureKpa, pressureUnit),
+                ),
+                color = GaugeScaleWhite,
+            )
         }
         if (dev.foss.expeditiongauge.playback.SampleImuExtras.hasMultiImu(sample.extrasJson)) {
             Text(stringResource(R.string.playback_multi_imu), color = GaugeYellow)
         }
     }
+}
+
+private fun formatPlaybackPressure(kpa: Float?, unit: PressureUnit): String {
+    if (kpa == null) return "--"
+    val display = UnitDisplay.pressureKpaToDisplay(kpa, unit)
+    val label = UnitDisplay.pressureUnitLabel(unit)
+    return if (unit == PressureUnit.KPA) "${display.toInt()} $label" else String.format("%.1f %s", display, label)
 }

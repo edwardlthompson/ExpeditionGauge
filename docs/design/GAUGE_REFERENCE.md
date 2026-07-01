@@ -6,9 +6,17 @@ Sprint 2 acceptance criteria **must** match this document. Intentional deviation
 
 ## Layout
 
-Landscape three-panel `Row` on `#000000` background:
+Rotation-aware **cube tiles** (`HudSquareTile`) on `#000000` background:
 
-| Left | Center | Right |
+| Mode | Arrangement |
+|------|-------------|
+| Portrait `THREE_TILE` | Column: G-meter · telemetry · TPMS (height ≥ 480dp) |
+| Landscape `THREE_TILE` | Row: G-meter · telemetry · TPMS (width ≥ 360dp) |
+| `TWO_TILE` fallback | G-meter + combined telemetry/TPMS cube |
+
+Legacy reference: landscape three-panel `Row` maps to cube row at sufficient width.
+
+| Left / tile 1 | Center / tile 2 | Right / tile 3 |
 |------|--------|-------|
 | Attitude G-meter (ball-in-ring) | Speed + numeric HDG + GPS coords | Tire pressures FL/FR/RL/RR |
 
@@ -27,10 +35,9 @@ Landscape three-panel `Row` on `#000000` background:
 - Concentric rings at 10° / 20° / 30° reference (attitude) and 0.5G / 1.0G / 1.5G (G-force / hybrid)
 - Crosshairs; animated ball from calibrated pitch/roll or lat/lon G
 - **Display-rotation-aware axes:** `GaugeDisplayRotation` maps device-frame G to screen coordinates so screen Y = longitudinal (forward/back) and screen X = lateral at all four `Surface.ROTATION_*` values
-- **G-ball trail:** fading dot trail (~40 samples) in G-force and hybrid modes; cleared on calibrate or session stop
-- Digital readouts: `Pitch: ±XX°`, `Roll: ±XX°` (whole numbers); lat/lon G as **whole numbers** (`Lat G: N`, `Lon G: N`)
-- Color zones: green / yellow / red by threshold
-- **Calibrate / Set Level** — sole full `Button` on the main HUD column
+- **G-ball trail:** fading dot trail (~40 samples) while **recording** in all modes; dedupe &lt; 0.02; cleared on calibrate or session stop
+- On-cube: canvas + **edge numerals** (roll ° left/right; lon G top/bottom in G-force modes)
+- Tap cube → detail sheet with pitch, roll, lat/lon G, peaks, **Calibrate / Set Level**
 
 ## Center — Speed / GPS / HDG
 
@@ -38,12 +45,13 @@ Landscape three-panel `Row` on `#000000` background:
 - Numeric heading only (`247°` + yellow `HDG`) — **no compass dial**
 - DMS coordinates (two lines)
 - Time top-right; trip/odo bottom
-- Broken white arc border
+- Clock and mountain icons for time and altitude in telemetry cube
 
 ## Right — Tire pressures
 
-- Portrait: 2×2 grid (FL/FR top, RL/RR bottom) with wheel icons; `--` when no TPMS
-- Landscape: four corners with large values; `--` when disconnected
+- Top-down tire icons; FL/RL start-aligned, FR/RR end-aligned
+- Center low-pressure icon (blink unless reduced motion / high contrast)
+- `TpmsPressureBands`: LOW &lt; 28 PSI, CRITICAL &lt; 25 PSI (stored kPa)
 - Yellow status icons (GPS fix, etc.)
 - Voltage when OBD available
 

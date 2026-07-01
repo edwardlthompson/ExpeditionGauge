@@ -123,3 +123,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 13 / `versionName` 2.10.1 with digital-only speed, `speedUnit` through HUD, `AltitudeNormalizer` (API 34+ MSL + EGM96 fallback), `GaugeMenuSurface` dark chrome, TPMS 2×2 grid, whole-number pitch/roll
 - **Alternatives considered:** Ship cube layout in same release (rejected — combined roadmap splits Phase A/B); router-level BackHandler (rejected — exceeds 300-line static gate)
 - **Consequences:** 193 unit tests pass; nav-bar inset deferred to v2.11.0 cube work; combined HUD roadmap Phase B next
+
+### 2026-06-30 — HUD cube layout v2.11.0
+- **Status:** Accepted
+- **Context:** Post–v2.10.1 feedback: cube 1:1 tiles, portrait pitch/roll axis bug, trail only in G modes, TPMS alignment, hardcoded km/h in alerts
+- **Decision:** Ship `versionCode` 14 / `versionName` 2.11.0 with `ui/dashboard/hud/` cube framework, edge numerals, `UnitDisplay`, `TpmsPressureBands`, menu nav inset
+- **Alternatives considered:** Keep row layout with borders only (rejected — inconsistent small-screen behavior); router-level calibrate button (rejected — detail sheet sufficient)
+- **Consequences:** TWO_TILE fallback below 480dp portrait; portrait-only `isPortraitLayout` axis remap; settings/playback/live use unit-aware labels

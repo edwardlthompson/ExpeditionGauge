@@ -24,4 +24,6 @@ data class DashboardHudProps(
     val activeAlerts: Set<AlertType>,
     val layoutSpec: OrientationLayoutSpec,
     val displayRotation: Int = 0,
+    val motionReduced: Boolean = false,
+    val highContrast: Boolean = false,
 )

@@ -28,4 +28,28 @@ class OrientationLayoutEngineTest {
         val spec = OrientationLayoutEngine.spec(600f, 600f)
         assertFalse(spec.isLandscape)
     }
+
+    @Test
+    fun tallPortrait_usesThreeTileMode() {
+        val spec = OrientationLayoutEngine.spec(400f, 800f)
+        assertEquals(HudTileMode.THREE_TILE, spec.tileMode)
+    }
+
+    @Test
+    fun shortPortrait_usesTwoTileFallback() {
+        val spec = OrientationLayoutEngine.spec(400f, 400f)
+        assertEquals(HudTileMode.TWO_TILE, spec.tileMode)
+    }
+
+    @Test
+    fun wideLandscape_usesThreeTileMode() {
+        val spec = OrientationLayoutEngine.spec(800f, 400f)
+        assertEquals(HudTileMode.THREE_TILE, spec.tileMode)
+    }
+
+    @Test
+    fun narrowLandscape_usesTwoTileFallback() {
+        val spec = OrientationLayoutEngine.spec(320f, 400f)
+        assertEquals(HudTileMode.TWO_TILE, spec.tileMode)
+    }
 }

@@ -36,6 +36,8 @@ import dev.foss.expeditiongauge.playback.HeatmapMetric
 import dev.foss.expeditiongauge.playback.PlaybackLayoutState
 import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.playback.PlaybackInputHandler
+import dev.foss.expeditiongauge.settings.PressureUnit
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -71,6 +73,8 @@ fun PlaybackScreen(
     onShareFlyoverExport: ((String) -> Unit)? = null,
     sessionMediaRepository: dev.foss.expeditiongauge.media.SessionMediaRepository? = null,
     onBack: () -> Unit,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    pressureUnit: PressureUnit = PressureUnit.KPA,
     modifier: Modifier = Modifier,
 ) {
     val state by engine.state.collectAsStateWithLifecycle()
@@ -257,7 +261,7 @@ fun PlaybackScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(SpacingMd),
             ) {
-                PlaybackMetricsPanel(sample = sample)
+                PlaybackMetricsPanel(sample = sample, speedUnit = speedUnit, pressureUnit = pressureUnit)
                 LapListPanel(summary = lapSummary)
                 if (state.showGhost && FeatureFlags.ghostLapEnabled) {
                     GhostLapComparePanel(

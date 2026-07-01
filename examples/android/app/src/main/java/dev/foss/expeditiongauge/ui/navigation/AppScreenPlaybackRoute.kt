@@ -19,6 +19,8 @@ import dev.foss.expeditiongauge.export.PlaybackVideoExportScheduler
 import dev.foss.expeditiongauge.export.PlaybackVideoExportSettings
 import dev.foss.expeditiongauge.flyover.FlyoverVideoExportScheduler
 import dev.foss.expeditiongauge.flyover.FlyoverVideoExportSettings
+import dev.foss.expeditiongauge.settings.PressureUnit
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import dev.foss.expeditiongauge.ui.playback.PlaybackScreen
 import dev.foss.expeditiongauge.ui.share.SharePreviewRequest
@@ -34,6 +36,8 @@ fun AppScreenPlaybackRoute(
     services: ExpeditionGaugeServices,
     statsSummaries: List<SessionStatsSummary>,
     onBack: () -> Unit,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    pressureUnit: PressureUnit = PressureUnit.KPA,
 ) {
     val playbackState by services.playbackEngine.state.collectAsStateWithLifecycle()
     var sessionAlerts by remember { mutableStateOf<List<AlertEventEntity>>(emptyList()) }
@@ -151,6 +155,8 @@ fun AppScreenPlaybackRoute(
             null
         },
         onBack = onBack,
+        speedUnit = speedUnit,
+        pressureUnit = pressureUnit,
     )
     sharePreviewRequest?.let { request ->
         SharePreviewSheet(

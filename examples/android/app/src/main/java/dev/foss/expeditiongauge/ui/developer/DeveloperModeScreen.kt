@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -28,6 +30,7 @@ fun DeveloperModeScreen(
     madgwickBeta: Float,
     onMadgwickBetaChange: (Float) -> Unit,
     onBack: () -> Unit,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     modifier: Modifier = Modifier,
 ) {
     GaugeBackHandler(onBack = onBack)
@@ -45,6 +48,8 @@ fun DeveloperModeScreen(
             color = GaugeYellow,
         )
         Text(text = stringResource(R.string.developer_mode_intro), color = GaugeScaleWhite)
+        val speedDisplay = UnitDisplay.speedMpsToDisplay(telemetry.speedMps, speedUnit)
+        val speedLabel = UnitDisplay.speedUnitLabel(speedUnit)
         Text(
             text = stringResource(
                 R.string.developer_raw_sensors,
@@ -53,7 +58,8 @@ fun DeveloperModeScreen(
                 telemetry.latG,
                 telemetry.lonG,
                 telemetry.headingDeg,
-                telemetry.speedMps * 3.6f,
+                speedDisplay,
+                speedLabel,
             ),
             color = GaugeScaleWhite,
             modifier = Modifier.testTag("developer_raw_readout"),

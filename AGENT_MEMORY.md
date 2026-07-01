@@ -19,7 +19,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Post-audit hardening | 2.9.1 | ✅ Audit sprint 2026-06-30 |
 | Dashboard HUD v2 | 2.10.0 | ✅ G-trail, drawer, storage loop, auto-record |
 | HUD readability | 2.10.1 | ✅ Digital speed, units, MSL altitude, dark menus, TPMS grid |
-| HUD cube layout v3 | 2.11.0 | 🔲 Phase B — cube tiles, UnitDisplay, nav inset |
+| HUD cube layout v3 | 2.11.0 | ✅ Cube tiles, UnitDisplay, nav inset |
 
 ## Tech Stack (ExpeditionGauge)
 

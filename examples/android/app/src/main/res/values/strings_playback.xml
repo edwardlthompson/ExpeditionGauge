@@ -23,7 +23,7 @@
     <string name="playback_body_yaw">Body yaw: %1$.1f°</string>
     <string name="playback_velocity_hdg">Velocity HDG: %1$.1f°</string>
     <string name="playback_slip_ratio">Slip ratio: %1$.2f</string>
-    <string name="playback_speed">Speed: %1$.0f km/h</string>
+    <string name="playback_speed">Speed: %1$s</string>
     <string name="playback_lat_g">Lat G: %1$.2f</string>
     <string name="playback_rpm">RPM: %1$.0f</string>
     <string name="playback_throttle">Throttle: %1$.0f%%</string>
@@ -32,10 +32,10 @@
     <string name="playback_no_sample">No samples loaded</string>
     <string name="playback_speed_up">Faster</string>
     <string name="playback_speed_down">Slower</string>
-    <string name="playback_tpms_fl">FL: %1$.0f kPa</string>
-    <string name="playback_tpms_fr">FR: %1$.0f kPa</string>
-    <string name="playback_tpms_rl">RL: %1$.0f kPa</string>
-    <string name="playback_tpms_rr">RR: %1$.0f kPa</string>
+    <string name="playback_tpms_fl">FL: %1$s</string>
+    <string name="playback_tpms_fr">FR: %1$s</string>
+    <string name="playback_tpms_rl">RL: %1$s</string>
+    <string name="playback_tpms_rr">RR: %1$s</string>
     <string name="playback_multi_imu">Multi-IMU corners available</string>
     <string name="playback_gps_source">GPS: %1$s · %2$d sats · HDOP %3$.1f</string>
     <string name="playback_alerts_title">Alerts (%1$d)</string>
