@@ -36,6 +36,13 @@ class NavigationBarBottomPaddingTest {
     }
 
     @Test
+    fun navigationBarPadding_rendersWithoutCrash() {
+        composeRule.setContent {
+            Box(Modifier.navigationBarPadding())
+        }
+    }
+
+    @Test
     fun insetAwareScaffold_rendersWithoutCrash() {
         composeRule.setContent {
             InsetAwareScaffold { _ ->

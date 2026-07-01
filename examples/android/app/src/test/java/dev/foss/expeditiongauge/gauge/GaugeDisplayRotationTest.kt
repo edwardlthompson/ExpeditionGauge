@@ -17,9 +17,14 @@ class GaugeDisplayRotationTest {
     }
 
     @Test
-    fun forwardLonGMovesBallUpAtRotation90() {
-        val ball = GaugeDisplayRotation.mapGForce(latG = 0f, lonG = 1f, displayRotation = 1)
-        assertTrue(ball.normalizedX > 0f)
+    fun forwardLonGMovesBallUpAtRotation90LandscapeHud() {
+        val ball = GaugeDisplayRotation.mapGForce(
+            latG = 0f,
+            lonG = 1f,
+            displayRotation = 1,
+            isPortraitLayout = false,
+        )
+        assertTrue(ball.normalizedY < 0f)
     }
 
     @Test

@@ -181,7 +181,7 @@ internal fun ballForMode(
 ): BallPosition = when (mode) {
     AttitudeGaugeMode.ATTITUDE ->
         GaugeDisplayRotation.mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
-    AttitudeGaugeMode.G_FORCE -> GaugeDisplayRotation.mapGForce(latG, lonG, displayRotation)
+    AttitudeGaugeMode.G_FORCE -> GaugeDisplayRotation.mapGForce(latG, lonG, displayRotation, isPortraitLayout)
     AttitudeGaugeMode.HYBRID -> {
         val attitude = AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg)
         val gForce = GForceBallLogic.mapLatLonG(latG, lonG)
@@ -192,6 +192,6 @@ internal fun ballForMode(
             zone = zone,
         )
         val rotated = GaugeDisplayRotation.rotateBall(combined, displayRotation)
-        if (isPortraitLayout) GaugeDisplayRotation.rotate90Clockwise(rotated) else rotated
+        GaugeDisplayRotation.applyHudCubeRemap(rotated, isPortraitLayout, displayRotation)
     }
 }

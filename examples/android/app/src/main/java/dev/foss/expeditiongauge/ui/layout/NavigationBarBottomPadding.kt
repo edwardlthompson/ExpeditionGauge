@@ -8,6 +8,11 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+/** All [navigationBars] insets — use for full-screen HUD (landscape puts nav on the side). */
+@Composable
+fun Modifier.navigationBarPadding(): Modifier =
+    windowInsetsPadding(WindowInsets.navigationBars)
+
 /** Bottom [navigationBars] inset for record controls, scrubbers, and FABs. */
 @Composable
 fun Modifier.navigationBarBottomPadding(): Modifier =

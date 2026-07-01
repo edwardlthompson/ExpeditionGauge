@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
+import dev.foss.expeditiongauge.ui.layout.navigationBarPadding
 
 /** Dark cockpit-adjacent surface for drawer and menu-stack screens (independent of [ThemeMode]). */
 @Composable
@@ -13,7 +13,7 @@ fun GaugeMenuSurface(
     content: @Composable () -> Unit,
 ) {
     Surface(
-        modifier = modifier.fillMaxSize().navigationBarBottomPadding(),
+        modifier = modifier.fillMaxSize().navigationBarPadding(),
         color = GaugeBackground,
         contentColor = GaugeScaleWhite,
         content = content,

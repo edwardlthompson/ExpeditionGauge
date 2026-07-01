@@ -79,6 +79,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.8] — Landscape G-meter and nav insets (2026-06-30)
+
+### Fixed
+
+* G-meter ball remaps 90° CCW at landscape ROTATION_90 and 90° CW at ROTATION_270 so pitch/roll match screen edges
+* Dashboard HUD and menu drawer respect **side** navigation bar insets (landscape gesture strip)
+
 ## [2.11.7] — Telemetry cube density (2026-06-30)
 
 ### Added
