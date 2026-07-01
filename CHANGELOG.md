@@ -17,6 +17,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.11.2](https://github.com/edwardlthompson/ExpeditionGauge/compare/v0.11.1...v0.11.2) (2026-07-01)
+
+
+### Fixed
+
+* **ci:** ignore GHSA-xpw8-rcwv-8f8p in AGP test-harness Netty scan ([f32d015](https://github.com/edwardlthompson/ExpeditionGauge/commit/f32d0157e3e0404e619867a1cfab17d430f007d7))
+* **ci:** run stack detect from repo root ([4e7f1ae](https://github.com/edwardlthompson/ExpeditionGauge/commit/4e7f1ae6f62d3ec2d3181db28d42be30bfe5acb0))
+* **ci:** skip optional stack jobs when examples absent ([54f7689](https://github.com/edwardlthompson/ExpeditionGauge/commit/54f76892f492f1dcb4aad4dbd44bbe04ecf084e1))
+* **ci:** skip web about gate and stabilize instrumented UI tests ([c81f5ac](https://github.com/edwardlthompson/ExpeditionGauge/commit/c81f5ac836cdf0f1f03ff883ad193c30c9727561))
+* **ci:** sync donations.json stub before android unit tests ([732d665](https://github.com/edwardlthompson/ExpeditionGauge/commit/732d665c6f51d61989609460b51f8e35f76e2957))
+* **ci:** unblock v2.9.0 release gates ([24a6a21](https://github.com/edwardlthompson/ExpeditionGauge/commit/24a6a21c496fcb93e08734dd0b67bbc76c0b0b5b))
+* **test:** restore assertIsDisplayed import ([943f659](https://github.com/edwardlthompson/ExpeditionGauge/commit/943f6597f76d21a772f53ef76913b18a515145c2))
+
+
+### Changed
+
+* **release:** prepare v2.1.0 release ([b390486](https://github.com/edwardlthompson/ExpeditionGauge/commit/b390486350fcc15c4ac87ab5b31b9bda7ae407b7))
+* **release:** prepare v2.9.0 release ([d1ef2dc](https://github.com/edwardlthompson/ExpeditionGauge/commit/d1ef2dc84e8051ca0e54c4550b410df22f3aa217))
+* **release:** prepare v2.9.1 release ([e8e7d8a](https://github.com/edwardlthompson/ExpeditionGauge/commit/e8e7d8a419476d5a7260bfd0868660f2622b73ce))
+
 ## [2.1.0] — ExpeditionGauge live telemetry (2026-06-30)
 
 ### Added
