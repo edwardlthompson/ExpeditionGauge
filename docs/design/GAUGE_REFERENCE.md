@@ -35,7 +35,8 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 - Concentric rings at 10° / 20° / 30° reference (attitude) and 0.5G / 1.0G / 1.5G (G-force / hybrid)
 - Crosshairs; animated ball from calibrated pitch/roll or lat/lon G
 - **Display-rotation-aware axes:** `GaugeDisplayRotation` maps device-frame G to screen coordinates so screen Y = longitudinal (forward/back) and screen X = lateral at all four `Surface.ROTATION_*` values
-- **G-ball trail:** fading dot trail (~40 samples) while **recording** in all modes; dedupe &lt; 0.02; cleared on calibrate or session stop
+- **G-ball trail:** colored line + dots (~40 samples) while **recording**; green→yellow→red by distance from center; dedupe &lt; 0.015; cleared on calibrate or session stop
+- Ball fill **green → yellow → red** as deflection increases; dark outline for contrast
 - On-cube: canvas + **directional edge numerals** — pitch ° on top/bottom only when ball is there (`--` on idle side); roll ° on left/right only on active side
 - Braking (negative pitch) moves ball toward **top**; acceleration toward **bottom**
 - Portrait HUD cube: extra **90° clockwise** ball rotation; roll ° on top/bottom edges, pitch ° on left/right
@@ -43,11 +44,9 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 
 ## Center — Speed / GPS / HDG
 
-- Large white speed digits (digital only — no arc gauge); yellow unit label respects imperial/metric setting
-- Numeric heading only (`247°` + yellow `HDG`) — **no compass dial**
-- DMS coordinates (two lines)
-- Time top-right; trip/odo bottom
-- Clock and mountain icons for time and altitude in telemetry cube
+- Compact row: **3-digit speed** beside **3-digit heading** (`247°` + yellow `HDG`) to free vertical space for coordinates
+- DMS coordinates always shown (two monospace lines); altitude/time hidden only in crawling-mode recording
+- Yellow unit labels respect imperial/metric setting
 
 ## Right — Tire pressures
 

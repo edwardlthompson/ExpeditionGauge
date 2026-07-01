@@ -43,6 +43,6 @@ class GBallTrailBuffer(private val capacity: Int = DEFAULT_CAPACITY) {
 
     companion object {
         const val DEFAULT_CAPACITY = 40
-        const val MIN_SAMPLE_DISTANCE = 0.02
+        const val MIN_SAMPLE_DISTANCE = 0.015f
     }
 }

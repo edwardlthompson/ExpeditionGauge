@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,8 +21,7 @@ import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.components.gauge.GpsReadoutPanel
 import dev.foss.expeditiongauge.ui.components.gauge.GpsStatusChip
-import dev.foss.expeditiongauge.ui.components.gauge.HeadingReadout
-import dev.foss.expeditiongauge.ui.components.gauge.SpeedometerGauge
+import dev.foss.expeditiongauge.ui.components.gauge.SpeedHeadingRow
 import dev.foss.expeditiongauge.ui.components.gauge.TirePressurePanel
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -35,37 +35,39 @@ fun TelemetryHudCube(
     preset: DashboardPreset,
     showDriftAngle: Boolean,
     useMetric: Boolean,
-    hideGpsDetail: Boolean,
+    hideGpsExtras: Boolean,
     activeAlerts: Set<AlertType>,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = SpacingSm / 2, vertical = SpacingSm / 4),
+            .padding(horizontal = SpacingSm / 4, vertical = SpacingSm / 4),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        if (preset.showSpeed) {
-            SpeedometerGauge(
+        if (preset.showSpeed || preset.showHeading) {
+            SpeedHeadingRow(
                 speedMps = telemetry.speedMps,
-                speedFromObd = telemetry.speedFromObd,
+                headingDeg = telemetry.headingDeg,
                 useMetric = useMetric,
+                showSpeed = preset.showSpeed,
+                showHeading = preset.showHeading,
+                modifier = Modifier.fillMaxWidth(),
             )
             telemetry.rpm?.let { rpm ->
                 Text(
                     text = stringResource(R.string.playback_rpm, rpm),
                     color = GaugeScaleWhite,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
         }
         if (preset.showHeading) {
-            HeadingReadout(headingDeg = telemetry.headingDeg)
             Text(
                 text = stringResource(R.string.gauge_lat_g, GaugeLogic.formatWholeG(telemetry.latG)),
                 color = if (AlertType.LAT_G in activeAlerts) GaugeRed else GaugeScaleWhite,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
         if (preset.showGps) {
@@ -75,23 +77,23 @@ fun TelemetryHudCube(
                 numSatellites = telemetry.numSatellites,
                 hdop = telemetry.hdop,
             )
-            if (!hideGpsDetail) {
-                GpsReadoutPanel(
-                    latitude = telemetry.latitude,
-                    longitude = telemetry.longitude,
-                    altitudeM = telemetry.altitudeM,
-                    driftAngleDeg = telemetry.driftAngleDeg,
-                    showDriftAngle = showDriftAngle || preset.emphasizeDrift,
-                    useMetric = useMetric,
-                    compact = true,
-                )
-            }
+            GpsReadoutPanel(
+                latitude = telemetry.latitude,
+                longitude = telemetry.longitude,
+                altitudeM = telemetry.altitudeM,
+                driftAngleDeg = telemetry.driftAngleDeg,
+                showDriftAngle = showDriftAngle || preset.emphasizeDrift,
+                useMetric = useMetric,
+                compact = true,
+                showTime = !hideGpsExtras,
+                showAltitude = !hideGpsExtras,
+            )
         }
         telemetry.slipRatio?.let { slip ->
             Text(
                 text = stringResource(R.string.gauge_slip_ratio, slip),
                 color = GaugeYellow,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     }
@@ -103,7 +105,7 @@ fun CombinedTelemetryTpmsCube(
     preset: DashboardPreset,
     showDriftAngle: Boolean,
     useMetric: Boolean,
-    hideGpsDetail: Boolean,
+    hideGpsExtras: Boolean,
     activeAlerts: Set<AlertType>,
     pressureUnit: PressureUnit,
     tempUnit: TempUnit,
@@ -118,7 +120,7 @@ fun CombinedTelemetryTpmsCube(
             preset = preset,
             showDriftAngle = showDriftAngle,
             useMetric = useMetric,
-            hideGpsDetail = hideGpsDetail,
+            hideGpsExtras = hideGpsExtras,
             activeAlerts = activeAlerts,
             modifier = Modifier.weight(1f),
         )

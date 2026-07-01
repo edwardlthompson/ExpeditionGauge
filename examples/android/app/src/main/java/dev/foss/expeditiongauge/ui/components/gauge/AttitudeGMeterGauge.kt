@@ -37,7 +37,6 @@ import dev.foss.expeditiongauge.gauge.GBallTrailBuffer
 import dev.foss.expeditiongauge.gauge.GForceBallLogic
 import dev.foss.expeditiongauge.gauge.GaugeDisplayRotation
 import dev.foss.expeditiongauge.gauge.GaugeLogic
-import dev.foss.expeditiongauge.gauge.GaugeZone
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -68,6 +67,7 @@ fun AttitudeGMeterGauge(
     displayRotation: Int = 0,
     recording: Boolean = false,
     isPortraitLayout: Boolean = false,
+    highContrast: Boolean = false,
 ) {
     val trailBuffer = remember { GBallTrailBuffer() }
     val ball = remember(pitchDeg, rollDeg, latG, lonG, mode, displayRotation, isPortraitLayout) {
@@ -75,9 +75,10 @@ fun AttitudeGMeterGauge(
     }
     val showTrail = recording
     var trailPoints by remember { mutableStateOf<List<Pair<Float, Float>>>(emptyList()) }
-    LaunchedEffect(ball.normalizedX, ball.normalizedY, showTrail) {
+    LaunchedEffect(pitchDeg, rollDeg, latG, lonG, mode, displayRotation, isPortraitLayout, showTrail) {
         if (showTrail) {
-            trailBuffer.add(ball.normalizedX, ball.normalizedY)
+            val sample = ballForMode(mode, pitchDeg, rollDeg, latG, lonG, displayRotation, isPortraitLayout)
+            trailBuffer.add(sample.normalizedX, sample.normalizedY)
             trailPoints = trailBuffer.snapshot()
         }
     }
@@ -122,6 +123,7 @@ fun AttitudeGMeterGauge(
             latGAlertActive = latGAlertActive,
             showTrail = showTrail,
             isPortraitLayout = isPortraitLayout,
+            highContrast = highContrast,
             modifier = Modifier.fillMaxSize(),
         )
     }

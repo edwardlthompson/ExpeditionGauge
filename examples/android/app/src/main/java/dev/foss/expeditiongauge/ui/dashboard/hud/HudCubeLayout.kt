@@ -25,6 +25,8 @@ fun HudCubeLayout(
     val isPortraitLayout = !props.layoutSpec.isLandscape
     val useMetric = props.speedUnit == SpeedUnit.METRIC
 
+    val hideGpsExtras = props.crawlingMode && props.recording
+
     val gMeterTile: @Composable () -> Unit = {
         if (preset.showAttitude) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -47,6 +49,7 @@ fun HudCubeLayout(
                     displayRotation = props.displayRotation,
                     recording = props.recording,
                     isPortraitLayout = isPortraitLayout,
+                    highContrast = props.highContrast,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -59,7 +62,7 @@ fun HudCubeLayout(
             preset = preset,
             showDriftAngle = props.showDriftAngle,
             useMetric = useMetric,
-            hideGpsDetail = props.crawlingMode && props.recording,
+            hideGpsExtras = hideGpsExtras,
             activeAlerts = props.activeAlerts,
             modifier = Modifier.fillMaxSize(),
         )
@@ -85,7 +88,7 @@ fun HudCubeLayout(
             preset = preset,
             showDriftAngle = props.showDriftAngle,
             useMetric = useMetric,
-            hideGpsDetail = props.crawlingMode && props.recording,
+            hideGpsExtras = hideGpsExtras,
             activeAlerts = props.activeAlerts,
             pressureUnit = props.pressureUnit,
             tempUnit = props.tempUnit,

@@ -79,6 +79,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.4] — HUD visibility and telemetry layout (2026-06-30)
+
+### Added
+
+* `SpeedHeadingRow` — 3-digit speed beside 3-digit heading in telemetry cube
+* `GmeterBallColor` — ball fill green → yellow → red by deflection from center
+
+### Changed
+
+* G-meter rings, crosshairs, and edge numerals boosted for high contrast
+* G-ball trail draws colored line segments + dots while recording (samples on every IMU update)
+* Lat/long DMS always visible in telemetry cube; crawling mode only hides clock/altitude
+
 ## [2.11.3] — Auto-record and G-meter calibration (2026-06-30)
 
 ### Fixed
