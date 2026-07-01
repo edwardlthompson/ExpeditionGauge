@@ -79,6 +79,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.9] — G-meter full rotation pipeline (2026-06-30)
+
+### Added
+
+* `docs/design/GMETER_HUD_ROTATION.md` — locked portrait/landscape axis contract for all `ROTATION_*`
+* `GaugeDisplayRotationAllOrientationsTest` — portrait 180°, landscape 0/180°
+
+### Fixed
+
+* G-meter: portrait cube (pitch mirror + 90° CW) applied in device space before `rotateBall`
+* G-meter tracks phone rotation through landscape 90°/270° and upside-down portrait/landscape
+* Portrait pitch mirror targets device Y (not roll X) after 90° CW remap
+
 ## [2.11.8] — Landscape G-meter and nav insets (2026-06-30)
 
 ### Fixed

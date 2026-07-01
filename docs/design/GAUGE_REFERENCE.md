@@ -34,7 +34,7 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 
 - Concentric rings at 10° / 20° / 30° reference (attitude) and 0.5G / 1.0G / 1.5G (G-force / hybrid)
 - **Thick rings and crosshairs** (4px+ stroke) for in-car distance readability
-- **Display-rotation-aware axes:** `GaugeDisplayRotation` maps device-frame G to screen coordinates so screen Y = longitudinal (forward/back) and screen X = lateral at all four `Surface.ROTATION_*` values
+- **Display-rotation-aware axes:** `GaugeDisplayRotation` — full pipeline in [`GMETER_HUD_ROTATION.md`](GMETER_HUD_ROTATION.md)
 - **G-ball trail:** colored line + dots (~40 samples) while **recording**; green→yellow→red by distance from center; dedupe &lt; 0.015; cleared on calibrate or session stop
 - Ball fill **green → yellow → red** as deflection increases; dark outline for contrast
 - On-cube: canvas + **directional edge numerals** — pitch ° on top/bottom only when ball is there (`--` on idle side); roll ° on left/right only on active side

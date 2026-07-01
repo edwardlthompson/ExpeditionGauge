@@ -191,7 +191,6 @@ internal fun ballForMode(
             normalizedY = ((attitude.normalizedY + gForce.normalizedY) / 2f).coerceIn(-1f, 1f),
             zone = zone,
         )
-        val rotated = GaugeDisplayRotation.rotateBall(combined, displayRotation)
-        GaugeDisplayRotation.applyHudCubeRemap(rotated, isPortraitLayout, displayRotation)
+        GaugeDisplayRotation.mapDeviceBallToHudScreen(combined, displayRotation, isPortraitLayout)
     }
 }

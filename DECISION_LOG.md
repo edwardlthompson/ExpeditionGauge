@@ -137,3 +137,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 21 / `versionName` 2.11.7 with enlarged digits, `TelemetryHudMetaRow` (alt/time/GPS meta), attitude and OBD extras rows, `SpaceEvenly` cube layout
 - **Alternatives considered:** Show lat G in cube (rejected — user removed in v2.11.5); hide alt/time during crawling recording in cube (rejected — wastes tile space)
 - **Consequences:** `SpeedHeadingRow.enlarged`, `GpsReadoutPanel.hudCube`; GAUGE_REFERENCE center section updated
+
+### 2026-06-30 — G-meter HUD rotation v2.11.9
+- **Status:** Accepted
+- **Context:** OnePlus 12 tuning: portrait cube validated at ROTATION_0; rotating to landscape or upside-down broke axes when cube remap ran after `rotateBall` or roll/pitch were confused
+- **Decision:** Ship `versionCode` 23 / `versionName` 2.11.9 with `mapDeviceBallToHudScreen` pipeline (portrait cube in device space → `rotateBall` → landscape post-remap); `GMETER_HUD_ROTATION.md` as canonical contract
+- **Alternatives considered:** Negate device roll X for lateral flip (rejected — flips screen Y after 90° CW); skip portrait 90° CW (rejected — validated portrait behavior)
+- **Consequences:** Portrait locked: mirror pitch + CW before rotate; landscape CCW@90 / CW@270 / negate@180; tests in `GaugeDisplayRotationAllOrientationsTest`

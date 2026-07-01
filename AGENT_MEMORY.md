@@ -20,7 +20,11 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Dashboard HUD v2 | 2.10.0 | ✅ G-trail, drawer, storage loop, auto-record |
 | HUD readability | 2.10.1 | ✅ Digital speed, units, MSL altitude, dark menus, TPMS grid |
 | HUD cube layout v3 | 2.11.0 | ✅ Cube tiles, UnitDisplay, nav inset |
-| HUD cube polish | 2.11.3–2.11.7 | ✅ Auto-record, calibrate, TPMS ref, telemetry density |
+| HUD cube polish | 2.11.3–2.11.8+ | ✅ Auto-record, calibrate, TPMS, telemetry, G-meter rotation |
+
+## G-meter HUD rotation (locked 2026-06-30)
+
+Portrait tile @ `ROTATION_0`: device pitch mirror + 90° CW **before** `rotateBall`. Landscape tile: post-remap per `displayRotation` (CCW @ 90, CW @ 270). Full matrix: `docs/design/GMETER_HUD_ROTATION.md`. Do not negate device roll (X) when fixing lateral pitch.
 
 ## Tech Stack (ExpeditionGauge)
 

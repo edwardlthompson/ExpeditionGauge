@@ -1,8 +1,14 @@
 package dev.foss.expeditiongauge.gauge
 
 /**
- * Remaps device-frame ball position to screen coordinates for [displayRotation].
- * Screen Y = longitudinal (front/back); screen X = lateral.
+ * Remaps device-frame ball position to HUD screen coordinates.
+ *
+ * Locked contract: `docs/design/GMETER_HUD_ROTATION.md`
+ *
+ * Pipeline:
+ * 1. Portrait layout: pitch mirror + 90° CW in **device** space (validated on OnePlus 12).
+ * 2. [rotateBall] for [displayRotation] (all orientations).
+ * 3. Landscape layout only: extra cube remap per rotation so pitch stays vertical on the tile.
  */
 object GaugeDisplayRotation {
     fun rotateBall(position: BallPosition, displayRotation: Int): BallPosition {
@@ -19,7 +25,7 @@ object GaugeDisplayRotation {
         )
     }
 
-    /** Portrait HUD cube: rotate ball 90° clockwise so pitch is vertical, roll is lateral. */
+    /** 90° CW: (x′, y′) = (−y, x). Portrait HUD cube — do not replace with CCW or identity. */
     fun rotate90Clockwise(position: BallPosition): BallPosition =
         position.copy(
             normalizedX = (-position.normalizedY).coerceIn(-1f, 1f),
@@ -33,19 +39,33 @@ object GaugeDisplayRotation {
             normalizedY = (-position.normalizedX).coerceIn(-1f, 1f),
         )
 
-    /**
-     * Square HUD cube remap after [rotateBall].
-     * Portrait: 90° CW. Landscape: 90° CCW at ROTATION_90, 90° CW at ROTATION_270.
-     */
-    fun applyHudCubeRemap(
-        position: BallPosition,
-        isPortraitLayout: Boolean,
+    fun mirrorPitch(position: BallPosition): BallPosition =
+        position.copy(normalizedY = (-position.normalizedY).coerceIn(-1f, 1f))
+
+    /** Portrait tile: mirror pitch (device Y) then 90° CW — device space, before [rotateBall]. */
+    fun applyPortraitCubeRemap(position: BallPosition): BallPosition =
+        rotate90Clockwise(mirrorPitch(position))
+
+    /** Landscape tile: extra remap after [rotateBall] so pitch stays on screen Y, roll on X. */
+    fun applyLandscapePostRemap(position: BallPosition, displayRotation: Int): BallPosition =
+        when (displayRotation.mod(4)) {
+            1 -> rotate90CounterClockwise(position)
+            2 -> position.copy(
+                normalizedX = (-position.normalizedX).coerceIn(-1f, 1f),
+                normalizedY = (-position.normalizedY).coerceIn(-1f, 1f),
+            )
+            3 -> rotate90Clockwise(position)
+            else -> position
+        }
+
+    fun mapDeviceBallToHudScreen(
+        device: BallPosition,
         displayRotation: Int,
-    ): BallPosition = when {
-        isPortraitLayout -> rotate90Clockwise(position)
-        displayRotation.mod(4) == 1 -> rotate90CounterClockwise(position)
-        displayRotation.mod(4) == 3 -> rotate90Clockwise(position)
-        else -> position
+        isPortraitLayout: Boolean,
+    ): BallPosition {
+        val cubeDevice = if (isPortraitLayout) applyPortraitCubeRemap(device) else device
+        val onScreen = rotateBall(cubeDevice, displayRotation)
+        return if (isPortraitLayout) onScreen else applyLandscapePostRemap(onScreen, displayRotation)
     }
 
     fun mapGForce(
@@ -53,18 +73,20 @@ object GaugeDisplayRotation {
         lonG: Float,
         displayRotation: Int,
         isPortraitLayout: Boolean = false,
-    ): BallPosition {
-        val mapped = rotateBall(GForceBallLogic.mapLatLonG(latG, lonG), displayRotation)
-        return applyHudCubeRemap(mapped, isPortraitLayout, displayRotation)
-    }
+    ): BallPosition = mapDeviceBallToHudScreen(
+        GForceBallLogic.mapLatLonG(latG, lonG),
+        displayRotation,
+        isPortraitLayout,
+    )
 
     fun mapAttitude(
         pitchDeg: Float,
         rollDeg: Float,
         displayRotation: Int,
         isPortraitLayout: Boolean = false,
-    ): BallPosition {
-        val mapped = rotateBall(AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg), displayRotation)
-        return applyHudCubeRemap(mapped, isPortraitLayout, displayRotation)
-    }
+    ): BallPosition = mapDeviceBallToHudScreen(
+        AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg),
+        displayRotation,
+        isPortraitLayout,
+    )
 }
