@@ -79,6 +79,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.11] — CI reproducibility and icon size fix (2026-06-30)
+
+### Fixed
+
+* Restore reproducible `assembleRelease` APK hashes in CI (R8 minify disabled — minify broke byte-identical rebuilds)
+* `docs/assets/app-icon-512.png` compressed under 500 KB repo hygiene budget; mipmaps regenerated
+
+### Changed
+
+* GitHub release APK ships reproducible release build (~78 MB vs ~86 MB debug)
+
 ## [2.11.10] — EG monogram icon and compressed release APK (2026-06-30)
 
 ### Added
