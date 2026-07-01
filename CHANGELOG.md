@@ -79,6 +79,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.10] — EG monogram icon and compressed release APK (2026-06-30)
+
+### Added
+
+* **EG monogram** launcher icon (Option C) — adaptive `ic_launcher` mipmaps from `docs/assets/app-icon-512.png`
+* `scripts/expedition/sync-app-icon.py` — regenerates mipmaps and F-Droid store icons from canonical 512px source
+
+### Changed
+
+* Release APK: R8 minify + resource shrink (`assembleRelease`); README shows app icon and release build instructions
+* F-Droid feature graphic uses monogram artwork
+
 ## [2.11.9] — G-meter full rotation pipeline (2026-06-30)
 
 ### Added

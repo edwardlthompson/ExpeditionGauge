@@ -144,3 +144,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 23 / `versionName` 2.11.9 with `mapDeviceBallToHudScreen` pipeline (portrait cube in device space → `rotateBall` → landscape post-remap); `GMETER_HUD_ROTATION.md` as canonical contract
 - **Alternatives considered:** Negate device roll X for lateral flip (rejected — flips screen Y after 90° CW); skip portrait 90° CW (rejected — validated portrait behavior)
 - **Consequences:** Portrait locked: mirror pitch + CW before rotate; landscape CCW@90 / CW@270 / negate@180; tests in `GaugeDisplayRotationAllOrientationsTest`
+
+### 2026-06-30 — EG monogram launcher icon v2.11.10
+- **Status:** Accepted
+- **Context:** Store/launcher used default Android icon; user selected Option C EG monogram for brand identity
+- **Decision:** Canonical `docs/assets/app-icon-512.png`; `sync-app-icon.py` generates mipmaps + store assets; release APK with R8 minify + shrink (~26% smaller than debug)
+- **Alternatives considered:** Option A G-meter bullseye (rejected — less distinctive); ship debug APK (rejected — user requested compression)
+- **Consequences:** `AndroidManifest` `android:icon`; README centered icon; GitHub releases ship `assembleRelease` APK

@@ -1,8 +1,12 @@
 # ExpeditionGauge
 
+<p align="center">
+  <img src="docs/assets/app-icon-512.png" alt="ExpeditionGauge app icon" width="128" height="128" />
+</p>
+
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.11.2-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.11.10-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -21,19 +25,20 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | Live metrics via AndroidX Car App Library (user-installed host app) |
 
-Shipped through **v2.11.0** — HUD cube layout v3 (1:1 tiles, G-meter edge numerals, TPMS top-down, global units). Prior **v2.10.1** added readability fixes. See [`CHANGELOG.md`](CHANGELOG.md) and [`docs/design/GAUGE_REFERENCE.md`](docs/design/GAUGE_REFERENCE.md).
+Shipped through **v2.11.10** — EG monogram launcher icon, compressed release APK. **v2.11.9** locked G-meter rotation for all orientations. See [`CHANGELOG.md`](CHANGELOG.md) and [`docs/design/GAUGE_REFERENCE.md`](docs/design/GAUGE_REFERENCE.md).
 
 ## Quick start
 
-### Build debug APK
+### Build release APK (compressed)
 
 ```bash
 export SOURCE_DATE_EPOCH=1700000000
+python scripts/expedition/sync-app-icon.py
 cd examples/android
-./gradlew assembleDebug
+./gradlew assembleRelease
 ```
 
-Install the APK from `examples/android/app/build/outputs/apk/debug/`. Requires Android 8+ (API 26).
+Install from `examples/android/app/build/outputs/apk/release/app-release.apk`. Debug builds: `./gradlew assembleDebug`. Requires Android 8+ (API 26).
 
 ### Run unit tests
 
