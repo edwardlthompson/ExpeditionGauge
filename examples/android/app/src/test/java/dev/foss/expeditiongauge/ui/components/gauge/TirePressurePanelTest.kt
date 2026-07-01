@@ -14,7 +14,7 @@ class TirePressurePanelTest {
 
     @Test
     fun formatPressure_zeroPsi_showsZero() {
-        assertEquals("0.0 psi", formatPressure(TirePressureReading(psi = 0f), PressureUnit.PSI))
+        assertEquals("0 Psi", formatPressure(TirePressureReading(psi = 0f), PressureUnit.PSI))
     }
 
     @Test

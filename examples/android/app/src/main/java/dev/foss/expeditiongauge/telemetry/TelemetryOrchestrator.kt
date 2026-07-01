@@ -86,7 +86,12 @@ class TelemetryOrchestrator(
             val stale = reading.lastSeenMs == 0L ||
                 System.currentTimeMillis() - reading.lastSeenMs > dev.foss.expeditiongauge.ble.tpms.TpmsDeviceSession.STALE_MS
             val psi = reading.pressureKpa?.let { it / 6.894757f }
-            return TirePressureReading(psi = psi, tempC = reading.tempC, stale = stale)
+            return TirePressureReading(
+                psi = psi,
+                tempC = reading.tempC,
+                batteryPct = reading.batteryPct,
+                stale = stale,
+            )
         }
         telemetryBus.publish(
             current.copy(

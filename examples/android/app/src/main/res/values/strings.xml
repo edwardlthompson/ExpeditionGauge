@@ -29,6 +29,10 @@
     <string name="gauge_tire_fr">FR</string>
     <string name="gauge_tire_rl">RL</string>
     <string name="gauge_tire_rr">RR</string>
+    <string name="gauge_tire_fl_long">FL tire</string>
+    <string name="gauge_tire_fr_long">FR tire</string>
+    <string name="gauge_tire_rl_long">RL tire</string>
+    <string name="gauge_tire_rr_long">RR tire</string>
     <string name="gauge_tire_psi">%.1f</string>
     <string name="gauge_tire_no_data">--</string>
     <string name="gauge_gps_fix">GPS fix</string>

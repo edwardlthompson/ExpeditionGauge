@@ -14,6 +14,7 @@ data class ImuStatusEntry(
 data class TirePressureReading(
     val psi: Float? = null,
     val tempC: Float? = null,
+    val batteryPct: Int? = null,
     val stale: Boolean = false,
 )
 

@@ -49,7 +49,7 @@ fun HudCubeLayout(
                     displayRotation = props.displayRotation,
                     recording = props.recording,
                     isPortraitLayout = isPortraitLayout,
-                    highContrast = props.highContrast,
+                    highContrast = true,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -77,7 +77,7 @@ fun HudCubeLayout(
             pressureUnit = props.pressureUnit,
             tempUnit = props.tempUnit,
             motionReduced = props.motionReduced,
-            highContrast = props.highContrast,
+            highContrast = true,
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -93,7 +93,7 @@ fun HudCubeLayout(
             pressureUnit = props.pressureUnit,
             tempUnit = props.tempUnit,
             motionReduced = props.motionReduced,
-            highContrast = props.highContrast,
+            highContrast = true,
             showTpms = preset.showTirePressure,
             modifier = Modifier.fillMaxSize(),
         )

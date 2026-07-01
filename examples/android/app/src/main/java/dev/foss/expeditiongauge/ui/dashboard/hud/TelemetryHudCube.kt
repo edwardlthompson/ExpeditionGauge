@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertType
-import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
@@ -23,7 +22,6 @@ import dev.foss.expeditiongauge.ui.components.gauge.GpsReadoutPanel
 import dev.foss.expeditiongauge.ui.components.gauge.GpsStatusChip
 import dev.foss.expeditiongauge.ui.components.gauge.SpeedHeadingRow
 import dev.foss.expeditiongauge.ui.components.gauge.TirePressurePanel
-import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
@@ -62,13 +60,6 @@ fun TelemetryHudCube(
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
-        }
-        if (preset.showHeading) {
-            Text(
-                text = stringResource(R.string.gauge_lat_g, GaugeLogic.formatWholeG(telemetry.latG)),
-                color = if (AlertType.LAT_G in activeAlerts) GaugeRed else GaugeScaleWhite,
-                style = MaterialTheme.typography.labelSmall,
-            )
         }
         if (preset.showGps) {
             GpsStatusChip(

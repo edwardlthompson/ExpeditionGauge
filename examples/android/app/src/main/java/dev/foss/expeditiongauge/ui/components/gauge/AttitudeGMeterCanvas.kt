@@ -49,13 +49,13 @@ fun AttitudeGMeterCanvas(
     val pitchColor = if (pitchAlertActive) GaugeRed else GaugeScaleWhite
     val showAttitudeEdges = mode == AttitudeGaugeMode.ATTITUDE || mode == AttitudeGaugeMode.HYBRID
     val showGForceEdges = mode == AttitudeGaugeMode.G_FORCE || mode == AttitudeGaugeMode.HYBRID
-    val ringAlpha = if (highContrast) 1f else if (mode == AttitudeGaugeMode.HYBRID) 0.75f else 0.9f
-    val ringStroke = if (highContrast) 3.5f else 2.5f
-    val crosshairWidth = if (highContrast) 2f else 1.5f
-    val edgeStyle = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+    val ringAlpha = 1f
+    val ringStroke = if (highContrast) 5f else 4f
+    val crosshairWidth = if (highContrast) 3.5f else 3f
+    val edgeStyle = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
     val ballFill = GmeterBallColor.fillColor(ball, alertActive)
-    val ballOuterRadius = if (highContrast) 12f else 11f
-    val ballInnerRadius = if (highContrast) 5f else 4f
+    val ballOuterRadius = if (highContrast) 13f else 12f
+    val ballInnerRadius = if (highContrast) 5.5f else 5f
 
     Box(modifier = modifier.fillMaxSize()) {
         Canvas(Modifier.fillMaxSize()) {

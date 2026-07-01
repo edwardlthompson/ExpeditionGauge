@@ -41,15 +41,16 @@ object GaugeLogic {
         return value.toInt().toString()
     }
 
-    /** Three-character speed field for compact HUD row (e.g. ` 45`, `128`). */
+    /** Three-digit speed field for compact HUD row (e.g. `000`, `045`, `128`). */
     fun formatSpeedPadded(speedMps: Float, useMetric: Boolean = true): String {
         val value = if (useMetric) speedMps * 3.6f else speedMps * 2.23694f
-        return value.toInt().coerceAtLeast(0).coerceAtMost(999).toString().padStart(3)
+        return value.toInt().coerceIn(0, 999).toString().padStart(3, '0')
     }
 
+    /** Three-digit heading field for compact HUD row (e.g. `000`, `012`, `247`). */
     fun formatHeadingPadded(headingDeg: Float): String {
         val normalized = ((headingDeg % 360f) + 360f) % 360f
-        return "${normalized.toInt().coerceIn(0, 359).toString().padStart(3)}°"
+        return normalized.toInt().coerceIn(0, 359).toString().padStart(3, '0')
     }
 
     fun speedUnitLabel(useMetric: Boolean = true): String = if (useMetric) "KM/H" else "MPH"

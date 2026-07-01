@@ -33,7 +33,7 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 ## Left — Attitude G-meter
 
 - Concentric rings at 10° / 20° / 30° reference (attitude) and 0.5G / 1.0G / 1.5G (G-force / hybrid)
-- Crosshairs; animated ball from calibrated pitch/roll or lat/lon G
+- **Thick rings and crosshairs** (4px+ stroke) for in-car distance readability
 - **Display-rotation-aware axes:** `GaugeDisplayRotation` maps device-frame G to screen coordinates so screen Y = longitudinal (forward/back) and screen X = lateral at all four `Surface.ROTATION_*` values
 - **G-ball trail:** colored line + dots (~40 samples) while **recording**; green→yellow→red by distance from center; dedupe &lt; 0.015; cleared on calibrate or session stop
 - Ball fill **green → yellow → red** as deflection increases; dark outline for contrast
@@ -44,17 +44,17 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 
 ## Center — Speed / GPS / HDG
 
-- Compact row: **3-digit speed** beside **3-digit heading** (`247°` + yellow `HDG`) to free vertical space for coordinates
+- Compact row: **000** speed beside **000** heading (always three digits, zero-padded)
 - DMS coordinates always shown (two monospace lines); altitude/time hidden only in crawling-mode recording
 - Yellow unit labels respect imperial/metric setting
 
 ## Right — Tire pressures
 
-- Top-down tire icons; FL/RL start-aligned, FR/RR end-aligned
+- Top-down **vehicle schematic** centered; four corner blocks per reference layout
+- Each corner: white label chip (`FL tire ›`), bold pressure, temperature, **battery icon**
+- Battery fill from BLE `batteryPct` when sensors connected (see [`TPMS_LAYOUT.md`](TPMS_LAYOUT.md))
 - Center low-pressure icon (blink unless reduced motion / high contrast)
-- `TpmsPressureBands`: LOW &lt; 28 PSI, CRITICAL &lt; 25 PSI (stored kPa)
-- Yellow status icons (GPS fix, etc.)
-- Voltage when OBD available
+- High-contrast white-on-black regardless of app light/dark theme
 
 ## Deviations from reference photo
 

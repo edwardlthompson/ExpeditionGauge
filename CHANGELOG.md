@@ -79,6 +79,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.5] — TPMS reference layout and HUD digits (2026-06-30)
+
+### Added
+
+* TPMS panel — top-down vehicle schematic, corner label chips, pressure/temp/battery per reference layout
+* `TpmsBatteryIcon` and `VehicleTopDownDiagram`; BLE `batteryPct` wired to HUD corners
+* `docs/design/TPMS_LAYOUT.md` — battery pipeline and follow-up plan rows
+
+### Changed
+
+* Speed and heading always **000** zero-padded in telemetry cube
+* Lat G removed from telemetry cube
+* G-meter rings/crosshairs thickened for distance readability (always high-contrast on HUD)
+
 ## [2.11.4] — HUD visibility and telemetry layout (2026-06-30)
 
 ### Added
