@@ -1,6 +1,5 @@
 package dev.foss.expeditiongauge.recording
 
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -75,11 +74,9 @@ class AutoRecordMonitor(
         val allowlist = settingsPreferences.autoRecordDeviceAddresses.first()
         if (allowlist.isEmpty()) return
         if (recordingWriter.recording.value) return
-        val adapter = BluetoothAdapter.getDefaultAdapter() ?: return
-        @Suppress("MissingPermission")
-        val bonded = adapter.bondedDevices.orEmpty()
-        val connected = bonded.firstOrNull { it.address in allowlist } ?: return
-        onDeviceConnected(connected.address)
+        val connectedAddress = BluetoothConnectionHelper.findConnectedAllowlistedAddress(context, allowlist)
+            ?: return
+        onDeviceConnected(connectedAddress)
     }
 
     companion object {

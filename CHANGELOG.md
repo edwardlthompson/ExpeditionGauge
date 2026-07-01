@@ -79,6 +79,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.3] — Auto-record and G-meter calibration (2026-06-30)
+
+### Fixed
+
+* Auto-record no longer starts on app launch when a allowlisted device is paired but not connected
+* G-meter **Calibrate / Set Level** stores raw sensor baseline so repeated taps stay centered (no wall jump)
+
 ## [2.11.2] — G-meter edge numerals and portrait axes (2026-06-30)
 
 ### Added

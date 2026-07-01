@@ -121,7 +121,8 @@ class DashboardViewModel(
     fun calibrateLevel() {
         viewModelScope.launch {
             val snapshot = telemetryBus.snapshots.value
-            calibrationStore.setLevel(snapshot.pitchDeg, snapshot.rollDeg)
+            if (snapshot.fusionSource != "phone") return@launch
+            calibrationStore.zeroToCurrentDisplay(snapshot.pitchDeg, snapshot.rollDeg)
         }
     }
 
