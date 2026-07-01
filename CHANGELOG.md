@@ -79,6 +79,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.12] — Reproducible release signing split (2026-06-30)
+
+### Fixed
+
+* CI `assembleRelease` hash gate: release APK is unsigned at build time (debug signing caused non-deterministic `META-INF` hashes)
+* `android.enablePngCrunchInReleaseBuilds=false` for stable launcher mipmap bytes
+
+### Added
+
+* `scripts/expedition/sign-release-apk.ps1` — sign `app-release-unsigned.apk` with debug keystore for sideload
+
 ## [2.11.11] — CI reproducibility and icon size fix (2026-06-30)
 
 ### Fixed
