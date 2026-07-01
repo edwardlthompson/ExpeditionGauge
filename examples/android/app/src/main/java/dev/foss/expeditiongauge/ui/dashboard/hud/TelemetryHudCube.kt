@@ -27,6 +27,7 @@ import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun TelemetryHudCube(
@@ -39,9 +40,11 @@ fun TelemetryHudCube(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(SpacingSm),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = SpacingSm / 2, vertical = SpacingSm / 4),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         if (preset.showSpeed) {
             SpeedometerGauge(

@@ -3,11 +3,12 @@ package dev.foss.expeditiongauge.ui.dashboard.hud
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
@@ -22,14 +23,12 @@ fun HudSquareTile(
     content: @Composable () -> Unit,
 ) {
     BoxWithConstraints(
-        modifier = modifier
-            .aspectRatio(1f)
-            .border(1.dp, GaugeScaleWhite.copy(alpha = 0.2f)),
+        modifier = modifier.border(1.dp, GaugeScaleWhite.copy(alpha = 0.2f)),
     ) {
-        val scale = (minOf(maxWidth.value, maxHeight.value) / REFERENCE_TILE_DP)
-            .coerceIn(MIN_FONT_SCALE, MAX_FONT_SCALE)
+        val edge = minOf(maxWidth.value, maxHeight.value)
+        val scale = (edge / REFERENCE_TILE_DP).coerceIn(MIN_FONT_SCALE, MAX_FONT_SCALE)
         CompositionLocalProvider(LocalTextScale provides scale) {
-            Box(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize().clip(RoundedCornerShape(0.dp))) {
                 content()
             }
         }

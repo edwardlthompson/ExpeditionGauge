@@ -79,6 +79,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.1] — HUD cube layout fixes (2026-06-30)
+
+### Fixed
+
+* HUD cube tiles no longer overlap — tile size derived from available height/width per orientation
+* GPS telemetry cube shows both latitude and longitude DMS lines
+* TPMS cube uses corner-aligned top-down tire layout (FL/FR/RL/RR at vehicle corners)
+* Tile content clipped to cube bounds; telemetry spacing tightened
+
 ## [2.11.0] — HUD cube layout v3 (2026-06-30)
 
 ### Added

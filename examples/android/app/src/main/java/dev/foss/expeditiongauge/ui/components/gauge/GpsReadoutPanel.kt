@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,13 +50,21 @@ fun GpsReadoutPanel(
                 Text(
                     text = stringResource(R.string.gauge_coords_line1, formatDms(lat, true)),
                     color = GaugeScaleWhite,
+                    style = if (compact) {
+                        androidx.compose.material3.MaterialTheme.typography.labelSmall
+                    } else {
+                        androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    },
                 )
-                if (!compact) {
-                    Text(
-                        text = stringResource(R.string.gauge_coords_line2, formatDms(lon, false)),
-                        color = GaugeScaleWhite,
-                    )
-                }
+                Text(
+                    text = stringResource(R.string.gauge_coords_line2, formatDms(lon, false)),
+                    color = GaugeScaleWhite,
+                    style = if (compact) {
+                        androidx.compose.material3.MaterialTheme.typography.labelSmall
+                    } else {
+                        androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    },
+                )
             }
         }
         altitudeM?.let {
