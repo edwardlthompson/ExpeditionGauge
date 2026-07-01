@@ -36,8 +36,14 @@ class AttitudeBallLogicTest {
     }
 
     @Test
-    fun negativePitchMovesBallUp() {
+    fun negativePitchMovesBallTowardTop() {
         val ball = AttitudeBallLogic.mapPitchRoll(-10f, 0f)
+        assertTrue(ball.normalizedY < 0f)
+    }
+
+    @Test
+    fun positivePitchMovesBallTowardBottom() {
+        val ball = AttitudeBallLogic.mapPitchRoll(10f, 0f)
         assertTrue(ball.normalizedY > 0f)
     }
 }

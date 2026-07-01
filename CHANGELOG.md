@@ -79,6 +79,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.2] — G-meter edge numerals and portrait axes (2026-06-30)
+
+### Added
+
+* `GmeterEdgeNumerals` — directional edge readouts (`--` on idle sides)
+* Portrait 90° clockwise ball rotation for attitude/hybrid modes
+
+### Fixed
+
+* Pitch axis sign (braking moves ball toward top in landscape)
+* Portrait pitch/roll swap via CW rotation; roll ° top/bottom, pitch ° left/right
+* Edge numerals only on the side the ball occupies
+
 ## [2.11.1] — HUD cube layout fixes (2026-06-30)
 
 ### Fixed

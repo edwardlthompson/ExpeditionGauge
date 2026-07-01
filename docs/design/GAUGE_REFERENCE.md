@@ -36,7 +36,9 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 - Crosshairs; animated ball from calibrated pitch/roll or lat/lon G
 - **Display-rotation-aware axes:** `GaugeDisplayRotation` maps device-frame G to screen coordinates so screen Y = longitudinal (forward/back) and screen X = lateral at all four `Surface.ROTATION_*` values
 - **G-ball trail:** fading dot trail (~40 samples) while **recording** in all modes; dedupe &lt; 0.02; cleared on calibrate or session stop
-- On-cube: canvas + **edge numerals** (roll ° left/right; lon G top/bottom in G-force modes)
+- On-cube: canvas + **directional edge numerals** — pitch ° on top/bottom only when ball is there (`--` on idle side); roll ° on left/right only on active side
+- Braking (negative pitch) moves ball toward **top**; acceleration toward **bottom**
+- Portrait HUD cube: extra **90° clockwise** ball rotation; roll ° on top/bottom edges, pitch ° on left/right
 - Tap cube → detail sheet with pitch, roll, lat/lon G, peaks, **Calibrate / Set Level**
 
 ## Center — Speed / GPS / HDG

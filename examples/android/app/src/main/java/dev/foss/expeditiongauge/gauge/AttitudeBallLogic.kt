@@ -18,7 +18,7 @@ object AttitudeBallLogic {
         val clampedPitch = pitchDeg.coerceIn(-MAX_ANGLE_DEG, MAX_ANGLE_DEG)
         val clampedRoll = rollDeg.coerceIn(-MAX_ANGLE_DEG, MAX_ANGLE_DEG)
         val normX = clampedRoll / MAX_ANGLE_DEG
-        val normY = -clampedPitch / MAX_ANGLE_DEG
+        val normY = clampedPitch / MAX_ANGLE_DEG
 
         val distance = hypot(normX.toDouble(), normY.toDouble()).toFloat()
         val (clampedX, clampedY) = if (distance > 1f) {

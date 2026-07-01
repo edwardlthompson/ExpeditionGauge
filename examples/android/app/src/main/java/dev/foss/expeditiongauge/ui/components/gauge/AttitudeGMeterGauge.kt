@@ -121,6 +121,7 @@ fun AttitudeGMeterGauge(
             rollAlertActive = rollAlertActive,
             latGAlertActive = latGAlertActive,
             showTrail = showTrail,
+            isPortraitLayout = isPortraitLayout,
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -189,10 +190,6 @@ internal fun ballForMode(
             zone = zone,
         )
         val rotated = GaugeDisplayRotation.rotateBall(combined, displayRotation)
-        if (isPortraitLayout) {
-            GaugeDisplayRotation.portraitAxisRemapForBall(rotated)
-        } else {
-            rotated
-        }
+        if (isPortraitLayout) GaugeDisplayRotation.rotate90Clockwise(rotated) else rotated
     }
 }
