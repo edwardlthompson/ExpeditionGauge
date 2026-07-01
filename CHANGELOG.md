@@ -79,6 +79,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Bump `actions/checkout` to v7 and `actions/upload-artifact` to v7 across workflows
+* Disable Release Please on child repo (ExpeditionGauge uses Gradle `versionName` releases)
+* Sync exemplar config stubs in all Android CI jobs
+
 ## [2.9.1] — Post-audit hardening (2026-06-30)
 
 ### Added

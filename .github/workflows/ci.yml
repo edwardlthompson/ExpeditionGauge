@@ -156,6 +156,9 @@ jobs:
       - name: Sync app-update assets
         if: hashFiles('examples/android/gradlew') != ''
         run: bash scripts/sync-app-update-from-config.sh
+      - name: Sync exemplar config stubs
+        if: hashFiles('examples/android/gradlew') != ''
+        run: bash scripts/sync-exemplar-config.sh
       - name: Run feature gate (strict multi-stack)
         run: bash scripts/feature-gate.sh --stack multi --strict --json
 
@@ -323,6 +326,8 @@ jobs:
         run: yes | sdkmanager --licenses
       - name: Sync app-update assets
         run: bash scripts/sync-app-update-from-config.sh
+      - name: Sync exemplar config stubs
+        run: bash scripts/sync-exemplar-config.sh
       - name: assembleDebug
         working-directory: examples/android
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
@@ -361,6 +366,8 @@ jobs:
           java-version: "17"
       - name: Sync app-update assets
         run: bash scripts/sync-app-update-from-config.sh
+      - name: Sync exemplar config stubs
+        run: bash scripts/sync-exemplar-config.sh
       - name: Enable KVM for emulator
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm.rules
@@ -485,6 +492,8 @@ jobs:
         run: yes | sdkmanager --licenses
       - name: Sync app-update assets
         run: bash scripts/sync-app-update-from-config.sh
+      - name: Sync exemplar config stubs
+        run: bash scripts/sync-exemplar-config.sh
       - name: FOSS compliance grep
         run: |
           if grep -rE "com\.google\.android\.gms|firebase" \

@@ -7,7 +7,7 @@
 - Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.9.1** (`versionCode` 11).
 - **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27). Archive: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
 - **Post-audit hardening (2026-06-30):** complete — see board below.
-- **Next:** Publish v2.9.0 release when ready; optional F-Droid submit; enable Dependabot alerts on GitHub.
+- **Next:** Publish v2.9.1 draft release; optional F-Droid submit. Dependabot alerts enabled — zero open Critical/High.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---

@@ -102,3 +102,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Ship `versionCode` 11 / `versionName` 2.9.1 with `allowBackup=false`, ExpeditionGauge `PRIVACY.md`, `.trivyignore` for AGP test-harness Netty only, export unit tests, adb-smoke modular split, BUILD_PLAN trim to ~120 lines
 - **Alternatives considered:** AGP bump to resolve Netty transitives (deferred — lockfile churn); keep template README (rejected — child repo should describe the app)
 - **Consequences:** Security Scan should pass; README reflects ExpeditionGauge; KB-014 documents Trivy ignore rationale
+
+### 2026-06-30 — Dependabot triage: defer bulk Android bump
+- **Status:** Accepted
+- **Context:** Dependabot PR #4 proposed Kotlin 2.4, OkHttp 5.x, Gradle 9.6, and 21 dependency bumps; CI failed on `processDebugNavigationResources` and duplicate classes
+- **Decision:** Close bulk PR; keep pinned FOSS stack on main. Apply github-actions group bump on main. Release Please disabled for ExpeditionGauge child repo (`if: github.repository == 'edwardlthompson/agent-project-bootstrap'`)
+- **Alternatives considered:** Merge partial bumps only (deferred — needs dedicated regression pass); keep Release Please for template semver in child repo (rejected — conflicts with app v2.9.x releases)
+- **Consequences:** Zero open Critical/High Dependabot alerts after Trivy ignore + alert enablement; android-dependencies group revisit in dedicated BUILD_PLAN row when AGP/Kotlin upgrade is scoped

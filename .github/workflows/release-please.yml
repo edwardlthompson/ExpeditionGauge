@@ -12,6 +12,8 @@ permissions:
 jobs:
   release-please:
     name: Changelog and release PR
+    # Template maintainer only — ExpeditionGauge ships via Gradle versionName + create-release.ps1
+    if: github.repository == 'edwardlthompson/agent-project-bootstrap'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
