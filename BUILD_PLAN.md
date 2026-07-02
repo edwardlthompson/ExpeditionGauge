@@ -4,10 +4,9 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.11.13** shipped · **v2.12.0** prepared on disk (uncommitted).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake + reproducible release pipeline.
-- **Pending release:** v2.12.0 — AA 3-tile grid (always-on), imperial display fix, driving route colors, offline map prefetch ([`CODE_REVIEW.md`](CODE_REVIEW.md) F-001).
-- **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.12.0** shipped (2026-07-02).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps.
+- **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; Security Scan green after KB-015 BouncyCastle triage.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
@@ -84,8 +83,6 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | ✅ | [AGENT] | M-002 Add `*.idsig` to `.gitignore` (F-003) |
 | 🔲 | [ADB] | M-003 Device validation: AA GridTemplate, imperial playback, route colors, offline map prompt (`b5214fc6`) (F-007) |
 
-**Blocker (not a plan row):** Commit + `/push` v2.12.0 bundle ([`CODE_REVIEW.md`](CODE_REVIEW.md) F-001).
-
 No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 > **Dashboard HUD v2** archived in COMPLETED_TASKS.md @ `v2.10.0`.
@@ -118,6 +115,7 @@ No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`]
 | Nav inset double-padding | `InsetAwareScaffold.kt` — one scaffold owner per route |
 | Session backup leakage | `allowBackup=false`; local-only default |
 | AGP Netty CVE noise | `.trivyignore` scoped to lockfile; revisit on AGP bump |
+| AGP BouncyCastle lockfile pins | `testImplementation` bcprov 1.80.2 + `.trivyignore` CVE-2025-14813 (KB-015); do not global `force` |
 
 **Deferred:** Custom Canvas on Android Auto; AAOS standalone APK; real-time recording graphs; production FOSS offline tile CDN (partial prefetch shipped v2.12.0 — tune cache completion in ROADMAP) → [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

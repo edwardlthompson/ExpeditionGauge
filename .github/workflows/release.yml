@@ -75,11 +75,19 @@ jobs:
           fi
           TAG="${EFFECTIVE#v}"
           VERSION=$(tr -d '[:space:]' < .template-version)
-          if [ "$TAG" != "$VERSION" ]; then
-            echo "Tag v$TAG does not match .template-version ($VERSION)"
+          ANDROID_VER=""
+          if [ -f examples/android/app/build.gradle.kts ]; then
+            ANDROID_VER=$(grep -oE 'versionName[[:space:]]*=[[:space:]]*"[^"]+"' examples/android/app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)".*/\1/' || true)
+          fi
+          if [ "$TAG" = "$VERSION" ]; then
+            echo "EFFECTIVE_TAG=v${VERSION}" >> "$GITHUB_ENV"
+          elif [ -n "$ANDROID_VER" ] && [ "$TAG" = "$ANDROID_VER" ]; then
+            echo "EFFECTIVE_TAG=v${TAG}" >> "$GITHUB_ENV"
+            echo "OK   child-repo tag v${TAG} matches android versionName (template ${VERSION})"
+          else
+            echo "Tag v$TAG does not match .template-version ($VERSION) or android versionName (${ANDROID_VER:-n/a})"
             exit 1
           fi
-          echo "EFFECTIVE_TAG=v${VERSION}" >> "$GITHUB_ENV"
 
       - name: Poll post-merge CI before SBOM upload
         if: github.event_name == 'release'
