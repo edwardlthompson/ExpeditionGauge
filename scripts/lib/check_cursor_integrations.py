@@ -75,6 +75,25 @@ def validate_artifacts(root: Path) -> list[str]:
     return errors
 
 
+def validate_agent_command_strings(root: Path) -> list[str]:
+    """Fail if agent surfaces still embed bash scripts/*.sh paths."""
+    errors: list[str] = []
+    cursor = root / ".cursor"
+    if not cursor.is_dir():
+        return errors
+    patterns = (".md", ".mdc")
+    for path in cursor.rglob("*"):
+        if not path.is_file() or path.suffix not in patterns:
+            continue
+        rel = path.relative_to(root).as_posix()
+        if rel.startswith(".cursor/parallel-prompts/"):
+            continue
+        body = read_text(path)
+        if "bash scripts/" in body:
+            errors.append(f"agent surface uses bash scripts/: {rel}")
+    return errors
+
+
 def validate_tier(root: Path, tier: str) -> list[str]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -126,6 +145,7 @@ def main() -> int:
     root = Path(args.root).resolve()
 
     errors = validate_artifacts(root)
+    errors.extend(validate_agent_command_strings(root))
     errors.extend(validate_tier(root, args.tier))
 
     if errors:

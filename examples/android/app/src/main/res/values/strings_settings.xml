@@ -51,6 +51,8 @@
     <string name="settings_attitude_mode_attitude">Attitude</string>
     <string name="settings_attitude_mode_gforce">G-Force</string>
     <string name="settings_attitude_mode_hybrid">Hybrid</string>
+    <string name="settings_attitude_mode_inclinometer">Inclinometer</string>
+    <string name="alerts_pitch_roll_hint">Sounds when exceeded (Alerts on). Shown on inclinometer and G-meter.</string>
     <string name="settings_recording_mode_label">Recording mode</string>
     <string name="settings_alerts_title">Alert thresholds</string>
     <string name="settings_android_auto_heading">Android Auto</string>

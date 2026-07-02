@@ -5,7 +5,7 @@
 3. **Bootstrap mode:** `docs/INITIALIZATION_PROMPT.md`
 4. **Reference mode:** `docs/FOR_AGENTS.md` + `TEMPLATE_INDEX.json`
 5. **Task board:** `BUILD_PLAN.md` (Sequential before Parallel) — status: 🔲 open · ✅ done · ❌ blocked
-6. **Parallel dispatch:** `bash scripts/plan-parallel-dispatch.sh` → `/scope` (Task subagents) — see [`docs/PARALLEL_AGENT_SCOPES.md`](docs/PARALLEL_AGENT_SCOPES.md)
+6. **Parallel dispatch:** `python3 scripts/agent-run.py plan-parallel-dispatch` → `/scope` (Task subagents) — see [`docs/PARALLEL_AGENT_SCOPES.md`](docs/PARALLEL_AGENT_SCOPES.md)
 7. **Autonomous /build:** `scripts/build-sprint-status.sh --lane child`; Expedition ADB/AUTO via `scripts/expedition/*.ps1`; failures → `HUMAN_BACKLOG.md`
 8. **Living memory:** update `AGENT_MEMORY.md` only at milestone boundaries
 

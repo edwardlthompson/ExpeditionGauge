@@ -25,10 +25,10 @@ object CarHudTileBuilder {
 
         return CarHudTiles(
             gMeter = CarHudTile(
-                title = "G-meter",
-                line1 = "Pitch ${GaugeLogic.formatSignedDegrees(snapshot.pitchDeg)}",
-                line2 = "Roll ${GaugeLogic.formatSignedDegrees(snapshot.rollDeg)}",
-                line3 = "LatG %.2f G".format(snapshot.latG),
+                title = "Attitude",
+                line1 = "P ${GaugeLogic.formatSignedDegrees(snapshot.pitchDeg)}",
+                line2 = "R ${GaugeLogic.formatSignedDegrees(snapshot.rollDeg)}",
+                line3 = "",
             ),
             telemetry = CarHudTile(
                 title = "Telemetry",

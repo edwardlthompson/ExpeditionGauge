@@ -28,7 +28,7 @@
 
 See [`docs/FILE_SIZE_GUIDE.md`](FILE_SIZE_GUIDE.md) for limits rationale and responsiveness guidance.
 
-**Lego rule:** Remove a feature by deleting its folder, removing wiring lines and i18n keys, then running `bash scripts/feature-gate.sh`. Golden Path must still pass.
+**Lego rule:** Remove a feature by deleting its folder, removing wiring lines and i18n keys, then running `python3 scripts/agent-run.py feature-gate`. Golden Path must still pass.
 
 **Reference exemplars:** About (Sprint 1) — `examples/web/src/about/`, `examples/android/.../about/`. Settings (Sprint 2) — `examples/web/src/settings/`, `examples/android/.../settings/`.
 
@@ -40,7 +40,7 @@ Status markers: 🔲 open · ✅ done · ❌ blocked (see `BUILD_PLAN.md` legend
 - 🔲 `[AGENT]` Feature container scaffolded (no unrelated edits)
 - 🔲 `[AGENT]` Unit tests for pure logic
 - 🔲 `[AGENT]` View wired; composition root (`appBootstrap.ts` / `GoldenPathApp.kt`) diff ≤10 lines
-- 🔲 `[AUTO]` `bash scripts/watch-agent-gates.sh --once --autofix`
+- 🔲 `[AUTO]` `python3 scripts/agent-run.py watch-agent-gates --once --autofix`
 - 🔲 `[HUMAN]` Manual smoke happy path; approve before next feature
 
 ## Autonomous agent protocol
@@ -49,16 +49,16 @@ Agents may **auto-fix** lint, format, type, and test failures within feature sco
 
 ```bash
 # After each AGENT BUILD_PLAN step
-bash scripts/watch-agent-gates.sh --once --autofix
+python3 scripts/agent-run.py watch-agent-gates --once --autofix
 
 # Extended session loop
-bash scripts/watch-agent-gates.sh --interval 60 --max-attempts 10 --autofix
+python3 scripts/agent-run.py watch-agent-gates --interval 60 --max-attempts 10 --autofix
 
 # Read progress
-bash scripts/agent-progress.sh status --json
+python3 scripts/agent-run.py agent-progress status --json
 
 # Set active feature (scopes autofix paths)
-bash scripts/agent-progress.sh set-feature --name settings
+python3 scripts/agent-run.py agent-progress set-feature --name settings
 ```
 
 **Loop:** gate → `feature-autofix.sh` (mechanical) → re-gate → agent semantic fix from JSON → repeat.

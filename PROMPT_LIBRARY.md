@@ -93,7 +93,7 @@ before push. SHA-pin third-party actions per docs/SECURITY_TRIAGE.md.
 
 ```
 After pushing to main, poll required GitHub workflows until green:
-  bash scripts/check-github-ci.sh --wait 300
+  python3 scripts/agent-run.py check-github-ci --wait 300
   # Windows: scripts/check-github-ci.ps1 -WaitSeconds 300
 Required workflows: CI, Security Scan, CodeQL.
 Do not mark release or Sprint 0 complete while any are failing.
@@ -183,7 +183,7 @@ Use action.yml in downstream repos: uses: owner/agent-project-bootstrap/.github/
 
 ```
 Autonomous feature step (auto-fix enabled):
-  bash scripts/watch-agent-gates.sh --once --autofix
+  python3 scripts/agent-run.py watch-agent-gates --once --autofix
 If exit 1: read .cursor/agent-progress.json and gate JSON; fix lint/tests in feature scope; re-run.
 Loop with --interval 60 --max-attempts 10 for extended sessions.
 On exit 2 (3-strike), halt and escalate to human.
@@ -226,7 +226,7 @@ Confirm repro locally before editing code. Switch to Agent Mode to apply fix.
 
 ```
 Plan approved. Execute the active [AGENT] BUILD_PLAN step in Agent Mode.
-After each step: bash scripts/watch-agent-gates.sh --once --autofix
+After each step: python3 scripts/agent-run.py watch-agent-gates --once --autofix
 On exit 2 (3-strike), switch to Debug Mode or escalate to human.
 Push to remote still requires human approval.
 ```

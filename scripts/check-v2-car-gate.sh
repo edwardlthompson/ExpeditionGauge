@@ -37,6 +37,9 @@ check_file "$CAR/ExpeditionGaugeCarAppService.kt"
 check_file "$CAR/CarTelemetryHost.kt"
 check_file "$CAR/CarAppBridge.kt"
 check_file "$CAR/ui/TelemetryGridScreen.kt"
+check_file "$CAR/gauge/InclinometerBitmapRenderer.kt"
+check_file "$CAR/gauge/InclinometerSegmentLogic.kt"
+check_file "$ROOT/docs/design/AA_INCLINOMETER.md"
 check_file "$ANDROID/car/AndroidAutoBridge.kt"
 check_file "$ANDROID/ui/settings/SettingsAndroidAutoOptions.kt"
 check_file "$ROOT/examples/android/app/src/main/res/xml/automotive_app_desc.xml"
@@ -49,6 +52,16 @@ grep_file "$ROOT/examples/android/app/src/main/AndroidManifest.xml" "automotive_
 grep_file "$ANDROID/ExpeditionGaugeApplication.kt" "CarAppBridgeRegistry"
 grep_file "$ANDROID/FeatureFlags.kt" "androidAutoEnabled"
 grep_file "$CAR/ui/TelemetryGridScreen.kt" "GridTemplate"
+grep_file "$CAR/ui/TelemetryGridScreen.kt" "setImage"
+grep_file "$CAR/ui/TelemetryGridScreen.kt" '"Zero"'
+grep_file "$CAR/CarAppBridge.kt" "zeroAttitude"
+grep_file "$ANDROID/car/AaScreenInvalidation.kt" "AA_INVALIDATE_MIN_INTERVAL_MS"
+if grep -qE '"Mark"' "$CAR/ui/TelemetryGridScreen.kt" 2>/dev/null; then
+  echo "FAIL Mark action still present in TelemetryGridScreen.kt"
+  FAIL=1
+else
+  echo "OK   TelemetryGridScreen.kt (no Mark action)"
+fi
 
 if [ "$FAIL" -ne 0 ]; then
   echo "v2 car gate FAILED"

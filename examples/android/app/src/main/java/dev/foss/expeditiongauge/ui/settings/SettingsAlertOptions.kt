@@ -48,6 +48,10 @@ fun SettingsAlertOptions(
         AlertField(R.string.alerts_max_roll, thresholds.maxRollDeg, "settings_alerts_roll") {
             onThresholdsChange(thresholds.copy(maxRollDeg = it))
         }
+        Text(
+            text = stringResource(R.string.alerts_pitch_roll_hint),
+            style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+        )
         AlertField(R.string.alerts_max_rpm, thresholds.maxRpm, "settings_alerts_rpm") {
             onThresholdsChange(thresholds.copy(maxRpm = it))
         }

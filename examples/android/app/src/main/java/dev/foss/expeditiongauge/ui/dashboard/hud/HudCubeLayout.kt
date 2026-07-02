@@ -7,8 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.ui.components.gauge.AttitudeGMeterGauge
+import dev.foss.expeditiongauge.ui.components.gauge.InclinometerGauge
 import dev.foss.expeditiongauge.ui.components.gauge.TirePressurePanel
 import dev.foss.expeditiongauge.ui.dashboard.DashboardHudProps
 import dev.foss.expeditiongauge.ui.dashboard.hud.CombinedTelemetryTpmsCube
@@ -31,28 +33,41 @@ fun HudCubeLayout(
     val gMeterTile: @Composable () -> Unit = {
         if (preset.showAttitude) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                AttitudeGMeterGauge(
-                    pitchDeg = telemetry.pitchDeg,
-                    rollDeg = telemetry.rollDeg,
-                    latG = telemetry.latG,
-                    lonG = telemetry.lonG,
-                    mode = props.attitudeGaugeMode,
-                    onCalibrate = props.onCalibrate,
-                    showPeakHold = props.recording,
-                    peakPitchDeg = telemetry.peakPitchDeg,
-                    peakRollDeg = telemetry.peakRollDeg,
-                    peakAbsPitchDeg = telemetry.peakAbsPitchDeg,
-                    peakAbsRollDeg = telemetry.peakAbsRollDeg,
-                    pitchAlertActive = AlertType.PITCH in props.activeAlerts,
-                    rollAlertActive = AlertType.ROLL in props.activeAlerts,
-                    latGAlertActive = AlertType.LAT_G in props.activeAlerts,
-                    gaugeSizeDp = props.layoutSpec.attitudeGaugeSizeDp.dp,
-                    displayRotation = props.displayRotation,
-                    recording = props.recording,
-                    isPortraitLayout = isPortraitLayout,
-                    highContrast = true,
-                    modifier = Modifier.fillMaxSize(),
-                )
+                when (props.attitudeGaugeMode) {
+                    AttitudeGaugeMode.INCLINOMETER -> InclinometerGauge(
+                        pitchDeg = telemetry.pitchDeg,
+                        rollDeg = telemetry.rollDeg,
+                        onCalibrate = props.onCalibrate,
+                        pitchAlertActive = AlertType.PITCH in props.activeAlerts,
+                        rollAlertActive = AlertType.ROLL in props.activeAlerts,
+                        maxPitchThresholdDeg = props.maxPitchAlertDeg,
+                        maxRollThresholdDeg = props.maxRollAlertDeg,
+                        gaugeSizeDp = props.layoutSpec.attitudeGaugeSizeDp.dp,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    else -> AttitudeGMeterGauge(
+                        pitchDeg = telemetry.pitchDeg,
+                        rollDeg = telemetry.rollDeg,
+                        latG = telemetry.latG,
+                        lonG = telemetry.lonG,
+                        mode = props.attitudeGaugeMode,
+                        onCalibrate = props.onCalibrate,
+                        showPeakHold = props.recording,
+                        peakPitchDeg = telemetry.peakPitchDeg,
+                        peakRollDeg = telemetry.peakRollDeg,
+                        peakAbsPitchDeg = telemetry.peakAbsPitchDeg,
+                        peakAbsRollDeg = telemetry.peakAbsRollDeg,
+                        pitchAlertActive = AlertType.PITCH in props.activeAlerts,
+                        rollAlertActive = AlertType.ROLL in props.activeAlerts,
+                        latGAlertActive = AlertType.LAT_G in props.activeAlerts,
+                        gaugeSizeDp = props.layoutSpec.attitudeGaugeSizeDp.dp,
+                        displayRotation = props.displayRotation,
+                        recording = props.recording,
+                        isPortraitLayout = isPortraitLayout,
+                        highContrast = true,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
             }
         }
     }

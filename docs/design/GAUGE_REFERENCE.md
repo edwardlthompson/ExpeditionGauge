@@ -63,7 +63,7 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 
 | Zone | Reference | ExpeditionGauge |
 |------|-----------|-----------------|
-| Left | Vertical inclinometer bars | Ball-in-ring attitude G-meter |
+| Left | Vertical inclinometer bars | Ball-in-ring attitude G-meter (phone default); **inclinometer bars** on AA + `AttitudeGaugeMode.INCLINOMETER` / Offroad preset — see [`AA_INCLINOMETER.md`](AA_INCLINOMETER.md) |
 | Right | Compass dial | Tire pressure panel |
 | Center | Speed + coords | Speed + coords + numeric HDG |
 

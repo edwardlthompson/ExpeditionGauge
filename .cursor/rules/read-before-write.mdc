@@ -23,5 +23,5 @@ Before modifying any file:
 
 - Write all text files as UTF-8 without BOM (never UTF-16)
 - Never mark BUILD_PLAN tasks complete without running validate scripts
-- Run `scripts/validate-bootstrap.sh` after creating Sprint 0 artifacts
-- Sprint 0 sign-off (canonical): `validate-bootstrap.sh --quick`, `feature-gate.sh --stack <active>`, `check-github-ci.sh --wait 300`, `check-license-compliance.sh` — see `BUILD_PLAN.md` Child Repo Playbook
+- Run `python3 scripts/agent-run.py validate-bootstrap --quick` after creating Sprint 0 artifacts
+- Sprint 0 sign-off (canonical): `validate-bootstrap --quick`, `feature-gate --stack <active>`, `check-github-ci --wait 300`, `check-license-compliance` via `python3 scripts/agent-run.py` — see `BUILD_PLAN.md` Child Repo Playbook

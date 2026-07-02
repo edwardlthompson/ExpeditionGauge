@@ -17,7 +17,7 @@ Execute the BUILD_PLAN **without asking the user questions, presenting options, 
 ## Step 0 — Load sprint state
 
 ```bash
-bash scripts/build-sprint-status.sh --json --lane child
+python3 scripts/agent-run.py build-sprint-status --json --lane child
 
 ```
 
@@ -39,7 +39,7 @@ Repeat until `sprint_agent_auto_complete`:
 ### 1a. Read status
 
 ```bash
-bash scripts/build-sprint-status.sh --json --lane child
+python3 scripts/agent-run.py build-sprint-status --json --lane child
 
 ```
 
@@ -49,10 +49,10 @@ bash scripts/build-sprint-status.sh --json --lane child
 
 | `next_row.action` | Action |
 |-------------------|--------|
-| `automate_human` / `automate_adb` | Run `bash scripts/attempt-build-plan-row.sh --owner "<owner>" --task "<task>" --sprint "<sprint>" --json`. On exit 0: mark row ✅. On exit 1: `bash scripts/build-backlog.sh add ...` and **continue** (row stays open). |
+| `automate_human` / `automate_adb` | Run `python3 scripts/agent-run.py attempt-build-plan-row --owner "<owner>" --task "<task>" --sprint "<sprint>" --json`. On exit 0: mark row ✅. On exit 1: `python3 scripts/agent-run.py build-backlog add ...` and **continue** (row stays open). |
 | `execute` | Implement the task; gate after each AGENT step; mark ✅ |
-| `parallel_dispatch` | Run @.cursor/commands/scope.md fully, then `bash scripts/agent-progress.sh set-parallel-sprint-done --sprint "<sprint>"` |
-| AUTO rows | `bash scripts/attempt-build-plan-row.sh` (Expedition: `check-v2-*-gate.sh`, `sprint-signoff.ps1`) or run scripts inline; mark ✅ on exit 0 |
+| `parallel_dispatch` | Run @.cursor/commands/scope.md fully, then `python3 scripts/agent-run.py agent-progress set-parallel-sprint-done --sprint "<sprint>"` |
+| AUTO rows | `python3 scripts/agent-run.py attempt-build-plan-row` (Expedition: `check-v2-*-gate.sh`, `sprint-signoff.ps1`) or run scripts inline; mark ✅ on exit 0 |
 **Expedition ADB:** automation routes to `pwsh scripts/expedition/adb-smoke.ps1 -Sprint <id> -Scenario <name>` when task contains a backtick scenario id.
 
 **Expedition release:** when AUTO row names `create-release.ps1` and `ensure-gh-auth.ps1` exits 0, run release; skip push without `/ship`.
@@ -60,7 +60,7 @@ bash scripts/build-sprint-status.sh --json --lane child
 ### 1c. Gate autofix (every AGENT step)
 
 ```bash
-bash scripts/watch-agent-gates.sh --once --autofix
+python3 scripts/agent-run.py watch-agent-gates --once --autofix
 
 ```
 
@@ -87,7 +87,7 @@ When `sprint_agent_auto_complete` for current sprint:
 
 ## Step 3 — Chain to next sprint
 
-Re-run `bash scripts/build-sprint-status.sh --json`.
+Re-run `python3 scripts/agent-run.py build-sprint-status --json`.
 
 - If `next_row` exists → **go to Step 1** immediately (no user pause).
 - If `all_sprints_agent_auto_complete` → print final summary.

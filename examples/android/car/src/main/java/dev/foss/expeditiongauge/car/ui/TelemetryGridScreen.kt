@@ -49,10 +49,10 @@ class TelemetryGridScreen(carContext: CarContext) : Screen(carContext) {
                 .build()
         }
 
-        val markAction = Action.Builder()
-            .setTitle("Mark")
+        val zeroAction = Action.Builder()
+            .setTitle("Zero")
             .setOnClickListener {
-                bridge.markEvent()
+                bridge.zeroAttitude()
                 invalidate()
             }
             .build()
@@ -64,7 +64,7 @@ class TelemetryGridScreen(carContext: CarContext) : Screen(carContext) {
             .setActionStrip(
                 ActionStrip.Builder()
                     .addAction(recordAction)
-                    .addAction(markAction)
+                    .addAction(zeroAction)
                     .build(),
             )
             .build()
@@ -82,10 +82,11 @@ class TelemetryGridScreen(carContext: CarContext) : Screen(carContext) {
                 append(tile.line3)
             }
         }
-        return GridItem.Builder()
+        val builder = GridItem.Builder()
             .setTitle(tile.title)
             .setText(CarText.create(text))
-            .build()
+        tile.image?.let { builder.setImage(it, GridItem.IMAGE_TYPE_LARGE) }
+        return builder.build()
     }
 
     private fun waitingTemplate(message: String): Template {

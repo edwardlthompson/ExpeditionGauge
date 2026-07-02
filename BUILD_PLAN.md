@@ -4,9 +4,9 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.12.0** shipped (2026-07-02).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps.
-- **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; Security Scan green after KB-015 BouncyCastle triage.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.13.0** shipped (2026-06-30).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell.
+- **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
@@ -69,23 +69,20 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | 22–27 | v2.4–v2.9 Relive wave | same |
 | Audit 2026-06-30 | post v2.9.0 hardening | same |
 | Audit 2026-06-30 | v2.12 readiness (M-001–M-002) | same |
+| Audit 2026-06-30 | v2.13 risks sprint (B-001–B-003) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 
 ---
 
 ## Active board
 
-### Audit Sprint — v2.12.0 readiness (2026-06-30)
+### v2.13 release (2026-06-30)
+
+> Shipped @ v2.13.0. M-003 ADB sign-off deferred — use [`ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) manual checklist.
 
 | Status | Owner | Task |
 |--------|-------|------|
-| ✅ | [AGENT] | M-001 Sync BUILD_PLAN current state + link [`CODE_REVIEW.md`](CODE_REVIEW.md) (F-002) |
-| ✅ | [AGENT] | M-002 Add `*.idsig` to `.gitignore` (F-003) |
-| 🔲 | [ADB] | M-003 Device validation: AA GridTemplate, imperial playback, route colors, offline map prompt (`b5214fc6`) (F-007) |
-
-No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`](docs/ROADMAP.md).
-
-> **Dashboard HUD v2** archived in COMPLETED_TASKS.md @ `v2.10.0`.
+| 🔲 | [ADB] | M-003 Device validation: `aa-inclinometer` on `b5214fc6` + manual DHU checklist |
 
 ---
 
@@ -97,7 +94,7 @@ No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`]
 | Fusion / recording | `fusion/`, `recording/`, `playback/` |
 | Relive (22–27) | `media/`, `export/`, `flyover/`, `share/` |
 | Layout | `ui/layout/InsetAwareScaffold.kt` |
-| ADB smokes | `scripts/expedition/adb-smoke.ps1`, `adb-scenarios/relive.ps1` |
+| ADB smokes | `scripts/expedition/adb-smoke.ps1`, `adb-scenarios/relive.ps1`, `adb-scenarios/aa-inclinometer.ps1` |
 
 ---
 
@@ -116,6 +113,11 @@ No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`]
 | Session backup leakage | `allowBackup=false`; local-only default |
 | AGP Netty CVE noise | `.trivyignore` scoped to lockfile; revisit on AGP bump |
 | AGP BouncyCastle lockfile pins | `testImplementation` bcprov 1.80.2 + `.trivyignore` CVE-2025-14813 (KB-015); do not global `force` |
+| Large uncommitted feature drift | Commit after ADB; split inclinometer vs cursor infra commits |
+| Hooks broken mid-migration | `.py` hooks + `hooks.json` committed together; smoke via `check-cursor-hooks --smoke` |
+| Agent doc drift reintroduces `.sh` | `check_cursor_integrations` gate on `.cursor/` agent surfaces |
+| Inclinometer AA alert audio routing | Red frame on AA tile; phone audio may not route — [`ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
+| JAVA_HOME unset locally (F-006) | Set `JAVA_HOME` for local Android `feature-gate`; CI is canonical — [`DEV_DEVICE.md`](docs/DEV_DEVICE.md) |
 
 **Deferred:** Custom Canvas on Android Auto; AAOS standalone APK; real-time recording graphs; production FOSS offline tile CDN (partial prefetch shipped v2.12.0 — tune cache completion in ROADMAP) → [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
@@ -125,4 +127,4 @@ No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`]
 
 Bootstrap complete (2026-06-30). All `project.config.json` sprint toggles through `v2_sharing_polish` are **on** and shipped.
 
-After new rows: Agent Mode + `watch-agent-gates.sh --once --autofix` per [AGENT] step; `resume-agent.ps1` after Cursor reopen.
+After new rows: Agent Mode + `python3 scripts/agent-run.py watch-agent-gates --once --autofix` per [AGENT] step; `resume-agent.ps1` after Cursor reopen.

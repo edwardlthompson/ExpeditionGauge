@@ -19,7 +19,7 @@ class AndroidAutoBridgeMetricsTest {
             throttlePct = 45f,
         )
 
-        val metrics = AndroidAutoBridge.run { snapshot.toCarMetrics(useMetric = true) }
+        val metrics = snapshot.toCarMetrics(useMetric = true)
 
         assertEquals("100 KM/H", metrics["speed"])
         assertEquals("0.85 G", metrics["latG"])
@@ -64,6 +64,8 @@ class AndroidAutoBridgeMetricsTest {
         }
 
         override fun markEvent(): Boolean = recording
+
+        override fun zeroAttitude(): Boolean = true
 
         override fun setInvalidationListener(listener: (() -> Unit)?) = Unit
     }

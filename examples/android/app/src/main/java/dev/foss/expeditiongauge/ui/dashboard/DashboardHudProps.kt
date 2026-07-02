@@ -23,6 +23,8 @@ data class DashboardHudProps(
     val speedUnit: SpeedUnit,
     val attitudeGaugeMode: AttitudeGaugeMode,
     val activeAlerts: Set<AlertType>,
+    val maxPitchAlertDeg: Float? = null,
+    val maxRollAlertDeg: Float? = null,
     val layoutSpec: OrientationLayoutSpec,
     val displayRotation: Int = 0,
     val motionReduced: Boolean = false,

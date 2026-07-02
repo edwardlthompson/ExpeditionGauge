@@ -154,3 +154,12 @@
 | **Cause** | ExpeditionGauge app semver (`versionName`) diverges from upstream template `.template-version` |
 | **Fix** | `release.yml` accepts tag when it matches `examples/android/app/build.gradle.kts` `versionName`; backfill via `workflow_dispatch` + `tag` input |
 | **Prevention** | After publishing app release, run **Actions → Release → Run workflow** with `tag=vX.Y.Z` if `release` event SBOM step failed |
+
+### KB-017 — Cursor agent shell opens scripts and steals focus (Quiet Agent Shell)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Agent runs `bash scripts/foo.sh`; Cursor opens hook or script tabs; keystrokes land in wrong editor tab |
+| **Cause** | `beforeShellExecution` hooks and command strings containing `.sh` paths trigger editor reveal |
+| **Fix** | Python hooks in `.cursor/hooks/*.py`; agent commands via `python3 scripts/agent-run.py <name>`; `.vscode/settings.json` disables auto-reveal |
+| **Prevention** | Keep agent-facing docs in `.cursor/` on `agent-run.py`; pin active tab during agent sessions; optional `<!-- cursor-hooks: off -->` in `BUILD_PLAN.md` |

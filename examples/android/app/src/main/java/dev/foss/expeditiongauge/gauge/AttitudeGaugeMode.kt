@@ -4,4 +4,5 @@ enum class AttitudeGaugeMode {
     ATTITUDE,
     G_FORCE,
     HYBRID,
+    INCLINOMETER,
 }

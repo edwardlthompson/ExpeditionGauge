@@ -1,27 +1,29 @@
 # ADR-0010: Android Auto via AndroidX Car App Library
 
-- **Status:** Accepted (revised 2026-06-30)
+- **Status:** Accepted (revised 2026-07-02)
 - **Date:** 2026-06-30
 - **Deciders:** ExpeditionGauge team
 
 ## Context
 
-Drivers want live speed, G, and attitude on the head unit without proprietary Google automotive SDKs or a second telemetry pipeline. The phone HUD uses Compose/Canvas, which **cannot** be rendered on Android Auto head units.
+Drivers want live speed and attitude on the head unit without proprietary Google automotive SDKs or a second telemetry pipeline. The phone HUD uses Compose/Canvas, which **cannot** be rendered on Android Auto head units.
 
 ## Decision
 
 1. **`androidx.car.app:app`** (Apache 2.0) in isolated **`:car`** Gradle module — no Play Services in production path.
-2. **`CarAppBridge`** registry — phone app implements bridge to `TelemetryBus` + `RecordingWriter`; car UI stays decoupled.
+2. **`CarAppBridge`** registry — phone app implements bridge to `TelemetryBus` + `RecordingWriter` + `CalibrationStore`; car UI stays decoupled.
 3. **Always-on when capable** — no Settings opt-out; `isAndroidAutoEnabled()` reflects build capability (`FeatureFlags.androidAutoCapable`), not a user toggle.
-4. **`GridTemplate` with 3 tiles** — G-meter (pitch/roll/latG), telemetry (speed/HDG/alt), TPMS corners; structured text + icons only.
-5. **Live refresh** — bridge rate-limits `Screen.invalidate()` to ~1 Hz while car session is active.
-6. **Sideload discovery** — requires Android Auto developer mode + unknown sources (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
+4. **`GridTemplate` with 3 tiles** — **Attitude** (bitmap inclinometer ±45° + pitch/roll text), telemetry (speed/HDG/alt), TPMS (text corners only). **No maps.**
+5. **Bitmap inclinometer** — `CarIcon` from shared `:car` `InclinometerBitmapRenderer` (progressive green→yellow→red by angle). Not a custom OpenGL surface.
+6. **Action strip** — **Record / Stop** and **Zero** (set level); mark-event and advanced features stay on phone.
+7. **Live refresh** — bridge rate-limits `Screen.invalidate()` to **250 ms** app-side (host may cap lower).
+8. **Sideload discovery** — requires Android Auto developer mode + unknown sources (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
 
 ## Consequences
 
 - Same APK ships phone + car entry points; DHU testing required for full AA certification path.
-- Metric allowlist removed; full cube metrics always shown on head unit (best-effort approximation).
-- OBD/BLE/TPMS state visible when bridge exposes readings.
+- Phone **Offroad** preset selects `AttitudeGaugeMode.INCLINOMETER` using the same renderer at full size.
+- Pitch/roll angle alerts reuse Settings thresholds; red frame on AA attitude tile when active.
 
 ## Alternatives Considered
 
@@ -30,5 +32,6 @@ Drivers want live speed, G, and attitude on the head unit without proprietary Go
 | Google Play Services Car API | FOSS violation |
 | Duplicate sensor pipeline in `:car` | Drift from phone fusion |
 | WebView / custom OpenGL on car | AA template policy |
+| MapTemplate / live map on AA | Navigation scope; not needed for telemetry HUD |
 | Settings opt-in toggle | User confusion; service should be ready when host connects |
 | PaneTemplate metric picker | Superseded by fixed 3-tile grid |

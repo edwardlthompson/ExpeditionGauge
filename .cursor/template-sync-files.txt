@@ -19,12 +19,12 @@
 .cursor/cursor-features.json
 .cursor/environment.json.commercial.example
 .cursor/hooks.json
-.cursor/hooks/after-edit-encoding.sh
-.cursor/hooks/before-shell-guard.sh
-.cursor/hooks/mcp-audit.sh
-.cursor/hooks/session-start-context.sh
+.cursor/hooks/after_edit_encoding.py
+.cursor/hooks/before_shell_guard.py
+.cursor/hooks/mcp_audit.py
+.cursor/hooks/session_start_context.py
 .cursor/hooks/shell-denylist.txt
-.cursor/hooks/subagent-scope-inject.sh
+.cursor/hooks/subagent_scope_inject.py
 .cursor/mcp.commercial.example
 .cursor/mcp.foss.example
 .cursor/rules/batch-commands.mdc
@@ -86,6 +86,7 @@ modules/android/COMMERCIAL.md
 modules/android/MODULE.md
 modules/python/MODULE.md
 scripts/agent-progress.sh
+scripts/agent-run.py
 scripts/attempt-build-plan-row.sh
 scripts/build-backlog.sh
 scripts/build-sprint-status.sh

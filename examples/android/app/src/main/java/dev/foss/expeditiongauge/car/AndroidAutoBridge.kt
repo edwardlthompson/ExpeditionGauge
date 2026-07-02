@@ -1,11 +1,14 @@
 package dev.foss.expeditiongauge.car
 
+import dev.foss.expeditiongauge.alerts.AlertThresholds
+import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.calibration.CalibrationStore
+import dev.foss.expeditiongauge.car.gauge.InclinometerCarIcon
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
-import dev.foss.expeditiongauge.gauge.GaugeLogic
-import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SpeedUnit
+import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 class AndroidAutoBridge(
     private val services: ExpeditionGaugeServices,
     private val settings: SettingsPreferences,
+    private val calibrationStore: CalibrationStore,
     scope: CoroutineScope,
 ) : CarAppBridge {
 
@@ -32,25 +36,45 @@ class AndroidAutoBridge(
     private var tempUnit: TempUnit = TempUnit.CELSIUS
 
     @Volatile
-    private var invalidationListener: (() -> Unit)? = null
+    private var activeAlerts: Set<AlertType> = emptySet()
 
     @Volatile
-    private var lastInvalidateMs: Long = 0L
+    private var alertThresholds: AlertThresholds = AlertThresholds()
+
+    @Volatile
+    private var invalidationListener: (() -> Unit)? = null
+
+    private val invalidation = AaScreenInvalidation()
 
     init {
         scope.launch {
             combine(
-                settings.speedUnit,
-                settings.pressureUnit,
-                settings.tempUnit,
-                services.telemetryBus.snapshots,
-            ) { spd, pressure, temp, telem ->
-                UnitPrefs(spd, pressure, temp, telem)
-            }.collect { prefs ->
-                speedUnit = prefs.speedUnit
-                pressureUnit = prefs.pressureUnit
-                tempUnit = prefs.tempUnit
-                snapshot = prefs.snapshot
+                combine(
+                    settings.speedUnit,
+                    settings.pressureUnit,
+                    settings.tempUnit,
+                    services.telemetryBus.snapshots,
+                ) { spd, pressure, temp, telem ->
+                    AndroidAutoTelemetryState(spd, pressure, temp, telem)
+                },
+                services.alertService.activeAlerts,
+                services.alertThresholdsPreferences.thresholds,
+            ) { telemState, alerts, thresholds ->
+                AndroidAutoBridgeState(
+                    speedUnit = telemState.speedUnit,
+                    pressureUnit = telemState.pressureUnit,
+                    tempUnit = telemState.tempUnit,
+                    snapshot = telemState.snapshot,
+                    alerts = alerts,
+                    thresholds = thresholds,
+                )
+            }.collect { state ->
+                speedUnit = state.speedUnit
+                pressureUnit = state.pressureUnit
+                tempUnit = state.tempUnit
+                snapshot = state.snapshot
+                activeAlerts = state.alerts
+                alertThresholds = state.thresholds
                 FeatureFlags.androidAutoEnabled = FeatureFlags.androidAutoCapable
                 maybeInvalidate()
             }
@@ -59,12 +83,25 @@ class AndroidAutoBridge(
 
     override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
 
-    override fun hudTiles(): CarHudTiles = CarHudTileBuilder.build(
-        snapshot = snapshot,
-        speedUnit = speedUnit,
-        pressureUnit = pressureUnit,
-        tempUnit = tempUnit,
-    )
+    override fun hudTiles(): CarHudTiles {
+        val built = CarHudTileBuilder.build(
+            snapshot = snapshot,
+            speedUnit = speedUnit,
+            pressureUnit = pressureUnit,
+            tempUnit = tempUnit,
+        )
+        val icon = runCatching {
+            InclinometerCarIcon.fromAttitude(
+                pitchDeg = snapshot.pitchDeg,
+                rollDeg = snapshot.rollDeg,
+                pitchAlert = AlertType.PITCH in activeAlerts,
+                rollAlert = AlertType.ROLL in activeAlerts,
+                maxPitchThresholdDeg = alertThresholds.maxPitchDeg,
+                maxRollThresholdDeg = alertThresholds.maxRollDeg,
+            )
+        }.getOrNull()
+        return built.copy(gMeter = built.gMeter.copy(image = icon))
+    }
 
     override fun metricValues(): Map<String, String> =
         snapshot.toCarMetrics(speedUnit == SpeedUnit.METRIC)
@@ -89,42 +126,23 @@ class AndroidAutoBridge(
         true
     }
 
+    override fun zeroAttitude(): Boolean = runBlocking {
+        if (snapshot.fusionSource != "phone") return@runBlocking false
+        calibrationStore.zeroToCurrentDisplay(snapshot.pitchDeg, snapshot.rollDeg)
+        maybeInvalidate(force = true)
+        true
+    }
+
     override fun setInvalidationListener(listener: (() -> Unit)?) {
         invalidationListener = listener
     }
 
-    private fun maybeInvalidate() {
+    private fun maybeInvalidate(force: Boolean = false) {
         val listener = invalidationListener ?: return
-        val now = System.currentTimeMillis()
-        if (now - lastInvalidateMs < INVALIDATE_MIN_INTERVAL_MS) return
-        lastInvalidateMs = now
-        listener()
+        invalidation.maybeInvalidate(snapshot.pitchDeg, snapshot.rollDeg, force, listener)
     }
 
-    private data class UnitPrefs(
-        val speedUnit: SpeedUnit,
-        val pressureUnit: PressureUnit,
-        val tempUnit: TempUnit,
-        val snapshot: TelemetrySnapshot,
-    )
-
     companion object {
-        private const val INVALIDATE_MIN_INTERVAL_MS = 1_000L
-
-        fun TelemetrySnapshot.toCarMetrics(useMetric: Boolean): Map<String, String> {
-            val speed = "${GaugeLogic.formatSpeedMps(speedMps, useMetric)} ${GaugeLogic.speedUnitLabel(useMetric)}"
-            val beta = driftAngleDeg?.let { GaugeLogic.formatSignedDegrees(it) } ?: "—"
-            val rpmText = rpm?.let { "${it.toInt()} rpm" } ?: "—"
-            val throttleText = throttlePct?.let { "${it.toInt()}%" } ?: "—"
-            return mapOf(
-                "speed" to speed,
-                "latG" to "%.2f G".format(latG),
-                "pitch" to GaugeLogic.formatSignedDegrees(pitchDeg),
-                "roll" to GaugeLogic.formatSignedDegrees(rollDeg),
-                "beta" to beta,
-                "rpm" to rpmText,
-                "throttle" to throttleText,
-            )
-        }
+        const val AA_INVALIDATE_MIN_INTERVAL_MS = AaScreenInvalidation.AA_INVALIDATE_MIN_INTERVAL_MS
     }
 }

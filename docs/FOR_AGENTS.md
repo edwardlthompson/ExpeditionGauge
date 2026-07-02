@@ -42,8 +42,8 @@ Every task row in `BUILD_PLAN.md` and checklist in module docs, PR template, and
 ## Repo hygiene
 
 - Track source and lockfiles only; never commit build output or caches (`docs/REPO_HYGIENE.md`)
-- Before push: `bash scripts/check-repo-hygiene.sh`
-- Reclaim disk: `bash scripts/purge-ephemeral.sh` (dry-run); `--apply` removes gitignored untracked files only
+- Before push: `python3 scripts/agent-run.py check-repo-hygiene`
+- Reclaim disk: `python3 scripts/agent-run.py purge-ephemeral` (dry-run); `--apply` removes gitignored untracked files only
 - Stage explicit paths; avoid blind `git add -A`
 
 ## Parallel Guardrails
@@ -78,7 +78,7 @@ Stack selection from init lives in `.cursor/stack-selection.json`.
 After each `[AGENT]` BUILD_PLAN step in a feature row:
 
 ```bash
-bash scripts/watch-agent-gates.sh --once --autofix
+python3 scripts/agent-run.py watch-agent-gates --once --autofix
 
 ```
 
@@ -89,7 +89,7 @@ bash scripts/watch-agent-gates.sh --once --autofix
 Extended sessions:
 
 ```bash
-bash scripts/watch-agent-gates.sh --interval 60 --max-attempts 10 --autofix
+python3 scripts/agent-run.py watch-agent-gates --interval 60 --max-attempts 10 --autofix
 
 ```
 
@@ -104,7 +104,7 @@ Use **Debug Mode** (`docs/CURSOR_MODES.md`, PROMPT_LIBRARY Entry 20) when CI or 
 ### CI poll after push
 
 ```bash
-bash scripts/check-github-ci.sh --wait 300
+python3 scripts/agent-run.py check-github-ci --wait 300
 # Windows: pwsh scripts/check-github-ci.ps1 -WaitSeconds 300
 
 ```
@@ -134,7 +134,7 @@ If a job is missing, wait - GitHub may not have enqueued it yet. If `FAIL` persi
 Before launching parallel agents:
 
 ```bash
-bash scripts/check-parallel-scope.sh
+python3 scripts/agent-run.py check-parallel-scope
 
 ```
 

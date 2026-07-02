@@ -10,8 +10,8 @@ Read @docs/PARALLEL_AGENT_SCOPES.md and the active BUILD_PLAN Parallel table.
 - Run:
 
 ```bash
-bash scripts/check-parallel-scope.sh
-bash scripts/plan-parallel-dispatch.sh --require-sequential-clear --json --feature <activeSprint>
+python3 scripts/agent-run.py check-parallel-scope
+python3 scripts/agent-run.py plan-parallel-dispatch --require-sequential-clear --json --feature <activeSprint>
 
 ```
 
@@ -20,11 +20,11 @@ If blockers include open Sequential items, finish them first.
 ## 2. Manifest and scope lock
 
 ```bash
-bash scripts/plan-parallel-dispatch.sh --require-sequential-clear --write-lock --json --feature <activeSprint>
+python3 scripts/agent-run.py plan-parallel-dispatch --require-sequential-clear --write-lock --json --feature <activeSprint>
 
 ```
 
-Optional hard isolation: `bash scripts/setup-agent-worktrees.sh`
+Optional hard isolation: `python3 scripts/agent-run.py setup-agent-worktrees`
 
 Print **agent_count** in one line.
 
@@ -44,8 +44,8 @@ Use **`.cursor/agents/gate-fixer.md`**. Each subagent must receive:
 - Read `.cursor/parallel-scope-lock.json` — stay inside assigned `scope` only.
 - **Forbidden paths:** `BUILD_PLAN.md`, `COMPLETED_TASKS.md`, `MainActivity.kt`, `ExpeditionGaugeApp.kt`, `AppScreenRouter.kt`, `InsetAwareScaffold.kt`, composition roots per `scripts/lib/parallel_scope.py`.
 - Branch: `feature/agent-<slug>` from lock file.
-- After work: `bash scripts/watch-agent-gates.sh --once --autofix`
-- Report: `bash scripts/agent-progress.sh set-step --name tests`
+- After work: `python3 scripts/agent-run.py watch-agent-gates --once --autofix`
+- Report: `python3 scripts/agent-run.py agent-progress set-step --name tests`
 
 ## 5. CLI fallback (ExpeditionGauge)
 
@@ -59,7 +59,7 @@ pwsh scripts/expedition/merge-parallel-agents.ps1 -Sprint <activeSprint>
 
 1. Wait for all subagents to complete.
 2. Resolve conflicts (sequential owner only).
-3. Run `bash scripts/watch-agent-gates.sh --once --autofix`.
+3. Run `python3 scripts/agent-run.py watch-agent-gates --once --autofix`.
 4. Mark Parallel rows ✅ in BUILD_PLAN (Parallel agents never edit BUILD_PLAN).
 5. Delete `.cursor/parallel-scope-lock.json` when done.
 6. If sprint fully ✅, read @.cursor/commands/cleanup.md.

@@ -159,6 +159,13 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Alternatives considered:** Partial wake lock (rejected — permission + battery); dashboard-only `Modifier.keepScreenOn()` (rejected — user chose full foreground)
 - **Consequences:** Clears on background; no `WAKE_LOCK` permission; documented in GAUGE_REFERENCE + PRIVACY
 
+### 2026-06-30 — v2.13.0 AA inclinometer + quiet agent shell
+- **Status:** Accepted
+- **Context:** Offroad/camper leveling needs ±45° inclinometer on AA and phone; agent shell commands opened `.sh` hook tabs and stole editor focus
+- **Decision:** Shared `:car` `InclinometerBitmapRenderer`; `AttitudeGaugeMode.INCLINOMETER` + Offroad preset; AA Zero action; Python hooks + `agent-run.py` (KB-017)
+- **Alternatives considered:** G-force on inclinometer tile (rejected); bash hook wrappers (rejected — focus steal); Mark on AA ActionStrip (removed — phone-only)
+- **Consequences:** ADR-0010 revised; `AA_INCLINOMETER.md`; M-003 ADB/DHU checklist remains open post-ship
+
 ### 2026-06-30 — v2.12.0 AA grid, imperial, route colors, offline maps
 - **Status:** Accepted
 - **Context:** Drivers wanted head-unit HUD without opt-in toggle; imperial display gaps in playback; drift β route colors confused driving semantics; playback map online-only

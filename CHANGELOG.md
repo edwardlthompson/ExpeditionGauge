@@ -92,6 +92,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Split oversized Kotlin files for CI file-limit compliance
 * Template sync to agent-project-bootstrap main (M30 FOSS layer, autonomous build stack)
 
+## [2.13.0] — AA inclinometer, phone Offroad mode, quiet agent shell (2026-06-30)
+
+### Added
+
+* Android Auto **inclinometer** attitude tile (±45° bitmap, progressive green→yellow→red, `P`/`R` angles only)
+* Phone **Inclinometer** gauge mode + Offroad preset default; shared `:car` `InclinometerBitmapRenderer`
+* AA Action strip **Zero** (set level); Mark removed from car UI
+* Pitch/roll alert threshold markers + distinct tones; 250 ms AA invalidate throttle
+* `docs/design/AA_INCLINOMETER.md` + ADR-0010 revision
+* **Quiet Agent Shell:** Python Cursor hooks, `scripts/agent-run.py`, `.vscode/settings.json` (KB-017)
+* ADB smoke scenario `aa-inclinometer` + manual DHU checklist in `ANDROID_AUTO.md`
+
+### Changed
+
+* Agent-facing docs/commands use `python3 scripts/agent-run.py` instead of `bash scripts/*.sh` paths
+* `check_cursor_integrations` gate blocks `bash scripts/` in `.cursor/` agent surfaces
+
 ## [Unreleased]
 
 ## [2.11.13] — Keep screen awake (2026-06-30)

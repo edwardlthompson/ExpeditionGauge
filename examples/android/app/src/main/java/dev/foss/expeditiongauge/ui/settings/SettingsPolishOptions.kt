@@ -55,6 +55,8 @@ fun SettingsPolishOptions(
                                     stringResource(R.string.settings_attitude_mode_gforce)
                                 AttitudeGaugeMode.HYBRID ->
                                     stringResource(R.string.settings_attitude_mode_hybrid)
+                                AttitudeGaugeMode.INCLINOMETER ->
+                                    stringResource(R.string.settings_attitude_mode_inclinometer)
                             },
                         )
                     },
@@ -63,6 +65,7 @@ fun SettingsPolishOptions(
                             AttitudeGaugeMode.ATTITUDE -> "settings_attitude_mode_attitude"
                             AttitudeGaugeMode.G_FORCE -> "settings_attitude_mode_gforce"
                             AttitudeGaugeMode.HYBRID -> "settings_attitude_mode_hybrid"
+                            AttitudeGaugeMode.INCLINOMETER -> "settings_attitude_mode_inclinometer"
                         },
                     ),
                 )

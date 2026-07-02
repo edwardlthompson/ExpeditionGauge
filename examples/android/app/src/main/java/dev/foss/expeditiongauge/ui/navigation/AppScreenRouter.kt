@@ -137,6 +137,7 @@ fun AppScreenRouter(
             lapTimingEnabled = lapTimingEnabled,
             lapTimingState = lapTimingState,
             attitudeGaugeMode = attitudeGaugeMode,
+            alertThresholds = alertThresholds,
             ttsReadoutEnabled = ttsReadoutEnabled,
             statsAggregate = statsAggregate,
         )

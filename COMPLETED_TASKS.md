@@ -2,6 +2,23 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## v2.13.0 release (2026-06-30)
+
+- ✅ [HUMAN] B-004 Ship v2.13.0 (inclinometer + quiet agent shell)
+
+## Risks sprint — v2.13 release (2026-06-30)
+
+- ✅ [AGENT] B-001 Finish Quiet Agent Shell doc migration + integration gate
+- ✅ [AGENT] B-002 Inclinometer test gaps + BUILD_PLAN critique rows
+- ✅ [AGENT] B-003 `aa-inclinometer` ADB scenario + ANDROID_AUTO manual checklist
+
+## Audit Sprint — v2.13 inclinometer readiness (2026-06-30)
+
+- ✅ [AGENT] A-001 Write CODE_REVIEW.md audit (F-001–F-006)
+- ✅ [AGENT] A-002 Sync BUILD_PLAN current state + inclinometer in-tree note (F-002)
+- ✅ [AGENT] A-003 Purge ephemeral root `hud-*.png` screenshots (F-004)
+- ✅ [AGENT] A-004 CHANGELOG [Unreleased] inclinometer entry (F-005)
+
 ## Audit Sprint — v2.12.0 readiness (2026-06-30)
 
 - ✅ [AGENT] M-001 Sync BUILD_PLAN current state + CODE_REVIEW.md (F-002)

@@ -26,7 +26,9 @@ class CarHudTileBuilderTest {
             PressureUnit.PSI,
             TempUnit.CELSIUS,
         )
-        assertTrue(tiles.gMeter.line1.contains("Pitch"))
+        assertTrue(tiles.gMeter.title == "Attitude")
+        assertTrue(tiles.gMeter.line1.startsWith("P "))
+        assertTrue(tiles.gMeter.line2.startsWith("R "))
         assertTrue(tiles.telemetry.line1.contains("KM/H"))
         assertTrue(tiles.telemetry.line2.contains("090"))
         assertTrue(tiles.tpms.line1.contains("FL"))

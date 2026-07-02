@@ -81,6 +81,8 @@ fun DashboardScreen(
     lapTimingState: PredictiveTimingState = PredictiveTimingState(),
     attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
         dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE,
+    maxPitchAlertDeg: Float? = null,
+    maxRollAlertDeg: Float? = null,
     statsAggregate: SessionAggregateStats = SessionAggregateStats(0, 0L, null),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -220,6 +222,8 @@ fun DashboardScreen(
                             speedUnit = speedUnit,
                             attitudeGaugeMode = attitudeGaugeMode,
                             activeAlerts = uiState.activeAlerts,
+                            maxPitchAlertDeg = maxPitchAlertDeg,
+                            maxRollAlertDeg = maxRollAlertDeg,
                             displayRotation = uiState.displayRotation,
                             themeMode = themeMode,
                             modifier = Modifier.weight(1f).fillMaxWidth(),

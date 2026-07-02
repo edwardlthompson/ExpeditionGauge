@@ -40,6 +40,35 @@ def load_hooks(root: Path) -> dict:
     return data
 
 
+def resolve_hook_script(root: Path, command: str) -> Path | None:
+    cmd = command.strip()
+    for prefix in ("python3 ", "python "):
+        if cmd.startswith(prefix):
+            cmd = cmd[len(prefix) :].strip()
+            break
+    script = root / cmd
+    if script.is_file():
+        return script
+    return None
+
+
+def validate_hook_script(root: Path, command: str) -> list[str]:
+    errors: list[str] = []
+    script = resolve_hook_script(root, command)
+    if script is None:
+        errors.append(f"hook script missing: {command}")
+        return errors
+    if script.suffix == ".py":
+        try:
+            first = script.read_text(encoding="utf-8").splitlines()[0]
+        except OSError:
+            errors.append(f"hook script unreadable: {command}")
+            return errors
+        if not first.startswith("#!"):
+            errors.append(f"hook python module missing shebang: {command}")
+    return errors
+
+
 def validate(root: Path) -> list[str]:
     errors: list[str] = []
     if hooks_disabled(root):
@@ -61,25 +90,22 @@ def validate(root: Path) -> list[str]:
             continue
         for entry in entries:
             cmd = entry.get("command", "")
-            script = root / cmd
-            if not script.is_file():
-                errors.append(f"hook script missing: {cmd}")
+            errors.extend(validate_hook_script(root, cmd))
 
     return errors
 
 
 def run_guard(root: Path, command: str) -> dict:
     payload = json.dumps({"command": command})
+    script = root / ".cursor/hooks/before_shell_guard.py"
     proc = subprocess.run(
-        ["bash", ".cursor/hooks/before-shell-guard.sh"],
+        ["python3", str(script)],
         input=payload,
         capture_output=True,
         text=True,
         cwd=root.as_posix(),
         check=False,
     )
-    if proc.returncode != 0 and proc.stdout.strip():
-        pass
     out = proc.stdout.strip() or proc.stderr.strip()
     if not out:
         return {"permission": "allow"}

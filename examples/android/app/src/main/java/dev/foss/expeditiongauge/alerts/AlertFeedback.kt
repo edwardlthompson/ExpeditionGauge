@@ -28,6 +28,8 @@ class AlertFeedback(context: Context) {
         if (!playTone) return
         val tone = when (type) {
             AlertType.LAT_G, AlertType.DRIFT_ANGLE -> ToneGenerator.TONE_PROP_BEEP
+            AlertType.PITCH -> ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD
+            AlertType.ROLL -> ToneGenerator.TONE_PROP_ACK
             AlertType.RPM, AlertType.SPEED -> ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD
             else -> ToneGenerator.TONE_PROP_ACK
         }

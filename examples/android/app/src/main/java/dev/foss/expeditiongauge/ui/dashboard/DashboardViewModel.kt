@@ -8,12 +8,13 @@ import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.map.SessionMapPrefetch
 import dev.foss.expeditiongauge.live.LivePairingSession
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
+import dev.foss.expeditiongauge.alerts.AlertService
+import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.recording.RecordingMode
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
-import dev.foss.expeditiongauge.alerts.AlertService
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.timing.LapTimingService
 import dev.foss.expeditiongauge.timing.PredictiveTimingState
@@ -163,7 +164,10 @@ class DashboardViewModel(
     }
 
     fun selectPreset(presetId: DashboardPresetId) {
-        viewModelScope.launch { settingsProfileRepository.updatePresetForActiveProfile(presetId) }
+        viewModelScope.launch {
+            settingsProfileRepository.updatePresetForActiveProfile(presetId)
+            gaugeModeForPreset(presetId)?.let { settingsPreferences.setAttitudeGaugeMode(it) }
+        }
     }
 
     fun markEvent() {
@@ -213,3 +217,6 @@ class DashboardViewModel(
 
     private data class LiveUi(val session: LivePairingSession?, val receiverCount: Int)
 }
+
+internal fun gaugeModeForPreset(presetId: DashboardPresetId): AttitudeGaugeMode? =
+    if (presetId == DashboardPresetId.Offroad) AttitudeGaugeMode.INCLINOMETER else null

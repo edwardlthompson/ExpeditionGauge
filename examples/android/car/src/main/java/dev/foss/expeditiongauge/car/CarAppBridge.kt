@@ -9,6 +9,7 @@ interface CarAppBridge {
     fun startRecording(): Boolean
     fun stopRecording(): Boolean
     fun markEvent(): Boolean
+    fun zeroAttitude(): Boolean
     fun setInvalidationListener(listener: (() -> Unit)?)
 }
 

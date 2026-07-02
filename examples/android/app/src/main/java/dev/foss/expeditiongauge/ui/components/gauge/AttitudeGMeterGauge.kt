@@ -193,4 +193,6 @@ internal fun ballForMode(
         )
         GaugeDisplayRotation.mapDeviceBallToHudScreen(combined, displayRotation, isPortraitLayout)
     }
+    AttitudeGaugeMode.INCLINOMETER ->
+        GaugeDisplayRotation.mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
 }

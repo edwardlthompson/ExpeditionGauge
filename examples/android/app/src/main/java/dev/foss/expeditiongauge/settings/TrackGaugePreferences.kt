@@ -30,6 +30,7 @@ internal class TrackGaugePreferences(private val context: Context) {
         when (prefs[attitudeGaugeModeKey]) {
             "g_force" -> AttitudeGaugeMode.G_FORCE
             "hybrid" -> AttitudeGaugeMode.HYBRID
+            "inclinometer" -> AttitudeGaugeMode.INCLINOMETER
             else -> AttitudeGaugeMode.ATTITUDE
         }
     }
@@ -55,6 +56,7 @@ internal class TrackGaugePreferences(private val context: Context) {
             it[attitudeGaugeModeKey] = when (mode) {
                 AttitudeGaugeMode.G_FORCE -> "g_force"
                 AttitudeGaugeMode.HYBRID -> "hybrid"
+                AttitudeGaugeMode.INCLINOMETER -> "inclinometer"
                 AttitudeGaugeMode.ATTITUDE -> "attitude"
             }
         }
