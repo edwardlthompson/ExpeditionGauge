@@ -145,3 +145,12 @@
 | **Cause** | Robolectric and AGP `unified-test-platform-*` declare older BouncyCastle; dependency locking records plugin pins separately from resolved runtime |
 | **Fix** | Explicit `testImplementation` on `bcprov-jdk18on:1.80.2` for unit-test runtime; `.trivyignore` for AGP `unified-test-platform` lockfile pins (do not `force` globally — breaks locked androidTest plugin) |
 | **Prevention** | Re-run `./gradlew --write-locks` after dependency changes; prefer targeted test deps over `resolutionStrategy.force` on all configurations |
+
+### KB-016 — Child-repo release tag vs `.template-version` (Ship 2026-07-02)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | `Release` workflow SBOM job fails: `Tag v2.12.0 does not match .template-version (0.11.1)` |
+| **Cause** | ExpeditionGauge app semver (`versionName`) diverges from upstream template `.template-version` |
+| **Fix** | `release.yml` accepts tag when it matches `examples/android/app/build.gradle.kts` `versionName`; backfill via `workflow_dispatch` + `tag` input |
+| **Prevention** | After publishing app release, run **Actions → Release → Run workflow** with `tag=vX.Y.Z` if `release` event SBOM step failed |
