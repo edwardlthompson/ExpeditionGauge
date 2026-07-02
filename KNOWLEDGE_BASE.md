@@ -136,3 +136,12 @@
 | **Cause** | Android Gradle Plugin `unified-test-platform-*` pulls Netty 4.1.110/4.1.93 for emulator/test plugins — not packaged in release APK |
 | **Fix** | Root `.trivyignore` lists affected CVE IDs; revisit when AGP bumps transitive Netty |
 | **Prevention** | Do not ignore Netty in runtime classpath; prefer AGP upgrade over blanket ignore when fix version ships |
+
+### KB-015 — BouncyCastle CVE-2025-14813 in lockfile (Ship 2026-06-30)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Security Scan fails on `org.bouncycastle:bcprov-jdk18on:1.78.1` / `1.79` in `gradle.lockfile` after MapLibre / Robolectric deps |
+| **Cause** | Robolectric and AGP `unified-test-platform-*` declare older BouncyCastle; dependency locking records plugin pins separately from resolved runtime |
+| **Fix** | `resolutionStrategy.force` + explicit `testImplementation` on `bcprov-jdk18on:1.80.2`; `.trivyignore` for remaining AGP lint/test-plugin lockfile lines |
+| **Prevention** | Re-run `./gradlew --write-locks` after dependency changes; prefer force/upgrade over ignore for runtime classpath |

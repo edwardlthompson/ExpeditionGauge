@@ -58,6 +58,16 @@ dependencyLocking {
     lockAllConfigurations()
 }
 
+configurations.configureEach {
+    resolutionStrategy {
+        force(
+            "org.bouncycastle:bcprov-jdk18on:1.80.2",
+            "org.bouncycastle:bcpkix-jdk18on:1.80.2",
+            "org.bouncycastle:bcutil-jdk18on:1.80.2",
+        )
+    }
+}
+
 dependencies {
     implementation(project(":car"))
 
@@ -96,6 +106,7 @@ dependencies {
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.80.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
