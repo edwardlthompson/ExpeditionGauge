@@ -6,7 +6,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.11.12-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.11.13-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -25,7 +25,7 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | Live metrics via AndroidX Car App Library (user-installed host app) |
 
-Shipped through **v2.11.12** — reproducible unsigned release APK + post-build signing for sideload. See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.11.13** — keep screen awake while app is open (default ON). See [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Quick start
 

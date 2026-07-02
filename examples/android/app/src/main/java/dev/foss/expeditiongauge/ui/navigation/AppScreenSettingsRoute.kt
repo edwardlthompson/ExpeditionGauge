@@ -63,6 +63,8 @@ fun AppScreenSettingsRoute(
     onLiveSignalWssUrlChange: (String) -> Unit,
     onAudibleTonesChange: (Boolean) -> Unit,
     onBrightnessModeSelect: (BrightnessMode) -> Unit,
+    keepScreenAwake: Boolean,
+    onKeepScreenAwakeChange: (Boolean) -> Unit,
 ) {
     val developerModeEnabled by services.settingsPreferences.developerModeEnabled
         .collectAsStateWithLifecycle(initialValue = false)
@@ -150,6 +152,8 @@ fun AppScreenSettingsRoute(
         },
         brightnessMode = brightnessMode,
         onBrightnessModeSelect = onBrightnessModeSelect,
+        keepScreenAwake = keepScreenAwake,
+        onKeepScreenAwakeChange = onKeepScreenAwakeChange,
         onSpeedUnitSelect = { unit ->
             scope.launch {
                 services.settingsPreferences.setSpeedUnit(unit)

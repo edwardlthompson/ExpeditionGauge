@@ -64,6 +64,9 @@ fun ExpeditionGaugeApp(
     val brightnessMode by brightnessPreferences.brightnessMode.collectAsStateWithLifecycle(
         initialValue = BrightnessMode.Auto,
     )
+    val keepScreenAwake by brightnessPreferences.keepScreenAwake.collectAsStateWithLifecycle(
+        initialValue = true,
+    )
     val highContrast by accessibilityPreferences.highContrastEnabled.collectAsStateWithLifecycle(initialValue = false)
     val largeText by accessibilityPreferences.largeTextEnabled.collectAsStateWithLifecycle(initialValue = false)
     val ttsReadout by accessibilityPreferences.ttsReadoutEnabled.collectAsStateWithLifecycle(initialValue = false)
@@ -166,6 +169,7 @@ fun ExpeditionGaugeApp(
     ExpeditionGaugeTheme(
         themeMode = themeMode,
         brightnessMode = brightnessMode,
+        keepScreenAwake = keepScreenAwake,
         highContrastEnabled = highContrast,
         textScale = if (largeText) 1.25f else 1f,
     ) {
@@ -239,6 +243,10 @@ fun ExpeditionGaugeApp(
                 brightnessMode = brightnessMode,
                 onBrightnessModeSelect = { mode ->
                     scope.launch { brightnessPreferences.setBrightnessMode(mode) }
+                },
+                keepScreenAwake = keepScreenAwake,
+                onKeepScreenAwakeChange = { enabled ->
+                    scope.launch { brightnessPreferences.setKeepScreenAwake(enabled) }
                 },
                 speedUnit = speedUnit,
                 logInterval = logInterval,

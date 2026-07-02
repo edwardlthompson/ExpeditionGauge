@@ -151,3 +151,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Canonical `docs/assets/app-icon-512.png`; `sync-app-icon.py` generates mipmaps + store assets; release APK with R8 minify + shrink (~26% smaller than debug)
 - **Alternatives considered:** Option A G-meter bullseye (rejected — less distinctive); ship debug APK (rejected — user requested compression)
 - **Consequences:** `AndroidManifest` `android:icon`; README centered icon; GitHub releases ship `assembleRelease` APK
+
+### 2026-06-30 — Keep screen awake v2.11.13
+- **Status:** Accepted
+- **Context:** In-car HUD testing: system display timeout dimmed screen during drives
+- **Decision:** `FLAG_KEEP_SCREEN_ON` via `ExpeditionGaugeTheme` SideEffect; `BrightnessPreferences.keepScreenAwake` default true; Settings toggle
+- **Alternatives considered:** Partial wake lock (rejected — permission + battery); dashboard-only `Modifier.keepScreenOn()` (rejected — user chose full foreground)
+- **Consequences:** Clears on background; no `WAKE_LOCK` permission; documented in GAUGE_REFERENCE + PRIVACY

@@ -79,6 +79,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.11.13] — Keep screen awake (2026-06-30)
+
+### Added
+
+* **Keep screen awake** — `FLAG_KEEP_SCREEN_ON` while app is in foreground (Settings toggle, default ON)
+* `KeepScreenAwake.kt` helper + `ScreenKeepAwakeTest`
+
+### Changed
+
+* Settings → display section: toggle with hint; preference in `BrightnessPreferences` DataStore
+
 ## [2.11.12] — Reproducible release signing split (2026-06-30)
 
 ### Fixed

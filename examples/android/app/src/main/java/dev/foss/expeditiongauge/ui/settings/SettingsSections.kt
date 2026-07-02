@@ -25,6 +25,8 @@ internal fun SettingsGeneralSections(
     onThemeModeSelect: (ThemeMode) -> Unit,
     brightnessMode: BrightnessMode,
     onBrightnessModeSelect: (BrightnessMode) -> Unit,
+    keepScreenAwake: Boolean,
+    onKeepScreenAwakeChange: (Boolean) -> Unit,
     speedUnit: SpeedUnit,
     onSpeedUnitSelect: (SpeedUnit) -> Unit,
     logIntervalMs: Long,
@@ -68,6 +70,16 @@ internal fun SettingsGeneralSections(
             )
         }
     }
+    SettingsSwitchRow(
+        label = stringResource(R.string.settings_keep_screen_awake),
+        checked = keepScreenAwake,
+        onCheckedChange = onKeepScreenAwakeChange,
+        modifier = Modifier.testTag("settings_keep_screen_awake"),
+    )
+    Text(
+        text = stringResource(R.string.settings_keep_screen_awake_hint),
+        style = MaterialTheme.typography.bodySmall,
+    )
     Text(text = stringResource(R.string.settings_units_label))
     FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
         SpeedUnit.entries.forEach { unit ->

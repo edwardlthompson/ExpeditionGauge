@@ -76,4 +76,5 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 - **Top bar:** hamburger menu, Play/Stop record icon (`record_play` / `record_stop`), mark-event icon when recording
 - **Drawer:** dark `GaugeMenuSurface`; sessions, stats, presets, IMU, live, settings, about, theme, recording options
 - **Sub-screens:** settings/sessions/about use `GaugeBackHandler`; drawer back closes before dashboard exit
+- **Keep screen awake:** `FLAG_KEEP_SCREEN_ON` while app is foreground (Settings toggle, default ON); clears on background
 - **Portrait HUD:** full DMS + MSL altitude, prominent digital speed, TPMS 2×2 grid with `--` placeholders when no sensors

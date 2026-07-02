@@ -11,6 +11,8 @@
     <string name="settings_brightness_auto">Auto brightness</string>
     <string name="settings_brightness_day">Day (outdoor)</string>
     <string name="settings_brightness_night">Night (dim)</string>
+    <string name="settings_keep_screen_awake">Keep screen awake</string>
+    <string name="settings_keep_screen_awake_hint">Prevents display timeout while the app is open. Screen can still sleep when you leave the app.</string>
     <string name="settings_update_check_label">Check for updates</string>
     <string name="settings_presets_title">Dashboard preset</string>
     <string name="settings_presets_hint">Layout emphasis for live HUD. Offroad links to crawl recording mode.</string>

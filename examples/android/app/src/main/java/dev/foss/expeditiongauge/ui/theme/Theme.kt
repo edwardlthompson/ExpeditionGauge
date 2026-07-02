@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.ui.theme
 
 import android.app.Activity
+import android.view.WindowManager
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.core.view.WindowCompat
 fun ExpeditionGaugeTheme(
     themeMode: ThemeMode,
     brightnessMode: BrightnessMode = BrightnessMode.Auto,
+    keepScreenAwake: Boolean = true,
     highContrastEnabled: Boolean = false,
     textScale: Float = 1f,
     content: @Composable () -> Unit,
@@ -42,6 +44,11 @@ fun ExpeditionGaugeTheme(
             val attrs = window.attributes
             attrs.screenBrightness = screenBrightnessFor(brightnessMode)
             window.attributes = attrs
+            if (shouldKeepScreenAwake(keepScreenAwake)) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
     }
 

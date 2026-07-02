@@ -9,7 +9,7 @@ ExpeditionGauge is a local-first off-road telemetry app. No account is required.
 | GPS tracks, IMU samples, OBD readings | Recording and playback | Until you delete the session |
 | Session metadata (name, activity type, notes) | Library organization | Until you delete the session |
 | Photos/videos attached to sessions | Scrubber markers and flyover waypoints | Until you delete the session or media |
-| Calibration and HUD preferences | App settings | Until app uninstall or reset |
+| Calibration and HUD preferences | App settings (incl. keep screen awake) | Until app uninstall or reset |
 | BLE device pairings (IMU, TPMS, external GPS, OBD) | Sensor connections | Until you forget the device or uninstall |
 
 All session data stays on your device by default. Exports (GPX, video, share cards) are written only when you request them.

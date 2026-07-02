@@ -77,6 +77,8 @@ fun AppScreenRouter(
     onAudibleTonesChange: (Boolean) -> Unit,
     brightnessMode: BrightnessMode,
     onBrightnessModeSelect: (BrightnessMode) -> Unit,
+    keepScreenAwake: Boolean,
+    onKeepScreenAwakeChange: (Boolean) -> Unit,
     speedUnit: SpeedUnit,
     logInterval: Long,
     obdAddress: String?,
@@ -176,6 +178,8 @@ fun AppScreenRouter(
             onLiveSignalWssUrlChange = onLiveSignalWssUrlChange,
             onAudibleTonesChange = onAudibleTonesChange,
             onBrightnessModeSelect = onBrightnessModeSelect,
+            keepScreenAwake = keepScreenAwake,
+            onKeepScreenAwakeChange = onKeepScreenAwakeChange,
         )
         AppScreen.About -> dev.foss.expeditiongauge.ui.about.AboutScreen(
             version = appVersion,
