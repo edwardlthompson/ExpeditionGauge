@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.ui.navigation
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsLogic
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.map.MapTilePrefetchWorker
 import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.ui.settings.SettingsScreen
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
@@ -26,6 +28,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AppScreenSettingsRoute(
+    context: Context,
     onScreenChange: (AppScreen) -> Unit,
     scope: CoroutineScope,
     services: ExpeditionGaugeServices,
@@ -68,10 +71,8 @@ fun AppScreenSettingsRoute(
 ) {
     val developerModeEnabled by services.settingsPreferences.developerModeEnabled
         .collectAsStateWithLifecycle(initialValue = false)
-    val androidAutoEnabled by services.settingsPreferences.androidAutoEnabled
-        .collectAsStateWithLifecycle(initialValue = false)
-    val androidAutoMetrics by services.settingsPreferences.androidAutoMetricAllowlist
-        .collectAsStateWithLifecycle(initialValue = emptySet())
+    val homeMapRegion by services.homeMapRegionPreferences.region
+        .collectAsStateWithLifecycle(initialValue = null)
     val mediaCompressionQuality by services.settingsPreferences.mediaCompressionQuality
         .collectAsStateWithLifecycle(initialValue = MediaCompressionQuality.BALANCED)
     var mediaStorageBytes by remember { mutableLongStateOf(0L) }
@@ -113,16 +114,15 @@ fun AppScreenSettingsRoute(
         onLiveSignalWssUrlChange = onLiveSignalWssUrlChange,
         onLiveReceiverOpen = { onScreenChange(AppScreen.LiveReceiver) },
         onAudibleTonesChange = onAudibleTonesChange,
-        androidAutoEnabled = androidAutoEnabled,
-        androidAutoMetrics = androidAutoMetrics,
-        onAndroidAutoEnabledChange = { enabled ->
+        homeMapRegion = homeMapRegion,
+        onUseCurrentLocationAsHomeRegion = {
             scope.launch {
-                services.settingsPreferences.setAndroidAutoEnabled(enabled)
-                FeatureFlags.androidAutoEnabled = enabled
+                val snap = services.telemetryBus.snapshots.value
+                val lat = snap.latitude ?: return@launch
+                val lon = snap.longitude ?: return@launch
+                services.homeMapRegionPreferences.setRegion(lat, lon)
+                MapTilePrefetchWorker.enqueueHomePrefetch(context)
             }
-        },
-        onAndroidAutoMetricToggle = { metric ->
-            scope.launch { services.settingsPreferences.toggleAndroidAutoMetric(metric) }
         },
         mediaCompressionQuality = mediaCompressionQuality,
         onMediaCompressionSelect = { quality ->

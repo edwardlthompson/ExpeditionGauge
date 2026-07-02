@@ -22,6 +22,9 @@ import dev.foss.expeditiongauge.flyover.FlyoverVideoExportSettings
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
+import dev.foss.expeditiongauge.map.MapRegionBounds
+import dev.foss.expeditiongauge.map.MapTilePrefetchWorker
+import dev.foss.expeditiongauge.ui.playback.MapDownloadDialog
 import dev.foss.expeditiongauge.ui.playback.PlaybackScreen
 import dev.foss.expeditiongauge.ui.share.SharePreviewRequest
 import dev.foss.expeditiongauge.ui.share.SharePreviewSheet
@@ -60,6 +63,8 @@ fun AppScreenPlaybackRoute(
         ).collectAsStateWithLifecycle(initialValue = emptyList())
     val flyoverWorkInfo = flyoverWorkInfos.firstOrNull()
     var sharePreviewRequest by remember { mutableStateOf<SharePreviewRequest?>(null) }
+    var showMapDownload by remember { mutableStateOf(false) }
+    var pendingMapBounds by remember { mutableStateOf<MapRegionBounds?>(null) }
     val videoPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { picked ->
             scope.launch {
@@ -76,6 +81,13 @@ fun AppScreenPlaybackRoute(
             services.videoSyncEngine.bindSession(sessionId)
             hasVideo = services.videoSyncEngine.videoUri != null
             videoOffsetMs = services.videoSyncEngine.videoOffsetMs
+        }
+    }
+    LaunchedEffect(playbackState.sessionId, playbackState.samples) {
+        val bounds = MapRegionBounds.fromSamples(playbackState.samples) ?: return@LaunchedEffect
+        if (!services.mapOfflineDownloadManager.isRegionCached(bounds)) {
+            pendingMapBounds = bounds
+            showMapDownload = true
         }
     }
     PlaybackScreen(
@@ -165,4 +177,20 @@ fun AppScreenPlaybackRoute(
             onShared = { sharePreviewRequest = null },
         )
     }
+    MapDownloadDialog(
+        visible = showMapDownload,
+        onDismiss = { showMapDownload = false },
+        onDownloadWifi = { showMapDownload = false },
+        onDownloadCellular = {
+            scope.launch {
+                services.mapTileCacheRepository.setAllowCellularDownloads(true)
+                val bounds = pendingMapBounds
+                val sessionId = playbackState.sessionId
+                if (bounds != null && sessionId != null) {
+                    MapTilePrefetchWorker.enqueueSessionPrefetch(context, sessionId, bounds)
+                }
+                showMapDownload = false
+            }
+        },
+    )
 }

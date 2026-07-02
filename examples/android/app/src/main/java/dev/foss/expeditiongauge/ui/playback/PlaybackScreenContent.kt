@@ -36,6 +36,7 @@ internal fun PlaybackBottomSection(
     engine: PlaybackEngine,
     heatmapMetric: HeatmapMetric,
     onHeatmapMetricChange: (HeatmapMetric) -> Unit,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     onBack: () -> Unit,
     onMediaMarkerTap: ((dev.foss.expeditiongauge.playback.ScrubberMarker) -> Unit)? = null,
 ) {
@@ -46,11 +47,16 @@ internal fun PlaybackBottomSection(
         if (FeatureFlags.elevationProfileEnabled) {
             ElevationProfilePanel(
                 state = state,
+                speedUnit = speedUnit,
                 onSeek = { engine.seekToIndex(it) },
             )
         }
         if (FeatureFlags.telemetryGraphsEnabled && state.samples.isNotEmpty() && state.graphsExpanded) {
-            TelemetryGraphPanel(state = state, onSeek = { engine.seekToIndex(it) })
+            TelemetryGraphPanel(
+                state = state,
+                speedUnit = speedUnit,
+                onSeek = { engine.seekToIndex(it) },
+            )
         }
         if (FeatureFlags.heatmapOverlayEnabled) {
             RouteHeatmapControls(selected = heatmapMetric, onSelect = onHeatmapMetricChange)

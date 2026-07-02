@@ -28,7 +28,7 @@ class RouteGeoJsonBuilderTest {
                 timestampMs = 0,
                 latitude = 47.0,
                 longitude = -122.0,
-                driftAngleDeg = 12f,
+                lonAccel = -0.5f,
             ),
             SampleEntity(
                 id = 2,
@@ -36,10 +36,10 @@ class RouteGeoJsonBuilderTest {
                 timestampMs = 100,
                 latitude = 47.01,
                 longitude = -121.99,
-                driftAngleDeg = 12f,
+                lonAccel = -0.5f,
             ),
         )
         val json = RouteGeoJsonBuilder.buildRouteGeoJson(samples)
-        assertTrue(json.contains("\"colorBucket\":${DriftRouteStyling.LEFT_BUCKET}"))
+        assertTrue(json.contains("\"colorBucket\":${DrivingRouteStyling.BRAKE_BUCKET}"))
     }
 }

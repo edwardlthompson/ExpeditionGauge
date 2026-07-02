@@ -25,7 +25,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.playback.DrivingRouteStyling
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
+import dev.foss.expeditiongauge.stats.SessionThumbnailGenerator
 import dev.foss.expeditiongauge.ui.playback.activityTypeLabel
 import dev.foss.expeditiongauge.ui.theme.GaugeGreen
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -55,6 +57,7 @@ fun RichSessionCard(
         ) {
             SessionRouteThumbnail(
                 routePoints = summary.routeThumb,
+                routeSegments = summary.routeThumbSegments,
                 sparkline = summary.sparklineLatG,
                 modifier = Modifier
                     .width(72.dp)
@@ -150,10 +153,24 @@ fun RichSessionCard(
 @Composable
 private fun SessionRouteThumbnail(
     routePoints: List<Pair<Float, Float>>,
+    routeSegments: List<SessionThumbnailGenerator.ColoredSegment>,
     sparkline: List<Float>,
     modifier: Modifier = Modifier,
 ) {
     Canvas(modifier = modifier.semantics { contentDescription = "route preview" }) {
+        if (routeSegments.size >= 1) {
+            drawRect(color = PlaybackMapRouteCasing)
+            routeSegments.forEach { segment ->
+                val color = DrivingRouteStyling.colorForBucket(segment.bucket)
+                drawLine(
+                    color = color,
+                    start = Offset(segment.from.first * size.width, segment.from.second * size.height),
+                    end = Offset(segment.to.first * size.width, segment.to.second * size.height),
+                    strokeWidth = 2f,
+                )
+            }
+            return@Canvas
+        }
         if (routePoints.size >= 2) {
             drawRect(color = PlaybackMapRouteCasing)
             var previous: Offset? = null

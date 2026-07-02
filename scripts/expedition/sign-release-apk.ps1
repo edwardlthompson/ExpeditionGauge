@@ -33,6 +33,17 @@ if (-not (Test-Path $ks)) {
 $sdk = $env:ANDROID_HOME
 if (-not $sdk) { $sdk = $env:ANDROID_SDK_ROOT }
 if (-not $sdk) {
+    $localProps = Join-Path $Root "examples\android\local.properties"
+    if (Test-Path $localProps) {
+        foreach ($line in Get-Content $localProps) {
+            if ($line -match '^sdk\.dir=(.+)$') {
+                $sdk = ($Matches[1] -replace '\\\\', '\').Trim()
+                break
+            }
+        }
+    }
+}
+if (-not $sdk) {
     Write-Error "sign-release-apk: set ANDROID_HOME or ANDROID_SDK_ROOT"
 }
 

@@ -9,8 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.map.MapStyleUrls
 import dev.foss.expeditiongauge.drivingline.DrivingLineAnalysis
 import dev.foss.expeditiongauge.drivingline.DrivingLineGeoJsonBuilder
+import dev.foss.expeditiongauge.playback.DrivingRouteStyling
 import dev.foss.expeditiongauge.playback.DriftRouteStyling
 import dev.foss.expeditiongauge.playback.HeatmapMetric
 import dev.foss.expeditiongauge.playback.RouteGeoJsonBuilder
@@ -143,7 +145,7 @@ fun PlaybackMapView(
     Box(modifier = modifier) {
         MaplibreMap(
             modifier = Modifier.fillMaxSize(),
-            baseStyle = BaseStyle.Uri("https://demotiles.maplibre.org/style.json"),
+            baseStyle = BaseStyle.Uri(MapStyleUrls.DEMO_STYLE),
             cameraState = camera,
             options = MapOptions(ornamentOptions = mapOrnaments),
         ) {
@@ -203,11 +205,9 @@ fun PlaybackMapView(
                     source = routeSource,
                     color = switch(
                         input = feature["colorBucket"].asNumber(),
-                        case(label = DriftRouteStyling.LEFT_BUCKET.toDouble(), output = const(DriftRouteStyling.DriftLeft)),
-                        case(label = DriftRouteStyling.RIGHT_BUCKET.toDouble(), output = const(DriftRouteStyling.DriftRight)),
-                        case(label = DriftRouteStyling.BRAKE_BUCKET.toDouble(), output = const(DriftRouteStyling.LonAccelBrake)),
-                        case(label = DriftRouteStyling.ACCEL_BUCKET.toDouble(), output = const(DriftRouteStyling.LonAccelAccel)),
-                        fallback = const(DriftRouteStyling.DriftNeutral),
+                        case(label = DrivingRouteStyling.BRAKE_BUCKET.toDouble(), output = const(DrivingRouteStyling.Brake)),
+                        case(label = DrivingRouteStyling.ACCEL_BUCKET.toDouble(), output = const(DrivingRouteStyling.Accel)),
+                        fallback = const(DrivingRouteStyling.Coast),
                     ),
                     width = switch(
                         input = feature["widthBucket"].asNumber(),

@@ -28,7 +28,11 @@
     <string name="playback_rpm">RPM: %1$.0f</string>
     <string name="playback_throttle">Throttle: %1$.0f%%</string>
     <string name="playback_elevation">Elevation</string>
-    <string name="playback_elevation_stats">Min %1$d m · Max %2$d m · ↑ %3$d m · ↓ %4$d m</string>
+    <string name="playback_elevation_stats">Min %1$d %5$s · Max %2$d %5$s · ↑ %3$d %5$s · ↓ %4$d %5$s</string>
+    <string name="map_download_title">Download map for this trip?</string>
+    <string name="map_download_message">Wi‑Fi is recommended. Offline tiles stay on your device.</string>
+    <string name="map_download_wifi">Wait for Wi‑Fi</string>
+    <string name="map_download_cellular">Use cellular</string>
     <string name="playback_no_sample">No samples loaded</string>
     <string name="playback_speed_up">Faster</string>
     <string name="playback_speed_down">Slower</string>

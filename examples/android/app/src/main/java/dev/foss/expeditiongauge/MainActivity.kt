@@ -78,6 +78,8 @@ class MainActivity : ComponentActivity() {
         }
 
         val dashboardViewModelFactory = DashboardViewModelFactory(
+            appContext = applicationContext,
+            database = services.database,
             telemetryBus = services.telemetryBus,
             calibrationStore = services.calibrationStore,
             thermalMonitor = services.thermalMonitor,

@@ -80,10 +80,8 @@ fun SettingsScreen(
     onLiveSignalWssUrlChange: (String) -> Unit = {},
     onLiveReceiverOpen: () -> Unit = {},
     onAudibleTonesChange: (Boolean) -> Unit = {},
-    androidAutoEnabled: Boolean = false,
-    androidAutoMetrics: Set<String> = emptySet(),
-    onAndroidAutoEnabledChange: (Boolean) -> Unit = {},
-    onAndroidAutoMetricToggle: (String) -> Unit = {},
+    homeMapRegion: dev.foss.expeditiongauge.map.HomeMapRegion? = null,
+    onUseCurrentLocationAsHomeRegion: () -> Unit = {},
     mediaCompressionQuality: dev.foss.expeditiongauge.settings.MediaCompressionQuality =
         dev.foss.expeditiongauge.settings.MediaCompressionQuality.BALANCED,
     onMediaCompressionSelect: (dev.foss.expeditiongauge.settings.MediaCompressionQuality) -> Unit = {},
@@ -230,11 +228,10 @@ fun SettingsScreen(
                 Text(stringResource(R.string.live_receiver_open))
             }
         }
-        SettingsAndroidAutoOptions(
-            androidAutoEnabled = androidAutoEnabled,
-            onAndroidAutoEnabledChange = onAndroidAutoEnabledChange,
-            allowedMetrics = androidAutoMetrics,
-            onToggleMetric = onAndroidAutoMetricToggle,
+        SettingsAndroidAutoOptions()
+        SettingsMapOptions(
+            homeRegion = homeMapRegion,
+            onUseCurrentLocation = onUseCurrentLocationAsHomeRegion,
         )
         SettingsMediaOptions(
             compressionQuality = mediaCompressionQuality,

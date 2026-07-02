@@ -5,30 +5,41 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.playback.ElevationProfileBuilder
+import dev.foss.expeditiongauge.settings.SpeedUnit
 
 object FlyoverOverlay {
-    fun hudLines(sample: SampleEntity?): List<String> {
+    fun hudLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> {
         if (sample == null) return listOf("ExpeditionGauge Flyover")
-        val speedKmh = sample.speedMps * 3.6f
-        val elev = sample.altitudeM?.let { "%.0f m".format(it) } ?: "— m"
+        val useMetric = speedUnit == SpeedUnit.METRIC
+        val speed = UnitDisplay.speedMpsToDisplay(sample.speedMps, speedUnit)
+        val speedUnitLabel = UnitDisplay.speedUnitLabel(speedUnit)
+        val elev = sample.altitudeM?.let {
+            "${UnitDisplay.altitudeMToDisplay(it, useMetric)} ${UnitDisplay.altitudeUnitLabel(useMetric)}"
+        } ?: "— ${UnitDisplay.altitudeUnitLabel(useMetric)}"
         return listOf(
-            "Speed %.0f km/h".format(speedKmh),
+            "Speed %.0f $speedUnitLabel".format(speed),
             "Elev $elev",
         )
     }
 
-    fun enhancedHudLines(sample: SampleEntity?): List<String> {
-        if (sample == null) return hudLines(null)
+    fun enhancedHudLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> {
+        if (sample == null) return hudLines(null, speedUnit)
         val beta = sample.driftAngleDeg ?: 0f
         val latG = sample.latG
-        return hudLines(sample) + listOf(
+        return hudLines(sample, speedUnit) + listOf(
             "β %.1f°".format(beta),
             "latG %.2f".format(latG),
         )
     }
 
-    fun draw(canvas: Canvas, sample: SampleEntity?, enhanced: Boolean = true) {
+    fun draw(
+        canvas: Canvas,
+        sample: SampleEntity?,
+        enhanced: Boolean = true,
+        speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    ) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
             textSize = (canvas.width.coerceAtLeast(1) / 24f).coerceIn(24f, 64f)
@@ -36,7 +47,7 @@ object FlyoverOverlay {
             setShadowLayer(4f, 2f, 2f, Color.BLACK)
         }
         var y = paint.textSize * 1.5f
-        val lines = if (enhanced) enhancedHudLines(sample) else hudLines(sample)
+        val lines = if (enhanced) enhancedHudLines(sample, speedUnit) else hudLines(sample, speedUnit)
         lines.forEach { line ->
             canvas.drawText(line, 24f, y, paint)
             y += paint.textSize * 1.2f
@@ -60,5 +71,5 @@ object FlyoverOverlay {
     }
 
     fun buildElevationProfile(samples: List<SampleEntity>): List<Double> =
-        ElevationProfileBuilder.build(samples)?.smoothedAltitudesM ?: emptyList()
+        ElevationProfileBuilder.build(samples)?.smoothedAltitudesM.orEmpty()
 }

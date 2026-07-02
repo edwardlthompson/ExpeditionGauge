@@ -141,6 +141,7 @@ fun AppScreenRouter(
             statsAggregate = statsAggregate,
         )
         AppScreen.Settings -> AppScreenSettingsRoute(
+            context = context,
             onScreenChange = onScreenChange,
             scope = scope,
             services = services,

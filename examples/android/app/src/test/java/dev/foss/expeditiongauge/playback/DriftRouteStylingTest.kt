@@ -6,17 +6,17 @@ import org.junit.Test
 
 class DriftRouteStylingTest {
     @Test
-    fun neutralBetaUsesYellowBucket() {
+    fun neutralLonAccelUsesCoastBucket() {
         assertEquals(DriftRouteStyling.NEUTRAL_BUCKET, DriftRouteStyling.colorBucket(2f, 0f))
     }
 
     @Test
-    fun leftDriftUsesCyanBucket() {
-        assertEquals(DriftRouteStyling.LEFT_BUCKET, DriftRouteStyling.colorBucket(12f, 0f))
+    fun driftAngleNoLongerChangesBucket() {
+        assertEquals(DriftRouteStyling.NEUTRAL_BUCKET, DriftRouteStyling.colorBucket(12f, 0f))
     }
 
     @Test
-    fun hardBrakeOverridesBeta() {
+    fun hardBrakeBucket() {
         assertEquals(DriftRouteStyling.BRAKE_BUCKET, DriftRouteStyling.colorBucket(12f, -0.5f))
     }
 

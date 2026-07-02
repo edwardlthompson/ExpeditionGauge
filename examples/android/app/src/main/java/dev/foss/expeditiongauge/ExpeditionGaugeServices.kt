@@ -22,6 +22,9 @@ import dev.foss.expeditiongauge.fusion.SensorFusionEngine
 import dev.foss.expeditiongauge.gps.ExternalNmeaGpsManager
 import dev.foss.expeditiongauge.gps.FusedGpsLocationProvider
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
+import dev.foss.expeditiongauge.map.HomeMapRegionPreferences
+import dev.foss.expeditiongauge.map.MapOfflineDownloadManager
+import dev.foss.expeditiongauge.map.MapTileCacheRepository
 import dev.foss.expeditiongauge.obd.ClassicBluetoothBudget
 import dev.foss.expeditiongauge.obd.ObdClassicManager
 import dev.foss.expeditiongauge.playback.PlaybackEngine
@@ -48,6 +51,13 @@ class ExpeditionGaugeServices(
     val driftEstimator = DriftAngleEstimator()
     val thermalMonitor = ThermalMonitor(appContext)
     val settingsPreferences = SettingsPreferences(appContext)
+    val homeMapRegionPreferences = HomeMapRegionPreferences(appContext)
+    val mapTileCacheRepository = MapTileCacheRepository(appContext)
+    val mapOfflineDownloadManager = MapOfflineDownloadManager(
+        appContext,
+        mapTileCacheRepository,
+        homeMapRegionPreferences,
+    )
 
     val scanCoordinator = BleScanCoordinator()
     val bleConnectionBudget = BleConnectionBudget()

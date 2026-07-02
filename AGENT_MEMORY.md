@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.11.7** (Relive wave + Dashboard HUD v2 + cube polish). **Dev device:** OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.12.0** (Relive wave + Dashboard HUD v2 + AA grid + offline maps). **Dev device:** OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -20,7 +20,8 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Dashboard HUD v2 | 2.10.0 | ✅ G-trail, drawer, storage loop, auto-record |
 | HUD readability | 2.10.1 | ✅ Digital speed, units, MSL altitude, dark menus, TPMS grid |
 | HUD cube layout v3 | 2.11.0 | ✅ Cube tiles, UnitDisplay, nav inset |
-| HUD cube polish | 2.11.3–2.11.8+ | ✅ Auto-record, calibrate, TPMS, telemetry, G-meter rotation |
+| HUD cube polish | 2.11.3–2.11.13 | ✅ Keep screen awake, reproducible release |
+| AA grid + maps wave | 2.12.0 | ✅ GridTemplate HUD, imperial fix, route colors, offline prefetch |
 
 ## G-meter HUD rotation (locked 2026-06-30)
 

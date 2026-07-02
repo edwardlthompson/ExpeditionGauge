@@ -46,8 +46,8 @@ object RouteHeatmapLayer {
         return when (metric) {
             HeatmapMetric.DRIFT_ANGLE -> {
                 val signed = intensity.coerceIn(0f, 30f)
-                if (signed <= 5f) DriftRouteStyling.DriftNeutral
-                else DriftRouteStyling.DriftLeft.copy(alpha = (signed / 30f).coerceIn(0.4f, 1f))
+                if (signed <= 5f) DrivingRouteStyling.Coast
+                else DrivingRouteStyling.Accel.copy(alpha = (signed / 30f).coerceIn(0.4f, 1f))
             }
             HeatmapMetric.SLIP_RATIO -> DriftRouteStyling.SlipHighlight.copy(
                 alpha = (intensity / 0.3f).coerceIn(0.2f, 1f),

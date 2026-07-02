@@ -3,6 +3,9 @@ package dev.foss.expeditiongauge.ui.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.foss.expeditiongauge.calibration.CalibrationStore
+import android.content.Context
+import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
+import dev.foss.expeditiongauge.map.SessionMapPrefetch
 import dev.foss.expeditiongauge.live.LivePairingSession
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
 import dev.foss.expeditiongauge.presets.DashboardPreset
@@ -48,6 +51,8 @@ data class DashboardUiState(
 )
 
 class DashboardViewModel(
+    private val appContext: Context,
+    private val database: ExpeditionGaugeDatabase,
     private val telemetryBus: TelemetryBus,
     private val calibrationStore: CalibrationStore,
     private val thermalMonitor: ThermalMonitor,
@@ -150,6 +155,9 @@ class DashboardViewModel(
             recordingWriter.stopRecording()
             if (sessionId != null && settingsPreferences.lapTimingEnabled.first()) {
                 lapTimingService.onRecordingStopped(sessionId)
+            }
+            sessionId?.let { id ->
+                SessionMapPrefetch.enqueueAfterRecording(appContext, database, id)
             }
         }
     }

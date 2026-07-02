@@ -3,8 +3,10 @@ package dev.foss.expeditiongauge.car
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.gauge.GaugeLogic
+import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SpeedUnit
+import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
@@ -18,41 +20,54 @@ class AndroidAutoBridge(
 ) : CarAppBridge {
 
     @Volatile
-    private var enabled: Boolean = false
-
-    @Volatile
-    private var allowlist: Set<String> = DEFAULT_ALLOWLIST
-
-    @Volatile
     private var snapshot: TelemetrySnapshot = TelemetrySnapshot.empty()
 
     @Volatile
-    private var useMetric: Boolean = true
+    private var speedUnit: SpeedUnit = SpeedUnit.METRIC
+
+    @Volatile
+    private var pressureUnit: PressureUnit = PressureUnit.PSI
+
+    @Volatile
+    private var tempUnit: TempUnit = TempUnit.CELSIUS
+
+    @Volatile
+    private var invalidationListener: (() -> Unit)? = null
+
+    @Volatile
+    private var lastInvalidateMs: Long = 0L
 
     init {
         scope.launch {
             combine(
-                settings.androidAutoEnabled,
-                settings.androidAutoMetricAllowlist,
                 settings.speedUnit,
+                settings.pressureUnit,
+                settings.tempUnit,
                 services.telemetryBus.snapshots,
-            ) { autoEnabled, metrics, speedUnit, telem ->
-                Quad(autoEnabled, metrics, speedUnit, telem)
-            }.collect { (autoEnabled, metrics, speedUnit, telem) ->
-                enabled = autoEnabled
-                allowlist = metrics
-                useMetric = speedUnit == SpeedUnit.METRIC
-                snapshot = telem
-                FeatureFlags.androidAutoEnabled = autoEnabled
+            ) { spd, pressure, temp, telem ->
+                UnitPrefs(spd, pressure, temp, telem)
+            }.collect { prefs ->
+                speedUnit = prefs.speedUnit
+                pressureUnit = prefs.pressureUnit
+                tempUnit = prefs.tempUnit
+                snapshot = prefs.snapshot
+                FeatureFlags.androidAutoEnabled = FeatureFlags.androidAutoCapable
+                maybeInvalidate()
             }
         }
     }
 
-    override fun isAndroidAutoEnabled(): Boolean = enabled && FeatureFlags.androidAutoCapable
+    override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
 
-    override fun allowedMetricKeys(): Set<String> = allowlist
+    override fun hudTiles(): CarHudTiles = CarHudTileBuilder.build(
+        snapshot = snapshot,
+        speedUnit = speedUnit,
+        pressureUnit = pressureUnit,
+        tempUnit = tempUnit,
+    )
 
-    override fun metricValues(): Map<String, String> = snapshot.toCarMetrics(useMetric)
+    override fun metricValues(): Map<String, String> =
+        snapshot.toCarMetrics(speedUnit == SpeedUnit.METRIC)
 
     override fun isRecording(): Boolean = services.recordingWriter.recording.value
 
@@ -74,10 +89,27 @@ class AndroidAutoBridge(
         true
     }
 
-    private data class Quad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
+    override fun setInvalidationListener(listener: (() -> Unit)?) {
+        invalidationListener = listener
+    }
+
+    private fun maybeInvalidate() {
+        val listener = invalidationListener ?: return
+        val now = System.currentTimeMillis()
+        if (now - lastInvalidateMs < INVALIDATE_MIN_INTERVAL_MS) return
+        lastInvalidateMs = now
+        listener()
+    }
+
+    private data class UnitPrefs(
+        val speedUnit: SpeedUnit,
+        val pressureUnit: PressureUnit,
+        val tempUnit: TempUnit,
+        val snapshot: TelemetrySnapshot,
+    )
 
     companion object {
-        val DEFAULT_ALLOWLIST: Set<String> = CarTelemetryHost.defaultPriority.take(6).toSet()
+        private const val INVALIDATE_MIN_INTERVAL_MS = 1_000L
 
         fun TelemetrySnapshot.toCarMetrics(useMetric: Boolean): Map<String, String> {
             val speed = "${GaugeLogic.formatSpeedMps(speedMps, useMetric)} ${GaugeLogic.speedUnitLabel(useMetric)}"

@@ -18,6 +18,7 @@ data class SessionStatsSummary(
     val sparklineLatG: List<Float> = emptyList(),
     val activityType: ActivityType = ActivityType.DRIVE,
     val routeThumb: List<Pair<Float, Float>> = emptyList(),
+    val routeThumbSegments: List<SessionThumbnailGenerator.ColoredSegment> = emptyList(),
 )
 
 data class SessionAggregateStats(
@@ -63,7 +64,7 @@ class SessionStatsAggregator(
         val eventCount = database.sessionEventDao().countBySession(session.id)
         val bestLapMs = lapTimingService.loadSummary(session.id)?.sessionBestMs
         val end = session.endTimeMs ?: System.currentTimeMillis()
-        val routeThumb = SessionThumbnailGenerator.generate(samples).points
+        val thumb = SessionThumbnailGenerator.generate(samples)
         return SessionStatsSummary(
             sessionId = session.id,
             name = session.name,
@@ -75,7 +76,8 @@ class SessionStatsAggregator(
             bestLapMs = bestLapMs,
             sparklineLatG = metrics.sparklineLatG,
             activityType = session.activityType,
-            routeThumb = routeThumb,
+            routeThumb = thumb.points,
+            routeThumbSegments = thumb.segments,
         )
     }
 
@@ -101,6 +103,7 @@ class SessionStatsAggregator(
         sparklineLatG: List<Float> = emptyList(),
         activityType: ActivityType = ActivityType.DRIVE,
         routeThumb: List<Pair<Float, Float>> = emptyList(),
+        routeThumbSegments: List<SessionThumbnailGenerator.ColoredSegment> = emptyList(),
     ): SessionStatsSummary {
         val end = session.endTimeMs ?: System.currentTimeMillis()
         return SessionStatsSummary(
@@ -115,6 +118,7 @@ class SessionStatsAggregator(
             sparklineLatG = sparklineLatG,
             activityType = activityType,
             routeThumb = routeThumb,
+            routeThumbSegments = routeThumbSegments,
         )
     }
 

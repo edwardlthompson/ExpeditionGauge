@@ -6,7 +6,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.11.13-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.12.0-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -23,9 +23,9 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Playback** | MapLibre route map, scrubber, elevation profile, ghost lap, media markers |
 | **Export & share** | GPX/ZIP, playback video burn-in, 3D flyover MP4, stats card share sheet |
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
-| **Android Auto** | Live metrics via AndroidX Car App Library (user-installed host app) |
+| **Android Auto** | 3-tile grid HUD (G / telemetry / TPMS); always-on when host connects — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
 
-Shipped through **v2.11.13** — keep screen awake while app is open (default ON). See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.12.0** — Android Auto grid HUD, imperial display fix, driving route colors, offline map prefetch. See [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Quick start
 

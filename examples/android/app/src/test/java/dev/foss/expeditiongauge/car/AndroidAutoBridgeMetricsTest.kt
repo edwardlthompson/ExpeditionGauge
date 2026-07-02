@@ -43,7 +43,11 @@ class AndroidAutoBridgeMetricsTest {
 
         override fun isAndroidAutoEnabled(): Boolean = true
 
-        override fun allowedMetricKeys(): Set<String> = AndroidAutoBridge.DEFAULT_ALLOWLIST
+        override fun hudTiles(): CarHudTiles = CarHudTiles(
+            gMeter = CarHudTile("G", "", ""),
+            telemetry = CarHudTile("T", "", ""),
+            tpms = CarHudTile("P", "", ""),
+        )
 
         override fun metricValues(): Map<String, String> = emptyMap()
 
@@ -60,5 +64,7 @@ class AndroidAutoBridgeMetricsTest {
         }
 
         override fun markEvent(): Boolean = recording
+
+        override fun setInvalidationListener(listener: (() -> Unit)?) = Unit
     }
 }

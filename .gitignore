@@ -62,6 +62,7 @@ examples/android/.cxx/
 examples/android/captures/
 *.apk
 *.aab
+*.idsig
 
 # Node / tooling
 .turbo/

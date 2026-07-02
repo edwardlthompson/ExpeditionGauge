@@ -3,6 +3,8 @@ package dev.foss.expeditiongauge.playback
 import androidx.compose.ui.graphics.Color
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import dev.foss.expeditiongauge.export.ExportExtrasParser
+import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.settings.SpeedUnit
 
 data class GraphSeries(
     val label: String,
@@ -25,12 +27,18 @@ object TelemetryGraphRenderer {
         )
     }
 
-    fun speedTabSeries(samples: List<SampleEntity>): List<GraphSeries> = listOfNotNull(
-        decimate(samples) { it.speedMps * 3.6f }?.copy(label = "speed", color = Color(0xFFFFD700)),
-        decimate(samples) { it.driftAngleDeg }?.copy(label = "beta", color = Color.Cyan),
-        decimate(samples) { it.throttle }?.copy(label = "throttle", color = Color(0xFF88FF88)),
-        decimate(samples) { it.rpm?.toFloat() }?.copy(label = "rpm", color = Color(0xFFFF8888)),
-    )
+    fun speedTabSeries(samples: List<SampleEntity>, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<GraphSeries> =
+        listOfNotNull(
+            decimate(samples) {
+                UnitDisplay.speedMpsToDisplay(it.speedMps, speedUnit)
+            }?.copy(
+                label = "speed (${UnitDisplay.speedUnitLabel(speedUnit)})",
+                color = Color(0xFFFFD700),
+            ),
+            decimate(samples) { it.driftAngleDeg }?.copy(label = "beta", color = Color.Cyan),
+            decimate(samples) { it.throttle }?.copy(label = "throttle", color = Color(0xFF88FF88)),
+            decimate(samples) { it.rpm?.toFloat() }?.copy(label = "rpm", color = Color(0xFFFF8888)),
+        )
 
     fun attitudeTabSeries(samples: List<SampleEntity>): List<GraphSeries> = listOfNotNull(
         decimate(samples) { it.pitchDeg }?.copy(label = "pitch", color = Color(0xFFFFD700)),

@@ -36,7 +36,7 @@ check_file "$ROOT/docs/design/CAR_GAUGE_PRIORITY.md"
 check_file "$CAR/ExpeditionGaugeCarAppService.kt"
 check_file "$CAR/CarTelemetryHost.kt"
 check_file "$CAR/CarAppBridge.kt"
-check_file "$CAR/ui/TelemetryPaneScreen.kt"
+check_file "$CAR/ui/TelemetryGridScreen.kt"
 check_file "$ANDROID/car/AndroidAutoBridge.kt"
 check_file "$ANDROID/ui/settings/SettingsAndroidAutoOptions.kt"
 check_file "$ROOT/examples/android/app/src/main/res/xml/automotive_app_desc.xml"
@@ -48,6 +48,7 @@ grep_file "$ROOT/examples/android/app/src/main/AndroidManifest.xml" "androidx.ca
 grep_file "$ROOT/examples/android/app/src/main/AndroidManifest.xml" "automotive_app_desc"
 grep_file "$ANDROID/ExpeditionGaugeApplication.kt" "CarAppBridgeRegistry"
 grep_file "$ANDROID/FeatureFlags.kt" "androidAutoEnabled"
+grep_file "$CAR/ui/TelemetryGridScreen.kt" "GridTemplate"
 
 if [ "$FAIL" -ne 0 ]; then
   echo "v2 car gate FAILED"

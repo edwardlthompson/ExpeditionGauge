@@ -4,10 +4,10 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.10.0** (`versionCode` 12).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32). Archive: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
-- **Post-audit hardening (2026-06-30):** complete — see board below.
-- **Next:** Publish v2.10.0 release; optional F-Droid submit. Dependabot alerts enabled — zero open Critical/High.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.11.13** shipped · **v2.12.0** prepared on disk (uncommitted).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake + reproducible release pipeline.
+- **Pending release:** v2.12.0 — AA 3-tile grid (always-on), imperial display fix, driving route colors, offline map prefetch ([`CODE_REVIEW.md`](CODE_REVIEW.md) F-001).
+- **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
@@ -44,7 +44,7 @@ Script catalog: [`scripts/expedition/`](scripts/expedition/) · toggles: `projec
 
 ## Architecture decision (ADR-0001)
 
-**Accepted ADRs:** 0001–0012.
+**Accepted ADRs:** 0001–0012 (incl. 0010 AA grid, 0011 offline tiles).
 
 | Layer | Choice |
 |-------|--------|
@@ -69,13 +69,24 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | 19b–21 | v2.1.1–v2.3 insets / orientation / AA | same |
 | 22–27 | v2.4–v2.9 Relive wave | same |
 | Audit 2026-06-30 | post v2.9.0 hardening | same |
+| Audit 2026-06-30 | v2.12 readiness (M-001–M-002) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 
 ---
 
 ## Active board
 
-No open `[AGENT]` rows. New work: add rows here or in [`docs/ROADMAP.md`](docs/ROADMAP.md) deferred section.
+### Audit Sprint — v2.12.0 readiness (2026-06-30)
+
+| Status | Owner | Task |
+|--------|-------|------|
+| ✅ | [AGENT] | M-001 Sync BUILD_PLAN current state + link [`CODE_REVIEW.md`](CODE_REVIEW.md) (F-002) |
+| ✅ | [AGENT] | M-002 Add `*.idsig` to `.gitignore` (F-003) |
+| 🔲 | [ADB] | M-003 Device validation: AA GridTemplate, imperial playback, route colors, offline map prompt (`b5214fc6`) (F-007) |
+
+**Blocker (not a plan row):** Commit + `/push` v2.12.0 bundle ([`CODE_REVIEW.md`](CODE_REVIEW.md) F-001).
+
+No other open `[AGENT]` rows. New features: add rows here or [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 > **Dashboard HUD v2** archived in COMPLETED_TASKS.md @ `v2.10.0`.
 
@@ -108,7 +119,7 @@ No open `[AGENT]` rows. New work: add rows here or in [`docs/ROADMAP.md`](docs/R
 | Session backup leakage | `allowBackup=false`; local-only default |
 | AGP Netty CVE noise | `.trivyignore` scoped to lockfile; revisit on AGP bump |
 
-**Deferred:** Custom Canvas on Android Auto; AAOS standalone APK; real-time recording graphs; offline terrain packs → [`docs/ROADMAP.md`](docs/ROADMAP.md).
+**Deferred:** Custom Canvas on Android Auto; AAOS standalone APK; real-time recording graphs; production FOSS offline tile CDN (partial prefetch shipped v2.12.0 — tune cache completion in ROADMAP) → [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ---
 

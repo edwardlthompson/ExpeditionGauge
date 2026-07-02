@@ -23,6 +23,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.playback.ElevationProfileBuilder
 import dev.foss.expeditiongauge.playback.PlaybackState
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -33,12 +35,14 @@ import dev.foss.expeditiongauge.ui.theme.SpacingMd
 @Composable
 fun ElevationProfilePanel(
     state: PlaybackState,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     modifier: Modifier = Modifier,
     onSeek: (Int) -> Unit = {},
 ) {
     ElevationProfilePanelContent(
         samples = state.samples,
         currentIndex = state.currentIndex,
+        speedUnit = speedUnit,
         modifier = modifier,
         onSeek = onSeek,
     )
@@ -48,11 +52,14 @@ fun ElevationProfilePanel(
 fun ElevationProfilePanelContent(
     samples: List<SampleEntity>,
     currentIndex: Int,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     modifier: Modifier = Modifier,
     onSeek: (Int) -> Unit = {},
 ) {
     val profile = remember(samples) { ElevationProfileBuilder.build(samples) }
     if (profile == null || !profile.hasProfile) return
+    val useMetric = speedUnit == SpeedUnit.METRIC
+    val unitLabel = UnitDisplay.altitudeUnitLabel(useMetric)
 
     Column(
         modifier = modifier
@@ -68,10 +75,11 @@ fun ElevationProfilePanelContent(
         Text(
             text = stringResource(
                 R.string.playback_elevation_stats,
-                profile.minM.toInt(),
-                profile.maxM.toInt(),
-                profile.totalAscentM.toInt(),
-                profile.totalDescentM.toInt(),
+                UnitDisplay.altitudeMToDisplay(profile.minM, useMetric),
+                UnitDisplay.altitudeMToDisplay(profile.maxM, useMetric),
+                UnitDisplay.altitudeMToDisplay(profile.totalAscentM, useMetric),
+                UnitDisplay.altitudeMToDisplay(profile.totalDescentM, useMetric),
+                unitLabel,
             ),
             color = GaugeScaleWhite,
             style = MaterialTheme.typography.labelSmall,

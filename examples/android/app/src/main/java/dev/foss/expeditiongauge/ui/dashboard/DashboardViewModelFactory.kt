@@ -3,6 +3,8 @@ package dev.foss.expeditiongauge.ui.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dev.foss.expeditiongauge.calibration.CalibrationStore
+import android.content.Context
+import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
@@ -14,6 +16,8 @@ import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.thermal.ThermalMonitor
 
 class DashboardViewModelFactory(
+    private val appContext: Context,
+    private val database: ExpeditionGaugeDatabase,
     private val telemetryBus: TelemetryBus,
     private val calibrationStore: CalibrationStore,
     private val thermalMonitor: ThermalMonitor,
@@ -29,6 +33,8 @@ class DashboardViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DashboardViewModel::class.java)) {
             return DashboardViewModel(
+                appContext = appContext,
+                database = database,
                 telemetryBus = telemetryBus,
                 calibrationStore = calibrationStore,
                 thermalMonitor = thermalMonitor,

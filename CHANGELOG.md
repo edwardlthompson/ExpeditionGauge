@@ -15,7 +15,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.12.0] — AA grid HUD, imperial fix, driving route colors, offline maps (2026-06-30)
 
+### Added
+
+* Android Auto **3-tile GridTemplate** (G-meter, telemetry, TPMS) with ~1 Hz live refresh; always-on when car host connects
+* `docs/help/ANDROID_AUTO.md` sideload setup guide
+* **Driving route colors** (green accel / yellow coast / red brake) on playback map and session thumbnails
+* **Offline map prefetch**: home region (Settings), per-session bbox after recording, Wi‑Fi worker, cellular download prompt
+* ADR-0011 offline tiles; `docs/design/DRIVING_ROUTE_COLORS.md`
+
+### Changed
+
+* Removed Android Auto Settings toggle and metric allowlist — full cube metrics on head unit (best-effort)
+* Imperial display: speed graphs, video/flyover overlays, elevation panel respect `SpeedUnit`
+* `DriftRouteStyling` delegates to `DrivingRouteStyling` (longitudinal buckets only)
 
 ## [2.1.0] — ExpeditionGauge live telemetry (2026-06-30)
 

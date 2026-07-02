@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.car.app.CarAppService
 import androidx.car.app.Session
 import androidx.car.app.validation.HostValidator
-import dev.foss.expeditiongauge.car.ui.TelemetryPaneScreen
+import dev.foss.expeditiongauge.car.ui.TelemetryGridScreen
 
 class ExpeditionGaugeCarAppService : CarAppService() {
     override fun createHostValidator(): HostValidator = HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
@@ -13,5 +13,5 @@ class ExpeditionGaugeCarAppService : CarAppService() {
 }
 
 private class ExpeditionGaugeCarSession : Session() {
-    override fun onCreateScreen(intent: Intent) = TelemetryPaneScreen(carContext)
+    override fun onCreateScreen(intent: Intent) = TelemetryGridScreen(carContext)
 }

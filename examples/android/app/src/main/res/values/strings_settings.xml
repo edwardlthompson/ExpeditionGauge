@@ -54,8 +54,12 @@
     <string name="settings_recording_mode_label">Recording mode</string>
     <string name="settings_alerts_title">Alert thresholds</string>
     <string name="settings_android_auto_heading">Android Auto</string>
-    <string name="settings_android_auto_enable">Show telemetry on Android Auto</string>
-    <string name="settings_android_auto_metrics">Metrics on head unit</string>
+    <string name="settings_android_auto_auto_connect">Android Auto connects automatically when your phone is linked to a compatible head unit.</string>
+    <string name="settings_android_auto_setup_hint">Enable Android Auto developer mode and allow unknown sources for sideloaded apps. See docs/help/ANDROID_AUTO.md.</string>
+    <string name="settings_maps_heading">Offline maps</string>
+    <string name="settings_maps_home_summary">Home region: %1$.4f, %2$.4f (%3$.0f km radius)</string>
+    <string name="settings_maps_home_unset">No home map region saved.</string>
+    <string name="settings_maps_use_location">Use current GPS as home region</string>
     <string name="settings_storage_heading">Session storage</string>
     <string name="settings_storage_summary">Using %1$s of %2$s allowed (%3$d%% of free space)</string>
     <string name="settings_storage_loop_hint">When full, oldest drives are deleted automatically to make room (loop recording).</string>

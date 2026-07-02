@@ -6,46 +6,30 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
-object DriftRouteStyling {
-    val DriftNeutral = Color(0xFFFFCC00)
-    val DriftLeft = Color(0xFF00CCFF)
-    val DriftRight = Color(0xFFFF00CC)
-    val LonAccelBrake = Color(0xFFFF3333)
-    val LonAccelAccel = Color(0xFF33CC33)
+/** Longitudinal driving colors: green accel, yellow coast, red brake. */
+object DrivingRouteStyling {
+    const val BRAKE_THRESHOLD_G = -0.25f
+    const val ACCEL_THRESHOLD_G = 0.25f
+
+    val Coast = Color(0xFFFFCC00)
+    val Brake = Color(0xFFFF3333)
+    val Accel = Color(0xFF33CC33)
     val SlipHighlight = Color(0xFFFF6600)
 
-    const val NEUTRAL_BUCKET = 0
-    const val LEFT_BUCKET = 1
-    const val RIGHT_BUCKET = 2
-    const val BRAKE_BUCKET = 3
-    const val ACCEL_BUCKET = 4
+    const val COAST_BUCKET = 0
+    const val BRAKE_BUCKET = 1
+    const val ACCEL_BUCKET = 2
 
-    fun colorBucket(beta: Float?, lonAccel: Float): Int {
-        if (lonAccel < -0.4f) return BRAKE_BUCKET
-        if (lonAccel > 0.35f) return ACCEL_BUCKET
-        val drift = beta ?: return NEUTRAL_BUCKET
-        return when {
-            drift > 5f -> LEFT_BUCKET
-            drift < -5f -> RIGHT_BUCKET
-            else -> NEUTRAL_BUCKET
-        }
+    fun colorBucket(lonAccel: Float): Int = when {
+        lonAccel < BRAKE_THRESHOLD_G -> BRAKE_BUCKET
+        lonAccel > ACCEL_THRESHOLD_G -> ACCEL_BUCKET
+        else -> COAST_BUCKET
     }
 
     fun colorForBucket(bucket: Int): Color = when (bucket) {
-        LEFT_BUCKET -> DriftLeft
-        RIGHT_BUCKET -> DriftRight
-        BRAKE_BUCKET -> LonAccelBrake
-        ACCEL_BUCKET -> LonAccelAccel
-        else -> DriftNeutral
-    }
-
-    fun betaColor(beta: Float?): Color {
-        val drift = beta ?: return DriftNeutral
-        return when {
-            drift > 5f -> DriftLeft
-            drift < -5f -> DriftRight
-            else -> DriftNeutral
-        }
+        BRAKE_BUCKET -> Brake
+        ACCEL_BUCKET -> Accel
+        else -> Coast
     }
 
     fun widthBucket(latG: Float): Int = when {
@@ -72,5 +56,39 @@ object DriftRouteStyling {
         return (4.dp + (slip * 12f).dp).coerceAtMost(16.dp)
     }
 
-    fun betaToArgb(beta: Float?): Long = betaColor(beta).toArgb().toLong() and 0xFFFFFFFFL
+    fun bucketToArgb(bucket: Int): Long = colorForBucket(bucket).toArgb().toLong() and 0xFFFFFFFFL
+}
+
+/** @deprecated Use [DrivingRouteStyling]; kept for heatmap/slip helpers during migration. */
+object DriftRouteStyling {
+    val DriftNeutral = DrivingRouteStyling.Coast
+    val LonAccelBrake = DrivingRouteStyling.Brake
+    val LonAccelAccel = DrivingRouteStyling.Accel
+    val SlipHighlight = DrivingRouteStyling.SlipHighlight
+
+    const val NEUTRAL_BUCKET = DrivingRouteStyling.COAST_BUCKET
+    const val BRAKE_BUCKET = DrivingRouteStyling.BRAKE_BUCKET
+    const val ACCEL_BUCKET = DrivingRouteStyling.ACCEL_BUCKET
+
+    @Deprecated("Drift left/right buckets removed", level = DeprecationLevel.HIDDEN)
+    const val LEFT_BUCKET = DrivingRouteStyling.COAST_BUCKET
+
+    @Deprecated("Drift left/right buckets removed", level = DeprecationLevel.HIDDEN)
+    const val RIGHT_BUCKET = DrivingRouteStyling.COAST_BUCKET
+
+    fun colorBucket(beta: Float?, lonAccel: Float): Int = DrivingRouteStyling.colorBucket(lonAccel)
+
+    fun colorForBucket(bucket: Int): Color = DrivingRouteStyling.colorForBucket(bucket)
+
+    fun betaColor(beta: Float?): Color = DrivingRouteStyling.Coast
+
+    fun widthBucket(latG: Float): Int = DrivingRouteStyling.widthBucket(latG)
+
+    fun widthForBucket(bucket: Int): Dp = DrivingRouteStyling.widthForBucket(bucket)
+
+    fun slipOverlayAlpha(slipRatio: Float?): Float = DrivingRouteStyling.slipOverlayAlpha(slipRatio)
+
+    fun slipWidthDp(slipRatio: Float?): Dp = DrivingRouteStyling.slipWidthDp(slipRatio)
+
+    fun betaToArgb(beta: Float?): Long = DrivingRouteStyling.bucketToArgb(DrivingRouteStyling.COAST_BUCKET)
 }

@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.settings.SpeedUnit
 
 object VideoOverlayCompositor {
     fun nearestSample(samples: List<SampleEntity>, timestampMs: Long): SampleEntity? {
@@ -21,28 +23,33 @@ object VideoOverlayCompositor {
         return best
     }
 
-    fun overlayLines(sample: SampleEntity?): List<String> {
+    fun overlayLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> {
         if (sample == null) return listOf("ExpeditionGauge")
-        val speedKmh = (sample.speedMps ?: 0f) * 3.6f
+        val speed = UnitDisplay.speedMpsToDisplay(sample.speedMps ?: 0f, speedUnit)
+        val unit = UnitDisplay.speedUnitLabel(speedUnit)
         val beta = sample.driftAngleDeg ?: 0f
         val latG = sample.latG ?: 0f
         return listOf(
-            "Speed %.0f km/h".format(speedKmh),
+            "Speed %.0f $unit".format(speed),
             "β %.1f°".format(beta),
             "latG %.2f".format(latG),
         )
     }
 
-    fun playbackExportLines(sample: SampleEntity?): List<String> {
+    fun playbackExportLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> {
         if (sample == null) return listOf("ExpeditionGauge")
-        val base = overlayLines(sample)
+        val base = overlayLines(sample, speedUnit)
         return base + listOf(
             "pitch %.1f°".format(sample.pitchDeg),
             "roll %.1f°".format(sample.rollDeg),
         )
     }
 
-    fun drawPlaybackExportOverlay(canvas: Canvas, sample: SampleEntity?) {
+    fun drawPlaybackExportOverlay(
+        canvas: Canvas,
+        sample: SampleEntity?,
+        speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    ) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
             textSize = (canvas.width.coerceAtLeast(1) / 24f).coerceIn(24f, 64f)
@@ -50,23 +57,13 @@ object VideoOverlayCompositor {
             setShadowLayer(4f, 2f, 2f, Color.BLACK)
         }
         var y = paint.textSize * 1.5f
-        playbackExportLines(sample).forEach { line ->
+        playbackExportLines(sample, speedUnit).forEach { line ->
             canvas.drawText(line, 24f, y, paint)
             y += paint.textSize * 1.2f
         }
     }
 
-    fun drawOverlay(canvas: Canvas, sample: SampleEntity?) {
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-            textSize = (canvas.width.coerceAtLeast(1) / 24f).coerceIn(24f, 64f)
-            typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
-            setShadowLayer(4f, 2f, 2f, Color.BLACK)
-        }
-        var y = paint.textSize * 1.5f
-        overlayLines(sample).forEach { line ->
-            canvas.drawText(line, 24f, y, paint)
-            y += paint.textSize * 1.2f
-        }
+    fun drawOverlay(canvas: Canvas, sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC) {
+        drawPlaybackExportOverlay(canvas, sample, speedUnit)
     }
 }

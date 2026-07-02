@@ -60,7 +60,7 @@ class SettingsPreferences(private val context: Context) {
     val androidAutoMetricAllowlist: Flow<Set<String>> = context.settingsDataStore.data.map { prefs ->
         val raw = prefs[keys.androidAutoMetrics]
         if (raw.isNullOrBlank()) {
-            dev.foss.expeditiongauge.car.AndroidAutoBridge.DEFAULT_ALLOWLIST
+            emptySet()
         } else {
             raw.split(',').map { it.trim() }.filter { it.isNotEmpty() }.toSet()
         }

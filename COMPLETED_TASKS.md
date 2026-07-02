@@ -2,6 +2,11 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Audit Sprint — v2.12.0 readiness (2026-06-30)
+
+- ✅ [AGENT] M-001 Sync BUILD_PLAN current state + CODE_REVIEW.md (F-002)
+- ✅ [AGENT] M-002 Add `*.idsig` to `.gitignore` (F-003)
+
 ## Dashboard HUD v2 (2026-06-30)
 
 - ✅ [AGENT] G-trail + `GaugeDisplayRotation` + portrait telemetry + rounded G readouts

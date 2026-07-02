@@ -28,6 +28,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.playback.GraphSeries
 import dev.foss.expeditiongauge.playback.ScrubberMarkerType
 import dev.foss.expeditiongauge.playback.PlaybackState
+import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.playback.TelemetryGraphRenderer
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.PlaybackAlertLine
@@ -38,14 +39,15 @@ enum class GraphTab { SPEED, ATTITUDE, TIRES }
 @Composable
 fun TelemetryGraphPanel(
     state: PlaybackState,
+    speedUnit: SpeedUnit = SpeedUnit.METRIC,
     modifier: Modifier = Modifier,
     onSeek: (Int) -> Unit = {},
 ) {
     var tab by remember { mutableIntStateOf(0) }
     val samples = state.samples
-    val series = remember(samples, tab) {
+    val series = remember(samples, tab, speedUnit) {
         when (tab) {
-            GraphTab.SPEED.ordinal -> TelemetryGraphRenderer.speedTabSeries(samples)
+            GraphTab.SPEED.ordinal -> TelemetryGraphRenderer.speedTabSeries(samples, speedUnit)
             GraphTab.ATTITUDE.ordinal -> TelemetryGraphRenderer.attitudeTabSeries(samples)
             else -> TelemetryGraphRenderer.tireTabSeries(samples)
         }

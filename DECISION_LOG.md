@@ -158,3 +158,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** `FLAG_KEEP_SCREEN_ON` via `ExpeditionGaugeTheme` SideEffect; `BrightnessPreferences.keepScreenAwake` default true; Settings toggle
 - **Alternatives considered:** Partial wake lock (rejected — permission + battery); dashboard-only `Modifier.keepScreenOn()` (rejected — user chose full foreground)
 - **Consequences:** Clears on background; no `WAKE_LOCK` permission; documented in GAUGE_REFERENCE + PRIVACY
+
+### 2026-06-30 — v2.12.0 AA grid, imperial, route colors, offline maps
+- **Status:** Accepted
+- **Context:** Drivers wanted head-unit HUD without opt-in toggle; imperial display gaps in playback; drift β route colors confused driving semantics; playback map online-only
+- **Decision:** Always-on `GridTemplate` 3-tile AA (`TelemetryGridScreen`); `DrivingRouteStyling` lonAccel buckets; `MapTilePrefetchWorker` + home region + cellular prompt; imperial via `UnitDisplay` on graphs/overlays/elevation
+- **Alternatives considered:** Pixel-perfect Compose HUD on AA (rejected — Car App Library policy); retain AA Settings toggle (rejected — user confirmed always-on); drift β as default route color (rejected)
+- **Consequences:** ADR-0010/0011; `docs/help/ANDROID_AUTO.md`; demo MapLibre tiles for offline spike; ADB validation row M-003 remains open

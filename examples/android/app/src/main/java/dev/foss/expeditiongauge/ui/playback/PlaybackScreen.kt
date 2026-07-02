@@ -284,6 +284,7 @@ fun PlaybackScreen(
             engine = engine,
             heatmapMetric = heatmapMetric,
             onHeatmapMetricChange = { heatmapMetric = it },
+            speedUnit = speedUnit,
             onBack = onBack,
             onMediaMarkerTap = { marker ->
                 marker.mediaId?.let { id -> selectedMedia = mediaById[id] }

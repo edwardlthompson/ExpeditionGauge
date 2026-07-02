@@ -18,8 +18,8 @@ android {
         applicationId = "dev.foss.expeditiongauge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 27
-        versionName = "2.11.13"
+        versionCode = 28
+        versionName = "2.12.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -85,6 +85,7 @@ dependencies {
 
     // Pinned FOSS stack — Sprint 1; versions mirrored in app/gradle.lockfile
     implementation("org.maplibre.compose:maplibre-compose:0.13.0")
+    implementation("org.maplibre.gl:android-sdk:13.0.2")
     implementation("com.github.eltonvs:kotlin-obd-api:1.4.1")
     implementation("androidx.media3:media3-exoplayer:1.7.1")
     implementation("androidx.media3:media3-ui:1.7.1")
