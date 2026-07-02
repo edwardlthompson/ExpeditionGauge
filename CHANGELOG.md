@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Removed Android Auto Settings toggle and metric allowlist — full cube metrics on head unit (best-effort)
 * Imperial display: speed graphs, video/flyover overlays, elevation panel respect `SpeedUnit`
 * `DriftRouteStyling` delegates to `DrivingRouteStyling` (longitudinal buckets only)
-* Security: force BouncyCastle 1.80.2 on app/test classpaths; scoped `.trivyignore` for AGP test-plugin pins (KB-015)
+* Security: explicit `bcprov-jdk18on:1.80.2` on unit-test classpath; scoped `.trivyignore` for AGP test-plugin lockfile pins (KB-015)
 
 ## [2.1.0] — ExpeditionGauge live telemetry (2026-06-30)
 

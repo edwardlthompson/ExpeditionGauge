@@ -143,5 +143,5 @@
 |-------|--------|
 | **Symptom** | Security Scan fails on `org.bouncycastle:bcprov-jdk18on:1.78.1` / `1.79` in `gradle.lockfile` after MapLibre / Robolectric deps |
 | **Cause** | Robolectric and AGP `unified-test-platform-*` declare older BouncyCastle; dependency locking records plugin pins separately from resolved runtime |
-| **Fix** | `resolutionStrategy.force` + explicit `testImplementation` on `bcprov-jdk18on:1.80.2`; `.trivyignore` for remaining AGP lint/test-plugin lockfile lines |
-| **Prevention** | Re-run `./gradlew --write-locks` after dependency changes; prefer force/upgrade over ignore for runtime classpath |
+| **Fix** | Explicit `testImplementation` on `bcprov-jdk18on:1.80.2` for unit-test runtime; `.trivyignore` for AGP `unified-test-platform` lockfile pins (do not `force` globally — breaks locked androidTest plugin) |
+| **Prevention** | Re-run `./gradlew --write-locks` after dependency changes; prefer targeted test deps over `resolutionStrategy.force` on all configurations |

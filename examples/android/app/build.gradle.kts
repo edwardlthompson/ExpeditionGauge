@@ -58,16 +58,6 @@ dependencyLocking {
     lockAllConfigurations()
 }
 
-configurations.configureEach {
-    resolutionStrategy {
-        force(
-            "org.bouncycastle:bcprov-jdk18on:1.80.2",
-            "org.bouncycastle:bcpkix-jdk18on:1.80.2",
-            "org.bouncycastle:bcutil-jdk18on:1.80.2",
-        )
-    }
-}
-
 dependencies {
     implementation(project(":car"))
 
