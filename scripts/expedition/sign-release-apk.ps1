@@ -58,4 +58,14 @@ Copy-Item $UnsignedApk $staging -Force
 & $apksigner sign --ks $ks --ks-pass pass:android --key-pass pass:android --out $OutApk $staging
 Remove-Item $staging -Force
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+# Keep a single versioned APK at repo root (ExpeditionGauge-{versionName}.apk).
+$outFull = [System.IO.Path]::GetFullPath($OutApk)
+Get-ChildItem (Join-Path $Root "ExpeditionGauge-*.apk") -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -ne $outFull } |
+    ForEach-Object {
+        Remove-Item $_.FullName -Force
+        Write-Host "Removed stale $($_.Name)" -ForegroundColor DarkYellow
+    }
+
 Write-Host "Signed $OutApk" -ForegroundColor Green
