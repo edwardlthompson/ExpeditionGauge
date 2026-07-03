@@ -23,7 +23,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
-.cursor-session-state
+.cursor-session-state.json
 .cursor/agent-progress.json
 .cursor/worktrees/
 .cursor/parallel-scope-lock.json
