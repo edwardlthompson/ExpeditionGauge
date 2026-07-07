@@ -23,8 +23,8 @@ kotlin {
 }
 
 dependencies {
-    api("androidx.car.app:app:1.4.0")
-    implementation("androidx.core:core:1.17.0")
+    api("androidx.car.app:app:1.7.0")
+    implementation("androidx.core:core:1.19.0")
 
     testImplementation("junit:junit:4.13.2")
 }
