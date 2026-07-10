@@ -111,6 +111,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* README beginner guide: install APK without Play Store, enable Android Auto developer mode + Unknown sources
+
 ## [2.14.0] — Inclinometer landscape + styles (2026-07-09)
 
 ### Added

@@ -10,12 +10,17 @@ ExpeditionGauge shows a **3-tile telemetry grid** on Android Auto (**Attitude** 
 - Car or head unit with **Android Auto** (wired USB or wireless, depending on vehicle)
 - For **sideloaded** builds: Android Auto **developer mode** and **unknown sources** enabled on the phone
 
-## Enable developer mode (sideload)
+## Enable developer mode (sideload — no Play Store)
 
-1. Open the **Android Auto** app on the phone (install from F-Droid / APK mirror if missing).
-2. Tap the version number **10 times** to unlock developer settings.
-3. Enable **Developer mode**.
-4. Enable **Unknown sources** (or add `dev.foss.expeditiongauge` to the allowed apps list).
+Do this **once** on the phone so Android Auto will list ExpeditionGauge after you install the APK from GitHub Releases:
+
+1. Install ExpeditionGauge from a [GitHub Release](https://github.com/edwardlthompson/ExpeditionGauge/releases) APK (allow install from your browser/file manager if asked).
+2. Open the **Android Auto** app on the phone.
+3. Open the menu → **About** / **Version**, then tap the **version number about 10 times** until developer mode unlocks.
+4. Menu → **Developer settings** → turn on **Unknown sources** (and allow ExpeditionGauge if prompted).
+5. Connect to the car and open **ExpeditionGauge** from the head-unit Apps list.
+
+Beginner walkthrough (same steps, more detail): [`README.md`](../../README.md#install-without-the-play-store-android-auto).
 
 ## Connect and launch
 

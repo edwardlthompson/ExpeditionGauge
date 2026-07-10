@@ -6,7 +6,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.12.0-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.14.0-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -23,9 +23,38 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Playback** | MapLibre route map, scrubber, elevation profile, ghost lap, media markers |
 | **Export & share** | GPX/ZIP, playback video burn-in, 3D flyover MP4, stats card share sheet |
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
-| **Android Auto** | 3-tile grid HUD (G / telemetry / TPMS); always-on when host connects — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
+| **Android Auto** | 3-tile grid HUD (Attitude / telemetry / TPMS); always-on when host connects — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
 
-Shipped through **v2.12.0** — Android Auto grid HUD, imperial display fix, driving route colors, offline map prefetch. See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.14.0** — landscape inclinometer (one Zero across orientations), gauge styles, GPS course heading. See [`CHANGELOG.md`](CHANGELOG.md).
+
+## Install without the Play Store (Android Auto)
+
+ExpeditionGauge is FOSS and is **not** on the Play Store. Install the APK from [GitHub Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases), then allow Android Auto to show sideloaded apps:
+
+### 1. Install the phone app
+
+1. On your phone, download the latest **`.apk`** from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases).
+2. Open the file and tap **Install**. If Android asks, allow installs from your browser or file manager.
+
+### 2. Turn on Android Auto developer mode
+
+1. Open the **Android Auto** app on your phone (search Settings or your app drawer).
+2. Tap the **menu** (⋮ or ☰) → **About** / **Version**.
+3. Tap the **version number about 10 times** until you see a message that developer mode is unlocked.
+4. Go back. Open the menu again → **Developer settings** (it only appears after step 3).
+
+### 3. Allow unknown sources
+
+1. In **Developer settings**, turn on **Unknown sources**.
+2. If Android asks which apps may start Android Auto, allow **ExpeditionGauge** (or “All apps” / your installer, depending on the phone).
+
+### 4. Use it in the car
+
+1. Plug in USB (or pair wireless Android Auto if your car supports it).
+2. On the car screen, open **Apps** and choose **ExpeditionGauge**.
+3. Keep the phone app running so gauges and recording stay live.
+
+If the app does not appear on the car screen: reconnect the cable, reboot the phone, and confirm **Unknown sources** is still on. More detail and troubleshooting: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md).
 
 ## Quick start
 
