@@ -4,6 +4,7 @@ import dev.foss.expeditiongauge.ble.BleImuManager
 import dev.foss.expeditiongauge.ble.tpms.BleTpmsManager
 import dev.foss.expeditiongauge.gps.ExternalNmeaGpsManager
 import dev.foss.expeditiongauge.gps.FusedGpsLocationProvider
+import dev.foss.expeditiongauge.gps.GpsCourseLogic
 import dev.foss.expeditiongauge.obd.ObdClassicManager
 import dev.foss.expeditiongauge.obd.ObdTelemetryLog
 import dev.foss.expeditiongauge.slip.TireSlipCalculator
@@ -106,7 +107,8 @@ class TelemetryOrchestrator(
 
     private fun mergeImu() {
         val current = telemetryBus.snapshots.value
-        val fusion = bleImuManager.fuseWithPhone(current.headingDeg)
+        val bodyYaw = current.bodyYawDeg ?: current.headingDeg
+        val fusion = bleImuManager.fuseWithPhone(bodyYaw)
         val statuses = bleImuManager.currentSessions().map { session ->
             ImuStatusEntry(
                 deviceId = session.deviceId,
@@ -119,6 +121,12 @@ class TelemetryOrchestrator(
                 latG = session.filter.latG(),
             )
         }
+        val yaw = if (fusion.activeCount > 0) fusion.bodyYawDeg else bodyYaw
+        val displayHdg = GpsCourseLogic.displayHeadingDeg(
+            bodyYawDeg = yaw,
+            gpsCourseDeg = current.velocityHeadingDeg,
+            speedMps = current.speedMps,
+        )
         telemetryBus.publish(
             current.copy(
                 imuStatuses = statuses,
@@ -126,7 +134,8 @@ class TelemetryOrchestrator(
                 chassisTwistDeg = fusion.chassisTwistDeg,
                 pitchDeg = if (fusion.activeCount > 0) fusion.pitchDeg else current.pitchDeg,
                 rollDeg = if (fusion.activeCount > 0) fusion.rollDeg else current.rollDeg,
-                headingDeg = fusion.bodyYawDeg,
+                headingDeg = displayHdg,
+                bodyYawDeg = yaw,
                 latG = if (fusion.activeCount > 0) fusion.latG else current.latG,
                 lonG = if (fusion.activeCount > 0) fusion.lonG else current.lonG,
             ),

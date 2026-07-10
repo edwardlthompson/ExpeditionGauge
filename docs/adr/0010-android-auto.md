@@ -17,7 +17,7 @@ Drivers want live speed and attitude on the head unit without proprietary Google
 5. **Bitmap inclinometer** — `CarIcon` from shared `:car` `InclinometerBitmapRenderer` (progressive green→yellow→red by angle). Not a custom OpenGL surface.
 6. **Action strip** — **Record / Stop** and **Zero** (set level); mark-event and advanced features stay on phone.
 7. **Live refresh** — bridge rate-limits `Screen.invalidate()` to **250 ms** app-side (host may cap lower).
-8. **Sideload discovery** — requires Android Auto developer mode + unknown sources (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
+8. **Sideload discovery** — `CarAppService` intent-filter must include `androidx.car.app.category.IOT` (host discovery); also requires Android Auto developer mode + unknown sources (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
 
 ## Consequences
 

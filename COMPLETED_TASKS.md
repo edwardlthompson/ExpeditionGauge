@@ -2,6 +2,24 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Audit 2026-07-09 evening — inclinometer landscape + ship prep
+
+- ✅ [AGENT] A-001 Ship inclinometer landscape: `SensorAxisRemap`, ADR-0013, rotation rule, tests (CODE_REVIEW F-001)
+- ✅ [AGENT] A-002 Land weekly-health push stub (CODE_REVIEW F-002)
+- ✅ [AGENT] A-003 Land `agent-run.py` Git Bash prefer + `sync-cursor-features` idempotency (F-003)
+- ✅ [AGENT] A-004 Split `GaugeDisplayRotation` / `PhoneSensorProvider` under 150-line logic limit (F-004)
+
+## Audit 2026-07-09 — post v2.13.0 tooling + Dependabot lockfile
+
+- ✅ [AGENT] A-001 Prefer Git Bash over WSL in `agent-run.py`; document in `DEV_DEVICE.md` (F-001)
+- ✅ [AGENT] A-002 Regenerate `app/gradle.lockfile` for Dependabot PR #7 + document gradle+lockfile procedure (F-002)
+- ✅ [AGENT] A-003 Confirm weekly-health push stub + `sync-cursor-features` idempotency ready to land (F-003)
+
+## Audit 2026-07-04 — post v2.13.0 hardening
+
+- ✅ [AGENT] A-001 Fix `weekly-health-check.yml` 0-job push failure — push stub job (F-001)
+- ✅ [AGENT] A-002 Skip `sync-cursor-features.py` writes when manifest unchanged (F-002)
+
 ## v2.13.0 release (2026-06-30)
 
 - ✅ [HUMAN] B-004 Ship v2.13.0 (inclinometer + quiet agent shell)

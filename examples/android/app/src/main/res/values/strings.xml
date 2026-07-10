@@ -199,6 +199,9 @@
     <string name="storage_cap_blocked">Free space — unprotect or delete a session to start recording</string>
     <string name="session_protect_loop">Protect from loop delete</string>
     <string name="gauge_detail_title">G-meter detail</string>
+    <string name="gauge_toggle_hint">Tap or swipe gauge to switch G-meter and inclinometer. Long-press for calibrate.</string>
+    <string name="gauge_inclinometer_style_hint">Tap or swipe to cycle inclinometer styles (ladder, horizon, dual dial, bubble). Long-press for calibrate. Use the button below for G-meter.</string>
+    <string name="gauge_switch_to_gmeter">Switch to G-meter</string>
     <string name="gauge_peak_pitch">Peak pitch: %1$s</string>
     <string name="gauge_peak_roll">Peak roll: %1$s</string>
     <string name="gauge_tpms_low_pressure">Low tire pressure</string>

@@ -13,3 +13,4 @@ On session start:
 4. Respect `project.config.json` sprint wave toggles; skip disabled polish/v2 sections.
 5. `[ADB]` tasks require physical device; use `adb-wait-device.ps1` when absent (blocker, not a plan row).
 6. Package namespace: `dev.foss.expeditiongauge`.
+7. Inclinometer landscape: ADR-0013 / `.cursor/rules/inclinometer-rotation.mdc` — do not regress.

@@ -16,7 +16,7 @@ Adopt a **Hexagonal (Ports & Adapters)** sensor stack:
 |-------|---------|----------------|
 | **Telemetry port** | `telemetry/TelemetryBus` | Single `Flow<TelemetrySnapshot>` for UI, recording, alerts, live stream |
 | **Phone adapters** | `sensors/PhoneSensorProvider`, `gps/PhoneGpsProvider` | Android `SensorManager` + `LocationManager` (no Play Services) |
-| **Fusion domain** | `fusion/SensorFusionEngine` | Madgwick + complementary filters → pitch, roll, yaw, latG, lonG |
+| **Fusion domain** | `fusion/SensorFusionEngine` | `SensorAxisRemap` → Madgwick/complementary → vehicle pitch/roll (ADR-0013) |
 | **Drift domain** | `drift/DriftAngleEstimator` | Lightweight EKF sideslip β from body yaw + GPS velocity heading |
 | **Calibration** | `calibration/CalibrationStore` | DataStore offsets for pitch/roll zero |
 | **Thermal guard** | `thermal/ThermalMonitor` | Non-blocking banner when device throttling detected |
@@ -35,7 +35,10 @@ CalibrationStore    ──► SensorFusionEngine           │
 
 ### Filter stack
 
-1. **Orientation:** Madgwick AHRS on accelerometer + gyroscope (+ magnetometer when available); complementary filter fallback.
+1. **Orientation:** Remap accel/gyro to a screen-stable frame (`SensorAxisRemap` by
+   `displayRotation`) **before** Madgwick AHRS; complementary filter fallback;
+   then locked portrait pitch↔roll swap (`VehicleAttitudeLogic`). See ADR-0013 —
+   do not fix landscape with post-fusion Euler unwrap.
 2. **Sideslip:** `SideslipEkf` state `[yaw, yawRate, β]`; GPS velocity heading updates suppressed below 2 m/s.
 3. **Rate:** 50 Hz fusion target during active HUD; providers may downsample under thermal pressure.
 

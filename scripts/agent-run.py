@@ -11,6 +11,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 
+# WSL's System32\bash.exe drops Windows JAVA_HOME; prefer Git Bash on Windows.
+_GIT_BASH_CANDIDATES = (
+    Path(r"C:\Program Files\Git\bin\bash.exe"),
+    Path(r"C:\Program Files\Git\usr\bin\bash.exe"),
+    Path(r"C:\Program Files (x86)\Git\bin\bash.exe"),
+)
+
 
 def script_argv(script: Path) -> str:
     return script.relative_to(ROOT).as_posix()
@@ -33,6 +40,21 @@ def resolve_script(name: str) -> Path | None:
     return None
 
 
+def resolve_bash() -> str | None:
+    """Prefer Git Bash over WSL bash so Windows env (JAVA_HOME) is visible."""
+    for candidate in _GIT_BASH_CANDIDATES:
+        if candidate.is_file():
+            return str(candidate)
+    which = shutil.which("bash")
+    if not which:
+        return None
+    # Skip WSL launcher when a real Git Bash was not found above.
+    lowered = which.replace("/", "\\").lower()
+    if lowered.endswith(r"\system32\bash.exe") or "windowsapps\\bash.exe" in lowered:
+        return None
+    return which
+
+
 def run_script(name: str, args: list[str]) -> int:
     script = resolve_script(name)
     if script is None:
@@ -45,11 +67,11 @@ def run_script(name: str, args: list[str]) -> int:
             cwd=ROOT,
             check=False,
         ).returncode
-    bash = shutil.which("bash")
+    bash = resolve_bash()
     if not bash:
-        print("ERROR: bash not found on PATH.", file=sys.stderr)
+        print("ERROR: Git Bash not found (WSL bash is not used).", file=sys.stderr)
         print(
-            f"Install Git Bash or run: powershell -NoProfile -File {script_argv(script)}",
+            f"Install Git for Windows or run: powershell -NoProfile -File {script_argv(script)}",
             file=sys.stderr,
         )
         return 1

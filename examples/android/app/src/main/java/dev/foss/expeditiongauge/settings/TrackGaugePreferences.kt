@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
+import dev.foss.expeditiongauge.car.gauge.inclinometerStyleFromStorage
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,6 +15,7 @@ internal class TrackGaugePreferences(private val context: Context) {
     private val trackStartFinishKey = stringPreferencesKey("track_start_finish_geojson")
     private val trackSectorsKey = stringPreferencesKey("track_sector_lines_geojson")
     private val attitudeGaugeModeKey = stringPreferencesKey("attitude_gauge_mode")
+    private val inclinometerStyleKey = stringPreferencesKey("inclinometer_style")
 
     val lapTimingEnabled: Flow<Boolean> = context.settingsDataStore.data.map {
         it[lapTimingEnabledKey] ?: false
@@ -33,6 +36,10 @@ internal class TrackGaugePreferences(private val context: Context) {
             "inclinometer" -> AttitudeGaugeMode.INCLINOMETER
             else -> AttitudeGaugeMode.ATTITUDE
         }
+    }
+
+    val inclinometerStyle: Flow<InclinometerStyle> = context.settingsDataStore.data.map { prefs ->
+        inclinometerStyleFromStorage(prefs[inclinometerStyleKey])
     }
 
     suspend fun setLapTimingEnabled(enabled: Boolean) {
@@ -59,6 +66,12 @@ internal class TrackGaugePreferences(private val context: Context) {
                 AttitudeGaugeMode.INCLINOMETER -> "inclinometer"
                 AttitudeGaugeMode.ATTITUDE -> "attitude"
             }
+        }
+    }
+
+    suspend fun setInclinometerStyle(style: InclinometerStyle) {
+        context.settingsDataStore.edit {
+            it[inclinometerStyleKey] = style.name.lowercase()
         }
     }
 

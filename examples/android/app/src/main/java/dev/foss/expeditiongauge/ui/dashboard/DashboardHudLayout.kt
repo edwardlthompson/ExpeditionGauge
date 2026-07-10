@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import android.provider.Settings
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
@@ -31,6 +32,8 @@ fun DashboardHudLayout(
     preset: DashboardPreset,
     showDriftAngle: Boolean,
     onCalibrate: () -> Unit,
+    onToggleAttitudeDisplay: () -> Unit = {},
+    onCycleInclinometerStyle: () -> Unit = {},
     recording: Boolean = false,
     crawlingMode: Boolean = false,
     tpmsEnabled: Boolean = false,
@@ -38,6 +41,7 @@ fun DashboardHudLayout(
     tempUnit: TempUnit = TempUnit.CELSIUS,
     speedUnit: SpeedUnit = SpeedUnit.METRIC,
     attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
+    inclinometerStyle: InclinometerStyle = InclinometerStyle.LADDER,
     activeAlerts: Set<AlertType> = emptySet(),
     maxPitchAlertDeg: Float? = null,
     maxRollAlertDeg: Float? = null,
@@ -58,6 +62,8 @@ fun DashboardHudLayout(
             preset = preset,
             showDriftAngle = showDriftAngle,
             onCalibrate = onCalibrate,
+            onToggleAttitudeDisplay = onToggleAttitudeDisplay,
+            onCycleInclinometerStyle = onCycleInclinometerStyle,
             recording = recording,
             crawlingMode = crawlingMode,
             tpmsEnabled = tpmsEnabled,
@@ -65,6 +71,7 @@ fun DashboardHudLayout(
             tempUnit = tempUnit,
             speedUnit = speedUnit,
             attitudeGaugeMode = attitudeGaugeMode,
+            inclinometerStyle = inclinometerStyle,
             activeAlerts = activeAlerts,
             maxPitchAlertDeg = maxPitchAlertDeg,
             maxRollAlertDeg = maxRollAlertDeg,

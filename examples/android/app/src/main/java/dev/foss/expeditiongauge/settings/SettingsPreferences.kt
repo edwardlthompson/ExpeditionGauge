@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.settings
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.recording.SessionStorageBudget
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,7 @@ class SettingsPreferences(private val context: Context) {
     val trackStartFinishGeoJson: Flow<String?> = trackGauge.trackStartFinishGeoJson
     val trackSectorLinesGeoJson: Flow<String?> = trackGauge.trackSectorLinesGeoJson
     val attitudeGaugeMode: Flow<AttitudeGaugeMode> = trackGauge.attitudeGaugeMode
+    val inclinometerStyle: Flow<InclinometerStyle> = trackGauge.inclinometerStyle
 
     val developerModeEnabled: Flow<Boolean> = context.settingsDataStore.data.map {
         it[keys.developerMode] ?: false
@@ -103,6 +105,7 @@ class SettingsPreferences(private val context: Context) {
     suspend fun setTrackStartFinishGeoJson(geoJson: String?) = store.setTrackStartFinishGeoJson(geoJson)
     suspend fun setTrackSectorLinesGeoJson(geoJson: String?) = store.setTrackSectorLinesGeoJson(geoJson)
     suspend fun setAttitudeGaugeMode(mode: AttitudeGaugeMode) = store.setAttitudeGaugeMode(mode)
+    suspend fun setInclinometerStyle(style: InclinometerStyle) = store.setInclinometerStyle(style)
     suspend fun clearTrackConfig() = store.clearTrackConfig()
     suspend fun setDeveloperModeEnabled(enabled: Boolean) = store.setDeveloperModeEnabled(enabled)
     suspend fun setMadgwickBeta(beta: Float) = store.setMadgwickBeta(beta)

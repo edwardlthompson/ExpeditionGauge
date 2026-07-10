@@ -111,6 +111,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.14.0] — Inclinometer landscape + styles (2026-07-09)
+
+### Added
+
+* **Screen-stable IMU remap** (`SensorAxisRemap`) before Madgwick — one Zero works in portrait and landscape (ADR-0013)
+* Inclinometer styles: Ladder, Horizon, Dual Dial, Bubble (tap/swipe cycle)
+* Horizon corner readouts (P / R); GPS course-over-ground heading when moving
+* Cursor rule `.cursor/rules/inclinometer-rotation.mdc` + regression tests
+
+### Fixed
+
+* Landscape horizon after portrait Zero (vertical sky/ground) — Activity `Display.rotation` authoritative; no Application WM overwrite
+* `weekly-health-check.yml` 0-job / red push — deferred stub on push; full health on schedule
+* `agent-run.py` prefers Git Bash over WSL so Windows `JAVA_HOME` reaches Gradle
+* Logic file-limits: split `PhoneRotationUnwrap` + `PhoneImuTelemetryPublisher`
+
+### Changed
+
+* `sync-cursor-features.py` skips writes when manifest unchanged
+* Vehicle-frame calibration offsets shared by G-meter and inclinometer
+
 ## [2.11.13] — Keep screen awake (2026-06-30)
 
 ### Added

@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat
 import dev.foss.expeditiongauge.drift.DriftAngleEstimator
 import dev.foss.expeditiongauge.sensors.SensorPollScheduler
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
-import kotlin.math.atan2
-import kotlin.math.sqrt
 
 class PhoneGpsProvider(
     private val context: Context,
@@ -47,14 +45,16 @@ class PhoneGpsProvider(
     }
 
     override fun onLocationChanged(location: Location) {
+        val prev = lastLocation
         lastLocation = location
-        val heading = if (location.hasBearing()) location.bearing else computeHeading(location)
         val speedMps = if (location.hasSpeed()) location.speed else 0f
-        driftEstimator.onGpsSample(heading, speedMps)
+        val course = resolveCourse(prev, location, speedMps)
+        driftEstimator.onGpsSample(course, speedMps)
         val snapshot = TelemetrySnapshot(
             timestampMs = System.currentTimeMillis(),
             speedMps = speedMps,
-            headingDeg = heading,
+            headingDeg = course,
+            velocityHeadingDeg = course,
             latitude = location.latitude,
             longitude = location.longitude,
             altitudeM = AltitudeNormalizer.fromLocation(location),
@@ -69,22 +69,26 @@ class PhoneGpsProvider(
     override fun onProviderEnabled(provider: String) = Unit
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) = Unit
 
+    private fun resolveCourse(prev: Location?, location: Location, speedMps: Float): Float {
+        if (prev != null) {
+            val segmentM = GpsCourseLogic.distanceM(
+                prev.latitude, prev.longitude, location.latitude, location.longitude,
+            )
+            val fromMove = GpsCourseLogic.bearingDeg(
+                prev.latitude, prev.longitude, location.latitude, location.longitude,
+            )
+            if (GpsCourseLogic.isReliableCourse(speedMps, segmentM)) return fromMove
+            if (segmentM >= GpsCourseLogic.MIN_SEGMENT_M) return fromMove
+        }
+        if (location.hasBearing() && speedMps >= GpsCourseLogic.MIN_SPEED_MPS) {
+            return GpsCourseLogic.normalize360(location.bearing)
+        }
+        return if (location.hasBearing()) GpsCourseLogic.normalize360(location.bearing) else 0f
+    }
+
     private fun hasLocationPermission(): Boolean {
         val fine = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
         val coarse = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
         return fine == PackageManager.PERMISSION_GRANTED || coarse == PackageManager.PERMISSION_GRANTED
     }
-
-    private fun computeHeading(location: Location): Float {
-        val prev = lastLocation ?: return 0f
-        val dLon = Math.toRadians(location.longitude - prev.longitude)
-        val lat1 = Math.toRadians(prev.latitude)
-        val lat2 = Math.toRadians(location.latitude)
-        val y = sin(dLon) * cos(lat2)
-        val x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
-        return Math.toDegrees(atan2(y, x)).toFloat().let { if (it < 0) it + 360f else it }
-    }
-
-    private fun sin(value: Double) = kotlin.math.sin(value)
-    private fun cos(value: Double) = kotlin.math.cos(value)
 }

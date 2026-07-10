@@ -9,7 +9,9 @@ import dev.foss.expeditiongauge.map.SessionMapPrefetch
 import dev.foss.expeditiongauge.live.LivePairingSession
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
 import dev.foss.expeditiongauge.alerts.AlertService
+import dev.foss.expeditiongauge.car.gauge.next
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.gauge.toggleGMeterInclinometer
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.recording.RecordingMode
@@ -64,6 +66,7 @@ class DashboardViewModel(
     private val lapTimingService: LapTimingService,
     private val settingsPreferences: SettingsPreferences,
     private val alertService: AlertService,
+    private val phoneSensorProvider: dev.foss.expeditiongauge.sensors.PhoneSensorProvider,
 ) : ViewModel() {
     private val liveState = MutableStateFlow(LiveUi(session = null, receiverCount = 0))
     private val displayRotation = MutableStateFlow(0)
@@ -122,13 +125,18 @@ class DashboardViewModel(
 
     fun updateDisplayRotation(rotation: Int) {
         displayRotation.value = rotation
+        phoneSensorProvider.updateDisplayRotation(rotation)
     }
 
     fun calibrateLevel() {
         viewModelScope.launch {
             val snapshot = telemetryBus.snapshots.value
-            if (snapshot.fusionSource != "phone") return@launch
-            calibrationStore.zeroToCurrentDisplay(snapshot.pitchDeg, snapshot.rollDeg)
+            // Vehicle-frame Zero — one calibration works in every phone orientation.
+            calibrationStore.zeroToCurrentDisplay(
+                snapshot.pitchDeg,
+                snapshot.rollDeg,
+                displayRotation.value,
+            )
         }
     }
 
@@ -167,6 +175,20 @@ class DashboardViewModel(
         viewModelScope.launch {
             settingsProfileRepository.updatePresetForActiveProfile(presetId)
             gaugeModeForPreset(presetId)?.let { settingsPreferences.setAttitudeGaugeMode(it) }
+        }
+    }
+
+    fun toggleAttitudeDisplay() {
+        viewModelScope.launch {
+            val next = settingsPreferences.attitudeGaugeMode.first().toggleGMeterInclinometer()
+            settingsPreferences.setAttitudeGaugeMode(next)
+        }
+    }
+
+    fun cycleInclinometerStyle() {
+        viewModelScope.launch {
+            val next = settingsPreferences.inclinometerStyle.first().next()
+            settingsPreferences.setInclinometerStyle(next)
         }
     }
 

@@ -18,6 +18,7 @@ import dev.foss.expeditiongauge.about.UpdateApplyCoordinator
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.accessibility.MetricTtsReadout
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.settings.MediaCompressionQuality
 import dev.foss.expeditiongauge.settings.PressureUnit
@@ -65,6 +66,7 @@ fun AppScreenDashboardRoute(
     lapTimingEnabled: Boolean,
     lapTimingState: dev.foss.expeditiongauge.timing.PredictiveTimingState,
     attitudeGaugeMode: AttitudeGaugeMode,
+    inclinometerStyle: InclinometerStyle = InclinometerStyle.LADDER,
     alertThresholds: AlertThresholds,
     ttsReadoutEnabled: Boolean,
     statsAggregate: SessionAggregateStats,
@@ -182,6 +184,7 @@ fun AppScreenDashboardRoute(
         lapTimingEnabled = lapTimingEnabled,
         lapTimingState = lapTimingState,
         attitudeGaugeMode = attitudeGaugeMode,
+        inclinometerStyle = inclinometerStyle,
         maxPitchAlertDeg = alertThresholds.maxPitchDeg,
         maxRollAlertDeg = alertThresholds.maxRollDeg,
         statsAggregate = statsAggregate,

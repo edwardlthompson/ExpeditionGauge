@@ -24,26 +24,32 @@ function Invoke-AdbInclinometerScenario {
         } 2
     }
 
+    # Presets live in the hamburger drawer (Dashboard HUD v2), not as top-bar chips.
+    $menu = Find-TapTarget -Content $content -Label "Open menu"
+    if (-not $menu) {
+        Write-JsonResult @{
+            status = "fail"
+            scenario = $Scenario
+            reason = "Open menu control not found"
+        } 1
+    }
+    Invoke-AdbCommand shell input tap $menu.X $menu.Y | Out-Null
+    Start-Sleep -Seconds 2
+    $content = Get-UiDumpContent
+
     $offroad = Find-TapTarget -Content $content -Label "Offroad"
     if (-not $offroad) {
         Write-JsonResult @{
             status = "fail"
             scenario = $Scenario
-            reason = "Offroad preset chip not found"
+            reason = "Offroad preset not found in dashboard menu"
         } 1
     }
     Invoke-AdbCommand shell input tap $offroad.X $offroad.Y | Out-Null
     Start-Sleep -Seconds 2
     $content = Get-UiDumpContent
 
-    if ($content -notmatch "CRAWL") {
-        Write-JsonResult @{
-            status = "fail"
-            scenario = $Scenario
-            reason = "Offroad preset did not activate CRAWL recording mode badge"
-        } 1
-    }
-
+    # Offroad switches attitude to inclinometer immediately; CRAWL badge only while recording.
     if ($content -notmatch "Inclinometer") {
         Write-JsonResult @{
             status = "fail"
@@ -52,20 +58,54 @@ function Invoke-AdbInclinometerScenario {
         } 1
     }
 
-    $gauge = Find-TapTarget -Content $content -Label "Inclinometer"
-    if ($gauge) {
-        Invoke-AdbCommand shell input tap $gauge.X $gauge.Y | Out-Null
+    $record = Find-TapTarget -Content $content -Label "Record"
+    if ($record) {
+        Invoke-AdbCommand shell input tap $record.X $record.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $recordingUi = Get-UiDumpContent
+        if ($recordingUi -notmatch "CRAWL") {
+            Write-JsonResult @{
+                status = "fail"
+                scenario = $Scenario
+                reason = "Offroad preset did not show CRAWL badge while recording"
+            } 1
+        }
+        $stop = Find-TapTarget -Content $recordingUi -Label "Stop"
+        if ($stop) {
+            Invoke-AdbCommand shell input tap $stop.X $stop.Y | Out-Null
+            Start-Sleep -Seconds 1
+        }
+        $content = Get-UiDumpContent
+    }
+
+    # content-desc is "Inclinometer pitch …, roll …" — long-press opens calibrate sheet.
+    if ($content -match 'content-desc="Inclinometer[^"]*"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"') {
+        $gx = [int](([int]$Matches[1] + [int]$Matches[3]) / 2)
+        $gy = [int](([int]$Matches[2] + [int]$Matches[4]) / 2)
+        # Long-press (~1s) opens calibrate; tap/swipe toggles G-meter ↔ inclinometer.
+        Invoke-AdbCommand shell input swipe $gx $gy $gx $gy 1000 | Out-Null
         Start-Sleep -Seconds 2
         $sheet = Get-UiDumpContent
         if ($sheet -notmatch "Calibrate / Set Level" -and $sheet -notmatch "inclinometer_calibrate") {
             Write-JsonResult @{
                 status = "fail"
                 scenario = $Scenario
-                reason = "inclinometer calibrate sheet not opened"
+                reason = "inclinometer calibrate sheet not opened on long-press"
             } 1
         }
         Invoke-AdbCommand shell input keyevent 4 | Out-Null
         Start-Sleep -Seconds 1
+        # Tap toggles to G-meter (ATTITUDE); inclinometer content-desc should disappear.
+        Invoke-AdbCommand shell input tap $gx $gy | Out-Null
+        Start-Sleep -Seconds 1
+        $toggled = Get-UiDumpContent
+        if ($toggled -match 'content-desc="Inclinometer') {
+            Write-JsonResult @{
+                status = "fail"
+                scenario = $Scenario
+                reason = "tap did not toggle inclinometer to G-meter"
+            } 1
+        }
     }
 
     $dump = (Invoke-AdbCommand shell dumpsys package $pkg) -join "`n"
@@ -74,6 +114,13 @@ function Invoke-AdbInclinometerScenario {
             status = "fail"
             scenario = $Scenario
             reason = "ExpeditionGaugeCarAppService not registered"
+        } 1
+    }
+    if ($dump -notmatch "androidx\.car\.app\.category\.IOT") {
+        Write-JsonResult @{
+            status = "fail"
+            scenario = $Scenario
+            reason = "CarAppService missing androidx.car.app.category.IOT (required for AA launcher discovery)"
         } 1
     }
 

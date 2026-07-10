@@ -172,3 +172,10 @@ _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/
 - **Decision:** Always-on `GridTemplate` 3-tile AA (`TelemetryGridScreen`); `DrivingRouteStyling` lonAccel buckets; `MapTilePrefetchWorker` + home region + cellular prompt; imperial via `UnitDisplay` on graphs/overlays/elevation
 - **Alternatives considered:** Pixel-perfect Compose HUD on AA (rejected — Car App Library policy); retain AA Settings toggle (rejected — user confirmed always-on); drift β as default route color (rejected)
 - **Consequences:** ADR-0010/0011; `docs/help/ANDROID_AUTO.md`; demo MapLibre tiles for offline spike; ADB validation row M-003 remains open
+
+### 2026-07-09 — Screen-stable IMU remap (inclinometer landscape)
+- **Status:** Accepted
+- **Context:** Portrait Zero + 90° CCW left the aviation horizon vertical; Application WM reported ROTATION_0 while Activity was ROTATION_90; Euler unwrap after Madgwick was gimbal-fragile
+- **Decision:** `SensorAxisRemap` before Madgwick; Activity `Display.rotation` authoritative; Madgwick reset on rotation change; keep locked portrait pitch↔roll swap; one vehicle-frame Zero for all orientations (ADR-0013)
+- **Alternatives considered:** Post-fusion Euler unwrap (rejected — singularity); re-zero per orientation (rejected — product requirement); Application WM on every gyro sample (rejected — OEM lie)
+- **Consequences:** Landscape horizon stays level after portrait Zero; `.cursor/rules/inclinometer-rotation.mdc`; `SensorAxisRemapTest` guards the matrix

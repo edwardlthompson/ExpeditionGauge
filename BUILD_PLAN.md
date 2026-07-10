@@ -4,9 +4,10 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.13.0** shipped (2026-06-30).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.14.0** (2026-07-09).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell, **v2.14** landscape IMU remap + inclinometer styles.
 - **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
+- **Audit 2026-07-04 / 2026-07-09:** tooling + Dependabot lockfile + inclinometer landscape archived.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
@@ -43,7 +44,7 @@ Script catalog: [`scripts/expedition/`](scripts/expedition/) · toggles: `projec
 
 ## Architecture decision (ADR-0001)
 
-**Accepted ADRs:** 0001–0012 (incl. 0010 AA grid, 0011 offline tiles).
+**Accepted ADRs:** 0001–0013 (incl. 0010 AA grid, 0011 offline tiles, **0013 screen-stable IMU remap**).
 
 | Layer | Choice |
 |-------|--------|
@@ -70,15 +71,20 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Audit 2026-06-30 | post v2.9.0 hardening | same |
 | Audit 2026-06-30 | v2.12 readiness (M-001–M-002) | same |
 | Audit 2026-06-30 | v2.13 risks sprint (B-001–B-003) | same |
+| Audit 2026-07-04 | post v2.13.0 hardening (A-001–A-002) | same — archived @ pending push |
+| Audit 2026-07-09 | tooling + Dependabot lockfile (A-001–A-003) | same |
+| Audit 2026-07-09 evening | inclinometer landscape ADR-0013 (A-001–A-004) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 
 ---
 
 ## Active board
 
-### v2.13 release (2026-06-30)
+> **Audit 2026-07-09 evening** archived in COMPLETED_TASKS.md (inclinometer landscape ADR-0013 + ship prep).
 
-> Shipped @ v2.13.0. M-003 ADB sign-off deferred — use [`ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) manual checklist.
+### v2.14 release (2026-07-09)
+
+> Shipping inclinometer landscape (ADR-0013), styles, GPS course heading, weekly-health stub.
 
 | Status | Owner | Task |
 |--------|-------|------|
@@ -117,7 +123,10 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Hooks broken mid-migration | `.py` hooks + `hooks.json` committed together; smoke via `check-cursor-hooks --smoke` |
 | Agent doc drift reintroduces `.sh` | `check_cursor_integrations` gate on `.cursor/` agent surfaces |
 | Inclinometer AA alert audio routing | Red frame on AA tile; phone audio may not route — [`ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
-| JAVA_HOME unset locally (F-006) | Set `JAVA_HOME` for local Android `feature-gate`; CI is canonical — [`DEV_DEVICE.md`](docs/DEV_DEVICE.md) |
+| Inclinometer landscape after portrait Zero | ADR-0013 `SensorAxisRemap` before Madgwick; Activity `Display.rotation` authoritative — [`.cursor/rules/inclinometer-rotation.mdc`](.cursor/rules/inclinometer-rotation.mdc) |
+| JAVA_HOME unset / WSL bash (F-001) | Prefer Git Bash in `agent-run.py`; set `JAVA_HOME` to JDK 17 — [`DEV_DEVICE.md`](docs/DEV_DEVICE.md) |
+| Dependabot gradle without lockfile (F-002) | Regenerate `app/gradle.lockfile` on bump PRs; see SECURITY_TRIAGE |
+| weekly-health red on every push | Push stub job; full health on schedule/dispatch only |
 
 **Deferred:** Custom Canvas on Android Auto; AAOS standalone APK; real-time recording graphs; production FOSS offline tile CDN (partial prefetch shipped v2.12.0 — tune cache completion in ROADMAP) → [`docs/ROADMAP.md`](docs/ROADMAP.md).
 

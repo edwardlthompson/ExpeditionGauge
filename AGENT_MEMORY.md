@@ -22,10 +22,15 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | HUD cube layout v3 | 2.11.0 | ✅ Cube tiles, UnitDisplay, nav inset |
 | HUD cube polish | 2.11.3–2.11.13 | ✅ Keep screen awake, reproducible release |
 | AA grid + maps wave | 2.12.0 | ✅ GridTemplate HUD, imperial fix, route colors, offline prefetch |
+| Inclinometer landscape | 2.14.0 | ✅ ADR-0013 SensorAxisRemap; styles; weekly-health stub |
 
 ## G-meter HUD rotation (locked 2026-06-30)
 
 Portrait tile @ `ROTATION_0`: device pitch mirror + 90° CW **before** `rotateBall`. Landscape tile: post-remap per `displayRotation` (CCW @ 90, CW @ 270). Full matrix: `docs/design/GMETER_HUD_ROTATION.md`. Do not negate device roll (X) when fixing lateral pitch.
+
+## Inclinometer landscape / IMU remap (locked 2026-07-09)
+
+**ADR-0013.** Remap accel/gyro with `SensorAxisRemap` **before** Madgwick (screen-stable frame). Then locked portrait pitch↔roll swap. Activity `Display.rotation` is authoritative — never overwrite from Application `WindowManager` on the gyro path. Do **not** fix landscape with post-fusion Euler unwrap. Cursor rule: `.cursor/rules/inclinometer-rotation.mdc`. Tests: `SensorAxisRemapTest`, `VehicleAttitudeLogicTest`.
 
 ## Tech Stack (ExpeditionGauge)
 

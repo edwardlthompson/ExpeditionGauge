@@ -10,18 +10,24 @@ object InclinometerCarIcon {
     fun fromAttitude(
         pitchDeg: Float,
         rollDeg: Float,
+        style: InclinometerStyle = InclinometerStyle.LADDER,
         pitchAlert: Boolean = false,
         rollAlert: Boolean = false,
         maxPitchThresholdDeg: Float? = null,
         maxRollThresholdDeg: Float? = null,
+        labelPitchDeg: Float? = null,
+        labelRollDeg: Float? = null,
     ): CarIcon {
         val bitmap = renderer.render(
             pitchDeg = pitchDeg,
             rollDeg = rollDeg,
+            style = style,
             pitchAlert = pitchAlert,
             rollAlert = rollAlert,
             maxPitchThresholdDeg = maxPitchThresholdDeg,
             maxRollThresholdDeg = maxRollThresholdDeg,
+            labelPitchDeg = labelPitchDeg,
+            labelRollDeg = labelRollDeg,
         )
         return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
     }
@@ -29,16 +35,22 @@ object InclinometerCarIcon {
     fun renderBitmap(
         pitchDeg: Float,
         rollDeg: Float,
+        style: InclinometerStyle = InclinometerStyle.LADDER,
         pitchAlert: Boolean = false,
         rollAlert: Boolean = false,
         maxPitchThresholdDeg: Float? = null,
         maxRollThresholdDeg: Float? = null,
+        labelPitchDeg: Float? = null,
+        labelRollDeg: Float? = null,
     ): Bitmap = renderer.render(
         pitchDeg = pitchDeg,
         rollDeg = rollDeg,
+        style = style,
         pitchAlert = pitchAlert,
         rollAlert = rollAlert,
         maxPitchThresholdDeg = maxPitchThresholdDeg,
         maxRollThresholdDeg = maxRollThresholdDeg,
+        labelPitchDeg = labelPitchDeg,
+        labelRollDeg = labelRollDeg,
     )
 }

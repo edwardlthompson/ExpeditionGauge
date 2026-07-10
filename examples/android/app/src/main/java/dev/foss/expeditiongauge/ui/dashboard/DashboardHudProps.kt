@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.ui.dashboard
 
 import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
@@ -15,6 +16,8 @@ data class DashboardHudProps(
     val preset: DashboardPreset,
     val showDriftAngle: Boolean,
     val onCalibrate: () -> Unit,
+    val onToggleAttitudeDisplay: () -> Unit = {},
+    val onCycleInclinometerStyle: () -> Unit = {},
     val recording: Boolean,
     val crawlingMode: Boolean,
     val tpmsEnabled: Boolean,
@@ -22,6 +25,7 @@ data class DashboardHudProps(
     val tempUnit: TempUnit,
     val speedUnit: SpeedUnit,
     val attitudeGaugeMode: AttitudeGaugeMode,
+    val inclinometerStyle: InclinometerStyle = InclinometerStyle.LADDER,
     val activeAlerts: Set<AlertType>,
     val maxPitchAlertDeg: Float? = null,
     val maxRollAlertDeg: Float? = null,

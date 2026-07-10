@@ -2,7 +2,6 @@ package dev.foss.expeditiongauge.ui.components.gauge
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,6 +27,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.car.gauge.InclinometerCarIcon
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
+import dev.foss.expeditiongauge.gauge.GaugeDisplayRotation
 import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -40,6 +41,11 @@ fun InclinometerGauge(
     rollDeg: Float,
     onCalibrate: () -> Unit,
     modifier: Modifier = Modifier,
+    style: InclinometerStyle = InclinometerStyle.LADDER,
+    onCycleStyle: (() -> Unit)? = null,
+    onToggleDisplay: (() -> Unit)? = null,
+    isPortraitLayout: Boolean = true,
+    displayRotation: Int = 0,
     pitchAlertActive: Boolean = false,
     rollAlertActive: Boolean = false,
     maxPitchThresholdDeg: Float? = null,
@@ -48,9 +54,20 @@ fun InclinometerGauge(
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val alertActive = pitchAlertActive || rollAlertActive
+    val (displayPitch, displayRoll) = remember(pitchDeg, rollDeg, isPortraitLayout, displayRotation) {
+        GaugeDisplayRotation.mapFusionToInclinometerAxes(
+            pitchDeg = pitchDeg,
+            rollDeg = rollDeg,
+            isPortraitLayout = isPortraitLayout,
+            displayRotation = displayRotation,
+        )
+    }
     val bitmap = remember(
+        displayPitch,
+        displayRoll,
         pitchDeg,
         rollDeg,
+        style,
         pitchAlertActive,
         rollAlertActive,
         maxPitchThresholdDeg,
@@ -58,12 +75,15 @@ fun InclinometerGauge(
         gaugeSizeDp,
     ) {
         InclinometerCarIcon.renderBitmap(
-            pitchDeg = pitchDeg,
-            rollDeg = rollDeg,
+            pitchDeg = displayPitch,
+            rollDeg = displayRoll,
+            style = style,
             pitchAlert = pitchAlertActive,
             rollAlert = rollAlertActive,
             maxPitchThresholdDeg = maxPitchThresholdDeg,
             maxRollThresholdDeg = maxRollThresholdDeg,
+            labelPitchDeg = displayPitch,
+            labelRollDeg = displayRoll,
         )
     }
 
@@ -77,10 +97,17 @@ fun InclinometerGauge(
                     Modifier
                 },
             )
-            .clickable { showSheet = true }
+            .attitudeGaugeInteraction(
+                onToggleDisplay = {
+                    onCycleStyle?.invoke()
+                        ?: onToggleDisplay?.invoke()
+                        ?: run { showSheet = true }
+                },
+                onLongPressCalibrate = { showSheet = true },
+            )
             .semantics {
-                contentDescription = "Inclinometer pitch ${GaugeLogic.formatSignedDegrees(pitchDeg)}, " +
-                    "roll ${GaugeLogic.formatSignedDegrees(rollDeg)}"
+                contentDescription = "Inclinometer pitch ${GaugeLogic.formatSignedDegrees(displayPitch)}, " +
+                    "roll ${GaugeLogic.formatSignedDegrees(displayRoll)}, style ${style.name}"
             }
             .testTag("inclinometer_gauge"),
         contentAlignment = Alignment.Center,
@@ -101,9 +128,14 @@ fun InclinometerGauge(
                 modifier = Modifier.padding(SpacingMd),
             )
             Text(
-                text = "P ${GaugeLogic.formatSignedDegrees(pitchDeg)}  R ${GaugeLogic.formatSignedDegrees(rollDeg)}",
+                text = "P ${GaugeLogic.formatSignedDegrees(displayPitch)}  R ${GaugeLogic.formatSignedDegrees(displayRoll)}",
                 color = GaugeScaleWhite,
                 modifier = Modifier.padding(horizontal = SpacingMd),
+            )
+            Text(
+                text = stringResource(R.string.gauge_inclinometer_style_hint),
+                color = GaugeScaleWhite,
+                modifier = Modifier.padding(SpacingMd),
             )
             Button(
                 onClick = {
@@ -113,6 +145,17 @@ fun InclinometerGauge(
                 modifier = Modifier.padding(SpacingMd).testTag("inclinometer_calibrate"),
             ) {
                 Text(stringResource(R.string.gauge_calibrate))
+            }
+            if (onToggleDisplay != null) {
+                Button(
+                    onClick = {
+                        onToggleDisplay()
+                        showSheet = false
+                    },
+                    modifier = Modifier.padding(SpacingMd).testTag("inclinometer_to_gmeter"),
+                ) {
+                    Text(stringResource(R.string.gauge_switch_to_gmeter))
+                }
             }
         }
     }

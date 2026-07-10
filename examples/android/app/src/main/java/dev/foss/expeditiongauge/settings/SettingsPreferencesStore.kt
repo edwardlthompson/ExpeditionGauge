@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.settings
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.recording.SessionStorageBudget
 
@@ -75,6 +76,7 @@ internal class SettingsPreferencesStore(
     suspend fun setTrackStartFinishGeoJson(geoJson: String?) = trackGauge.setTrackStartFinishGeoJson(geoJson)
     suspend fun setTrackSectorLinesGeoJson(geoJson: String?) = trackGauge.setTrackSectorLinesGeoJson(geoJson)
     suspend fun setAttitudeGaugeMode(mode: AttitudeGaugeMode) = trackGauge.setAttitudeGaugeMode(mode)
+    suspend fun setInclinometerStyle(style: InclinometerStyle) = trackGauge.setInclinometerStyle(style)
     suspend fun clearTrackConfig() = trackGauge.clearTrackConfig()
 
     suspend fun setDeveloperModeEnabled(enabled: Boolean) {

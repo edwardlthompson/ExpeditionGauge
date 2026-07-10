@@ -84,9 +84,44 @@ object GaugeDisplayRotation {
         rollDeg: Float,
         displayRotation: Int,
         isPortraitLayout: Boolean = false,
-    ): BallPosition = mapDeviceBallToHudScreen(
-        AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg),
-        displayRotation,
-        isPortraitLayout,
-    )
+    ): BallPosition {
+        // Vehicle-frame telemetry — portrait cube only (no displayRotation ball remaps).
+        @Suppress("UNUSED_PARAMETER")
+        val unused = displayRotation
+        val device = AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg)
+        return if (isPortraitLayout) applyPortraitCubeRemap(device) else device
+    }
+
+    fun mapFusionToInclinometerAxes(
+        pitchDeg: Float,
+        rollDeg: Float,
+        isPortraitLayout: Boolean = true,
+        displayRotation: Int = 0,
+        calibrationDisplayRotation: Int = 0,
+    ): Pair<Float, Float> {
+        @Suppress("UNUSED_PARAMETER")
+        listOf(isPortraitLayout, displayRotation, calibrationDisplayRotation)
+        return pitchDeg to rollDeg
+    }
+
+    fun unwrapPhoneRotation(pitchDeg: Float, rollDeg: Float, rotationDelta: Int) =
+        PhoneRotationUnwrap.unwrapPhoneRotation(pitchDeg, rollDeg, rotationDelta)
+
+    fun wrapSigned180(deg: Float) = PhoneRotationUnwrap.wrapSigned180(deg)
+
+    /** Screen-relative pitch/roll via G-meter ball pipeline (legacy / tests). */
+    fun mapAttitudeToScreenAxes(
+        pitchDeg: Float,
+        rollDeg: Float,
+        displayRotation: Int,
+        isPortraitLayout: Boolean,
+    ): Pair<Float, Float> {
+        val ball = mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
+        val max = AttitudeBallLogic.MAX_ANGLE_DEG
+        return if (isPortraitLayout) {
+            (ball.normalizedX * max) to (ball.normalizedY * max)
+        } else {
+            (ball.normalizedY * max) to (ball.normalizedX * max)
+        }
+    }
 }

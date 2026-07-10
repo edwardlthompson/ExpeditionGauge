@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
@@ -15,9 +15,12 @@ import dev.foss.expeditiongauge.about.AppUpdatePreferences
 import dev.foss.expeditiongauge.about.DonationsConfig
 import dev.foss.expeditiongauge.about.ReleaseAsset
 import dev.foss.expeditiongauge.about.UpdateApplyCoordinator
-import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.accessibility.AudibleTones
+import dev.foss.expeditiongauge.alerts.AlertThresholds
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
+import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
@@ -28,19 +31,16 @@ import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.ui.calibration.CalibrationTipsScreen
 import dev.foss.expeditiongauge.ui.calibration.CalibrationWizardScreen
-import dev.foss.expeditiongauge.ui.developer.DeveloperModeScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
-import dev.foss.expeditiongauge.presets.DashboardPresetId
-import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
-import dev.foss.expeditiongauge.ui.timing.TrackSetupScreen
+import dev.foss.expeditiongauge.ui.developer.DeveloperModeScreen
 import dev.foss.expeditiongauge.ui.live.LiveReceiverScreen
 import dev.foss.expeditiongauge.ui.settings.ImuManagementScreen
 import dev.foss.expeditiongauge.ui.settings.TpmsManagementScreen
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
+import dev.foss.expeditiongauge.ui.timing.TrackSetupScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
 @Composable
 fun AppScreenRouter(
     screen: AppScreen,
@@ -101,6 +101,7 @@ fun AppScreenRouter(
     lapTimingEnabled: Boolean,
     lapTimingState: dev.foss.expeditiongauge.timing.PredictiveTimingState,
     attitudeGaugeMode: AttitudeGaugeMode,
+    inclinometerStyle: InclinometerStyle,
     alertThresholds: AlertThresholds,
     onAlertThresholdsChange: (AlertThresholds) -> Unit,
     activePresetId: DashboardPresetId,
@@ -137,6 +138,7 @@ fun AppScreenRouter(
             lapTimingEnabled = lapTimingEnabled,
             lapTimingState = lapTimingState,
             attitudeGaugeMode = attitudeGaugeMode,
+            inclinometerStyle = inclinometerStyle,
             alertThresholds = alertThresholds,
             ttsReadoutEnabled = ttsReadoutEnabled,
             statsAggregate = statsAggregate,

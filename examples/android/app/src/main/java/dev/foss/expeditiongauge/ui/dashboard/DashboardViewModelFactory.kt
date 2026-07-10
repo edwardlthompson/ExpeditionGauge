@@ -28,6 +28,7 @@ class DashboardViewModelFactory(
     private val lapTimingService: LapTimingService,
     private val settingsPreferences: SettingsPreferences,
     private val alertService: AlertService,
+    private val phoneSensorProvider: dev.foss.expeditiongauge.sensors.PhoneSensorProvider,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -45,6 +46,7 @@ class DashboardViewModelFactory(
                 lapTimingService = lapTimingService,
                 settingsPreferences = settingsPreferences,
                 alertService = alertService,
+                phoneSensorProvider = phoneSensorProvider,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

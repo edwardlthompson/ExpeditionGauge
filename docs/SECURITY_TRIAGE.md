@@ -62,6 +62,17 @@ Recommended cadence: **Monday** (aligned with scheduled security scans and `heal
 
 After triage, confirm Trivy and CodeQL workflows are green on `main`.
 
+## Gradle Dependabot + lockfile
+
+`examples/android/app` uses `dependencyLocking { lockAllConfigurations() }` with `app/gradle.lockfile`. Dependabot version bumps that only edit `*.gradle.kts` **will fail CI** until the lockfile is regenerated:
+
+```bash
+cd examples/android
+./gradlew :app:dependencies --write-locks --no-daemon
+```
+
+Commit `app/gradle.lockfile` on the Dependabot branch before merge. Do not delete the lockfile to “make CI green.”
+
 ## GitHub Actions Pin Policy
 
 Third-party workflow actions must use **immutable refs** to reduce supply-chain risk (see Trivy action advisory, March 2026).

@@ -104,6 +104,8 @@ fun ExpeditionGaugeApp(
         .collectAsStateWithLifecycle(initialValue = false)
     val attitudeGaugeMode by services.settingsPreferences.attitudeGaugeMode
         .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE)
+    val inclinometerStyle by services.settingsPreferences.inclinometerStyle
+        .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.car.gauge.InclinometerStyle.LADDER)
     val alertThresholds by services.alertThresholdsPreferences.thresholds
         .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.alerts.AlertThresholds())
     val dashboardViewModel: DashboardViewModel = viewModel(factory = dashboardViewModelFactory)
@@ -270,6 +272,7 @@ fun ExpeditionGaugeApp(
                 lapTimingEnabled = lapTimingEnabled,
                 lapTimingState = lapTimingState,
                 attitudeGaugeMode = attitudeGaugeMode,
+                inclinometerStyle = inclinometerStyle,
                 alertThresholds = alertThresholds,
                 onAlertThresholdsChange = { thresholds ->
                     scope.launch { services.alertThresholdsPreferences.setThresholds(thresholds) }

@@ -1,31 +1,29 @@
 package dev.foss.expeditiongauge.gauge
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+/** Landscape G-meter: vehicle-frame attitude — displayRotation ignored (cancelled in fusion). */
 class GaugeDisplayRotationLandscapeTest {
     @Test
-    fun landscapeRotation90_rollMapsToScreenRight() {
+    fun landscape_rollMapsToScreenRight() {
         val ball = GaugeDisplayRotation.mapAttitude(0f, 15f, displayRotation = 1, isPortraitLayout = false)
         assertTrue(ball.normalizedX > 0.1f)
     }
 
     @Test
-    fun landscapeRotation270_rollMapsToScreenRight() {
-        val ball = GaugeDisplayRotation.mapAttitude(0f, 15f, displayRotation = 3, isPortraitLayout = false)
-        assertTrue(ball.normalizedX > 0.1f)
-    }
-
-    @Test
-    fun landscapeRotation90_brakingMapsToScreenTop() {
+    fun landscape_brakingMapsToScreenTop() {
         val ball = GaugeDisplayRotation.mapAttitude(-12f, 0f, displayRotation = 1, isPortraitLayout = false)
         assertTrue(ball.normalizedY < -0.1f)
     }
 
     @Test
-    fun landscapeRotation270_brakingMapsToScreenTop() {
-        val ball = GaugeDisplayRotation.mapAttitude(-12f, 0f, displayRotation = 3, isPortraitLayout = false)
-        assertTrue(ball.normalizedY < -0.1f)
+    fun landscape_stableAcross90And270() {
+        val a = GaugeDisplayRotation.mapAttitude(-12f, 15f, displayRotation = 1, isPortraitLayout = false)
+        val b = GaugeDisplayRotation.mapAttitude(-12f, 15f, displayRotation = 3, isPortraitLayout = false)
+        assertEquals(a.normalizedX, b.normalizedX, 0.001f)
+        assertEquals(a.normalizedY, b.normalizedY, 0.001f)
     }
 
     @Test

@@ -14,11 +14,13 @@ import dev.foss.expeditiongauge.ui.layout.navigationBarPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -81,6 +83,8 @@ fun DashboardScreen(
     lapTimingState: PredictiveTimingState = PredictiveTimingState(),
     attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
         dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE,
+    inclinometerStyle: dev.foss.expeditiongauge.car.gauge.InclinometerStyle =
+        dev.foss.expeditiongauge.car.gauge.InclinometerStyle.LADDER,
     maxPitchAlertDeg: Float? = null,
     maxRollAlertDeg: Float? = null,
     statsAggregate: SessionAggregateStats = SessionAggregateStats(0, 0L, null),
@@ -90,8 +94,14 @@ fun DashboardScreen(
     val preset = uiState.activePreset
     var showRecordingAdvanced by remember { mutableStateOf(false) }
     var drawerOpen by remember { mutableStateOf(false) }
-    val displayRotation = LocalView.current.display.rotation
-    LaunchedEffect(displayRotation) {
+    // configChanges keeps the Activity; push live Display.rotation into fusion every frame.
+    val configuration = LocalConfiguration.current
+    val view = LocalView.current
+    val displayRotation = view.display.rotation
+    SideEffect {
+        viewModel.updateDisplayRotation(displayRotation)
+    }
+    LaunchedEffect(configuration, displayRotation) {
         viewModel.updateDisplayRotation(displayRotation)
     }
 
@@ -214,6 +224,8 @@ fun DashboardScreen(
                             preset = preset,
                             showDriftAngle = uiState.showDriftAngle,
                             onCalibrate = viewModel::calibrateLevel,
+                            onToggleAttitudeDisplay = viewModel::toggleAttitudeDisplay,
+                            onCycleInclinometerStyle = viewModel::cycleInclinometerStyle,
                             recording = uiState.recording,
                             crawlingMode = uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING,
                             tpmsEnabled = tpmsEnabled,
@@ -221,10 +233,11 @@ fun DashboardScreen(
                             tempUnit = tempUnit,
                             speedUnit = speedUnit,
                             attitudeGaugeMode = attitudeGaugeMode,
+                            inclinometerStyle = inclinometerStyle,
                             activeAlerts = uiState.activeAlerts,
                             maxPitchAlertDeg = maxPitchAlertDeg,
                             maxRollAlertDeg = maxRollAlertDeg,
-                            displayRotation = uiState.displayRotation,
+                            displayRotation = displayRotation,
                             themeMode = themeMode,
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                         )

@@ -1,7 +1,6 @@
 package dev.foss.expeditiongauge.ui.components.gauge
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +52,7 @@ fun AttitudeGMeterGauge(
     onCalibrate: () -> Unit,
     modifier: Modifier = Modifier,
     mode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
+    onToggleDisplay: (() -> Unit)? = null,
     latG: Float = 0f,
     lonG: Float = 0f,
     showPeakHold: Boolean = false,
@@ -105,7 +105,10 @@ fun AttitudeGMeterGauge(
             .then(
                 if (gaugeAlert) Modifier.border(3.dp, GaugeRed, CircleShape) else Modifier,
             )
-            .clickable { showDetail = true }
+            .attitudeGaugeInteraction(
+                onToggleDisplay = { onToggleDisplay?.invoke() ?: run { showDetail = true } },
+                onLongPressCalibrate = { showDetail = true },
+            )
             .testTag("attitude_g_meter")
             .semantics { contentDescription = calibrateLabel },
     ) {
@@ -145,6 +148,7 @@ fun AttitudeGMeterGauge(
                 Text(stringResource(R.string.gauge_lon_g, lonGText), color = GaugeScaleWhite)
                 val magnitude = hypot(latG.toDouble(), lonG.toDouble()).toFloat()
                 Text(stringResource(R.string.gauge_g_magnitude, magnitude.roundToInt()), color = GaugeScaleWhite)
+                Text(stringResource(R.string.gauge_toggle_hint), color = GaugeScaleWhite)
                 if (showPeakHold) {
                     Text(
                         stringResource(R.string.gauge_peak_pitch, GaugeLogic.formatWholeDegrees(peakPitchDeg)),

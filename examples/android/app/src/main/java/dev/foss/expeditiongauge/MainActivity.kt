@@ -90,6 +90,7 @@ class MainActivity : ComponentActivity() {
             lapTimingService = services.lapTimingService,
             settingsPreferences = services.settingsPreferences,
             alertService = services.alertService,
+            phoneSensorProvider = services.phoneSensorProvider,
         )
 
         setContent {

@@ -4,6 +4,7 @@ import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.calibration.CalibrationStore
 import dev.foss.expeditiongauge.car.gauge.InclinometerCarIcon
+import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.settings.SettingsPreferences
@@ -23,26 +24,14 @@ class AndroidAutoBridge(
     scope: CoroutineScope,
 ) : CarAppBridge {
 
-    @Volatile
-    private var snapshot: TelemetrySnapshot = TelemetrySnapshot.empty()
-
-    @Volatile
-    private var speedUnit: SpeedUnit = SpeedUnit.METRIC
-
-    @Volatile
-    private var pressureUnit: PressureUnit = PressureUnit.PSI
-
-    @Volatile
-    private var tempUnit: TempUnit = TempUnit.CELSIUS
-
-    @Volatile
-    private var activeAlerts: Set<AlertType> = emptySet()
-
-    @Volatile
-    private var alertThresholds: AlertThresholds = AlertThresholds()
-
-    @Volatile
-    private var invalidationListener: (() -> Unit)? = null
+    @Volatile private var snapshot: TelemetrySnapshot = TelemetrySnapshot.empty()
+    @Volatile private var speedUnit: SpeedUnit = SpeedUnit.METRIC
+    @Volatile private var pressureUnit: PressureUnit = PressureUnit.PSI
+    @Volatile private var tempUnit: TempUnit = TempUnit.CELSIUS
+    @Volatile private var activeAlerts: Set<AlertType> = emptySet()
+    @Volatile private var alertThresholds: AlertThresholds = AlertThresholds()
+    @Volatile private var inclinometerStyle: InclinometerStyle = InclinometerStyle.LADDER
+    @Volatile private var invalidationListener: (() -> Unit)? = null
 
     private val invalidation = AaScreenInvalidation()
 
@@ -59,7 +48,8 @@ class AndroidAutoBridge(
                 },
                 services.alertService.activeAlerts,
                 services.alertThresholdsPreferences.thresholds,
-            ) { telemState, alerts, thresholds ->
+                settings.inclinometerStyle,
+            ) { telemState, alerts, thresholds, style ->
                 AndroidAutoBridgeState(
                     speedUnit = telemState.speedUnit,
                     pressureUnit = telemState.pressureUnit,
@@ -67,14 +57,15 @@ class AndroidAutoBridge(
                     snapshot = telemState.snapshot,
                     alerts = alerts,
                     thresholds = thresholds,
-                )
-            }.collect { state ->
+                ) to style
+            }.collect { (state, style) ->
                 speedUnit = state.speedUnit
                 pressureUnit = state.pressureUnit
                 tempUnit = state.tempUnit
                 snapshot = state.snapshot
                 activeAlerts = state.alerts
                 alertThresholds = state.thresholds
+                inclinometerStyle = style
                 FeatureFlags.androidAutoEnabled = FeatureFlags.androidAutoCapable
                 maybeInvalidate()
             }
@@ -84,16 +75,12 @@ class AndroidAutoBridge(
     override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
 
     override fun hudTiles(): CarHudTiles {
-        val built = CarHudTileBuilder.build(
-            snapshot = snapshot,
-            speedUnit = speedUnit,
-            pressureUnit = pressureUnit,
-            tempUnit = tempUnit,
-        )
+        val built = CarHudTileBuilder.build(snapshot, speedUnit, pressureUnit, tempUnit)
         val icon = runCatching {
             InclinometerCarIcon.fromAttitude(
                 pitchDeg = snapshot.pitchDeg,
                 rollDeg = snapshot.rollDeg,
+                style = inclinometerStyle,
                 pitchAlert = AlertType.PITCH in activeAlerts,
                 rollAlert = AlertType.ROLL in activeAlerts,
                 maxPitchThresholdDeg = alertThresholds.maxPitchDeg,
@@ -128,7 +115,11 @@ class AndroidAutoBridge(
 
     override fun zeroAttitude(): Boolean = runBlocking {
         if (snapshot.fusionSource != "phone") return@runBlocking false
-        calibrationStore.zeroToCurrentDisplay(snapshot.pitchDeg, snapshot.rollDeg)
+        calibrationStore.zeroToCurrentDisplay(
+            snapshot.pitchDeg,
+            snapshot.rollDeg,
+            displayRotation = 0,
+        )
         maybeInvalidate(force = true)
         true
     }

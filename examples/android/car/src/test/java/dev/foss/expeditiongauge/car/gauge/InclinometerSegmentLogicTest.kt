@@ -10,8 +10,8 @@ class InclinometerSegmentLogicTest {
         val frame = InclinometerSegmentLogic.frame(pitchDeg = 15f, rollDeg = 0f)
         assertTrue(frame.pitchUp.isNotEmpty())
         assertTrue(frame.pitchDown.isEmpty())
-        assertTrue(frame.rollLeft.isEmpty())
-        assertTrue(frame.rollRight.isEmpty())
+        assertEquals(0.5f, frame.leftRollFill, 0.001f)
+        assertEquals(0.5f, frame.rightRollFill, 0.001f)
     }
 
     @Test
@@ -22,10 +22,18 @@ class InclinometerSegmentLogicTest {
     }
 
     @Test
-    fun negativeRoll_lightsLeftArcOnly() {
+    fun negativeRoll_fillsLeftDrainsRight() {
         val frame = InclinometerSegmentLogic.frame(pitchDeg = 0f, rollDeg = -20f)
-        assertTrue(frame.rollLeft.isNotEmpty())
-        assertTrue(frame.rollRight.isEmpty())
+        assertTrue(frame.leftRollFill > frame.rightRollFill)
+        assertTrue(frame.pitchUp.isEmpty())
+        assertTrue(frame.pitchDown.isEmpty())
+    }
+
+    @Test
+    fun levelRoll_bothSidesHalfFull() {
+        val (left, right) = InclinometerSegmentLogic.rollFills(0f)
+        assertEquals(0.5f, left, 0.001f)
+        assertEquals(0.5f, right, 0.001f)
     }
 
     @Test

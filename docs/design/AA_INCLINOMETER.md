@@ -4,41 +4,59 @@ Reference photo: [`gauge-reference/aa-inclinometer-reference.png`](gauge-referen
 
 Simplified pitch/roll inclinometer for **Android Auto** (bitmap `CarIcon`) and phone **`AttitudeGaugeMode.INCLINOMETER`** / Offroad preset. Ball-in-ring G-meter (`GAUGE_REFERENCE.md`) is unchanged for other gauge modes.
 
+## Layout (reference-inspired)
+
+| Region | Behavior |
+|--------|----------|
+| **Center** | Vertical pitch ladder (±45°) with dual rails, tick labels, red pointer triangles, digital pitch readout on top |
+| **Left / right** | Roll columns as communicating vessels: one side **fills** as the other **drains**; red pointer tracks roll; digital roll readout at bottom |
+
 ## Scale
 
 | Constant | Value |
 |----------|--------|
-| `INCLINOMETER_MAX_DEG` | **45°** full scale (AA + inclinometer mode only) |
+| `INCLINOMETER_MAX_DEG` | **45°** full scale |
 | Tick marks | 15° · 30° · 45° |
 | Pitch bars | 5 per side of center (9° per step) |
-| Roll segments | 7 per side arc (≈6.4° per step) |
+| Roll segments | 10 per side (fill fraction = `(1 ± roll/45) / 2`) |
 
-Display clamps segment lighting at ±45°; numeric readout shows true angle beyond scale.
+Display clamps lighting at ±45°; numeric readout shows true angle within scale.
 
 ## Sign convention
 
-Matches phone `AttitudeBallLogic` / `GAUGE_REFERENCE.md`:
+Visual layout (what the driver sees on the **bitmap**, after screen-axis mapping):
 
-- **Negative pitch** (nose down / braking): lights **upper** center bars
-- **Positive pitch** (nose up): lights **lower** center bars
-- **Negative roll**: lights **left** arc
-- **Positive roll**: lights **right** arc
+- **Nose down / up** → center pitch ladder (upper / lower bars)
+- **Tilt left / right** → side columns fill / drain as communicating vessels
 
-No `GaugeDisplayRotation` remap on inclinometer — vehicle-forward axes for crawling and camper leveling.
+**Phone (LOCKED — ADR-0013):** fusion remaps IMU axes to a screen-stable frame
+(`SensorAxisRemap`) **before** Madgwick, then applies the locked portrait
+pitch↔roll swap (`VehicleAttitudeLogic`). One Zero works in every orientation.
+Do not reintroduce Application-WM rotation overwrites or post-fusion Euler
+unwrap. Inclinometer / horizon are a passthrough of fusion. Tap/swipe cycles
+`InclinometerStyle`. Long-press opens calibrate; sheet can switch back to G-meter.
 
-## Color
+**Styles**
 
-Progressive **green → yellow → red** per segment using the same normalized lerp as `GmeterBallColor` (`|segmentAngle| / 45°`).
+| Style | Cue |
+|-------|-----|
+| `LADDER` | Center pitch bars + L/R roll vessels (offroad dash) |
+| `HORIZON` | Artificial horizon (aviation attitude indicator) |
+| `DUAL_DIAL` | Twin circular dials P / R |
+| `BUBBLE` | Spirit-level tubes (vertical pitch, horizontal roll) |
+
+**Calibration:** `CalibrationStore.zeroToCurrentDisplay` updates shared fusion offsets used by
+both G-meter and inclinometer; peak-hold clears when offsets change.
 
 ## Angle alerts
 
-Reuse Settings **Max pitch (°)** / **Max roll (°)** with Alerts master on. Threshold markers drawn on gauge when set (clamped to 45°). Active alert: red border on phone; red frame on AA bitmap.
+Reuse Settings **Max pitch (°)** / **Max roll (°)** with Alerts master on. Threshold markers drawn on pitch rails when set (clamped to 45°). Active alert: red border on phone; red frame on AA bitmap.
 
 ## Preset behavior
 
-Selecting **Offroad** on the dashboard sets `AttitudeGaugeMode.INCLINOMETER`. Switching to another preset (Drift, Track, etc.) does **not** auto-revert gauge mode — change it under Settings → Display → Attitude gauge if needed.
+Selecting **Offroad** on the dashboard sets `AttitudeGaugeMode.INCLINOMETER`. Tap/swipe the gauge to toggle G-meter ↔ inclinometer. Switching presets does **not** auto-revert gauge mode.
 
 ## AA asset
 
 - Square bitmap targeting **128×128 dp** (`GridItem.IMAGE_TYPE_LARGE`)
-- Text under image: `P ±xx.x°` · `R ±xx.x°` only (no G-force)
+- Bitmap includes pitch/roll digital readouts; AA tile text may still show `P` / `R` lines

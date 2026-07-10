@@ -57,6 +57,27 @@ def write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 
+def manifest_signature(tier: str, enabled: list[str], hidden: list[str], stack: str) -> dict:
+    return {
+        "distribution_tier": tier,
+        "stack": stack,
+        "cursor_features_enabled": enabled,
+        "cursor_features_hidden": hidden,
+    }
+
+
+def read_manifest_signature(path: Path) -> dict:
+    data = read_json(path)
+    if not data:
+        return {}
+    return {
+        "distribution_tier": data.get("distribution_tier"),
+        "stack": data.get("stack", "multi"),
+        "cursor_features_enabled": data.get("cursor_features_enabled") or data.get("enabled"),
+        "cursor_features_hidden": data.get("cursor_features_hidden") or data.get("hidden"),
+    }
+
+
 def set_rule_always_apply(path: Path, enabled: bool) -> None:
     if not path.is_file():
         return
@@ -152,22 +173,29 @@ def sync(root: Path, tier: str, copy_commercial: bool, patch_init: bool = False)
         hidden = []
 
     stack_sel = read_json(cursor_dir / "stack-selection.json")
+    stack = stack_sel.get("stack", "multi")
+    next_sig = manifest_signature(tier, enabled, hidden, stack)
+    stack_path = cursor_dir / "stack-selection.json"
+    manifest_path = cursor_dir / "cursor-features.json"
+    unchanged = read_manifest_signature(stack_path) == next_sig
+
     stack_sel["distribution_tier"] = tier
-    stack_sel.setdefault("stack", stack_sel.get("stack", "multi"))
+    stack_sel.setdefault("stack", stack)
     stack_sel["cursor_features_enabled"] = enabled
     stack_sel["cursor_features_hidden"] = hidden
-    stack_sel["cursor_features_synced_at"] = (
-        datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    )
-    write_json(cursor_dir / "stack-selection.json", stack_sel)
+    if not unchanged:
+        stack_sel["cursor_features_synced_at"] = (
+            datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+        )
+        write_json(stack_path, stack_sel)
 
-    manifest = {
-        "distribution_tier": tier,
-        "enabled": enabled,
-        "hidden": hidden,
-        "generated_at": stack_sel["cursor_features_synced_at"],
-    }
-    write_json(cursor_dir / "cursor-features.json", manifest)
+        manifest = {
+            "distribution_tier": tier,
+            "enabled": enabled,
+            "hidden": hidden,
+            "generated_at": stack_sel["cursor_features_synced_at"],
+        }
+        write_json(manifest_path, manifest)
 
     foss_rule = root / ".cursor/rules/foss-compliance.mdc"
     commercial_rule = root / ".cursor/rules/commercial-compliance.mdc"

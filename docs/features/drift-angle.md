@@ -23,9 +23,11 @@ driftAngleDeg = normalize(bodyYawDeg − velocityHeadingDeg)
 
 ## Phone-only path
 
-1. `SensorFusionEngine` provides body yaw.
-2. GPS velocity heading updates β when speed ≥ 2 m/s.
-3. Below threshold, β updates suppressed (unreliable at crawl speed).
+1. `SensorFusionEngine` provides body yaw (`bodyYawDeg`).
+2. GPS course-over-ground from movement (`GpsCourseLogic` + successive fixes) updates
+   velocity heading when speed ≥ 2 m/s and segment ≥ 2 m.
+3. HUD `headingDeg` prefers GPS course while moving; falls back to body yaw when stationary.
+4. Below threshold, β updates suppressed (unreliable at crawl speed).
 
 ## UI
 

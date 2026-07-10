@@ -13,12 +13,16 @@ object ImuFusionLog {
         latG: Float,
         pitchDeg: Float,
         rollDeg: Float,
+        displayRotation: Int = 0,
+        rawPitchDeg: Float = 0f,
+        rawRollDeg: Float = 0f,
     ) {
         Log.d(
             TAG,
             "fusionSource=$fusionSource active=$activeCount " +
                 "twist=${chassisTwistDeg ?: 0f} beta=${driftAngleDeg ?: 0f} " +
-                "latG=$latG pitch=$pitchDeg roll=$rollDeg",
+                "latG=$latG pitch=$pitchDeg roll=$rollDeg " +
+                "rot=$displayRotation rawP=$rawPitchDeg rawR=$rawRollDeg",
         )
     }
 }

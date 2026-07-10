@@ -1,0 +1,37 @@
+---
+description: Locked inclinometer / landscape IMU rotation contract (do not regress)
+globs:
+  - examples/android/app/src/main/java/dev/foss/expeditiongauge/fusion/**
+  - examples/android/app/src/main/java/dev/foss/expeditiongauge/gauge/**
+  - examples/android/app/src/main/java/dev/foss/expeditiongauge/sensors/**
+  - examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/components/gauge/**
+  - examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/dashboard/**
+  - docs/design/GMETER_HUD_ROTATION.md
+  - docs/design/AA_INCLINOMETER.md
+  - docs/adr/0013-screen-stable-imu-remap.md
+alwaysApply: false
+---
+
+# Inclinometer / landscape rotation (LOCKED)
+
+Validated 2026-07-09 on OnePlus 12. Full ADR: `docs/adr/0013-screen-stable-imu-remap.md`.
+
+## Do
+
+1. Remap accel/gyro with `SensorAxisRemap` **before** Madgwick (`SensorFusionEngine`).
+2. Keep locked portrait pitch↔roll swap in `VehicleAttitudeLogic` (ROTATION_0 identity).
+3. Push Activity `view.display.rotation` into fusion (`DashboardScreen` / `updateDisplayRotation`).
+4. Use `DisplayManager` for background fallback — never Application `WindowManager` as truth.
+5. Reset Madgwick when `displayRotation` changes.
+6. Update `SensorAxisRemapTest` + `GMETER_HUD_ROTATION.md` if you change the matrix.
+
+## Do not
+
+- Re-read Application WM rotation on every gyro sample (wipes ROTATION_90 → 0 on OEMs).
+- Fix landscape with post-fusion Euler unwrap (`pitch±90` / `roll±180`) as the primary path.
+- Change the portrait inclinometer swap “to fix landscape.”
+- Double-apply `displayRotation` ball remaps on already vehicle-frame attitude fusion.
+
+## Quick check
+
+Portrait Zero → rotate 90° CCW → horizon stays level (sky top / ground bottom), P/R ≈ 0 without re-zero.

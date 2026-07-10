@@ -46,6 +46,8 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />
+                <!-- Required for AA host discovery; GridTemplate HUD fits IOT category. -->
+                <category android:name="androidx.car.app.category.IOT" />
             </intent-filter>
             <meta-data
                 android:name="androidx.car.app.minCarApiLevel"

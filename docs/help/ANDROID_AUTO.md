@@ -50,11 +50,21 @@ Use when `adb-smoke.ps1 -Scenario aa-inclinometer` reports `aa_host: disconnecte
 
 Phone-only automated checks: `pwsh scripts/expedition/adb-smoke.ps1 -Sprint 21 -Scenario aa-inclinometer -Serial b5214fc6`
 
+## Manifest (developers)
+
+`CarAppService` must declare a car app category in its intent-filter or the head unit will not list the app:
+
+```xml
+<category android:name="androidx.car.app.category.IOT" />
+```
+
+ExpeditionGauge uses **IOT** (grid of device/telemetry tiles). Also keep `automotive_app_desc.xml` with `<uses name="template" />`.
+
 ## Troubleshooting
 
 | Symptom | Check |
 |--------|--------|
-| App not listed on head unit | Developer mode + unknown sources; reinstall APK; reboot phone |
+| App not listed on head unit | Confirm APK includes `androidx.car.app.category.IOT`; developer mode + **Unknown sources**; Android Auto → Customize launcher; reinstall APK; reboot phone; reconnect AA |
 | “Start ExpeditionGauge on phone” | Open the app on the phone while connected |
 | Stale telemetry | Phone screen can sleep if **Keep screen awake** is off in Settings |
 | TPMS shows `--` | Pair TPMS in phone Settings → TPMS |
