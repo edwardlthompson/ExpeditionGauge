@@ -163,3 +163,21 @@
 | **Cause** | `beforeShellExecution` hooks and command strings containing `.sh` paths trigger editor reveal |
 | **Fix** | Python hooks in `.cursor/hooks/*.py`; agent commands via `python3 scripts/agent-run.py <name>`; `.vscode/settings.json` disables auto-reveal |
 | **Prevention** | Keep agent-facing docs in `.cursor/` on `agent-run.py`; pin active tab during agent sessions; optional `<!-- cursor-hooks: off -->` in `BUILD_PLAN.md` |
+
+### KB-018 — Weekly-health 0-job failure on push (Ship 2026-07-09)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | `weekly-health-check.yml` concludes **failure** on every `main` push with **0 jobs** |
+| **Cause** | Path-filter / `if:` on all jobs can yield an empty matrix; GitHub marks the run failed. A push stub job still failed with 0 jobs on the introducing commit. |
+| **Fix** | Remove `on.push` entirely — run only on `schedule` (Monday 07:00 UTC) and `workflow_dispatch`. |
+| **Prevention** | Do not re-add `on.push` to weekly-health without a guaranteed always-run job that GitHub actually schedules. |
+
+### KB-019 — Inclinometer landscape after portrait Zero (ADR-0013)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | After Zero in portrait, rotate 90° CCW → aviation horizon vertical (sky left / ground right) |
+| **Cause** | (1) Application `WindowManager` reports `ROTATION_0` while Activity is `ROTATION_90` and overwrites fusion; (2) post-Madgwick Euler unwrap is gimbal-fragile |
+| **Fix** | `SensorAxisRemap` before Madgwick; Activity `Display.rotation` authoritative; Madgwick reset on rotation change; locked portrait pitch↔roll swap unchanged |
+| **Prevention** | `.cursor/rules/inclinometer-rotation.mdc`; `SensorAxisRemapTest`; do not reintroduce Application WM on gyro path or Euler unwrap as primary fix |
