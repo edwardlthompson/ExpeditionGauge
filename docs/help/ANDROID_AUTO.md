@@ -8,7 +8,7 @@ ExpeditionGauge shows a **3-tile telemetry grid** on Android Auto (**Attitude** 
 
 - Android phone with ExpeditionGauge installed (sideload or release APK)
 - Car or head unit with **Android Auto** (wired USB or wireless, depending on vehicle)
-- For **sideloaded** builds: Android Auto **developer mode** and **unknown sources** enabled on the phone
+- For **sideloaded** builds: Android Auto **developer mode**, **unknown sources**, and **Customize launcher** enabled on the phone
 
 ## Enable developer mode (sideload — no Play Store)
 
@@ -18,13 +18,36 @@ Do this **once** on the phone so Android Auto will list ExpeditionGauge after yo
 2. Open the **Android Auto** app on the phone.
 3. Open the menu → **About** / **Version**, then tap the **version number about 10 times** until developer mode unlocks.
 4. Menu → **Developer settings** → turn on **Unknown sources** (and allow ExpeditionGauge if prompted).
-5. Connect to the car and open **ExpeditionGauge** from the head-unit Apps list.
+5. Back in Android Auto settings → **Customize launcher** → enable **ExpeditionGauge** (check the box).
+6. Connect to the car and open **ExpeditionGauge** from the head-unit Apps list.
 
 Beginner walkthrough (same steps, more detail): [`README.md`](../../README.md#install-without-the-play-store-android-auto).
 
+## After every install or upgrade (required)
+
+Android Auto caches the discovered app list. A category change (e.g. IOT → POI) is invisible until the host refreshes:
+
+**Preferred (ADB):**
+
+```powershell
+pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Clear
+```
+
+**Manual minimum:** force-stop Android Auto → reboot phone → re-enable Unknown sources → Customize launcher → USB reconnect.
+
+**Full reset (clears AA settings):** after `pm clear` of Android Auto you must unlock developer mode and Unknown sources again, then re-check Customize launcher.
+
+Verify on device before testing the car:
+
+```text
+adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "category.POI ExpeditionGaugeCarAppService"
+```
+
+You must see `androidx.car.app.category.POI` (not IOT).
+
 ## Connect and launch
 
-1. Connect the phone to the car (USB or wireless pairing per your vehicle).
+1. Connect the phone to the car (**USB preferred** for first successful discover; wireless after that).
 2. On the head unit, open **Apps** → **ExpeditionGauge**.
 3. You should see three tiles: **Attitude** (inclinometer graphic + P/R angles), **Telemetry**, and **TPMS**, plus **Record / Stop** and **Zero** actions.
 4. Keep ExpeditionGauge running on the phone so sensors and recording stay active.
@@ -57,23 +80,44 @@ Phone-only automated checks: `pwsh scripts/expedition/adb-smoke.ps1 -Sprint 21 -
 
 ## Manifest (developers)
 
-`CarAppService` must declare a car app category in its intent-filter or the head unit will not list the app:
+`CarAppService` must declare **one** car app category in its intent-filter or the head unit will not list the app:
 
 ```xml
-<category android:name="androidx.car.app.category.IOT" />
+<category android:name="androidx.car.app.category.POI" />
 ```
 
-ExpeditionGauge uses **IOT** (grid of device/telemetry tiles). Also keep `automotive_app_desc.xml` with `<uses name="template" />`.
+ExpeditionGauge uses **POI** for **sideload / projected Android Auto** discovery. Many cars filter **IOT** even with Unknown sources (DHU is more permissive). This is an intentional FOSS trade-off — **not Play-certified**. Do **not** add NAVIGATION or dual categories. Also keep `automotive_app_desc.xml` with `<uses name="template" />`.
 
 ## Troubleshooting
 
 | Symptom | Check |
 |--------|--------|
-| App not listed on head unit | Confirm APK includes `androidx.car.app.category.IOT`; developer mode + **Unknown sources**; Android Auto → Customize launcher; reinstall APK; reboot phone; reconnect AA |
+| App not listed on head unit | Confirm dumpsys shows `category.POI`; developer mode + **Unknown sources**; **Customize launcher** checked; run `aa-refresh-host.ps1`; reinstall APK; reboot phone; prefer USB reconnect |
+| Listed in Customize but missing on car | Force-stop/clear AA cache; USB cable/port; disable battery restriction on ExpeditionGauge + Android Auto |
+| Not in Customize launcher at all | Unknown sources still on after reboot (OnePlus may reset); reinstall; verify POI in dumpsys — then see **Escalation** below |
 | “Start ExpeditionGauge on phone” | Open the app on the phone while connected |
 | Stale telemetry | Phone screen can sleep if **Keep screen awake** is off in Settings |
 | TPMS shows `--` | Pair TPMS in phone Settings → TPMS |
 | Zero does nothing | Phone fusion must be active (not external-only IMU path) |
+
+## Escalation (stop-rule — no more category swaps)
+
+If ExpeditionGauge is still **absent from Customize launcher** (or checked there but never on the head unit) after:
+
+1. Install **≥ 2.14.1** with `category.POI` verified in dumpsys  
+2. `aa-refresh-host.ps1 -Clear` (or force-stop + reboot)  
+3. Unknown sources + Customize launcher  
+4. USB reconnect  
+
+…treat it as **OEM / host policy**, not an app-category bug. **Do not** try MESSAGING, WEATHER, dual categories, or NAVIGATION.
+
+Then only:
+
+- Update Android Auto from Play; reboot phone  
+- Prefer USB over wireless for discovery  
+- Known-good cable/port; unrestricted battery for ExpeditionGauge + Android Auto  
+- Confirm Unknown sources survived reboot  
+- Record phone AA version + head-unit model in [`HUMAN_BACKLOG.md`](../../HUMAN_BACKLOG.md) and leave BUILD_PLAN **M-003** open  
 
 ## Privacy
 

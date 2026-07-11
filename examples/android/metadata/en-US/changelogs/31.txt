@@ -1,0 +1,1 @@
+POI category for Android Auto head-unit discovery (sideload). After install: enable Unknown sources + Customize launcher; run aa-refresh-host if upgrading.

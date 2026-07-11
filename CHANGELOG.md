@@ -111,14 +111,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.14.1] — Android Auto head-unit discovery (2026-07-11)
+
 ### Fixed
 
-* `create-release.ps1` builds, signs, and attaches `ExpeditionGauge-{version}.apk` so GitHub Releases always ship a sideloadable APK
-* `sign-release-apk.ps1` correctly parses Gradle `sdk.dir` from `local.properties` on Windows
+* Android Auto **CarAppService** category **IOT → POI** so sideloaded apps appear on real projected head units (IOT often filtered; DHU more permissive)
+* README / help: **Customize launcher** step + required post-install AA host refresh
+* CI asserts release APK declares `ExpeditionGaugeCarAppService` + `category.POI`
 
 ### Added
 
-* README beginner guide: install APK without Play Store, enable Android Auto developer mode + Unknown sources
+* `scripts/expedition/aa-refresh-host.ps1` — force-stop / optional clear Android Auto after upgrade
+* Escalation stop-rule in `docs/help/ANDROID_AUTO.md` (no further category churn)
+
+### Changed
+
+* ADR-0010: POI is FOSS sideload discovery category; not Play-certified
 
 ## [2.14.0] — Inclinometer landscape + styles (2026-07-09)
 
@@ -128,6 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Inclinometer styles: Ladder, Horizon, Dual Dial, Bubble (tap/swipe cycle)
 * Horizon corner readouts (P / R); GPS course-over-ground heading when moving
 * Cursor rule `.cursor/rules/inclinometer-rotation.mdc` + regression tests
+* README beginner guide: install APK without Play Store, enable Android Auto developer mode + Unknown sources
 
 ### Fixed
 
@@ -135,6 +144,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `weekly-health-check.yml` 0-job / red push — deferred stub on push; full health on schedule
 * `agent-run.py` prefers Git Bash over WSL so Windows `JAVA_HOME` reaches Gradle
 * Logic file-limits: split `PhoneRotationUnwrap` + `PhoneImuTelemetryPublisher`
+* `create-release.ps1` builds, signs, and attaches `ExpeditionGauge-{version}.apk` so GitHub Releases always ship a sideloadable APK
+* `sign-release-apk.ps1` correctly parses Gradle `sdk.dir` from `local.properties` on Windows
 
 ### Changed
 

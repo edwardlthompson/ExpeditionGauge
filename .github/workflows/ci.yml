@@ -510,6 +510,20 @@ jobs:
         env:
           SOURCE_DATE_EPOCH: "1700000000"
         run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
+      - name: Assert CarAppService POI category in release APK
+        working-directory: examples/android
+        run: |
+          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          test -n "$APK"
+          AAPT=$(ls -d "${ANDROID_HOME}/build-tools"/*/aapt | sort -V | tail -1)
+          "$AAPT" dump xmltree "$APK" AndroidManifest.xml > /tmp/eg-manifest-tree.txt
+          grep -q 'ExpeditionGaugeCarAppService' /tmp/eg-manifest-tree.txt
+          grep -q 'androidx.car.app.category.POI' /tmp/eg-manifest-tree.txt
+          if grep -q 'androidx.car.app.category.IOT' /tmp/eg-manifest-tree.txt; then
+            echo "FAIL: release APK still declares category.IOT"
+            exit 1
+          fi
+          echo "OK   release APK declares CarAppService + category.POI"
       - name: Compare APK hashes (flake tolerance)
         working-directory: examples/android
         env:

@@ -1162,8 +1162,8 @@ switch ($Scenario) {
         if ($dump -notmatch "androidx\.car\.app\.CarAppService") {
             Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "CarAppService intent filter missing" } 1
         }
-        if ($dump -notmatch "androidx\.car\.app\.category\.IOT") {
-            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "CarAppService missing category.IOT" } 1
+        if ($dump -notmatch "androidx\.car\.app\.category\.POI") {
+            Write-JsonResult @{ status = "fail"; scenario = $Scenario; reason = "CarAppService missing category.POI" } 1
         }
     }
     "aa-live-metrics" {

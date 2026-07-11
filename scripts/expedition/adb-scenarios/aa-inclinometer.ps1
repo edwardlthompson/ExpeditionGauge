@@ -116,11 +116,11 @@ function Invoke-AdbInclinometerScenario {
             reason = "ExpeditionGaugeCarAppService not registered"
         } 1
     }
-    if ($dump -notmatch "androidx\.car\.app\.category\.IOT") {
+    if ($dump -notmatch "androidx\.car\.app\.category\.POI") {
         Write-JsonResult @{
             status = "fail"
             scenario = $Scenario
-            reason = "CarAppService missing androidx.car.app.category.IOT (required for AA launcher discovery)"
+            reason = "CarAppService missing androidx.car.app.category.POI (required for AA launcher discovery)"
         } 1
     }
 

@@ -19,6 +19,13 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-11 — Android Auto projected discovery uses POI (not IOT)
+- **Status:** Accepted
+- **Context:** Sideloaded ExpeditionGauge with Unknown sources still missing from head-unit Apps; device dumpsys showed `category.IOT` on 2.13.0; community FOSS apps report real cars filter IOT while DHU does not
+- **Decision:** Single `androidx.car.app.category.POI` on `CarAppService`; document Customize launcher + `aa-refresh-host.ps1`; escalate OEM/cable only if Customize stays empty — no dual categories / NAVIGATION
+- **Alternatives considered:** Keep IOT (rejected — filtered on projected hosts); dual IOT+POI (rejected — host confusion); NAVIGATION (rejected — map obligations)
+- **Consequences:** Not Play-certification-ready; FOSS sideload path only; ship 2.14.1 with signed APK + mandatory host refresh after upgrade
+
 ### 2026-07-10 — GitHub release must attach signed APK
 - **Status:** Accepted
 - **Context:** v2.14.0 was published via `gh release create` with notes only; Release workflow uploaded SBOMs but no APK, so sideload/Android Auto install from Releases failed

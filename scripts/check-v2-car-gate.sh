@@ -48,6 +48,7 @@ check_file "$ROOT/examples/android/app/src/test/java/dev/foss/expeditiongauge/ca
 
 grep_file "$ROOT/examples/android/app/build.gradle.kts" 'project\(":car"\)'
 grep_file "$ROOT/examples/android/app/src/main/AndroidManifest.xml" "androidx.car.app.CarAppService"
+grep_file "$ROOT/examples/android/app/src/main/AndroidManifest.xml" "androidx.car.app.category.POI"
 grep_file "$ROOT/examples/android/app/src/main/AndroidManifest.xml" "automotive_app_desc"
 grep_file "$ANDROID/ExpeditionGaugeApplication.kt" "CarAppBridgeRegistry"
 grep_file "$ANDROID/FeatureFlags.kt" "androidAutoEnabled"

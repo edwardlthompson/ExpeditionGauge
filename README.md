@@ -6,7 +6,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.14.0-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.14.1-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -25,7 +25,7 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | 3-tile grid HUD (Attitude / telemetry / TPMS); always-on when host connects — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
 
-Shipped through **v2.14.0** — landscape inclinometer (one Zero across orientations), gauge styles, GPS course heading. See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.14.1** — Android Auto head-unit discovery (`category.POI`), landscape inclinometer, gauge styles. See [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Install without the Play Store (Android Auto)
 
@@ -48,13 +48,21 @@ ExpeditionGauge is FOSS and is **not** on the Play Store. Install the APK from [
 1. In **Developer settings**, turn on **Unknown sources**.
 2. If Android asks which apps may start Android Auto, allow **ExpeditionGauge** (or “All apps” / your installer, depending on the phone).
 
-### 4. Use it in the car
+### 4. Enable in Customize launcher
 
-1. Plug in USB (or pair wireless Android Auto if your car supports it).
+1. Open **Android Auto** settings (not Developer settings).
+2. Tap **Customize launcher** (sometimes under Apps / Launcher).
+3. Find **ExpeditionGauge** and turn it **on** (checked).
+
+### 5. Use it in the car
+
+1. Plug in USB (preferred for first connect; or pair wireless Android Auto if your car supports it).
 2. On the car screen, open **Apps** and choose **ExpeditionGauge**.
 3. Keep the phone app running so gauges and recording stay live.
 
-If the app does not appear on the car screen: reconnect the cable, reboot the phone, and confirm **Unknown sources** is still on. More detail and troubleshooting: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md).
+**After every upgrade:** Android Auto may cache the old app list. Force-stop Android Auto (or run `pwsh scripts/expedition/aa-refresh-host.ps1`), re-check Unknown sources + Customize launcher, then reconnect USB.
+
+If the app does not appear: confirm Customize launcher is checked, reconnect USB, reboot the phone, and re-check **Unknown sources**. More detail: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md).
 
 ## Quick start
 
