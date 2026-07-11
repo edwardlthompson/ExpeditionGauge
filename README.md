@@ -31,10 +31,17 @@ Shipped through **v2.14.1** — Android Auto head-unit discovery (`category.POI`
 
 ExpeditionGauge is FOSS and is **not** on the Play Store. Install the APK from [GitHub Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases), then allow Android Auto to show sideloaded apps:
 
-### 1. Install the phone app
+### 1. Install the phone app (so Android Auto can list it)
 
-1. On your phone, download the latest **`.apk`** from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases).
-2. Open the file and tap **Install**. If Android asks, allow installs from your browser or file manager.
+Android Auto hides apps unless **both** install fields look like Play Store (`installer` **and** `initiating` package = `com.android.vending`). Browser/`adb install` is not enough.
+
+**Best (USB + rooted phone):**
+
+```powershell
+pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.14.1.apk
+```
+
+**Other devices:** download `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) and follow [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDELOAD.md) (rooted PC install vs KingInstaller limits on Android 14+).
 
 ### 2. Turn on Android Auto developer mode
 
@@ -60,9 +67,9 @@ ExpeditionGauge is FOSS and is **not** on the Play Store. Install the APK from [
 2. On the car screen, open **Apps** and choose **ExpeditionGauge**.
 3. Keep the phone app running so gauges and recording stay live.
 
-**After every upgrade:** Android Auto may cache the old app list. Force-stop Android Auto (or run `pwsh scripts/expedition/aa-refresh-host.ps1`), re-check Unknown sources + Customize launcher, then reconnect USB.
+**After every upgrade:** re-run `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-*.apk`, re-check Unknown sources + Customize launcher, then reconnect USB.
 
-If the app does not appear: confirm Customize launcher is checked, reconnect USB, reboot the phone, and re-check **Unknown sources**. More detail: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md).
+If Customize launcher is still empty: confirm dumpsys shows `installerPackageName=com.android.vending`, then see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) Escalation.
 
 ## Quick start
 

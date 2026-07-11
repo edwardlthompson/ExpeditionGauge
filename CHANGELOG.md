@@ -111,6 +111,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* Android Auto Customize launcher: install session must run as Play Store UID so **both** `installerPackageName` and `initiatingPackageName` are `com.android.vending` (shell initiator hides the app even when installer is spoofed)
 ## [2.14.1] — Android Auto head-unit discovery (2026-07-11)
 
 ### Fixed

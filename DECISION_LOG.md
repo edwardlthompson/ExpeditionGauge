@@ -19,6 +19,20 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-11 — AA Customize launcher requires Play install initiator (not just installer)
+- **Status:** Accepted
+- **Context:** Device smoke showed Customize launcher listing Car Scanner (`initiatingPackageName=com.android.vending`) but not ExpeditionGauge (`installer=vending` yet `initiator=com.android.shell`). UI dump after fixing initiator: **LISTED=True** with checkbox enabled.
+- **Decision:** `aa-refresh-host.ps1` creates `pm install-create` as Play Store UID, then shell `install-write`/`commit`; document KingInstaller for phone-only; keep `category.POI`
+- **Alternatives considered:** packages.xml edit (blocked by fsverity); phenotype FlagOverrides (schema changed / unnecessary once initiator correct); more category swaps (rejected)
+- **Consequences:** Root required for the ADB session trick; browser sideload alone will not populate Customize launcher on locked-down AA hosts
+
+### 2026-07-11 — AA Customize launcher requires Play installer attribution
+- **Status:** Accepted
+- **Context:** After POI + Unknown sources, Customize launcher still empty on OnePlus; dumpsys showed `installerPackageName=null` / `initiatingPackageName=com.android.shell` from plain `adb install`
+- **Decision:** Default `aa-refresh-host.ps1 -Apk` to `pm install -i com.android.vending`; document KingInstaller for phone-only; not a category change
+- **Alternatives considered:** More category swaps (rejected — escalation stop-rule); require KingInstaller only (rejected — ADB path is FOSS and scriptable)
+- **Consequences:** GitHub download + open APK is insufficient for AA listing on locked-down hosts; release docs must point at `aa-refresh-host.ps1`
+
 ### 2026-07-11 — Android Auto projected discovery uses POI (not IOT)
 - **Status:** Accepted
 - **Context:** Sideloaded ExpeditionGauge with Unknown sources still missing from head-unit Apps; device dumpsys showed `category.IOT` on 2.13.0; community FOSS apps report real cars filter IOT while DHU does not

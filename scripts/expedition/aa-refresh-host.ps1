@@ -1,9 +1,15 @@
 # Refresh Android Auto host discovery after ExpeditionGauge install/upgrade.
-# Clears stale CarAppService category cache (e.g. IOT → POI).
+#
+# Critical: plain `adb install` / `pm install -i com.android.vending` leaves
+# initiatingPackageName=com.android.shell. Android Auto Customize launcher hides
+# those apps (Car Scanner works because initiator=com.android.vending).
+# This script creates the install session as the Play Store UID so both
+# installer and initiator are com.android.vending.
 param(
     [string]$Serial = "",
     [switch]$Clear,
-    [string]$Apk = ""
+    [string]$Apk = "",
+    [switch]$NoPlayStoreInstaller
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,9 +25,9 @@ if (-not $Serial) {
 }
 
 function Invoke-Adb {
-    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Args)
-    & adb -s $Serial @Args
-    if ($LASTEXITCODE -ne 0) { throw "adb failed: adb -s $Serial $($Args -join ' ')" }
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$AdbArgs)
+    & adb -s $Serial @AdbArgs
+    if ($LASTEXITCODE -ne 0) { throw "adb failed: adb -s $Serial $($AdbArgs -join ' ')" }
 }
 
 $state = (adb devices | Select-String "^$Serial\s+device")
@@ -31,16 +37,48 @@ if (-not $state) {
 
 $pkg = "dev.foss.expeditiongauge"
 $aaPkg = "com.google.android.projection.gearhead"
+$playInstaller = "com.android.vending"
+
+function Install-AsPlayStore([string]$ApkPath) {
+    Write-Host "Root + install session as Play Store UID (installer+initiator=$playInstaller) ..." -ForegroundColor Cyan
+    Invoke-Adb root | Out-Null
+    Start-Sleep -Seconds 1
+    $apkFull = (Resolve-Path $ApkPath).Path
+    $remote = "/data/local/tmp/ExpeditionGauge-aa-install.apk"
+    Invoke-Adb push $apkFull $remote | Out-Null
+
+    $vendingUid = (adb -s $Serial shell "dumpsys package $playInstaller" |
+        Select-String -Pattern "userId=(\d+)" |
+        Select-Object -First 1)
+    if (-not $vendingUid) { throw "aa-refresh-host: could not resolve $playInstaller userId" }
+    $uid = $vendingUid.Matches[0].Groups[1].Value
+
+    $size = (adb -s $Serial shell "stat -c %s $remote").ToString().Trim()
+    $create = (adb -s $Serial shell "su $uid -c `"pm install-create --user 0 -i $playInstaller -r -S $size`"").ToString()
+    if ($create -notmatch "\[(\d+)\]") {
+        throw "aa-refresh-host: install-create failed: $create"
+    }
+    $sid = $Matches[1]
+    # Session created as vending; write/commit as shell (allowed) — initiator stays vending.
+    Invoke-Adb shell "pm install-write -S $size $sid base $remote" | Out-Null
+    Invoke-Adb shell "pm install-commit $sid" | Out-Null
+    Invoke-Adb shell "rm -f $remote" | Out-Null
+}
 
 if ($Apk) {
     if (-not (Test-Path $Apk)) { Write-Error "aa-refresh-host: APK not found: $Apk" }
-    Write-Host "Installing $Apk ..." -ForegroundColor Cyan
-    Invoke-Adb install -r $Apk
+    if ($NoPlayStoreInstaller) {
+        Write-Host "Installing via adb install -r (Customize launcher likely HIDDEN) ..." -ForegroundColor Yellow
+        Invoke-Adb install -r ((Resolve-Path $Apk).Path)
+    }
+    else {
+        Install-AsPlayStore -ApkPath $Apk
+    }
 }
 
 Write-Host "Force-stopping Android Auto ($aaPkg) ..." -ForegroundColor Cyan
 Invoke-Adb shell am force-stop $aaPkg
-Invoke-Adb shell am force-stop $pkg
+Invoke-Adb shell am start -n "$pkg/.MainActivity" | Out-Null
 
 if ($Clear) {
     Write-Host "Clearing Android Auto app data (re-enable developer mode + Unknown sources after this) ..." -ForegroundColor Yellow
@@ -52,21 +90,24 @@ if ($dump -notmatch "ExpeditionGaugeCarAppService") {
     Write-Error "aa-refresh-host: ExpeditionGaugeCarAppService not registered — install ExpeditionGauge first"
 }
 if ($dump -notmatch "androidx\.car\.app\.category\.POI") {
-    Write-Error "aa-refresh-host: category.POI missing (still IOT or old APK?) — install >= 2.14.1"
+    Write-Error "aa-refresh-host: category.POI missing — install >= 2.14.1"
 }
-if ($dump -match "androidx\.car\.app\.category\.IOT") {
-    Write-Warning "aa-refresh-host: dumpsys still mentions IOT — confirm you installed the POI build"
+if ($dump -notmatch "installerPackageName=$playInstaller") {
+    Write-Warning "aa-refresh-host: installerPackageName is not $playInstaller"
+}
+if ($dump -notmatch "initiatingPackageName=$playInstaller") {
+    Write-Warning "aa-refresh-host: initiatingPackageName is not $playInstaller — Customize launcher will stay empty on modern AA"
 }
 
 Write-Host @"
 
-OK  Package shows ExpeditionGaugeCarAppService + category.POI
+OK  Package shows CarAppService + category.POI
+    Expect installerPackageName=$playInstaller AND initiatingPackageName=$playInstaller
 
 Next (on phone):
-  1. Open Android Auto → unlock developer mode if cleared → Unknown sources ON
-  2. Customize launcher → enable ExpeditionGauge
-  3. Launch ExpeditionGauge once on the phone
-  4. USB reconnect to the head unit (prefer USB for first discover)
+  1. Android Auto → Unknown sources ON
+  2. Customize launcher → enable ExpeditionGauge (should be listed)
+  3. USB reconnect to the head unit
 
-If still missing after that: see Escalation in docs/help/ANDROID_AUTO.md — do NOT change categories again.
+Smoke: pwsh scripts/expedition/aa-smoke-customize-launcher.ps1 -SkipReinstall -SkipPhenotype
 "@ -ForegroundColor Green

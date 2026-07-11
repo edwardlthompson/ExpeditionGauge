@@ -14,36 +14,57 @@ ExpeditionGauge shows a **3-tile telemetry grid** on Android Auto (**Attitude** 
 
 Do this **once** on the phone so Android Auto will list ExpeditionGauge after you install the APK from GitHub Releases:
 
-1. Install ExpeditionGauge from a [GitHub Release](https://github.com/edwardlthompson/ExpeditionGauge/releases) APK (allow install from your browser/file manager if asked).
+1. Install ExpeditionGauge (see **Install so Customize launcher can see it** below — plain Downloads install is often not enough).
 2. Open the **Android Auto** app on the phone.
 3. Open the menu → **About** / **Version**, then tap the **version number about 10 times** until developer mode unlocks.
 4. Menu → **Developer settings** → turn on **Unknown sources** (and allow ExpeditionGauge if prompted).
 5. Back in Android Auto settings → **Customize launcher** → enable **ExpeditionGauge** (check the box).
 6. Connect to the car and open **ExpeditionGauge** from the head-unit Apps list.
 
-Beginner walkthrough (same steps, more detail): [`README.md`](../../README.md#install-without-the-play-store-android-auto).
+Beginner walkthrough: [`README.md`](../../README.md#install-without-the-play-store-android-auto).
+
+**Other phones / GitHub sideload:** see [`ANDROID_AUTO_SIDELOAD.md`](ANDROID_AUTO_SIDELOAD.md) and the **AA-install-kit** zip on [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) (rooted PC installer).
+
+## Install so Customize launcher can see it
+
+Android Auto on **OnePlus** / recent AA builds hides Car App Library apps unless **both**:
+
+- `installerPackageName=com.android.vending`
+- `initiatingPackageName=com.android.vending`
+
+Plain `adb install`, browser Downloads install, or even `pm install -i com.android.vending` leaves `initiatingPackageName=com.android.shell` — the app never appears under Customize launcher (verified vs Car Scanner on device).
+
+**Preferred (rooted USB + computer):**
+
+```powershell
+pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGauge-2.14.1.apk
+```
+
+That creates the install session as the Play Store UID so both fields are `com.android.vending`.
+
+**Verify:**
+
+```text
+adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackageName initiatingPackageName category.POI"
+```
+
+You need `installerPackageName=com.android.vending`, `initiatingPackageName=com.android.vending`, and `category.POI`.
+
+**Phone-only alternative:** [KingInstaller](https://github.com/Rikj000/KingInstaller) (“Install as king”, enable the **OnePlus** option). Still enable AA Unknown sources afterward.
 
 ## After every install or upgrade (required)
 
-Android Auto caches the discovered app list. A category change (e.g. IOT → POI) is invisible until the host refreshes:
+Android Auto caches the discovered app list. Install-attribution changes are invisible until the host refreshes:
 
 **Preferred (ADB):**
 
 ```powershell
-pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Clear
+pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGauge-2.14.1.apk
 ```
 
-**Manual minimum:** force-stop Android Auto → reboot phone → re-enable Unknown sources → Customize launcher → USB reconnect.
+**Manual minimum:** force-stop Android Auto → open ExpeditionGauge once → reboot phone → re-enable Unknown sources → Customize launcher → USB reconnect.
 
-**Full reset (clears AA settings):** after `pm clear` of Android Auto you must unlock developer mode and Unknown sources again, then re-check Customize launcher.
-
-Verify on device before testing the car:
-
-```text
-adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "category.POI ExpeditionGaugeCarAppService"
-```
-
-You must see `androidx.car.app.category.POI` (not IOT).
+**Full reset (clears AA settings):** add `-Clear` to `aa-refresh-host.ps1` — then unlock developer mode and Unknown sources again.
 
 ## Connect and launch
 
@@ -93,8 +114,8 @@ ExpeditionGauge uses **POI** for **sideload / projected Android Auto** discovery
 | Symptom | Check |
 |--------|--------|
 | App not listed on head unit | Confirm dumpsys shows `category.POI`; developer mode + **Unknown sources**; **Customize launcher** checked; run `aa-refresh-host.ps1`; reinstall APK; reboot phone; prefer USB reconnect |
-| Listed in Customize but missing on car | Force-stop/clear AA cache; USB cable/port; disable battery restriction on ExpeditionGauge + Android Auto |
-| Not in Customize launcher at all | Unknown sources still on after reboot (OnePlus may reset); reinstall; verify POI in dumpsys — then see **Escalation** below |
+| Not in Customize launcher at all | Confirm `installerPackageName=com.android.vending` in dumpsys; re-run `aa-refresh-host.ps1 -Apk …`; Unknown sources on; then Escalation |
+| Listed in Customize but missing on car | Force-stop AA; USB cable/port; disable battery restriction on ExpeditionGauge + Android Auto |
 | “Start ExpeditionGauge on phone” | Open the app on the phone while connected |
 | Stale telemetry | Phone screen can sleep if **Keep screen awake** is off in Settings |
 | TPMS shows `--` | Pair TPMS in phone Settings → TPMS |
@@ -102,10 +123,10 @@ ExpeditionGauge uses **POI** for **sideload / projected Android Auto** discovery
 
 ## Escalation (stop-rule — no more category swaps)
 
-If ExpeditionGauge is still **absent from Customize launcher** (or checked there but never on the head unit) after:
+If ExpeditionGauge is still **absent from Customize launcher** after:
 
-1. Install **≥ 2.14.1** with `category.POI` verified in dumpsys  
-2. `aa-refresh-host.ps1 -Clear` (or force-stop + reboot)  
+1. Install **≥ 2.14.1** with `category.POI` **and** `installerPackageName=com.android.vending`  
+2. `aa-refresh-host.ps1 -Apk …` (and optional `-Clear`)  
 3. Unknown sources + Customize launcher  
 4. USB reconnect  
 
