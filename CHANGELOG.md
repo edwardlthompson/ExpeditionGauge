@@ -111,6 +111,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+* `create-release.ps1` builds, signs, and attaches `ExpeditionGauge-{version}.apk` so GitHub Releases always ship a sideloadable APK
+* `sign-release-apk.ps1` correctly parses Gradle `sdk.dir` from `local.properties` on Windows
+
 ### Added
 
 * README beginner guide: install APK without Play Store, enable Android Auto developer mode + Unknown sources

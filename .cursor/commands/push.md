@@ -25,6 +25,7 @@ Create/update RELEASE_NOTES.md from CHANGELOG, BUILD_PLAN rows, recent commits (
 ## Step 4 — Release
 
 - Prefer Release Please PR merge ([HUMAN] if branch protection blocks agent)
+- **ExpeditionGauge:** create the GitHub release with `pwsh scripts/expedition/create-release.ps1` (builds, signs, and attaches `ExpeditionGauge-{version}.apk`). Never publish a tag/release without the signed APK asset. If a release already exists without an APK: `assembleRelease` → `sign-release-apk.ps1` → `gh release upload vX.Y.Z ExpeditionGauge-X.Y.Z.apk --clobber`
 - Update @AGENT_MEMORY.md and @DECISION_LOG.md at milestone boundary
 
 ## Step 5 — Cleanup

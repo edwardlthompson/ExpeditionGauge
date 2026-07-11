@@ -37,7 +37,8 @@ if (-not $sdk) {
     if (Test-Path $localProps) {
         foreach ($line in Get-Content $localProps) {
             if ($line -match '^sdk\.dir=(.+)$') {
-                $sdk = ($Matches[1] -replace '\\\\', '\').Trim()
+                # Gradle local.properties escapes: C\:\\Users\\... → C:\Users\...
+                $sdk = ($Matches[1].Trim() -replace '\\:', ':' -replace '\\\\', '\').TrimEnd('\')
                 break
             }
         }

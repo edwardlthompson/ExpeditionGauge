@@ -19,6 +19,13 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-10 — GitHub release must attach signed APK
+- **Status:** Accepted
+- **Context:** v2.14.0 was published via `gh release create` with notes only; Release workflow uploaded SBOMs but no APK, so sideload/Android Auto install from Releases failed
+- **Decision:** `create-release.ps1` always `assembleRelease` + `sign-release-apk.ps1` and passes `ExpeditionGauge-{version}.apk` to `gh release create`; `/push` Step 4 documents backfill via `gh release upload --clobber`
+- **Alternatives considered:** CI-only APK upload in `release.yml` (deferred — signing uses local debug keystore for FOSS sideload); unsigned APK on Releases (rejected — not installable)
+- **Consequences:** Agents must use `create-release.ps1` (or explicit sign+upload) for ExpeditionGauge releases; v2.14.0 backfilled with signed APK
+
 ### 2026-06-20 — Repo-wide checklist status markers
 - **Status:** Accepted
 - **Context:** BUILD_PLAN and scattered checklists used mixed ⬜ / `- [ ]` / ✅ formats; inconsistent in Markdown Preview vs source
