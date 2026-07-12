@@ -7,9 +7,23 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
+# Native Windows git cannot clone file:///c/Users/... (MSYS). Prefer cygpath -m.
+CLONE_SRC="$ROOT"
+if command -v cygpath >/dev/null 2>&1; then
+  CLONE_SRC="$(cygpath -m "$ROOT")"
+elif [[ "$ROOT" =~ ^/([a-zA-Z])/(.*)$ ]]; then
+  drive="$(echo "${BASH_REMATCH[1]}" | tr '[:lower:]' '[:upper:]')"
+  CLONE_SRC="${drive}:/${BASH_REMATCH[2]}"
+fi
+
 echo "==> Simulating template upgrade in $WORKDIR"
 
-git clone --quiet "file://$ROOT" "$WORKDIR/child"
+# Git for Windows writes to the Windows path; MSYS /tmp destinations can "succeed" with no files.
+CLONE_DEST="$WORKDIR/child"
+if command -v cygpath >/dev/null 2>&1; then
+  CLONE_DEST="$(cygpath -m "$WORKDIR")/child"
+fi
+git clone --quiet "file://$CLONE_SRC" "$CLONE_DEST"
 cd "$WORKDIR/child"
 
 AREAS=(

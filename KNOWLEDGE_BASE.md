@@ -199,3 +199,21 @@
 | **Cause** | Gate hardcoded `--stack multi --strict`, which blocks missing Go/Rust toolchains |
 | **Fix** | `scripts/pre-release-gate.sh` reads `project.config.json` `stack` (android) |
 | **Prevention** | Child repos keep accurate `stack` in project.config; do not force multi on android-only machines |
+
+### KB-022 — Dependabot alert count must not use `?page=`
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | `pre-release-gate` / `security-triage --strict` warns “could not fetch Dependabot alerts” and fails |
+| **Cause** | `gh api … -f page=` / `?page=` — Dependabot alerts API rejects page pagination (HTTP 400) |
+| **Fix** | `scripts/count-critical-high-dependabot.sh` uses `gh api --paginate` with query `state=open&per_page=100` only |
+| **Prevention** | Do not use `-f` form fields for GET Dependabot alerts |
+
+### KB-023 — `file://` git clone under Git Bash needs Windows path
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | `simulate-template-upgrade` fails: `'/c/Users/…' does not appear to be a git repository` |
+| **Cause** | Native `git` cannot use MSYS `file:///c/Users/...` URLs |
+| **Fix** | Convert ROOT with `cygpath -m` (or `/c/…` → `C:/…`) before `git clone file://…`; use Windows path for clone destination (MSYS `/tmp` + native git can no-op) |
+| **Prevention** | Prefer relative paths after `cd` for Python; convert absolute MSYS paths before native Windows tools |
