@@ -47,14 +47,33 @@ function Install-AsPlayStore([string]$ApkPath) {
     $remote = "/data/local/tmp/ExpeditionGauge-aa-install.apk"
     Invoke-Adb push $apkFull $remote | Out-Null
 
-    $vendingUid = (adb -s $Serial shell "dumpsys package $playInstaller" |
-        Select-String -Pattern "userId=(\d+)" |
+    # Android 14+ dumpsys often prints appId=; older builds used userId=.
+    $vendingUid = (adb -s $Serial shell "cmd package list packages -U $playInstaller" |
+        Select-String -Pattern "uid:(\d+)" |
         Select-Object -First 1)
-    if (-not $vendingUid) { throw "aa-refresh-host: could not resolve $playInstaller userId" }
+    if (-not $vendingUid) {
+        $vendingUid = (adb -s $Serial shell "dumpsys package $playInstaller" |
+            Select-String -Pattern "(?:userId|appId)=(\d+)" |
+            Select-Object -First 1)
+    }
+    if (-not $vendingUid) { throw "aa-refresh-host: could not resolve $playInstaller uid" }
     $uid = $vendingUid.Matches[0].Groups[1].Value
+    Write-Host "Play Store uid=$uid" -ForegroundColor DarkGray
 
     $size = (adb -s $Serial shell "stat -c %s $remote").ToString().Trim()
-    $create = (adb -s $Serial shell "su $uid -c `"pm install-create --user 0 -i $playInstaller -r -S $size`"").ToString()
+    $createCmd = "pm install-create --user 0 -i $playInstaller -r -S $size"
+    $create = (adb -s $Serial shell "su $uid -c `"$createCmd`"" 2>&1 | Out-String)
+    if ($create -match "su: inaccessible|not found|No such file") {
+        $helperLocal = Join-Path $PSScriptRoot "bin\run-as-uid-arm64"
+        if (-not (Test-Path $helperLocal)) {
+            throw "aa-refresh-host: Magisk su missing and no run-as-uid-arm64 helper at $helperLocal"
+        }
+        Write-Host "Magisk su missing — using run-as-uid-arm64 helper (adb-root devices)" -ForegroundColor Yellow
+        $helperRemote = "/data/local/tmp/run-as-uid"
+        Invoke-Adb push $helperLocal $helperRemote | Out-Null
+        Invoke-Adb shell "chmod 755 $helperRemote" | Out-Null
+        $create = (adb -s $Serial shell "$helperRemote $uid $createCmd").ToString()
+    }
     if ($create -notmatch "\[(\d+)\]") {
         throw "aa-refresh-host: install-create failed: $create"
     }

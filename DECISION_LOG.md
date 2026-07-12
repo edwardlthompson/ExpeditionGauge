@@ -19,6 +19,13 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-12 — Head-unit routes + soft features for HU/AAOS
+- **Status:** Accepted
+- **Context:** Stock AA Play-attribution blocks many FOSS users; aftermarket Android HUs, AAOS, and MITM adapters are viable dash paths
+- **Decision:** Document routes in `HEAD_UNIT_ROUTES.md` / README; ship one APK with soft `uses-feature`, `distractionOptimized` MainActivity, and existing Car App path for MITM/AA
+- **Alternatives considered:** Separate AAOS product flavor (deferred); claim native OpenAuto UI rewrite (out of scope — use projected AA or Android-on-SBC)
+- **Consequences:** v2.14.2+ installs on HUs without phone IMU; AAOS UX remains best-effort under OEM distraction policy
+
 ### 2026-07-11 — AA sideload alternatives beyond root / public Play
 - **Status:** Accepted (documentation)
 - **Context:** Users need non-rooted GitHub sideload on Android 14+; research of Fermata/KingInstaller/AAAD/AAXLU/aa-proxy communities

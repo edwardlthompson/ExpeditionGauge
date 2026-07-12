@@ -6,7 +6,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.14.1-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.14.2-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -24,8 +24,23 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Export & share** | GPX/ZIP, playback video burn-in, 3D flyover MP4, stats card share sheet |
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | 3-tile grid HUD (Attitude / telemetry / TPMS); always-on when host connects — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
+| **Other head units** | Aftermarket Android HU, AAOS sideload, wireless MITM, DIY OpenAuto — [`docs/help/HEAD_UNIT_ROUTES.md`](docs/help/HEAD_UNIT_ROUTES.md) |
 
-Shipped through **v2.14.1** — Android Auto head-unit discovery (`category.POI`), landscape inclinometer, gauge styles. See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.14.2** — soft hardware features for HU/AAOS install, AA head-unit discovery (`category.POI`), landscape inclinometer. See [`CHANGELOG.md`](CHANGELOG.md).
+
+## Other head-unit routes (no public Play Store)
+
+If stock Android Auto on the phone is too locked down, use a display path Google does not gate the same way. Full matrix: [`docs/help/HEAD_UNIT_ROUTES.md`](docs/help/HEAD_UNIT_ROUTES.md).
+
+| Route | What to buy / use | How ExpeditionGauge runs |
+|-------|-------------------|---------------------------|
+| **Aftermarket Android HU** | ATOTO S8/X10-class, Mekede/Dasaita, Joying, Xtrons, similar unlocked radios | Sideload the APK **on the head unit** — full Compose HUD (best FOSS car path) |
+| **Wireless AA MITM** | [AAWireless](https://www.aawireless.io/) (developer mode) or FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs) | Phone keeps the app; adapter presents like DHU so the **Car App** grid can appear |
+| **DIY Pi / OpenAuto** | OpenAuto, Crankshaft, or Android-on-SBC | Usually phone → DIY AA head unit (same Car App path); native Android SBCs = treat like aftermarket HU |
+| **OEM Android Automotive** | Polestar 2/3/4, Volvo EX30/EX90/XC40 Recharge (most sideload-friendly); others vary | Sideload APK **on the car**; park for permissions; external BLE/NMEA if no IMU |
+| **Stock AA on phone** | Magisk kit / KingInstaller ≤13 / private Play track | See [Install without the Play Store](#install-without-the-play-store-android-auto) below |
+
+**App readiness (v2.14.2+):** one APK serves all routes — soft `uses-feature` so HUs without phone sensors can install; `distractionOptimized` for AAOS; projected `CarAppService` for MITM/AA; BLE IMU / NMEA / OBD when the unit has no usable sensors. Enable **Keep screen awake** on dash mounts.
 
 ## Install without the Play Store (Android Auto)
 
@@ -53,14 +68,14 @@ Full matrix: [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDEL
 3. Run:
 
 ```powershell
-pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.14.1.apk
+pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.14.2.apk
 ```
 
 ```bash
-bash ./install-aa-from-pc.sh ExpeditionGauge-2.14.1.apk
+bash ./install-aa-from-pc.sh ExpeditionGauge-2.14.2.apk
 ```
 
-From a full clone: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.14.1.apk`
+From a full clone: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.14.2.apk`
 
 4. Confirm both lines show Play Store:
 
@@ -92,6 +107,8 @@ adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackag
 | **Shizuku alone** | No | **Cannot** unlock third-party AA apps (hooks need Xposed) |
 
 **Bottom line for ExpeditionGauge on a stock Android 14+ phone:** use Magisk + the AA install kit, a wireless MITM adapter, or a private Play track. There is no reliable FOSS phone-only trick that sets `initiatingPackageName=com.android.vending` for an arbitrary APK. If Customize launcher stays empty, dumpsys initiator is still wrong — do not change car-app categories again.
+
+Prefer skipping phone AA entirely? Use an [aftermarket Android head unit or AAOS sideload](#other-head-unit-routes-no-public-play-store) — [`docs/help/HEAD_UNIT_ROUTES.md`](docs/help/HEAD_UNIT_ROUTES.md).
 
 ## Quick start
 

@@ -25,6 +25,8 @@ Beginner walkthrough: [`README.md`](../../README.md#install-without-the-play-sto
 
 **Other phones / GitHub sideload:** see [`ANDROID_AUTO_SIDELOAD.md`](ANDROID_AUTO_SIDELOAD.md) and the **AA-install-kit** zip on [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) (rooted PC installer).
 
+**Skip stock AA:** aftermarket HU / AAOS / MITM — [`HEAD_UNIT_ROUTES.md`](HEAD_UNIT_ROUTES.md).
+
 ## Install so Customize launcher can see it
 
 Android Auto on **OnePlus** / recent AA builds hides Car App Library apps unless **both**:
@@ -37,7 +39,7 @@ Plain `adb install`, browser Downloads install, or even `pm install -i com.andro
 **Preferred (rooted USB + computer):**
 
 ```powershell
-pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGauge-2.14.1.apk
+pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGauge-2.14.2.apk
 ```
 
 That creates the install session as the Play Store UID so both fields are `com.android.vending`.
@@ -61,7 +63,7 @@ Android Auto caches the discovered app list. Install-attribution changes are inv
 **Preferred (ADB):**
 
 ```powershell
-pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGauge-2.14.1.apk
+pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGauge-2.14.2.apk
 ```
 
 **Manual minimum:** force-stop Android Auto → open ExpeditionGauge once → reboot phone → re-enable Unknown sources → Customize launcher → USB reconnect.
@@ -127,7 +129,7 @@ ExpeditionGauge uses **POI** for **sideload / projected Android Auto** discovery
 
 If ExpeditionGauge is still **absent from Customize launcher** after:
 
-1. Install **≥ 2.14.1** with `category.POI` **and** `installerPackageName=com.android.vending`  
+1. Install **≥ 2.14.2** with `category.POI` **and** `installerPackageName=com.android.vending`  
 2. `aa-refresh-host.ps1 -Apk …` (and optional `-Clear`)  
 3. Unknown sources + Customize launcher  
 4. USB reconnect  

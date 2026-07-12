@@ -19,11 +19,11 @@ Works on Magisk/rooted devices including Android 14/15/16.
 4. Run:
 
 ```powershell
-pwsh install-aa-from-pc.ps1 -Apk ExpeditionGauge-2.14.1.apk
+pwsh install-aa-from-pc.ps1 -Apk ExpeditionGauge-2.14.2.apk
 ```
 
 ```bash
-bash install-aa-from-pc.sh ExpeditionGauge-2.14.1.apk
+bash install-aa-from-pc.sh ExpeditionGauge-2.14.2.apk
 ```
 
 5. Confirm:
@@ -67,6 +67,8 @@ These are the only known practical alternatives when you cannot root and cannot 
 - Expecting AAAD / Fermata-style flows to install ExpeditionGauge (catalog apps only)
 
 There is **no** known FOSS phone app that, on stock Android 14+, can set `initiatingPackageName=com.android.vending` for an arbitrary APK without Magisk or Google Play’s installer.
+
+**Skip phone AA entirely:** aftermarket Android head units, OEM AAOS sideload, or DIY OpenAuto — see [`HEAD_UNIT_ROUTES.md`](HEAD_UNIT_ROUTES.md). The same APK (v2.14.2+) is prepared for those routes.
 
 ## Path D — Already installed wrong
 

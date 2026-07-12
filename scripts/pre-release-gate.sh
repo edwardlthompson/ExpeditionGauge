@@ -11,7 +11,12 @@ VERSION=""
 
 echo "=== Pre-release gate ==="
 
-if ! bash scripts/feature-gate.sh --stack multi --strict --json; then
+# Child repos set project.config.json "stack" (e.g. android). Template maintainers use multi.
+STACK="$(python3 -c "import json; print(json.load(open('project.config.json',encoding='utf-8')).get('stack','multi'))" 2>/dev/null || echo multi)"
+STACK="${STACK:-multi}"
+echo "Feature gate stack=${STACK}"
+
+if ! bash scripts/feature-gate.sh --stack "$STACK" --strict --json; then
   echo "FAIL: feature-gate.sh"
   ERRORS=$((ERRORS + 1))
 else

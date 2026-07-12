@@ -39,7 +39,14 @@ fi
 
 REMOTE=/data/local/tmp/ExpeditionGauge-aa-install.apk
 "${ADB[@]}" push "$APK" "$REMOTE" >/dev/null
-UID_PLAY=$("${ADB[@]}" shell dumpsys package "$PLAY" | sed -n 's/.*userId=\([0-9]*\).*/\1/p' | head -1)
+UID_PLAY=$("${ADB[@]}" shell cmd package list packages -U "$PLAY" | sed -n 's/.*uid:\([0-9]*\).*/\1/p' | head -1 | tr -d '\r')
+if [[ -z "$UID_PLAY" ]]; then
+  UID_PLAY=$("${ADB[@]}" shell dumpsys package "$PLAY" | sed -n 's/.*\(userId\|appId\)=\([0-9]*\).*/\2/p' | head -1 | tr -d '\r')
+fi
+if [[ -z "$UID_PLAY" ]]; then
+  echo "Play Store ($PLAY) uid not found" >&2
+  exit 1
+fi
 SIZE=$("${ADB[@]}" shell stat -c %s "$REMOTE" | tr -d '\r')
 CREATE=$("${ADB[@]}" shell "su $UID_PLAY -c \"pm install-create --user 0 -i $PLAY -r -S $SIZE\"" | tr -d '\r')
 SID=$(echo "$CREATE" | sed -n 's/.*\[\([0-9]*\)\].*/\1/p')

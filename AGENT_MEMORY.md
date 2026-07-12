@@ -23,6 +23,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | HUD cube polish | 2.11.3–2.11.13 | ✅ Keep screen awake, reproducible release |
 | AA grid + maps wave | 2.12.0 | ✅ GridTemplate HUD, imperial fix, route colors, offline prefetch |
 | Inclinometer landscape | 2.14.0 | ✅ ADR-0013 SensorAxisRemap; styles; weekly-health stub |
+| AA discovery + sideload | 2.14.1–2.14.2 | ✅ POI category; Play initiator install kit; HU/AAOS soft features + HEAD_UNIT_ROUTES |
 
 ## G-meter HUD rotation (locked 2026-06-30)
 

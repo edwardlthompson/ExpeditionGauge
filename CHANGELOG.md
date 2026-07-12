@@ -109,15 +109,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Agent-facing docs/commands use `python3 scripts/agent-run.py` instead of `bash scripts/*.sh` paths
 * `check_cursor_integrations` gate blocks `bash scripts/` in `.cursor/` agent surfaces
 
-## [Unreleased]
+## [2.14.2] — Head-unit install readiness (2026-07-12)
 
 ### Added
 
-* README / `ANDROID_AUTO_SIDELOAD.md`: full AA install matrix (rooted kit, KingInstaller ≤13, wireless MITM adapters, private Play track, AAAD catalog caveat); document no stock Android 14+ software spoof for Play initiator on arbitrary APKs
+* `docs/help/HEAD_UNIT_ROUTES.md` + README: aftermarket Android HU, AAOS, wireless MITM, DIY OpenAuto routes for FOSS dash display without public Play AA
+
+### Changed
+
+* Manifest: soft hardware features (IMU/GPS/BT/telephony/`type.automotive`) and `distractionOptimized` MainActivity so one APK installs on aftermarket HUs / AAOS; accelerometer no longer required
 
 ### Fixed
 
-* Android Auto Customize launcher: install session must run as Play Store UID so **both** `installerPackageName` and `initiatingPackageName` are `com.android.vending` (shell initiator hides the app even when installer is spoofed)
+* Sideload install on devices without phone accelerometer (aftermarket HUs / many AAOS units)
+
 ## [2.14.1] — Android Auto head-unit discovery (2026-07-11)
 
 ### Fixed
@@ -125,6 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Android Auto **CarAppService** category **IOT → POI** so sideloaded apps appear on real projected head units (IOT often filtered; DHU more permissive)
 * README / help: **Customize launcher** step + required post-install AA host refresh
 * CI asserts release APK declares `ExpeditionGaugeCarAppService` + `category.POI`
+* Android Auto Customize launcher: install session must run as Play Store UID so **both** `installerPackageName` and `initiatingPackageName` are `com.android.vending` (shell initiator hides the app even when installer is spoofed)
 
 ### Added
 

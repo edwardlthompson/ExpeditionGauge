@@ -72,14 +72,29 @@ Unrooted options:
 $remote = "/data/local/tmp/ExpeditionGauge-aa-install.apk"
 Adb push $Apk $remote | Out-Null
 
-$uidLine = (Adb shell "dumpsys package $play") -join "`n"
-if ($uidLine -notmatch "userId=(\d+)") {
-    Write-Error "Play Store ($play) not installed — required to spoof install initiator"
+$uidLine = (Adb shell "cmd package list packages -U $play") -join "`n"
+if ($uidLine -notmatch "uid:(\d+)") {
+    $uidLine = (Adb shell "dumpsys package $play") -join "`n"
+    if ($uidLine -notmatch "(?:userId|appId)=(\d+)") {
+        Write-Error "Play Store ($play) not installed — required to spoof install initiator"
+    }
 }
 $uid = $Matches[1]
 $size = (Adb shell "stat -c %s $remote").ToString().Trim()
 
-$create = (Adb shell "su $uid -c `"pm install-create --user 0 -i $play -r -S $size`"").ToString()
+$createCmd = "pm install-create --user 0 -i $play -r -S $size"
+$create = (Adb shell "su $uid -c `"$createCmd`"" 2>&1 | Out-String)
+if ($create -match "su: inaccessible|not found|No such file") {
+    $helperLocal = Join-Path $PSScriptRoot "bin\run-as-uid-arm64"
+    if (-not (Test-Path $helperLocal)) {
+        Write-Error "Magisk su missing and no run-as-uid-arm64 helper — install Magisk or rebuild scripts/expedition/bin/run-as-uid-arm64"
+    }
+    Write-Host "Magisk su missing — using run-as-uid-arm64 helper" -ForegroundColor Yellow
+    $helperRemote = "/data/local/tmp/run-as-uid"
+    Adb push $helperLocal $helperRemote | Out-Null
+    Adb shell "chmod 755 $helperRemote" | Out-Null
+    $create = (Adb shell "$helperRemote $uid $createCmd").ToString()
+}
 if ($create -notmatch "\[(\d+)\]") { Write-Error "install-create failed: $create" }
 $sid = $Matches[1]
 Write-Host "Session $sid as uid $uid ($play)" -ForegroundColor Cyan

@@ -18,7 +18,8 @@ Drivers want live speed and attitude on the head unit without proprietary Google
 6. **Action strip** — **Record / Stop** and **Zero** (set level); mark-event and advanced features stay on phone.
 7. **Live refresh** — bridge rate-limits `Screen.invalidate()` to **250 ms** app-side (host may cap lower).
 8. **Sideload discovery** — `CarAppService` declares a **single** `androidx.car.app.category.POI` category (not IOT, not dual categories, not NAVIGATION). Many real projected head units filter IOT even with Unknown sources; DHU is more permissive. POI is the least-wrong AA-allowed category for this FOSS telemetry grid — **not Play-certification-ready**. Also requires Android Auto developer mode + unknown sources + Customize launcher (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
-9. **HostValidator** — `ALLOW_ALL_HOSTS_VALIDATOR` for sideload/DHU; stricter validators deferred until a Play path exists.
+9. **HostValidator** — `ALLOW_ALL_HOSTS_VALIDATOR` for sideload/DHU/MITM adapters; stricter validators deferred until a Play path exists.
+10. **Non-AA dash routes** — same APK also targets aftermarket Android HUs and AAOS sideload (soft hardware features, distraction-optimized `MainActivity`); see `docs/help/HEAD_UNIT_ROUTES.md`.
 
 ## Consequences
 

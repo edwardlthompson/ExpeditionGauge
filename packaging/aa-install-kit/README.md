@@ -22,11 +22,11 @@ Full guide (alternatives matrix): https://github.com/edwardlthompson/ExpeditionG
 4. Run:
 
 ```powershell
-pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.14.1.apk
+pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.14.2.apk
 ```
 
 ```bash
-bash ./install-aa-from-pc.sh ExpeditionGauge-2.14.1.apk
+bash ./install-aa-from-pc.sh ExpeditionGauge-2.14.2.apk
 ```
 
 5. Confirm both show Play Store:
@@ -39,6 +39,7 @@ adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackag
 
 ## Other options (no public Play listing, no Magisk)
 
+- **Aftermarket Android HU / AAOS / DIY:** see [HEAD_UNIT_ROUTES.md](https://github.com/edwardlthompson/ExpeditionGauge/blob/main/docs/help/HEAD_UNIT_ROUTES.md) — same APK, native HUD or MITM
 - **Wireless adapter:** [AAWireless](https://www.aawireless.io/) developer mode, or FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs)
 - **Private Play track:** Internal testing / Internal app sharing (real Play attribution)
 - **Not for this APK:** [AAAD](https://github.com/shmykelsa/AAAD) only installs its curated catalog
