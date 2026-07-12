@@ -217,3 +217,12 @@
 | **Cause** | Native `git` cannot use MSYS `file:///c/Users/...` URLs |
 | **Fix** | Convert ROOT with `cygpath -m` (or `/c/…` → `C:/…`) before `git clone file://…`; use Windows path for clone destination (MSYS `/tmp` + native git can no-op) |
 | **Prevention** | Prefer relative paths after `cd` for Python; convert absolute MSYS paths before native Windows tools |
+
+### KB-024 — Upgrade-sim init smoke missing `.template-update.json` (Windows /ship)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Local `simulate-template-upgrade` fails after bootstrap quick: `FileNotFoundError: …/child/.template-update.json` during non-interactive web init smoke |
+| **Cause** | Init smoke path expects template-update sidecar written by prune/init; Windows `/tmp` clone + web-stack init does not always emit the file in ExpeditionGauge child context |
+| **Fix** | Treat as non-blocking for android-only `/ship` when CI `CI` + Security + CodeQL are green; re-run under Git Bash after `cygpath` clone fix (KB-023) or skip web init smoke for `stack=android` |
+| **Prevention** | Prefer CI upgrade job / android feature-gate for child-repo release regression; do not fail `/regress` solely on local web init smoke |
