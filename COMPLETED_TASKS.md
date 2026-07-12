@@ -2,6 +2,13 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Audit 2026-07-12 — MSYS paths + autocal hygiene
+
+- ✅ [AGENT] A-001 Fix F-001: MSYS `/c/...` → Windows root (`repo_paths.py`, sync-cursor-features, agent-progress, readme-health, watch-gates)
+- ✅ [AGENT] A-002 Fix F-004: `feature-gate` multi+strict does not `block_env` on missing optional go/npm/cargo
+- ✅ [AGENT] A-003 Fix F-003/F-005: gitignore AA dumps + install kits; sync stack from `project.config.json`
+- ✅ [AGENT] A-004 Re-run `validate-bootstrap --quick`, `check-readme-health`, `watch-agent-gates --once --autofix --step none`
+
 ## Audit 2026-07-09 evening — inclinometer landscape + ship prep
 
 - ✅ [AGENT] A-001 Ship inclinometer landscape: `SensorAxisRemap`, ADR-0013, rotation rule, tests (CODE_REVIEW F-001)

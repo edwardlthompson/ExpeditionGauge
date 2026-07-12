@@ -22,7 +22,6 @@ class ExpeditionGaugeApplication : Application() {
         CarAppBridgeRegistry.bridge = AndroidAutoBridge(
             services,
             services.settingsPreferences,
-            services.calibrationStore,
             applicationScope,
         )
     }

@@ -25,14 +25,15 @@ internal class InclinometerBubbleDraw(
         strokeWidth = sizePx * 0.012f
     }
 
-    fun draw(pitchDeg: Float, rollDeg: Float, alert: Boolean) {
+    fun draw(pitchDeg: Float, rollDeg: Float, alert: Boolean, yawDeg: Float? = null) {
         val cx = sizePx / 2f
         val cy = sizePx / 2f
         drawVerticalTube(cx, cy, pitchDeg)
         drawHorizontalTube(cx, cy, rollDeg)
-        kit.text.textSize = sizePx * 0.07f
+        kit.text.textSize = sizePx * 0.065f
         canvas.drawText("P ${kit.formatAngle(pitchDeg)}", cx, sizePx * 0.1f, kit.text)
-        canvas.drawText("R ${kit.formatAngle(rollDeg)}", cx, sizePx * 0.95f, kit.text)
+        val yawPart = yawDeg?.let { "  Y ${kit.formatAngle(it)}" } ?: ""
+        canvas.drawText("R ${kit.formatAngle(rollDeg)}$yawPart", cx, sizePx * 0.95f, kit.text)
         if (alert) {
             canvas.drawRect(
                 sizePx * 0.025f, sizePx * 0.025f,

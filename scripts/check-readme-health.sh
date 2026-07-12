@@ -20,12 +20,13 @@ if command -v python3 >/dev/null 2>&1; then PY=python3
 elif command -v python >/dev/null 2>&1; then PY=python
 else PY=python3; fi
 
-$PY - "$ROOT/README.md" "$ROOT" << 'PY'
+# Use paths relative to ROOT (already cd'd) so Windows Python is not handed MSYS /c/... paths.
+$PY - "README.md" "." << 'PY'
 import re, sys
 from pathlib import Path
 
 readme = Path(sys.argv[1])
-root = Path(sys.argv[2])
+root = Path(sys.argv[2]).resolve()
 text = readme.read_text(encoding="utf-8")
 errors = []
 for m in re.finditer(r'\[[^\]]+\]\(([^)]+)\)', text):

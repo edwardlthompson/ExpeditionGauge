@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import dev.foss.expeditiongauge.ui.layout.InsetAwareScaffold
 import dev.foss.expeditiongauge.ui.layout.navigationBarPadding
 import androidx.compose.material3.Text
@@ -92,6 +94,8 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
     val preset = uiState.activePreset
+    val autocalPending by viewModel.autocalPending.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
     var showRecordingAdvanced by remember { mutableStateOf(false) }
     var drawerOpen by remember { mutableStateOf(false) }
     // configChanges keeps the Activity; push live Display.rotation into fusion every frame.
@@ -104,8 +108,20 @@ fun DashboardScreen(
     LaunchedEffect(configuration, displayRotation) {
         viewModel.updateDisplayRotation(displayRotation)
     }
+    LaunchedEffect(Unit) {
+        viewModel.autocalMessages.collect { msg ->
+            snackbarHostState.showSnackbar(msg)
+        }
+    }
 
     BackHandler(enabled = drawerOpen) { drawerOpen = false }
+
+    if (autocalPending != null) {
+        AutocalConfirmDialog(
+            onAccept = viewModel::acceptAutocal,
+            onDismiss = viewModel::dismissAutocal,
+        )
+    }
 
     DashboardMenuDrawer(
         drawerOpen = drawerOpen,
@@ -267,6 +283,10 @@ fun DashboardScreen(
                                 .fillMaxWidth(),
                         )
                     }
+                    SnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier.align(androidx.compose.ui.Alignment.BottomCenter),
+                    )
                 }
             }
         }

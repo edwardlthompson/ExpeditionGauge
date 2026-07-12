@@ -19,6 +19,13 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-12 — Integer P/R/Y + stationary pose autocalibrate
+- **Status:** Accepted
+- **Context:** Decimal attitude jitter; mount pose needs a still-window Zero with honest yaw/compass behavior
+- **Decision:** Whole-degree P/R/Y labels; confirm dialog after ~3s still; soft MagHeading + variance gate (P/R-only when distorted); shared commit gate with manual Zero
+- **Alternatives considered:** Silent auto-Zero without confirm (rejected — slope/false forward); full Madgwick 9-DOF (deferred — MagHeading overlay sufficient for v2.15)
+- **Consequences:** v2.15.0 Settings toggle default on; AA Zero shares CalibrationStore; GPS course never offset
+
 ### 2026-07-12 — Head-unit routes + soft features for HU/AAOS
 - **Status:** Accepted
 - **Context:** Stock AA Play-attribution blocks many FOSS users; aftermarket Android HUs, AAOS, and MITM adapters are viable dash paths

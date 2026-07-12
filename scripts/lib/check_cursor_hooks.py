@@ -156,7 +156,9 @@ def main() -> int:
     parser.add_argument("--root", default=".")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
-    root = Path(args.root).resolve()
+    from repo_paths import resolve_repo_root
+
+    root = resolve_repo_root(args.root)
 
     errors = validate(root)
     if args.smoke:

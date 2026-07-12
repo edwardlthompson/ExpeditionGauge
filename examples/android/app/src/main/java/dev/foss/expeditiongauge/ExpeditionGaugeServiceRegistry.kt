@@ -19,6 +19,11 @@ internal fun ExpeditionGaugeServices.bindLifecycleFlows(
         }
     }
     scope.launch {
+        settingsPreferences.autoCalibrateWhenStill.collect { enabled ->
+            autocalibrationController.enabled = enabled
+        }
+    }
+    scope.launch {
         settingsPreferences.developerModeEnabled.collect { enabled ->
             FeatureFlags.developerModeEnabled = enabled
         }
@@ -94,3 +99,17 @@ private data class AlertProcessInput(
     val sessionId: Long?,
     val audible: Boolean,
 )
+
+fun ExpeditionGaugeServices.startSensors() {
+    phoneSensorProvider.start()
+    fusedGpsProvider.startPhone()
+    bleImuManager.startScan()
+    if (FeatureFlags.tpmsEnabled) bleTpmsManager.startScan()
+}
+
+fun ExpeditionGaugeServices.stopSensors() {
+    phoneSensorProvider.stop()
+    fusedGpsProvider.stopPhone()
+    bleImuManager.stopScan()
+    bleTpmsManager.stopScan()
+}

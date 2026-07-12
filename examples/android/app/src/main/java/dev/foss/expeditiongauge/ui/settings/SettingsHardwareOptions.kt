@@ -40,6 +40,8 @@ fun SettingsHardwareOptions(
     onForgetExternalGps: () -> Unit,
     onImuManage: () -> Unit,
     onCalibrationReset: () -> Unit,
+    autoCalibrateWhenStill: Boolean = true,
+    onAutoCalibrateWhenStillChange: (Boolean) -> Unit = {},
 ) {
     SettingsSwitchRow(
         label = stringResource(R.string.settings_tpms_enable),
@@ -159,4 +161,14 @@ fun SettingsHardwareOptions(
     Button(onClick = onCalibrationReset, modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.settings_calibration_reset))
     }
+    SettingsSwitchRow(
+        label = stringResource(R.string.settings_auto_calibrate),
+        checked = autoCalibrateWhenStill,
+        onCheckedChange = onAutoCalibrateWhenStillChange,
+        modifier = Modifier.testTag("settings_auto_calibrate"),
+    )
+    Text(
+        text = stringResource(R.string.settings_auto_calibrate_hint),
+        modifier = Modifier.fillMaxWidth(),
+    )
 }

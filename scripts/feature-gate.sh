@@ -130,7 +130,9 @@ should_run() {
 
 skip_or_block() {
   local msg="$1"
-  if [ "$STRICT" = true ]; then
+  # multi = run whatever toolchains exist; missing optional tools are skips even in --strict.
+  # Primary stack (android/web/…) still blocks when its toolchain is absent.
+  if [ "$STRICT" = true ] && [ "$STACK" != "multi" ]; then
     block_env "$msg"
   fi
   log "$msg"

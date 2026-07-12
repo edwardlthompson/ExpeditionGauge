@@ -59,6 +59,10 @@ class SettingsPreferences(private val context: Context) {
         it[keys.androidAutoEnabled] ?: false
     }
 
+    val autoCalibrateWhenStill: Flow<Boolean> = context.settingsDataStore.data.map {
+        it[keys.autoCalibrateWhenStill] ?: true
+    }
+
     val androidAutoMetricAllowlist: Flow<Set<String>> = context.settingsDataStore.data.map { prefs ->
         val raw = prefs[keys.androidAutoMetrics]
         if (raw.isNullOrBlank()) {
@@ -119,4 +123,5 @@ class SettingsPreferences(private val context: Context) {
     suspend fun setAutoRecordDeviceAddresses(addresses: Set<String>) = store.setAutoRecordDeviceAddresses(addresses)
     suspend fun setSessionStorageFreePercent(percent: Int) = store.setSessionStorageFreePercent(percent)
     suspend fun resetCalibrationFlag() = store.resetCalibrationFlag()
+    suspend fun setAutoCalibrateWhenStill(enabled: Boolean) = store.setAutoCalibrateWhenStill(enabled)
 }

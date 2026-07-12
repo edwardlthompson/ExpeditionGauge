@@ -52,6 +52,8 @@ fun SettingsScreen(
     onCalibrationReset: () -> Unit,
     onCalibrationTips: () -> Unit = {},
     onCalibrationWizard: () -> Unit = {},
+    autoCalibrateWhenStill: Boolean = true,
+    onAutoCalibrateWhenStillChange: (Boolean) -> Unit = {},
     developerModeEnabled: Boolean = false,
     onDeveloperModeChange: (Boolean) -> Unit = {},
     onDeveloperModeOpen: () -> Unit = {},
@@ -271,6 +273,8 @@ fun SettingsScreen(
             onForgetExternalGps = onForgetExternalGps,
             onImuManage = onImuManage,
             onCalibrationReset = onCalibrationReset,
+            autoCalibrateWhenStill = autoCalibrateWhenStill,
+            onAutoCalibrateWhenStillChange = onAutoCalibrateWhenStillChange,
         )
         Button(onClick = onBack) {
             Text(stringResource(R.string.settings_close))

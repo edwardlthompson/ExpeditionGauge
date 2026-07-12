@@ -24,6 +24,8 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | AA grid + maps wave | 2.12.0 | ✅ GridTemplate HUD, imperial fix, route colors, offline prefetch |
 | Inclinometer landscape | 2.14.0 | ✅ ADR-0013 SensorAxisRemap; styles; weekly-health stub |
 | AA discovery + sideload | 2.14.1–2.14.2 | ✅ POI category; Play initiator install kit; HU/AAOS soft features + HEAD_UNIT_ROUTES |
+| Audit 2026-07-12 | tooling | ✅ MSYS `/c`→Windows root; multi-strict optional skip; stack sync from project.config |
+| Integer P/R/Y autocal | 2.15.0 | ✅ Whole-degree labels; still Zero + yaw offset; mag gate |
 
 ## G-meter HUD rotation (locked 2026-06-30)
 

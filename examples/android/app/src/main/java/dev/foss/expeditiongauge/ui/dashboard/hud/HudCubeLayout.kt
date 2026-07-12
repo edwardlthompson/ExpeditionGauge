@@ -47,6 +47,7 @@ fun HudCubeLayout(
                         rollAlertActive = AlertType.ROLL in props.activeAlerts,
                         maxPitchThresholdDeg = props.maxPitchAlertDeg,
                         maxRollThresholdDeg = props.maxRollAlertDeg,
+                        yawDeg = telemetry.bodyYawDeg ?: telemetry.headingDeg,
                         gaugeSizeDp = props.layoutSpec.attitudeGaugeSizeDp.dp,
                         modifier = Modifier.fillMaxSize(),
                     )

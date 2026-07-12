@@ -17,6 +17,7 @@ object InclinometerCarIcon {
         maxRollThresholdDeg: Float? = null,
         labelPitchDeg: Float? = null,
         labelRollDeg: Float? = null,
+        yawDeg: Float? = null,
     ): CarIcon {
         val bitmap = renderer.render(
             pitchDeg = pitchDeg,
@@ -28,6 +29,7 @@ object InclinometerCarIcon {
             maxRollThresholdDeg = maxRollThresholdDeg,
             labelPitchDeg = labelPitchDeg,
             labelRollDeg = labelRollDeg,
+            yawDeg = yawDeg,
         )
         return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
     }
@@ -42,6 +44,7 @@ object InclinometerCarIcon {
         maxRollThresholdDeg: Float? = null,
         labelPitchDeg: Float? = null,
         labelRollDeg: Float? = null,
+        yawDeg: Float? = null,
     ): Bitmap = renderer.render(
         pitchDeg = pitchDeg,
         rollDeg = rollDeg,
@@ -52,5 +55,6 @@ object InclinometerCarIcon {
         maxRollThresholdDeg = maxRollThresholdDeg,
         labelPitchDeg = labelPitchDeg,
         labelRollDeg = labelRollDeg,
+        yawDeg = yawDeg,
     )
 }

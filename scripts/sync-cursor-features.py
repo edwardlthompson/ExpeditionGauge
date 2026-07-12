@@ -173,14 +173,15 @@ def sync(root: Path, tier: str, copy_commercial: bool, patch_init: bool = False)
         hidden = []
 
     stack_sel = read_json(cursor_dir / "stack-selection.json")
-    stack = stack_sel.get("stack", "multi")
+    project_cfg = read_json(root / "project.config.json")
+    stack = str(project_cfg.get("stack") or stack_sel.get("stack") or "multi")
     next_sig = manifest_signature(tier, enabled, hidden, stack)
     stack_path = cursor_dir / "stack-selection.json"
     manifest_path = cursor_dir / "cursor-features.json"
     unchanged = read_manifest_signature(stack_path) == next_sig
 
     stack_sel["distribution_tier"] = tier
-    stack_sel.setdefault("stack", stack)
+    stack_sel["stack"] = stack
     stack_sel["cursor_features_enabled"] = enabled
     stack_sel["cursor_features_hidden"] = hidden
     if not unchanged:
@@ -223,7 +224,11 @@ def main() -> int:
     parser.add_argument("--copy-commercial", action="store_true")
     parser.add_argument("--patch-init", action="store_true", help="Rewrite INITIALIZATION_PROMPT Distribution section")
     args = parser.parse_args()
-    root = Path(args.root).resolve()
+    # Local import keeps sync usable when lib is not on PYTHONPATH yet.
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
+    from repo_paths import resolve_repo_root
+
+    root = resolve_repo_root(args.root)
     sync(root, args.tier, args.copy_commercial, patch_init=args.patch_init)
     print(f"Synced Cursor features (tier={args.tier})")
     return 0

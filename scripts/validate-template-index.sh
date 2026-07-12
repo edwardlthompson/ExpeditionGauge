@@ -3,11 +3,12 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-INDEX="$ROOT/TEMPLATE_INDEX.json"
+cd "$ROOT"
+INDEX="TEMPLATE_INDEX.json"
 
 if ! command -v jq &>/dev/null; then
   echo "jq not found; using python fallback"
-  python3 - "$INDEX" "$ROOT" << 'PY'
+  python3 - "$INDEX" "." << 'PY'
 import glob, json, sys, os
 index_path, root = sys.argv[1], sys.argv[2]
 with open(index_path) as f:
@@ -76,7 +77,7 @@ if [ "$ERRORS" -gt 0 ]; then
   exit 1
 fi
 
-python3 - "$INDEX" "$ROOT" << 'PY' || exit 1
+python3 - "$INDEX" "." << 'PY' || exit 1
 import glob, json, os, sys
 index_path, root = sys.argv[1], sys.argv[2]
 with open(index_path) as f:

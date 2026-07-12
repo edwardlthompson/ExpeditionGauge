@@ -23,6 +23,10 @@
     <string name="gauge_pitch">Pitch: %1$s</string>
     <string name="gauge_roll">Roll: %1$s</string>
     <string name="gauge_calibrate">Calibrate / Set Level</string>
+    <string name="autocal_confirm_title">Set level here?</string>
+    <string name="autocal_confirm_body">Phone is still. Use only on flat ground with the vehicle pointed forward. This zeros pitch, roll, and yaw.</string>
+    <string name="autocal_confirm_accept">Set level</string>
+    <string name="autocal_confirm_dismiss">Not now</string>
     <string name="gauge_speed_unit">%1$s</string>
     <string name="gauge_hdg_label">HDG</string>
     <string name="gauge_hud_pitch_short">P %1$s</string>
@@ -121,6 +125,7 @@
     <string name="calibration_tips_intro">Mount the phone rigidly with the screen facing you. Level the device before your first drive.</string>
     <string name="calibration_mount_diagram">[ Phone ] — level mount\n  windshield or dash bar\n  portrait or landscape OK</string>
     <string name="calibration_tips_level">Tap Calibrate on the attitude gauge when parked on level ground.</string>
+    <string name="calibration_tips_autocal">Or leave Auto-calibrate on: sit still ~3s in the mount (flat ground, pointed forward) and confirm Set level. Yaw is compass-based when stable, otherwise relative.</string>
     <string name="calibration_tips_figure8">After mounting, drive a slow figure-8 to help compass and GPS heading settle.</string>
     <string name="calibration_tips_full_wizard">Open the full calibration wizard from Settings for multi-IMU setup.</string>
     <string name="calibration_wizard_open">Full calibration wizard</string>
@@ -132,7 +137,7 @@
     <string name="calibration_wizard_imu">Assign each external IMU to a corner. Connected devices: %1$d</string>
     <string name="calibration_wizard_figure8">Drive a slow figure-8 at parking-lot speed to settle compass and GPS heading.</string>
     <string name="calibration_wizard_test_drive">Test drive: verify live attitude and speed while moving slowly.</string>
-    <string name="calibration_wizard_live_yaw">Live pitch %.1f° · roll %.1f° · speed %.0f km/h</string>
+    <string name="calibration_wizard_live_yaw">Live pitch %.0f° · roll %.0f° · speed %.0f km/h</string>
     <string name="video_sync_import">Import video</string>
     <string name="video_sync_offset">Video offset (ms): %1$d</string>
     <string name="video_sync_burn_in">Export burn-in video</string>

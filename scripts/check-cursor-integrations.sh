@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 TIER="foss"
-ARGS=(--root "$ROOT")
+ARGS=(--root .)
 while [ $# -gt 0 ]; do
   case "$1" in
     --tier) TIER="${2:-foss}"; shift 2 ;;
@@ -11,4 +12,4 @@ while [ $# -gt 0 ]; do
   esac
 done
 ARGS+=(--tier "$TIER")
-python3 "$ROOT/scripts/lib/check_cursor_integrations.py" "${ARGS[@]}"
+python3 scripts/lib/check_cursor_integrations.py "${ARGS[@]}"

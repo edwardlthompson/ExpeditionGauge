@@ -82,6 +82,7 @@ class MainActivity : ComponentActivity() {
             database = services.database,
             telemetryBus = services.telemetryBus,
             calibrationStore = services.calibrationStore,
+            autocalibrationController = services.autocalibrationController,
             thermalMonitor = services.thermalMonitor,
             recordingWriter = services.recordingWriter,
             settingsProfileRepository = services.settingsProfileRepository,

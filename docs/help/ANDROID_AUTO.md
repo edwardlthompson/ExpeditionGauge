@@ -79,7 +79,7 @@ pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGaug
 
 ## Zero (set level)
 
-**Zero** calibrates pitch/roll to the current attitude (same as phone **Calibrate**). Use on a **level surface** when parked or crawling slowly.
+**Zero** calibrates pitch/roll/yaw to the current attitude (same as phone **Calibrate** / auto-calibrate confirm). Use on a **level surface** with the vehicle pointed forward when parked. Attitude labels show whole degrees; the inclinometer graphic stays smooth.
 
 ## Angle alerts
 

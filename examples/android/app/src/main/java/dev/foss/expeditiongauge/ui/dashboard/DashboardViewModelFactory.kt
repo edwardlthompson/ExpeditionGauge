@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import dev.foss.expeditiongauge.calibration.AutocalibrationController
 import dev.foss.expeditiongauge.calibration.CalibrationStore
 import android.content.Context
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
@@ -20,6 +21,7 @@ class DashboardViewModelFactory(
     private val database: ExpeditionGaugeDatabase,
     private val telemetryBus: TelemetryBus,
     private val calibrationStore: CalibrationStore,
+    private val autocalibrationController: AutocalibrationController,
     private val thermalMonitor: ThermalMonitor,
     private val recordingWriter: RecordingWriter,
     private val settingsProfileRepository: SettingsProfileRepository,
@@ -38,6 +40,7 @@ class DashboardViewModelFactory(
                 database = database,
                 telemetryBus = telemetryBus,
                 calibrationStore = calibrationStore,
+                autocalibrationController = autocalibrationController,
                 thermalMonitor = thermalMonitor,
                 recordingWriter = recordingWriter,
                 settingsProfileRepository = settingsProfileRepository,

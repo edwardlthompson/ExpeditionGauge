@@ -2,7 +2,8 @@
 # Validate BUILD_PLAN sprints have Parallel tables with enough AGENT rows.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-BUILD_PLAN="$ROOT/BUILD_PLAN.md"
+cd "$ROOT"
+BUILD_PLAN="BUILD_PLAN.md"
 MIN_AGENTS=2
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -27,7 +28,7 @@ while [ $# -gt 0 ]; do
       ;;
   esac
 done
-python3 "$ROOT/scripts/lib/parallel_scope_cli.py" \
+python3 scripts/lib/parallel_scope_cli.py \
   --build-plan "$BUILD_PLAN" \
   check-build-plan \
   --min-agents "$MIN_AGENTS"

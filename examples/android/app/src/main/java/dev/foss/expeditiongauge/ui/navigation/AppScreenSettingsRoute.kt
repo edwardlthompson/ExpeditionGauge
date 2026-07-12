@@ -84,6 +84,8 @@ fun AppScreenSettingsRoute(
         .collectAsStateWithLifecycle(initialValue = emptySet())
     val sessionStoragePercent by services.settingsPreferences.sessionStorageFreePercent
         .collectAsStateWithLifecycle(initialValue = 25)
+    val autoCalibrateWhenStill by services.settingsPreferences.autoCalibrateWhenStill
+        .collectAsStateWithLifecycle(initialValue = true)
     LaunchedEffect(Unit) {
         mediaStorageBytes = services.sessionMediaRepository.totalStorageBytes()
         sessionStorageUsed = services.sessionStorageBudget.usedBytes()
@@ -232,6 +234,10 @@ fun AppScreenSettingsRoute(
         },
         onCalibrationTips = { onScreenChange(AppScreen.CalibrationTips) },
         onCalibrationWizard = { onScreenChange(AppScreen.CalibrationWizard) },
+        autoCalibrateWhenStill = autoCalibrateWhenStill,
+        onAutoCalibrateWhenStillChange = { enabled ->
+            scope.launch { services.settingsPreferences.setAutoCalibrateWhenStill(enabled) }
+        },
         developerModeEnabled = developerModeEnabled,
         onDeveloperModeChange = { enabled ->
             scope.launch { services.settingsPreferences.setDeveloperModeEnabled(enabled) }

@@ -108,7 +108,7 @@ TIER="foss"
 if [ -f .cursor/stack-selection.json ]; then
   TIER="$(python3 -c "import json;print(json.load(open('.cursor/stack-selection.json')).get('distribution_tier','foss'))" 2>/dev/null || echo foss)"
 fi
-python3 scripts/sync-cursor-features.py --root "$ROOT" --tier "$TIER"
+python3 scripts/sync-cursor-features.py --root . --tier "$TIER"
 run_check bash scripts/check-cursor-integrations.sh --tier "$TIER"
 run_check bash scripts/check-build-plan-parallel.sh
 run_check bash scripts/check-template-version-sync.sh

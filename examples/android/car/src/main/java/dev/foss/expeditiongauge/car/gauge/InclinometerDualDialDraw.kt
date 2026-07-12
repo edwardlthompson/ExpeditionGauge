@@ -29,11 +29,15 @@ internal class InclinometerDualDialDraw(
         strokeCap = Paint.Cap.ROUND
     }
 
-    fun draw(pitchDeg: Float, rollDeg: Float, alert: Boolean) {
+    fun draw(pitchDeg: Float, rollDeg: Float, alert: Boolean, yawDeg: Float? = null) {
         val cy = sizePx / 2f
         val r = sizePx * 0.22f
         drawDial(sizePx * 0.28f, cy, r, pitchDeg, "P")
         drawDial(sizePx * 0.72f, cy, r, rollDeg, "R")
+        yawDeg?.let {
+            kit.text.textSize = sizePx * 0.06f
+            canvas.drawText("Y ${kit.formatAngle(it)}", sizePx / 2f, sizePx * 0.96f, kit.text)
+        }
         if (alert) {
             canvas.drawRect(
                 sizePx * 0.025f, sizePx * 0.025f,

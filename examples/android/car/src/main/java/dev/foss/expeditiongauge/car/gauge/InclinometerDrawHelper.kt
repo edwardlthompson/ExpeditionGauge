@@ -87,10 +87,11 @@ internal class InclinometerDrawHelper(
         kit.pointer(canvas, px, needleY, pointingRight = left)
     }
 
-    fun drawReadouts(pitchDeg: Float, rollDeg: Float, cx: Float) {
+    fun drawReadouts(pitchDeg: Float, rollDeg: Float, cx: Float, yawDeg: Float? = null) {
         canvas.drawText(kit.formatAngle(pitchDeg), cx, sizePx * 0.11f, kit.text)
-        kit.text.textSize = sizePx * 0.07f
-        canvas.drawText("R ${kit.formatAngle(rollDeg)}", cx, sizePx * 0.94f, kit.text)
+        kit.text.textSize = sizePx * 0.065f
+        val yawPart = yawDeg?.let { "  Y ${kit.formatAngle(it)}" } ?: ""
+        canvas.drawText("R ${kit.formatAngle(rollDeg)}$yawPart", cx, sizePx * 0.94f, kit.text)
         kit.text.textSize = sizePx * 0.09f
     }
 

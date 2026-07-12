@@ -65,12 +65,12 @@ internal class InclinometerPaintKit(private val sizePx: Int) {
     }
 
     fun formatAngle(deg: Float): String {
-        val rounded = (deg * 10f).roundToInt() / 10f
+        val rounded = deg.roundToInt()
         val sign = when {
-            rounded > 0f -> "+"
-            rounded < 0f -> "−"
+            rounded > 0 -> "+"
+            rounded < 0 -> "−"
             else -> ""
         }
-        return "$sign${"%.1f".format(abs(rounded))}°"
+        return "$sign${abs(rounded)}°"
     }
 }

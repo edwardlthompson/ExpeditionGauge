@@ -4,10 +4,10 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.14.0** (2026-07-09).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell, **v2.14** landscape IMU remap + inclinometer styles.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.15.0** (2026-07-12).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell, **v2.14** landscape IMU remap + inclinometer styles / AA discovery, **v2.15** integer P/R/Y + stationary autocalibrate.
 - **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
-- **Audit 2026-07-04 / 2026-07-09:** tooling + Dependabot lockfile + inclinometer landscape archived.
+- **Audit 2026-07-12:** MSYS path + multi-strict + stack sync archived; Dependabot 0 open; integer P/R/Y autocalibrate uncommitted (F-002).
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
@@ -74,17 +74,16 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Audit 2026-07-04 | post v2.13.0 hardening (A-001–A-002) | same — archived @ pending push |
 | Audit 2026-07-09 | tooling + Dependabot lockfile (A-001–A-003) | same |
 | Audit 2026-07-09 evening | inclinometer landscape ADR-0013 (A-001–A-004) | same |
+| Audit 2026-07-12 | MSYS paths + multi-strict + stack sync (A-001–A-004) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 
 ---
 
 ## Active board
 
-> **Audit 2026-07-09 evening** archived in COMPLETED_TASKS.md (inclinometer landscape ADR-0013 + ship prep).
+> **Audit 2026-07-12** archived in COMPLETED_TASKS.md (MSYS path + multi-strict + stack sync).
 
-### v2.14 release (2026-07-09)
-
-> Shipping inclinometer landscape (ADR-0013), styles, GPS course heading, weekly-health stub.
+### v2.14 / AA device (open)
 
 | Status | Owner | Task |
 |--------|-------|------|

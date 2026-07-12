@@ -61,6 +61,7 @@ fun CalibrationTipsScreen(
             )
         }
         Text(text = stringResource(R.string.calibration_tips_level), color = GaugeScaleWhite)
+        Text(text = stringResource(R.string.calibration_tips_autocal), color = GaugeScaleWhite)
         Text(text = stringResource(R.string.calibration_tips_figure8), color = GaugeScaleWhite)
         Text(text = stringResource(R.string.calibration_tips_full_wizard), color = GaugeScaleWhite)
         Button(onClick = onBack, modifier = Modifier.testTag("calibration_tips_back")) {

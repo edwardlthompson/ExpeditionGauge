@@ -142,7 +142,9 @@ def main() -> int:
     parser.add_argument("--root", default=".")
     parser.add_argument("--tier", default="foss", choices=("foss", "commercial"))
     args = parser.parse_args()
-    root = Path(args.root).resolve()
+    from repo_paths import resolve_repo_root
+
+    root = resolve_repo_root(args.root)
 
     errors = validate_artifacts(root)
     errors.extend(validate_agent_command_strings(root))

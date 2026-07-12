@@ -2,7 +2,6 @@ package dev.foss.expeditiongauge.car
 
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.alerts.AlertType
-import dev.foss.expeditiongauge.calibration.CalibrationStore
 import dev.foss.expeditiongauge.car.gauge.InclinometerCarIcon
 import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
@@ -20,7 +19,6 @@ import kotlinx.coroutines.runBlocking
 class AndroidAutoBridge(
     private val services: ExpeditionGaugeServices,
     private val settings: SettingsPreferences,
-    private val calibrationStore: CalibrationStore,
     scope: CoroutineScope,
 ) : CarAppBridge {
 
@@ -85,6 +83,7 @@ class AndroidAutoBridge(
                 rollAlert = AlertType.ROLL in activeAlerts,
                 maxPitchThresholdDeg = alertThresholds.maxPitchDeg,
                 maxRollThresholdDeg = alertThresholds.maxRollDeg,
+                yawDeg = snapshot.bodyYawDeg ?: snapshot.headingDeg,
             )
         }.getOrNull()
         return built.copy(gMeter = built.gMeter.copy(image = icon))
@@ -115,9 +114,10 @@ class AndroidAutoBridge(
 
     override fun zeroAttitude(): Boolean = runBlocking {
         if (snapshot.fusionSource != "phone") return@runBlocking false
-        calibrationStore.zeroToCurrentDisplay(
-            snapshot.pitchDeg,
-            snapshot.rollDeg,
+        services.autocalibrationController.manualZero(
+            pitchDeg = snapshot.pitchDeg,
+            rollDeg = snapshot.rollDeg,
+            yawDeg = snapshot.bodyYawDeg ?: snapshot.headingDeg,
             displayRotation = 0,
         )
         maybeInvalidate(force = true)

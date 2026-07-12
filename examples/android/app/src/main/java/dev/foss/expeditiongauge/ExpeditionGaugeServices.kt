@@ -8,6 +8,7 @@ import dev.foss.expeditiongauge.ble.tpms.BleTpmsManager
 import dev.foss.expeditiongauge.alerts.AlertService
 import dev.foss.expeditiongauge.alerts.AlertThresholdsPreferences
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
+import dev.foss.expeditiongauge.calibration.AutocalibrationController
 import dev.foss.expeditiongauge.calibration.CalibrationStore
 import dev.foss.expeditiongauge.calibration.CalibrationWizardStore
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
@@ -47,6 +48,7 @@ class ExpeditionGaugeServices(
 ) {
     val telemetryBus = TelemetryBus()
     val calibrationStore = CalibrationStore(appContext)
+    val autocalibrationController = AutocalibrationController(calibrationStore)
     val fusionEngine = SensorFusionEngine(calibrationStore)
     val driftEstimator = DriftAngleEstimator()
     val thermalMonitor = ThermalMonitor(appContext)
@@ -112,6 +114,7 @@ class ExpeditionGaugeServices(
             calibrationStore = calibrationStore,
             scope = scope,
             bleImuManager = bleImuManager,
+            autocalibrationController = autocalibrationController,
         )
         fusedGpsProvider = FusedGpsLocationProvider(
             context = appContext,
@@ -132,19 +135,5 @@ class ExpeditionGaugeServices(
         telemetryOrchestrator.start()
         autoRecordMonitor.start()
         bindLifecycleFlows(scope, accessibilityPreferences)
-    }
-
-    fun startSensors() {
-        phoneSensorProvider.start()
-        fusedGpsProvider.startPhone()
-        bleImuManager.startScan()
-        if (FeatureFlags.tpmsEnabled) bleTpmsManager.startScan()
-    }
-
-    fun stopSensors() {
-        phoneSensorProvider.stop()
-        fusedGpsProvider.stopPhone()
-        bleImuManager.stopScan()
-        bleTpmsManager.stopScan()
     }
 }

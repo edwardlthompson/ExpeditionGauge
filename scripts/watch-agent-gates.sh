@@ -41,7 +41,13 @@ feature_autofix_paths() {
 import json, sys
 from pathlib import Path
 
-root = Path(sys.argv[1])
+def resolve_repo_root(raw: str) -> Path:
+    s = str(raw).strip().replace("\\", "/")
+    if len(s) >= 3 and s[0] == "/" and s[2] == "/" and s[1].isalpha():
+        s = f"{s[1].upper()}:{s[2:]}"
+    return Path(s).expanduser().resolve()
+
+root = resolve_repo_root(sys.argv[1])
 prog = root / ".cursor/agent-progress.json"
 feature = ""
 stack = "web"

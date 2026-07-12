@@ -13,10 +13,8 @@ object GaugeLogic {
     const val RING_20_DEG = 20f
     const val RING_30_DEG = 30f
 
-    fun formatSignedDegrees(value: Float): String {
-        val sign = if (value >= 0f) "+" else ""
-        return "$sign${"%.1f".format(value)}°"
-    }
+    /** Whole degrees with explicit +/− (attitude labels — no decimals / jitter). */
+    fun formatSignedDegrees(value: Float): String = formatWholeDegrees(value)
 
     fun formatWholeDegrees(value: Float): String {
         val sign = if (value >= 0f) "+" else ""

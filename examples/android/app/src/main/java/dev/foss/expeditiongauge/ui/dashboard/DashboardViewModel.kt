@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.foss.expeditiongauge.calibration.AutocalibrationController
 import dev.foss.expeditiongauge.calibration.CalibrationStore
 import android.content.Context
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
@@ -58,6 +59,7 @@ class DashboardViewModel(
     private val database: ExpeditionGaugeDatabase,
     private val telemetryBus: TelemetryBus,
     private val calibrationStore: CalibrationStore,
+    private val autocalibrationController: AutocalibrationController,
     private val thermalMonitor: ThermalMonitor,
     private val recordingWriter: RecordingWriter,
     private val settingsProfileRepository: SettingsProfileRepository,
@@ -73,6 +75,8 @@ class DashboardViewModel(
     private var receiverCountJob: Job? = null
 
     val lapTimingState: StateFlow<PredictiveTimingState> = lapTimingService.liveState
+    val autocalPending = autocalibrationController.pending
+    val autocalMessages = autocalibrationController.messages
 
     val uiState: StateFlow<DashboardUiState> = combine(
         combine(
@@ -131,12 +135,24 @@ class DashboardViewModel(
     fun calibrateLevel() {
         viewModelScope.launch {
             val snapshot = telemetryBus.snapshots.value
-            // Vehicle-frame Zero — one calibration works in every phone orientation.
-            calibrationStore.zeroToCurrentDisplay(
-                snapshot.pitchDeg,
-                snapshot.rollDeg,
-                displayRotation.value,
+            autocalibrationController.manualZero(
+                pitchDeg = snapshot.pitchDeg,
+                rollDeg = snapshot.rollDeg,
+                yawDeg = snapshot.bodyYawDeg ?: snapshot.headingDeg,
+                displayRotation = displayRotation.value,
             )
+        }
+    }
+
+    fun acceptAutocal() {
+        viewModelScope.launch {
+            autocalibrationController.acceptPending(displayRotation.value)
+        }
+    }
+
+    fun dismissAutocal() {
+        viewModelScope.launch {
+            autocalibrationController.dismissPending()
         }
     }
 

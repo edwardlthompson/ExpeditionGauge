@@ -45,6 +45,8 @@
     <string name="settings_external_gps_enable">Enable external Bluetooth GPS</string>
     <string name="settings_external_gps_forget">Forget external GPS device</string>
     <string name="settings_calibration_reset">Reset calibration</string>
+    <string name="settings_auto_calibrate">Auto-calibrate when still</string>
+    <string name="settings_auto_calibrate_hint">After the phone sits still ~3s in the mount, ask to set level (flat ground, pointed forward). Yaw uses compass when stable; otherwise relative.</string>
     <string name="settings_performance_hint">Lower logging rate reduces CPU and heat. Connect an external IMU to offload phone sensors when available.</string>
     <string name="settings_lap_timing_enable">Enable lap timing</string>
     <string name="settings_attitude_gauge_label">Attitude G-meter mode</string>

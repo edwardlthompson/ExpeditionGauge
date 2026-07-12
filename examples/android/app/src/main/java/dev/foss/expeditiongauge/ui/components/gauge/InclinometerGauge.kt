@@ -50,6 +50,7 @@ fun InclinometerGauge(
     rollAlertActive: Boolean = false,
     maxPitchThresholdDeg: Float? = null,
     maxRollThresholdDeg: Float? = null,
+    yawDeg: Float? = null,
     gaugeSizeDp: Dp = 180.dp,
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -72,6 +73,7 @@ fun InclinometerGauge(
         rollAlertActive,
         maxPitchThresholdDeg,
         maxRollThresholdDeg,
+        yawDeg,
         gaugeSizeDp,
     ) {
         InclinometerCarIcon.renderBitmap(
@@ -84,6 +86,7 @@ fun InclinometerGauge(
             maxRollThresholdDeg = maxRollThresholdDeg,
             labelPitchDeg = displayPitch,
             labelRollDeg = displayRoll,
+            yawDeg = yawDeg,
         )
     }
 
@@ -106,8 +109,12 @@ fun InclinometerGauge(
                 onLongPressCalibrate = { showSheet = true },
             )
             .semantics {
-                contentDescription = "Inclinometer pitch ${GaugeLogic.formatSignedDegrees(displayPitch)}, " +
-                    "roll ${GaugeLogic.formatSignedDegrees(displayRoll)}, style ${style.name}"
+                contentDescription = buildString {
+                    append("Inclinometer pitch ${GaugeLogic.formatSignedDegrees(displayPitch)}, ")
+                    append("roll ${GaugeLogic.formatSignedDegrees(displayRoll)}")
+                    yawDeg?.let { append(", yaw ${GaugeLogic.formatSignedDegrees(it)}") }
+                    append(", style ${style.name}")
+                }
             }
             .testTag("inclinometer_gauge"),
         contentAlignment = Alignment.Center,
@@ -128,7 +135,11 @@ fun InclinometerGauge(
                 modifier = Modifier.padding(SpacingMd),
             )
             Text(
-                text = "P ${GaugeLogic.formatSignedDegrees(displayPitch)}  R ${GaugeLogic.formatSignedDegrees(displayRoll)}",
+                text = buildString {
+                    append("P ${GaugeLogic.formatSignedDegrees(displayPitch)}  ")
+                    append("R ${GaugeLogic.formatSignedDegrees(displayRoll)}")
+                    yawDeg?.let { append("  Y ${GaugeLogic.formatSignedDegrees(it)}") }
+                },
                 color = GaugeScaleWhite,
                 modifier = Modifier.padding(horizontal = SpacingMd),
             )

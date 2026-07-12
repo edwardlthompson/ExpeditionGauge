@@ -58,12 +58,18 @@ class SensorFusionEngine(
         val (ax0, ay0, az0) = lastAccel
         val (ax, ay, az) = SensorAxisRemap.remap(ax0, ay0, az0, displayRotation)
         val (gx, gy, gz) = SensorAxisRemap.remap(x, y, z, displayRotation)
+        lastGyro = Triple(gx, gy, gz)
         if (useMadgwick) {
             madgwick.update(gx, gy, gz, ax, ay, az)
         } else {
             complementary.update(gx, gy, gz, ax, ay, az, dtSec)
         }
         lastTimestampNs = timestampNs
+    }
+
+    fun onMagnetometer(x: Float, y: Float, z: Float) {
+        val (mx, my, mz) = SensorAxisRemap.remap(x, y, z, displayRotation)
+        lastMag = Triple(mx, my, mz)
     }
 
     fun currentOutput(): FusionOutput {
@@ -74,14 +80,19 @@ class SensorFusionEngine(
         val (vehiclePitch, vehicleRoll) = VehicleAttitudeLogic.fromDevice(
             rawPitch, rawRoll, displayRotation = 0,
         )
-        val (pitch, roll) = calibrationStore.applyOffsets(
-            vehiclePitch, vehicleRoll, calibrationOffsets,
+        val magYaw = lastMag?.let { (mx, my, mz) ->
+            val (ax, ay, az) = lastAccel
+            MagHeading.yawDeg(ax, ay, az, mx, my, mz)
+        }
+        val rawYawEffective = magYaw ?: rawYaw
+        val (pitch, roll, yaw) = calibrationStore.applyAttitude(
+            vehiclePitch, vehicleRoll, rawYawEffective, calibrationOffsets,
         )
         val (ax, ay, az) = lastAccel
         return FusionOutput(
             pitchDeg = pitch,
             rollDeg = roll,
-            yawDeg = rawYaw,
+            yawDeg = yaw,
             latG = ay / GRAVITY,
             lonG = ax / GRAVITY,
         )
@@ -96,7 +107,14 @@ class SensorFusionEngine(
         return rawPitch to rawRoll
     }
 
+    fun lastAccelOrNull(): Triple<Float, Float, Float>? =
+        lastAccel.takeIf { it != Triple(0f, 0f, GRAVITY) || lastTimestampNs > 0L }
+
+    fun lastGyroRates(): Triple<Float, Float, Float>? = lastGyro
+
     private var lastAccel: Triple<Float, Float, Float> = Triple(0f, 0f, GRAVITY)
+    private var lastGyro: Triple<Float, Float, Float>? = null
+    private var lastMag: Triple<Float, Float, Float>? = null
 
     companion object {
         private const val GRAVITY = 9.81f

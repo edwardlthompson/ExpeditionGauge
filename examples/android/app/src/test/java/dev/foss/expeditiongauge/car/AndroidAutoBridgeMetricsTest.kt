@@ -23,7 +23,7 @@ class AndroidAutoBridgeMetricsTest {
 
         assertEquals("100 KM/H", metrics["speed"])
         assertEquals("0.85 G", metrics["latG"])
-        assertEquals("+5.0°", metrics["beta"])
+        assertEquals("+5°", metrics["beta"])
         assertEquals("3200 rpm", metrics["rpm"])
     }
 

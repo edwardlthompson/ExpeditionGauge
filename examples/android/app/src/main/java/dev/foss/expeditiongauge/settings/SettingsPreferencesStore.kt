@@ -141,4 +141,8 @@ internal class SettingsPreferencesStore(
     suspend fun resetCalibrationFlag() {
         context.settingsDataStore.edit { it[keys.calibrationReset] = 1f }
     }
+
+    suspend fun setAutoCalibrateWhenStill(enabled: Boolean) {
+        context.settingsDataStore.edit { it[keys.autoCalibrateWhenStill] = enabled }
+    }
 }
