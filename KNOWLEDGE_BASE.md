@@ -181,3 +181,21 @@
 | **Cause** | (1) Application `WindowManager` reports `ROTATION_0` while Activity is `ROTATION_90` and overwrites fusion; (2) post-Madgwick Euler unwrap is gimbal-fragile |
 | **Fix** | `SensorAxisRemap` before Madgwick; Activity `Display.rotation` authoritative; Madgwick reset on rotation change; locked portrait pitch↔roll swap unchanged |
 | **Prevention** | `.cursor/rules/inclinometer-rotation.mdc`; `SensorAxisRemapTest`; do not reintroduce Application WM on gyro path or Euler unwrap as primary fix |
+
+### KB-020 — CHANGELOG must keep `## [Unreleased]`
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | CI `Validate Bootstrap Artifacts` / upgrade simulation fail: `CHANGELOG.md must have exactly one ## [Unreleased] section (found 0)` |
+| **Cause** | Shipping a version section and deleting the empty Unreleased heading |
+| **Fix** | Always leave a blank `## [Unreleased]` above the latest versioned section |
+| **Prevention** | Run `validate-bootstrap --quick` before `/ship`; never remove Unreleased when cutting a release |
+
+### KB-021 — Pre-release gate stack from `project.config.json`
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Local `pre-release-gate` fails `environment` / `go not found` on ExpeditionGauge despite `stack=android` |
+| **Cause** | Gate hardcoded `--stack multi --strict`, which blocks missing Go/Rust toolchains |
+| **Fix** | `scripts/pre-release-gate.sh` reads `project.config.json` `stack` (android) |
+| **Prevention** | Child repos keep accurate `stack` in project.config; do not force multi on android-only machines |
