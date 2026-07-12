@@ -111,6 +111,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* README / `ANDROID_AUTO_SIDELOAD.md`: full AA install matrix (rooted kit, KingInstaller ≤13, wireless MITM adapters, private Play track, AAAD catalog caveat); document no stock Android 14+ software spoof for Play initiator on arbitrary APKs
+
 ### Fixed
 
 * Android Auto Customize launcher: install session must run as Play Store UID so **both** `installerPackageName` and `initiatingPackageName` are `com.android.vending` (shell initiator hides the app even when installer is spoofed)

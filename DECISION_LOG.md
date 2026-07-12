@@ -19,6 +19,13 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-11 — AA sideload alternatives beyond root / public Play
+- **Status:** Accepted (documentation)
+- **Context:** Users need non-rooted GitHub sideload on Android 14+; research of Fermata/KingInstaller/AAAD/AAXLU/aa-proxy communities
+- **Decision:** Document only proven paths: Magisk PC kit; KingInstaller ≤13; wireless MITM (AAWireless / aa-proxy-rs); private Play Internal testing. Explicitly reject Shizuku-alone, AAAD-for-arbitrary-APK (catalog only), and category churn
+- **Alternatives considered:** Ship a FOSS KingInstaller fork (rejected for A14+ — spoof closed); claim USB-only unrooted A14 fix (rejected — none known); list ExpeditionGauge in AAAD (out of scope / paid catalog gate)
+- **Consequences:** README and `ANDROID_AUTO_SIDELOAD.md` state hard platform limits; kit zip remains the supported rooted path
+
 ### 2026-07-11 — AA Customize launcher requires Play install initiator (not just installer)
 - **Status:** Accepted
 - **Context:** Device smoke showed Customize launcher listing Car Scanner (`initiatingPackageName=com.android.vending`) but not ExpeditionGauge (`installer=vending` yet `initiator=com.android.shell`). UI dump after fixing initiator: **LISTED=True** with checkbox enabled.

@@ -29,47 +29,69 @@ Shipped through **v2.14.1** — Android Auto head-unit discovery (`category.POI`
 
 ## Install without the Play Store (Android Auto)
 
-ExpeditionGauge is FOSS and is **not** on the Play Store. Install the APK from [GitHub Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases), then allow Android Auto to show sideloaded apps:
+ExpeditionGauge is FOSS and is **not** on the public Play Store. Android Auto will **not** list a normal GitHub sideload on modern phones — it requires Play Store install attribution (`installerPackageName` **and** `initiatingPackageName` = `com.android.vending`).
 
-### 1. Install the phone app (so Android Auto can list it)
+Download assets from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases):
 
-Android Auto hides apps unless **both** install fields look like Play Store (`installer` **and** `initiating` package = `com.android.vending`). Browser/`adb install` is not enough.
+- `ExpeditionGauge-X.Y.Z.apk` — the app
+- `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` — APK + PC install scripts + guide
 
-**Best (USB + rooted phone):**
+Full matrix: [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDELOAD.md) · day-to-day AA use: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md)
+
+### Pick an install path
+
+| Your situation | What to do |
+|----------------|------------|
+| **Rooted phone** (Magisk) + PC | Use the AA install kit (Path A below) — proven on Android 14/15/16 |
+| **Unrooted, Android ≤ 13** | [KingInstaller](https://github.com/fcaronte/KingInstaller/releases) “Install as king” (enable OnePlus/Oppo/Realme option if needed) |
+| **Unrooted, Android 14+** | No reliable software-only spoof. Use **root** (Path A), a **wireless AA adapter** with developer/MITM mode, or a **private Play track** (see alternatives below) |
+
+### Path A — Rooted PC install (recommended)
+
+1. USB debugging on; connect the phone; allow this computer.
+2. Unzip `ExpeditionGauge-*-AA-install-kit.zip` (or use the repo scripts).
+3. Run:
 
 ```powershell
-pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.14.1.apk
+pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.14.1.apk
 ```
 
-**Other devices:** download `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) and follow [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDELOAD.md) (rooted PC install vs KingInstaller limits on Android 14+).
+```bash
+bash ./install-aa-from-pc.sh ExpeditionGauge-2.14.1.apk
+```
 
-### 2. Turn on Android Auto developer mode
+From a full clone: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.14.1.apk`
 
-1. Open the **Android Auto** app on your phone (search Settings or your app drawer).
-2. Tap the **menu** (⋮ or ☰) → **About** / **Version**.
-3. Tap the **version number about 10 times** until you see a message that developer mode is unlocked.
-4. Go back. Open the menu again → **Developer settings** (it only appears after step 3).
+4. Confirm both lines show Play Store:
 
-### 3. Allow unknown sources
+```text
+adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackageName initiatingPackageName"
+```
 
-1. In **Developer settings**, turn on **Unknown sources**.
-2. If Android asks which apps may start Android Auto, allow **ExpeditionGauge** (or “All apps” / your installer, depending on the phone).
+### Path B — After install: enable AA + Customize launcher
 
-### 4. Enable in Customize launcher
+1. Open **Android Auto** on the phone → menu → **About** / **Version** → tap the version **~10 times** (developer mode).
+2. Menu → **Developer settings** → **Unknown sources** ON.
+3. Android Auto settings → **Customize launcher** → enable **ExpeditionGauge**.
+4. USB to the car (preferred first time) → **Apps** → **ExpeditionGauge**. Keep the phone app running.
 
-1. Open **Android Auto** settings (not Developer settings).
-2. Tap **Customize launcher** (sometimes under Apps / Launcher).
-3. Find **ExpeditionGauge** and turn it **on** (checked).
+**After every upgrade:** reinstall with Path A (or KingInstaller on ≤13), then re-check Unknown sources + Customize launcher.
 
-### 5. Use it in the car
+### Are there other options besides Play Store or root?
 
-1. Plug in USB (preferred for first connect; or pair wireless Android Auto if your car supports it).
-2. On the car screen, open **Apps** and choose **ExpeditionGauge**.
-3. Keep the phone app running so gauges and recording stay live.
+**Short answer:** nothing simple and FOSS that works on a stock Android 14+ phone over a normal USB cable. Community options:
 
-**After every upgrade:** re-run `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-*.apk`, re-check Unknown sources + Customize launcher, then reconnect USB.
+| Approach | Root? | Notes |
+|----------|-------|--------|
+| **Wireless AA adapter + developer/MITM mode** | No | Commercial [AAWireless](https://www.aawireless.io/) (enable developer mode in its app) or DIY FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs) on a Pi/dongle — presents like DHU and can show sideloaded apps |
+| **Google Play Internal testing / Internal app sharing** | No | Upload the APK/AAB to a **private** Play Console track; testers install “from Play” so attribution is real. Needs a Play developer account; not a public listing |
+| **KingInstaller** | No | Works on many **Android ≤ 13** phones; usually **fails on 14+** (initiator becomes KingInstaller) |
+| **[AAAD](https://github.com/shmykelsa/AAAD)** | No | Installs a **curated catalog** of third-party AA apps (paid unlock). Not a general “any GitHub APK” installer for ExpeditionGauge. Unreliable on Android 14+; maintainer often points people at AAWireless |
+| **Desktop Head Unit / Headunit Reloaded** | No | Dev/emulator path — not a substitute for a real car head unit |
+| **LSPosed / AA XLauncher Unlocked** | Yes (Magisk) | Hooks AA’s Play checks; still root |
+| **Shizuku alone** | No | **Cannot** unlock third-party AA apps (hooks need Xposed) |
 
-If Customize launcher is still empty: confirm dumpsys shows `installerPackageName=com.android.vending`, then see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) Escalation.
+**Bottom line for ExpeditionGauge on a stock Android 14+ phone:** use Magisk + the AA install kit, a wireless MITM adapter, or a private Play track. There is no reliable FOSS phone-only trick that sets `initiatingPackageName=com.android.vending` for an arbitrary APK. If Customize launcher stays empty, dumpsys initiator is still wrong — do not change car-app categories again.
 
 ## Quick start
 

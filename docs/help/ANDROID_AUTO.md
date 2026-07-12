@@ -50,7 +50,9 @@ adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackag
 
 You need `installerPackageName=com.android.vending`, `initiatingPackageName=com.android.vending`, and `category.POI`.
 
-**Phone-only alternative:** [KingInstaller](https://github.com/Rikj000/KingInstaller) (“Install as king”, enable the **OnePlus** option). Still enable AA Unknown sources afterward.
+**Phone-only alternative (Android ≤ 13):** [KingInstaller](https://github.com/fcaronte/KingInstaller/releases) (“Install as king”, enable the **OnePlus/Oppo/Realme** option if needed). Still enable AA Unknown sources afterward.
+
+**Android 14+ without Magisk:** no reliable phone-only spoof for an arbitrary APK — see the alternatives matrix in [`ANDROID_AUTO_SIDELOAD.md`](ANDROID_AUTO_SIDELOAD.md) (wireless MITM adapter, private Play track).
 
 ## After every install or upgrade (required)
 
