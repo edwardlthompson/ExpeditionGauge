@@ -84,6 +84,8 @@ class AndroidAutoBridge(
                 maxPitchThresholdDeg = alertThresholds.maxPitchDeg,
                 maxRollThresholdDeg = alertThresholds.maxRollDeg,
                 yawDeg = snapshot.bodyYawDeg ?: snapshot.headingDeg,
+                latG = snapshot.latG,
+                lonG = snapshot.lonG,
             )
         }.getOrNull()
         return built.copy(gMeter = built.gMeter.copy(image = icon))

@@ -106,7 +106,7 @@ fun SettingsScreen(
     onLapTimingEnabledChange: (Boolean) -> Unit = {},
     onTrackSetup: () -> Unit = {},
     attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
-        dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE,
+        dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.G_FORCE,
     onAttitudeGaugeModeSelect: (dev.foss.expeditiongauge.gauge.AttitudeGaugeMode) -> Unit = {},
     alertThresholds: AlertThresholds = AlertThresholds(),
     onAlertThresholdsChange: (AlertThresholds) -> Unit = {},

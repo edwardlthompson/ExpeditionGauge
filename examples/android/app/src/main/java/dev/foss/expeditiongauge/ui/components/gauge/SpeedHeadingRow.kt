@@ -5,19 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
-import dev.foss.expeditiongauge.ui.theme.GaugeLabelTextStyle
+import dev.foss.expeditiongauge.ui.dashboard.hud.HudAutoFitText
+import dev.foss.expeditiongauge.ui.dashboard.hud.hudCubeTextStyle
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
@@ -29,42 +25,50 @@ fun SpeedHeadingRow(
     useMetric: Boolean,
     showSpeed: Boolean,
     showHeading: Boolean,
-    enlarged: Boolean = false,
+    altitudeM: Double? = null,
+    showAltitude: Boolean = false,
+    @Suppress("UNUSED_PARAMETER") uniformCube: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    if (!showSpeed && !showHeading) return
-    val scale = LocalTextScale.current
-    val baseDigit = if (enlarged) 40f else 28f
-    val digitStyle = androidx.compose.ui.text.TextStyle(
-        fontSize = (baseDigit * scale).sp,
-        lineHeight = (baseDigit * 1.15f * scale).sp,
-        fontWeight = FontWeight.Bold,
-        fontFamily = FontFamily.Monospace,
-    )
-    val unitSize = if (enlarged) 13f else 11f
+    if (!showSpeed && !showHeading && !showAltitude) return
+    val style = hudCubeTextStyle()
+    val baseSp = 14f * LocalTextScale.current
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 2.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (showSpeed) {
             HudCompactDigitColumn(
                 value = GaugeLogic.formatSpeedPadded(speedMps, useMetric),
                 unit = GaugeLogic.speedUnitLabel(useMetric),
-                digitStyle = digitStyle,
-                unitSizeSp = unitSize,
-                modifier = Modifier.widthIn(min = 88.dp),
+                style = style,
+                baseSp = baseSp,
+                contentAlignment = Alignment.Start,
+                modifier = Modifier.weight(1f),
             )
         }
         if (showHeading) {
             HudCompactDigitColumn(
                 value = GaugeLogic.formatHeadingPadded(headingDeg),
                 unit = stringResource(R.string.gauge_hdg_label),
-                digitStyle = digitStyle,
-                unitSizeSp = unitSize,
-                modifier = Modifier.widthIn(min = 72.dp),
+                style = style,
+                baseSp = baseSp,
+                contentAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        if (showAltitude) {
+            val elevUnit = if (useMetric) "M" else "FT"
+            HudCompactDigitColumn(
+                value = GaugeLogic.formatAltitudePadded(altitudeM, useMetric),
+                unit = stringResource(R.string.gauge_elev_label_unit, elevUnit),
+                style = style,
+                baseSp = baseSp,
+                contentAlignment = Alignment.End,
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -74,19 +78,30 @@ fun SpeedHeadingRow(
 private fun HudCompactDigitColumn(
     value: String,
     unit: String,
-    digitStyle: androidx.compose.ui.text.TextStyle,
-    unitSizeSp: Float,
+    style: androidx.compose.ui.text.TextStyle,
+    baseSp: Float,
+    contentAlignment: Alignment.Horizontal,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = contentAlignment,
     ) {
-        Text(text = value, color = GaugeScaleWhite, style = digitStyle)
-        Text(
+        HudAutoFitText(
+            text = value,
+            color = GaugeScaleWhite,
+            style = style,
+            minSp = 9f,
+            maxSp = baseSp,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        HudAutoFitText(
             text = unit,
             color = GaugeYellow,
-            style = GaugeLabelTextStyle.copy(fontSize = (unitSizeSp * LocalTextScale.current).sp),
+            style = style,
+            minSp = 9f,
+            maxSp = baseSp,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

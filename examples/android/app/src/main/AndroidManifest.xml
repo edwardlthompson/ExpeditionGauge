@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
     <!-- Soft requirements: aftermarket HUs / AAOS often lack phone IMU/camera/telephony.
          Phone sensors still used when present; BLE IMU / NMEA / OBD cover the rest. -->

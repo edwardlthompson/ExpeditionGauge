@@ -11,7 +11,6 @@ internal class SettingsPreferencesStore(
     private val trackGauge: TrackGaugePreferences,
 ) {
     private val keys = SettingsPreferencesKeys
-
     suspend fun setSpeedUnit(unit: SpeedUnit) {
         context.settingsDataStore.edit {
             it[keys.speedUnit] = if (unit == SpeedUnit.IMPERIAL) "imperial" else "metric"
@@ -145,4 +144,7 @@ internal class SettingsPreferencesStore(
     suspend fun setAutoCalibrateWhenStill(enabled: Boolean) {
         context.settingsDataStore.edit { it[keys.autoCalibrateWhenStill] = enabled }
     }
+
+    suspend fun setCoordFormatDecimal(decimal: Boolean) =
+        context.settingsDataStore.edit { it[keys.coordFormatDecimal] = decimal }
 }

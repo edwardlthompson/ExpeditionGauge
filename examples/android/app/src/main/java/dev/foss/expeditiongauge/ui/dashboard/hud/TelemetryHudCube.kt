@@ -19,7 +19,6 @@ import dev.foss.expeditiongauge.ui.components.gauge.SpeedHeadingRow
 import dev.foss.expeditiongauge.ui.components.gauge.TirePressurePanel
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun TelemetryHudCube(
@@ -34,30 +33,24 @@ fun TelemetryHudCube(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = SpacingSm / 3, vertical = SpacingSm / 3),
+            .padding(horizontal = SpacingSm / 3, vertical = SpacingSm / 4),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        if (preset.showSpeed || preset.showHeading) {
+        if (preset.showSpeed || preset.showHeading || preset.showGps) {
             SpeedHeadingRow(
                 speedMps = telemetry.speedMps,
                 headingDeg = telemetry.headingDeg,
                 useMetric = useMetric,
                 showSpeed = preset.showSpeed,
                 showHeading = preset.showHeading,
-                enlarged = true,
+                altitudeM = telemetry.altitudeM,
+                showAltitude = preset.showGps,
+                uniformCube = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
         if (preset.showGps) {
-            TelemetryHudMetaRow(
-                altitudeM = telemetry.altitudeM,
-                useMetric = useMetric,
-                gpsFix = telemetry.gpsFix,
-                gpsSource = telemetry.gpsSource,
-                numSatellites = telemetry.numSatellites,
-                hdop = telemetry.hdop,
-            )
             GpsReadoutPanel(
                 latitude = telemetry.latitude,
                 longitude = telemetry.longitude,
@@ -69,22 +62,21 @@ fun TelemetryHudCube(
                 hudCube = true,
                 showTime = false,
                 showAltitude = false,
+                modifier = Modifier.fillMaxWidth(),
             )
-        }
-        if (preset.showAttitude) {
-            TelemetryHudAttitudeRow(
-                pitchDeg = telemetry.pitchDeg,
-                rollDeg = telemetry.rollDeg,
-                showDriftAngle = showDriftAngle || preset.emphasizeDrift,
-                driftAngleDeg = telemetry.driftAngleDeg,
+            TelemetryHudSatRow(
+                gpsFix = telemetry.gpsFix,
+                numSatellites = telemetry.numSatellites,
+                hdop = telemetry.hdop,
+                modifier = Modifier.fillMaxWidth(),
             )
+            TelemetryHudClockRow(modifier = Modifier.fillMaxWidth())
         }
         TelemetryHudVehicleRow(
             rpm = telemetry.rpm,
             batteryVoltage = telemetry.batteryVoltage,
-            latG = telemetry.latG,
-            lonG = telemetry.lonG,
             slipRatio = telemetry.slipRatio,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

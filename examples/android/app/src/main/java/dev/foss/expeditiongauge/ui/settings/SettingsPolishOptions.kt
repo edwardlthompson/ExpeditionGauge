@@ -42,34 +42,33 @@ fun SettingsPolishOptions(
     if (FeatureFlags.telemetryGraphsEnabled) {
         Text(text = stringResource(R.string.settings_attitude_gauge_label))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
-            AttitudeGaugeMode.entries.forEach { mode ->
+            AttitudeGaugeMode.DISPLAY_CYCLE.forEach { mode ->
                 FilterChip(
                     selected = attitudeGaugeMode == mode,
                     onClick = { onAttitudeGaugeModeSelect(mode) },
-                    label = {
-                        Text(
-                            when (mode) {
-                                AttitudeGaugeMode.ATTITUDE ->
-                                    stringResource(R.string.settings_attitude_mode_attitude)
-                                AttitudeGaugeMode.G_FORCE ->
-                                    stringResource(R.string.settings_attitude_mode_gforce)
-                                AttitudeGaugeMode.HYBRID ->
-                                    stringResource(R.string.settings_attitude_mode_hybrid)
-                                AttitudeGaugeMode.INCLINOMETER ->
-                                    stringResource(R.string.settings_attitude_mode_inclinometer)
-                            },
-                        )
-                    },
-                    modifier = Modifier.testTag(
-                        when (mode) {
-                            AttitudeGaugeMode.ATTITUDE -> "settings_attitude_mode_attitude"
-                            AttitudeGaugeMode.G_FORCE -> "settings_attitude_mode_gforce"
-                            AttitudeGaugeMode.HYBRID -> "settings_attitude_mode_hybrid"
-                            AttitudeGaugeMode.INCLINOMETER -> "settings_attitude_mode_inclinometer"
-                        },
-                    ),
+                    label = { Text(attitudeModeLabel(mode)) },
+                    modifier = Modifier.testTag(attitudeModeTestTag(mode)),
                 )
             }
         }
     }
+}
+
+@Composable
+private fun attitudeModeLabel(mode: AttitudeGaugeMode): String = when (mode) {
+    AttitudeGaugeMode.G_FORCE -> stringResource(R.string.settings_attitude_mode_gforce)
+    AttitudeGaugeMode.INCLINOMETER_LADDER -> stringResource(R.string.settings_attitude_mode_ladder)
+    AttitudeGaugeMode.INCLINOMETER_HORIZON -> stringResource(R.string.settings_attitude_mode_horizon)
+    AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL -> stringResource(R.string.settings_attitude_mode_dual_dial)
+    AttitudeGaugeMode.INCLINOMETER_BUBBLE -> stringResource(R.string.settings_attitude_mode_bubble)
+    AttitudeGaugeMode.COMPASS_BALL -> stringResource(R.string.settings_attitude_mode_compass)
+}
+
+private fun attitudeModeTestTag(mode: AttitudeGaugeMode): String = when (mode) {
+    AttitudeGaugeMode.G_FORCE -> "settings_attitude_mode_gforce"
+    AttitudeGaugeMode.INCLINOMETER_LADDER -> "settings_attitude_mode_ladder"
+    AttitudeGaugeMode.INCLINOMETER_HORIZON -> "settings_attitude_mode_horizon"
+    AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL -> "settings_attitude_mode_dual_dial"
+    AttitudeGaugeMode.INCLINOMETER_BUBBLE -> "settings_attitude_mode_bubble"
+    AttitudeGaugeMode.COMPASS_BALL -> "settings_attitude_mode_compass"
 }

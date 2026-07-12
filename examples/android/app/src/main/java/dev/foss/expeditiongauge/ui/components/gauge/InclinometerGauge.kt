@@ -51,6 +51,8 @@ fun InclinometerGauge(
     maxPitchThresholdDeg: Float? = null,
     maxRollThresholdDeg: Float? = null,
     yawDeg: Float? = null,
+    latG: Float? = null,
+    lonG: Float? = null,
     gaugeSizeDp: Dp = 180.dp,
 ) {
     var showSheet by remember { mutableStateOf(false) }
@@ -74,6 +76,8 @@ fun InclinometerGauge(
         maxPitchThresholdDeg,
         maxRollThresholdDeg,
         yawDeg,
+        latG,
+        lonG,
         gaugeSizeDp,
     ) {
         InclinometerCarIcon.renderBitmap(
@@ -87,6 +91,8 @@ fun InclinometerGauge(
             labelPitchDeg = displayPitch,
             labelRollDeg = displayRoll,
             yawDeg = yawDeg,
+            latG = latG,
+            lonG = lonG,
         )
     }
 
@@ -102,9 +108,7 @@ fun InclinometerGauge(
             )
             .attitudeGaugeInteraction(
                 onToggleDisplay = {
-                    onCycleStyle?.invoke()
-                        ?: onToggleDisplay?.invoke()
-                        ?: run { showSheet = true }
+                    onToggleDisplay?.invoke() ?: run { showSheet = true }
                 },
                 onLongPressCalibrate = { showSheet = true },
             )
@@ -113,6 +117,8 @@ fun InclinometerGauge(
                     append("Inclinometer pitch ${GaugeLogic.formatSignedDegrees(displayPitch)}, ")
                     append("roll ${GaugeLogic.formatSignedDegrees(displayRoll)}")
                     yawDeg?.let { append(", yaw ${GaugeLogic.formatSignedDegrees(it)}") }
+                    latG?.let { append(", latG %.1f".format(it)) }
+                    lonG?.let { append(", lonG %.1f".format(it)) }
                     append(", style ${style.name}")
                 }
             }
@@ -136,9 +142,12 @@ fun InclinometerGauge(
             )
             Text(
                 text = buildString {
-                    append("P ${GaugeLogic.formatSignedDegrees(displayPitch)}  ")
-                    append("R ${GaugeLogic.formatSignedDegrees(displayRoll)}")
-                    yawDeg?.let { append("  Y ${GaugeLogic.formatSignedDegrees(it)}") }
+                    appendLine("P ${GaugeLogic.formatSignedDegrees(displayPitch)}")
+                    appendLine("R ${GaugeLogic.formatSignedDegrees(displayRoll)}")
+                    yawDeg?.let { appendLine("Y ${GaugeLogic.formatSignedDegrees(it)}") }
+                    if (latG != null || lonG != null) {
+                        append("G lat ${"%.1f".format(latG ?: 0f)} lon ${"%.1f".format(lonG ?: 0f)}")
+                    }
                 },
                 color = GaugeScaleWhite,
                 modifier = Modifier.padding(horizontal = SpacingMd),
@@ -156,6 +165,17 @@ fun InclinometerGauge(
                 modifier = Modifier.padding(SpacingMd).testTag("inclinometer_calibrate"),
             ) {
                 Text(stringResource(R.string.gauge_calibrate))
+            }
+            if (onCycleStyle != null) {
+                Button(
+                    onClick = {
+                        onCycleStyle()
+                        showSheet = false
+                    },
+                    modifier = Modifier.padding(SpacingMd).testTag("inclinometer_cycle_style"),
+                ) {
+                    Text(stringResource(R.string.gauge_inclinometer_style_hint))
+                }
             }
             if (onToggleDisplay != null) {
                 Button(

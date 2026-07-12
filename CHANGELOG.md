@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.16.0] — Gauge cycle, G-meter axes, USGS elevation (2026-07-12)
+
+### Added
+
+* Standalone attitude cycle: ladder bars, horizon, dual dial, spirit level, G-meter, Elite-style compass ball
+* USGS 3DEP DEM elevation fallback when GNSS vertical quality is weak (&lt;6 sats used or vertical accuracy &gt;15 m)
+* A-GPS assist (XTRA/time injection + network provider) to improve fix quality; DEM supplies elevation when sats are few
+* Compass ball gauge (`CompassBallLogic` / canvas) and HUD screenshot helpers
+
+### Changed
+
+* Single G-meter ball (retired separate Attitude / Hybrid / accel-G modes); pitch vertical, roll lateral
+* Braking moves the ball toward vehicle front (top); acceleration toward the rear
+* Portrait G-meter cube remap is identity (no pitch mirror / no 90° CW swap) — see `docs/design/GMETER_HUD_ROTATION.md`
+
+### Fixed
+
+* Elevation under weak GNSS (e.g. −95 ft vs USGS ~8 ft at Guaynabo) now prefers DEM until satellite quality recovers
+
 ## [2.15.0] — Integer P/R/Y + stationary autocalibrate (2026-07-12)
 
 ### Added

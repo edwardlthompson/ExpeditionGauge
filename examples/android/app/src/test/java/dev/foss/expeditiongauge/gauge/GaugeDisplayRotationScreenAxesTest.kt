@@ -8,7 +8,7 @@ import kotlin.math.abs
 class GaugeDisplayRotationScreenAxesTest {
     @Test
     fun portraitRotation0_pitchOnLadder_rollOnSides() {
-        // Portrait G-meter: pitch → X, roll → Y; inclinometer remaps X→ladder, Y→sides.
+        // Portrait G-meter: pitch → Y (vertical), roll → X (lateral).
         val (pitch, roll) = GaugeDisplayRotation.mapAttitudeToScreenAxes(
             pitchDeg = -12f,
             rollDeg = 15f,
@@ -17,7 +17,6 @@ class GaugeDisplayRotationScreenAxesTest {
         )
         assertTrue("physical pitch should drive ladder", abs(pitch) > 0.1f)
         assertTrue("physical roll should drive sides", abs(roll) > 0.1f)
-        // Braking (neg pitch) → left on portrait G-meter X → negative ladder after remap
         assertTrue(pitch < -0.1f)
         assertTrue(roll > 0.1f)
     }

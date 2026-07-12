@@ -40,15 +40,15 @@ fun AttitudeGMeterCanvas(
     rollAlertActive: Boolean,
     latGAlertActive: Boolean,
     showTrail: Boolean,
-    isPortraitLayout: Boolean = false,
+    @Suppress("UNUSED_PARAMETER") isPortraitLayout: Boolean = false,
     highContrast: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val alertActive = pitchAlertActive || rollAlertActive || latGAlertActive
     val rollColor = if (rollAlertActive) GaugeRed else GaugeScaleWhite
     val pitchColor = if (pitchAlertActive) GaugeRed else GaugeScaleWhite
-    val showAttitudeEdges = mode == AttitudeGaugeMode.ATTITUDE || mode == AttitudeGaugeMode.HYBRID
-    val showGForceEdges = mode == AttitudeGaugeMode.G_FORCE || mode == AttitudeGaugeMode.HYBRID
+    val showAttitudeEdges = mode == AttitudeGaugeMode.G_FORCE
+    val showGForceEdges = false
     val ringAlpha = 1f
     val ringStroke = if (highContrast) 5f else 4f
     val crosshairWidth = if (highContrast) 3.5f else 3f
@@ -123,57 +123,31 @@ fun AttitudeGMeterCanvas(
             }
         }
         if (showAttitudeEdges) {
-            if (isPortraitLayout) {
-                Text(
-                    text = GmeterEdgeNumerals.topRollReadout(rollDeg, ball.normalizedY),
-                    color = rollColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 2.dp),
-                )
-                Text(
-                    text = GmeterEdgeNumerals.bottomRollReadout(rollDeg, ball.normalizedY),
-                    color = rollColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp),
-                )
-                Text(
-                    text = GmeterEdgeNumerals.leftPitchReadout(pitchDeg, ball.normalizedX),
-                    color = pitchColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.CenterStart).padding(start = 2.dp),
-                )
-                Text(
-                    text = GmeterEdgeNumerals.rightPitchReadout(pitchDeg, ball.normalizedX),
-                    color = pitchColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.CenterEnd).padding(end = 2.dp),
-                )
-            } else {
-                Text(
-                    text = GmeterEdgeNumerals.topPitchReadout(pitchDeg, ball.normalizedY),
-                    color = pitchColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 2.dp),
-                )
-                Text(
-                    text = GmeterEdgeNumerals.bottomPitchReadout(pitchDeg, ball.normalizedY),
-                    color = pitchColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp),
-                )
-                Text(
-                    text = GmeterEdgeNumerals.leftRollReadout(rollDeg, ball.normalizedX),
-                    color = rollColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.CenterStart).padding(start = 2.dp),
-                )
-                Text(
-                    text = GmeterEdgeNumerals.rightRollReadout(rollDeg, ball.normalizedX),
-                    color = rollColor,
-                    style = edgeStyle,
-                    modifier = Modifier.align(Alignment.CenterEnd).padding(end = 2.dp),
-                )
-            }
+            // Pitch vertical (top/bottom), roll lateral (left/right) in both layouts.
+            Text(
+                text = GmeterEdgeNumerals.topPitchReadout(pitchDeg, ball.normalizedY),
+                color = pitchColor,
+                style = edgeStyle,
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 2.dp),
+            )
+            Text(
+                text = GmeterEdgeNumerals.bottomPitchReadout(pitchDeg, ball.normalizedY),
+                color = pitchColor,
+                style = edgeStyle,
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 2.dp),
+            )
+            Text(
+                text = GmeterEdgeNumerals.leftRollReadout(rollDeg, ball.normalizedX),
+                color = rollColor,
+                style = edgeStyle,
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 2.dp),
+            )
+            Text(
+                text = GmeterEdgeNumerals.rightRollReadout(rollDeg, ball.normalizedX),
+                color = rollColor,
+                style = edgeStyle,
+                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 2.dp),
+            )
         }
         if (showGForceEdges && !showAttitudeEdges) {
             Text(

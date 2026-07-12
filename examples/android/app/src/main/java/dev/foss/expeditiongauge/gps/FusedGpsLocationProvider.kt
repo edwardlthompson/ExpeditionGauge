@@ -31,8 +31,9 @@ class FusedGpsLocationProvider(
     private val driftEstimator: DriftAngleEstimator,
     private val sensorProvider: PhoneSensorProvider,
     private val externalGps: ExternalNmeaGpsManager,
+    private val demElevation: DemElevationLookup,
 ) {
-    private val phoneGps = PhoneGpsProvider(context, driftEstimator) { onPhoneSnapshot(it) }
+    private val phoneGps = PhoneGpsProvider(context, driftEstimator, demElevation) { onPhoneSnapshot(it) }
     private val _state = MutableStateFlow(FusedGpsState())
     val state: StateFlow<FusedGpsState> = _state.asStateFlow()
 
@@ -41,26 +42,24 @@ class FusedGpsLocationProvider(
 
     fun onExternalFix(fix: NmeaFix) {
         if (!fix.valid || ExternalNmeaGpsManager.isStale(fix)) {
-            publishPhoneFallback()
+            if (_state.value.source == GpsSource.EXTERNAL) {
+                _state.value = _state.value.copy(source = GpsSource.PHONE)
+            }
             return
         }
         val heading = fix.courseDeg ?: _state.value.headingDeg
         val speed = fix.speedMps ?: 0f
         driftEstimator.onGpsSample(heading, speed)
-        val state = FusedGpsState(
-            source = GpsSource.EXTERNAL,
-            fix = true,
-            latitude = fix.latitude,
-            longitude = fix.longitude,
-            altitudeM = fix.altitudeM,
-            speedMps = speed,
-            headingDeg = heading,
-            hdop = fix.hdop,
-            numSatellites = fix.numSatellites,
-            fixQuality = fix.fixQuality,
-        )
+        val state = ExternalFixAltitude.toState(fix, heading, speed, demElevation)
         _state.value = state
-        mergeIntoBus(state)
+        publishExternal(state)
+        ExternalFixAltitude.refreshDemIfNeeded(fix, demElevation) { demMeters ->
+            val current = _state.value
+            if (current.source != GpsSource.EXTERNAL) return@refreshDemIfNeeded
+            val updated = current.copy(altitudeM = demMeters)
+            _state.value = updated
+            publishExternal(updated)
+        }
     }
 
     fun onPhoneSnapshot(snapshot: TelemetrySnapshot) {
@@ -77,13 +76,7 @@ class FusedGpsLocationProvider(
             numSatellites = snapshot.numSatellites,
             fixQuality = snapshot.fixQuality,
         )
-        mergePhoneSnapshot(snapshot)
-    }
-
-    private fun publishPhoneFallback() {
-        if (_state.value.source == GpsSource.EXTERNAL) {
-            _state.value = _state.value.copy(source = GpsSource.PHONE)
-        }
+        publishPhone(snapshot)
     }
 
     private fun externalGpsActive(): Boolean {
@@ -91,7 +84,7 @@ class FusedGpsLocationProvider(
         return fix.valid && !ExternalNmeaGpsManager.isStale(fix)
     }
 
-    private fun mergePhoneSnapshot(snapshot: TelemetrySnapshot) {
+    private fun publishPhone(snapshot: TelemetrySnapshot) {
         val course = snapshot.velocityHeadingDeg ?: snapshot.headingDeg
         val merged = GpsHeadingMerge.withCourse(
             current = telemetryBus.snapshots.value,
@@ -115,7 +108,7 @@ class FusedGpsLocationProvider(
         sensorProvider.updateGpsContext(merged)
     }
 
-    private fun mergeIntoBus(gps: FusedGpsState) {
+    private fun publishExternal(gps: FusedGpsState) {
         val merged = GpsHeadingMerge.withCourse(
             current = telemetryBus.snapshots.value,
             speedMps = gps.speedMps,

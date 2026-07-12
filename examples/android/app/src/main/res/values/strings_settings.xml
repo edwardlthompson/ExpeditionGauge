@@ -50,10 +50,13 @@
     <string name="settings_performance_hint">Lower logging rate reduces CPU and heat. Connect an external IMU to offload phone sensors when available.</string>
     <string name="settings_lap_timing_enable">Enable lap timing</string>
     <string name="settings_attitude_gauge_label">Attitude G-meter mode</string>
-    <string name="settings_attitude_mode_attitude">Attitude</string>
-    <string name="settings_attitude_mode_gforce">G-Force</string>
-    <string name="settings_attitude_mode_hybrid">Hybrid</string>
+    <string name="settings_attitude_mode_gforce">G-meter</string>
     <string name="settings_attitude_mode_inclinometer">Inclinometer</string>
+    <string name="settings_attitude_mode_ladder">Ladder bars</string>
+    <string name="settings_attitude_mode_horizon">Horizon</string>
+    <string name="settings_attitude_mode_dual_dial">Dual dial</string>
+    <string name="settings_attitude_mode_bubble">Spirit level</string>
+    <string name="settings_attitude_mode_compass">Compass ball</string>
     <string name="alerts_pitch_roll_hint">Sounds when exceeded (Alerts on). Shown on inclinometer and G-meter.</string>
     <string name="settings_recording_mode_label">Recording mode</string>
     <string name="settings_alerts_title">Alert thresholds</string>

@@ -33,6 +33,8 @@ internal class InclinometerHorizonDraw(
         labelPitchDeg: Float = pitchDeg,
         labelRollDeg: Float = rollDeg,
         yawDeg: Float? = null,
+        latG: Float? = null,
+        lonG: Float? = null,
     ) {
         val cx = sizePx / 2f
         val cy = sizePx / 2f
@@ -67,7 +69,9 @@ internal class InclinometerHorizonDraw(
         val py = cy - r * cos(rollRad)
         canvas.drawCircle(px, py, sizePx * 0.02f, kit.pointer)
 
-        drawCornerReadouts(labelPitchDeg, labelRollDeg, yawDeg)
+        InclinometerCornerReadouts.draw(
+            canvas, sizePx, kit, labelPitchDeg, labelRollDeg, yawDeg, latG, lonG,
+        )
         if (alert) {
             canvas.drawRect(
                 sizePx * 0.025f, sizePx * 0.025f,
@@ -75,26 +79,6 @@ internal class InclinometerHorizonDraw(
                 kit.alert,
             )
         }
-    }
-
-    /** P top-left / R bottom-right — single-line labels in cube corner wedges. */
-    private fun drawCornerReadouts(pitchDeg: Float, rollDeg: Float, yawDeg: Float?) {
-        val inset = sizePx * 0.028f
-        kit.text.textSize = sizePx * 0.05f
-        kit.text.textAlign = Paint.Align.LEFT
-        canvas.drawText("P ${kit.formatAngle(pitchDeg)}", inset, inset - kit.text.fontMetrics.ascent, kit.text)
-        kit.text.textAlign = Paint.Align.RIGHT
-        val rLine = buildString {
-            append("R ${kit.formatAngle(rollDeg)}")
-            if (yawDeg != null) append(" Y ${kit.formatAngle(yawDeg)}")
-        }
-        canvas.drawText(
-            rLine,
-            sizePx - inset,
-            sizePx - inset - kit.text.fontMetrics.descent,
-            kit.text,
-        )
-        kit.text.textAlign = Paint.Align.CENTER
     }
 
     private fun drawBankTicks(cx: Float, cy: Float, r: Float) {

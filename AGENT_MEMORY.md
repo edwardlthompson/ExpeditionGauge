@@ -26,10 +26,15 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | AA discovery + sideload | 2.14.1–2.14.2 | ✅ POI category; Play initiator install kit; HU/AAOS soft features + HEAD_UNIT_ROUTES |
 | Audit 2026-07-12 | tooling | ✅ MSYS `/c`→Windows root; multi-strict optional skip; stack sync from project.config |
 | Integer P/R/Y autocal | 2.15.0 | ✅ Whole-degree labels; still Zero + yaw offset; mag gate |
+| Gauge cycle + elev DEM | 2.16.0 | ✅ Standalone gauges; G-meter axes; USGS DEM + A-GPS |
 
-## G-meter HUD rotation (locked 2026-06-30)
+## G-meter HUD rotation (locked 2026-07-12, supersedes 2026-06-30 CW cube)
 
-Portrait tile @ `ROTATION_0`: device pitch mirror + 90° CW **before** `rotateBall`. Landscape tile: post-remap per `displayRotation` (CCW @ 90, CW @ 270). Full matrix: `docs/design/GMETER_HUD_ROTATION.md`. Do not negate device roll (X) when fixing lateral pitch.
+Portrait tile: **identity** cube (roll→X, pitch→Y). Braking (−pitch) → ball toward front/top. Do not pitch-mirror or 90° CW in portrait. Landscape: post-remap per `displayRotation`. Full matrix: `docs/design/GMETER_HUD_ROTATION.md`.
+
+## Elevation under weak GNSS (v2.16.0)
+
+Prefer USGS 3DEP EPQS DEM when sats used &lt;6 or vertical accuracy &gt;15 m; A-GPS (XTRA/time + network) improves fix but does not supply elevation.
 
 ## Inclinometer landscape / IMU remap (locked 2026-07-09)
 

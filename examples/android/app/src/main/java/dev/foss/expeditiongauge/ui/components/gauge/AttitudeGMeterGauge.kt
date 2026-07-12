@@ -29,11 +29,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
-import dev.foss.expeditiongauge.gauge.AttitudeBallLogic
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.gauge.BallPosition
 import dev.foss.expeditiongauge.gauge.GBallTrailBuffer
-import dev.foss.expeditiongauge.gauge.GForceBallLogic
 import dev.foss.expeditiongauge.gauge.GaugeDisplayRotation
 import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
@@ -51,7 +49,7 @@ fun AttitudeGMeterGauge(
     rollDeg: Float,
     onCalibrate: () -> Unit,
     modifier: Modifier = Modifier,
-    mode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
+    mode: AttitudeGaugeMode = AttitudeGaugeMode.G_FORCE,
     onToggleDisplay: (() -> Unit)? = null,
     latG: Float = 0f,
     lonG: Float = 0f,
@@ -178,25 +176,16 @@ internal fun ballForMode(
     mode: AttitudeGaugeMode,
     pitchDeg: Float,
     rollDeg: Float,
-    latG: Float,
-    lonG: Float,
+    @Suppress("UNUSED_PARAMETER") latG: Float,
+    @Suppress("UNUSED_PARAMETER") lonG: Float,
     displayRotation: Int,
     isPortraitLayout: Boolean = false,
 ): BallPosition = when (mode) {
-    AttitudeGaugeMode.ATTITUDE ->
-        GaugeDisplayRotation.mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
-    AttitudeGaugeMode.G_FORCE -> GaugeDisplayRotation.mapGForce(latG, lonG, displayRotation, isPortraitLayout)
-    AttitudeGaugeMode.HYBRID -> {
-        val attitude = AttitudeBallLogic.mapPitchRoll(pitchDeg, rollDeg)
-        val gForce = GForceBallLogic.mapLatLonG(latG, lonG)
-        val zone = if (attitude.zone.ordinal >= gForce.zone.ordinal) attitude.zone else gForce.zone
-        val combined = BallPosition(
-            normalizedX = ((attitude.normalizedX + gForce.normalizedX) / 2f).coerceIn(-1f, 1f),
-            normalizedY = ((attitude.normalizedY + gForce.normalizedY) / 2f).coerceIn(-1f, 1f),
-            zone = zone,
-        )
-        GaugeDisplayRotation.mapDeviceBallToHudScreen(combined, displayRotation, isPortraitLayout)
-    }
-    AttitudeGaugeMode.INCLINOMETER ->
-        GaugeDisplayRotation.mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
+    AttitudeGaugeMode.G_FORCE,
+    AttitudeGaugeMode.INCLINOMETER_LADDER,
+    AttitudeGaugeMode.INCLINOMETER_HORIZON,
+    AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL,
+    AttitudeGaugeMode.INCLINOMETER_BUBBLE,
+    AttitudeGaugeMode.COMPASS_BALL,
+    -> GaugeDisplayRotation.mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
 }

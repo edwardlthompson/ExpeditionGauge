@@ -33,9 +33,17 @@ internal object SettingsPreferencesKeys {
     val autoRecordEnabled = booleanPreferencesKey("auto_record_enabled")
     val autoRecordDevices = stringPreferencesKey("auto_record_device_addresses")
     val sessionStorageFreePercent = androidx.datastore.preferences.core.intPreferencesKey("session_storage_free_percent")
+    val coordFormatDecimal = booleanPreferencesKey("coord_format_decimal")
+    val hudScreenshotMode = stringPreferencesKey("hud_screenshot_mode")
 
     fun speedUnitFrom(prefs: Preferences): SpeedUnit =
         if (prefs[speedUnit] == "imperial") SpeedUnit.IMPERIAL else SpeedUnit.METRIC
+
+    fun hudScreenshotModeFrom(prefs: Preferences): HudScreenshotMode =
+        when (prefs[hudScreenshotMode]) {
+            "each_cube" -> HudScreenshotMode.EACH_CUBE
+            else -> HudScreenshotMode.FULL_SCREEN
+        }
 
     fun pressureUnitFrom(prefs: Preferences): PressureUnit =
         if (prefs[pressureUnit] == "kpa") PressureUnit.KPA else PressureUnit.PSI

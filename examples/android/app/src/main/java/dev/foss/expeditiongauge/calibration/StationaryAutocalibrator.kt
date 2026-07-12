@@ -109,8 +109,8 @@ class StationaryAutocalibrator(
         return fixed
     }
 
-    fun armCooldown(nowMs: Long) {
-        cooldownUntilMs = nowMs + cooldownMs
+    fun armCooldown(nowMs: Long, durationMs: Long = cooldownMs) {
+        cooldownUntilMs = nowMs + durationMs
     }
 
     private fun clearAverage() {

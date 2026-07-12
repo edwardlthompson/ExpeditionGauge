@@ -134,4 +134,16 @@ class AutocalibrationController(
     }
 
     fun commitGate(): CalibrationCommitGate = commitGate
+
+    /**
+     * After process restart, suppress auto-zero prompts until Madgwick settles when a
+     * prior zero already lives in [CalibrationStore].
+     */
+    fun restorePersistedZeroCooldown(nowMs: Long = System.currentTimeMillis()) {
+        autocalibrator.armCooldown(nowMs, durationMs = STARTUP_COOLDOWN_MS)
+    }
+
+    companion object {
+        private const val STARTUP_COOLDOWN_MS = 120_000L
+    }
 }

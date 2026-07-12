@@ -5,18 +5,13 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,8 +21,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.TpmsPressureBands
@@ -35,6 +28,7 @@ import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TirePressureReading
+import dev.foss.expeditiongauge.ui.dashboard.hud.hudCubeTextStyle
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -52,75 +46,58 @@ fun TirePressurePanel(
     tempUnit: TempUnit = TempUnit.CELSIUS,
     motionReduced: Boolean = false,
     highContrast: Boolean = false,
-    themeMode: ThemeMode = ThemeMode.System,
+    @Suppress("UNUSED_PARAMETER") themeMode: ThemeMode = ThemeMode.System,
     @Suppress("UNUSED_PARAMETER") compact: Boolean = false,
 ) {
     val readings = listOf(frontLeft, frontRight, rearLeft, rearRight)
     val worstBand = TpmsPressureBands.worst(readings.map { TpmsPressureBands.band(it.psi) })
-    val scale = LocalTextScale.current
-    val pressureStyle = MaterialTheme.typography.titleLarge.copy(
-        fontWeight = FontWeight.Bold,
-        fontSize = MaterialTheme.typography.titleLarge.fontSize * scale,
-    )
-    val tempStyle = MaterialTheme.typography.bodySmall.copy(
-        fontWeight = FontWeight.Medium,
-        fontSize = MaterialTheme.typography.bodySmall.fontSize * scale,
+    val base = hudCubeTextStyle()
+    // Match visual weight of telemetry readouts (same LocalTextScale, slightly stronger face).
+    val style = base.copy(
+        fontSize = base.fontSize * 1.2f,
+        lineHeight = base.lineHeight * 1.2f,
     )
 
-    Box(modifier = modifier.fillMaxSize().padding(3.dp)) {
-        VehicleTopDownDiagram(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxSize(0.58f),
-            highContrast = highContrast,
-        )
+    Box(modifier = modifier.fillMaxSize().padding(8.dp)) {
         TpmsCornerBlock(
-            modifier = Modifier.align(Alignment.TopStart).padding(top = 2.dp),
+            modifier = Modifier.align(Alignment.TopStart),
             labelRes = R.string.gauge_tire_fl_long,
             reading = frontLeft,
             pressureUnit = pressureUnit,
             tempUnit = tempUnit,
             alignEnd = false,
             highContrast = highContrast,
-            themeMode = themeMode,
-            pressureStyle = pressureStyle,
-            tempStyle = tempStyle,
+            style = style,
         )
         TpmsCornerBlock(
-            modifier = Modifier.align(Alignment.TopEnd).padding(top = 2.dp),
+            modifier = Modifier.align(Alignment.TopEnd),
             labelRes = R.string.gauge_tire_fr_long,
             reading = frontRight,
             pressureUnit = pressureUnit,
             tempUnit = tempUnit,
             alignEnd = true,
             highContrast = highContrast,
-            themeMode = themeMode,
-            pressureStyle = pressureStyle,
-            tempStyle = tempStyle,
+            style = style,
         )
         TpmsCornerBlock(
-            modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 2.dp),
+            modifier = Modifier.align(Alignment.BottomStart),
             labelRes = R.string.gauge_tire_rl_long,
             reading = rearLeft,
             pressureUnit = pressureUnit,
             tempUnit = tempUnit,
             alignEnd = false,
             highContrast = highContrast,
-            themeMode = themeMode,
-            pressureStyle = pressureStyle,
-            tempStyle = tempStyle,
+            style = style,
         )
         TpmsCornerBlock(
-            modifier = Modifier.align(Alignment.BottomEnd).padding(bottom = 2.dp),
+            modifier = Modifier.align(Alignment.BottomEnd),
             labelRes = R.string.gauge_tire_rr_long,
             reading = rearRight,
             pressureUnit = pressureUnit,
             tempUnit = tempUnit,
             alignEnd = true,
             highContrast = highContrast,
-            themeMode = themeMode,
-            pressureStyle = pressureStyle,
-            tempStyle = tempStyle,
+            style = style,
         )
         if (worstBand == TpmsPressureBands.Band.LOW || worstBand == TpmsPressureBands.Band.CRITICAL) {
             TpmsCenterAlert(
@@ -141,54 +118,27 @@ private fun TpmsCornerBlock(
     tempUnit: TempUnit,
     alignEnd: Boolean,
     highContrast: Boolean,
-    themeMode: ThemeMode,
-    pressureStyle: androidx.compose.ui.text.TextStyle,
-    tempStyle: androidx.compose.ui.text.TextStyle,
+    style: androidx.compose.ui.text.TextStyle,
     modifier: Modifier = Modifier,
 ) {
     val band = TpmsPressureBands.band(reading.psi)
     val valueColor = tpmsValueColor(reading, band, highContrast)
     val horizontal = if (alignEnd) Alignment.End else Alignment.Start
-    val textAlign = if (alignEnd) TextAlign.End else TextAlign.Start
-    val chipColors = tpmsChipColors(themeMode)
 
     Column(
-        modifier = modifier.padding(horizontal = 1.dp),
+        modifier = modifier.padding(horizontal = 2.dp),
         horizontalAlignment = horizontal,
-        verticalArrangement = Arrangement.spacedBy(1.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Row(
-            modifier = Modifier
-                .border(1.dp, chipColors.border, RoundedCornerShape(6.dp))
-                .background(chipColors.background, RoundedCornerShape(6.dp))
-                .padding(horizontal = 6.dp, vertical = 2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            Text(
-                text = stringResource(labelRes),
-                color = chipColors.foreground,
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                textAlign = textAlign,
-            )
-            Text(text = "›", color = chipColors.foreground, style = MaterialTheme.typography.labelSmall)
-        }
-        Text(
-            text = formatPressure(reading, pressureUnit),
-            color = valueColor,
-            style = pressureStyle,
-            textAlign = textAlign,
-        )
-        Text(
-            text = formatTemp(reading.tempC, tempUnit),
-            color = valueColor,
-            style = tempStyle,
-            textAlign = textAlign,
-        )
+        Text(text = stringResource(labelRes), color = GaugeYellow, style = style)
+        Text(text = formatPressure(reading, pressureUnit), color = valueColor, style = style)
+        Text(text = formatTemp(reading.tempC, tempUnit), color = valueColor, style = style)
         TpmsBatteryIcon(
             batteryPct = reading.batteryPct,
             highContrast = highContrast,
-            modifier = Modifier.align(if (alignEnd) Alignment.End else Alignment.Start),
+            modifier = Modifier
+                .align(if (alignEnd) Alignment.End else Alignment.Start)
+                .size((18f * LocalTextScale.current).dp),
         )
     }
 }

@@ -15,7 +15,8 @@ class GaugeDisplayRotationAllOrientationsTest {
         val inverted = GaugeDisplayRotation.mapAttitude(-12f, 0f, displayRotation = 2, isPortraitLayout = true)
         assertEquals(upright.normalizedX, inverted.normalizedX, 0.001f)
         assertEquals(upright.normalizedY, inverted.normalizedY, 0.001f)
-        assertTrue(upright.normalizedX < -0.1f)
+        // Braking (−pitch) → ball toward front/top (−Y in Compose).
+        assertTrue(upright.normalizedY < -0.1f)
     }
 
     @Test
@@ -24,7 +25,8 @@ class GaugeDisplayRotationAllOrientationsTest {
         val inverted = GaugeDisplayRotation.mapAttitude(0f, 15f, displayRotation = 2, isPortraitLayout = true)
         assertEquals(upright.normalizedX, inverted.normalizedX, 0.001f)
         assertEquals(upright.normalizedY, inverted.normalizedY, 0.001f)
-        assertTrue(upright.normalizedY > 0.1f)
+        // Roll on screen X.
+        assertTrue(upright.normalizedX > 0.1f)
     }
 
     @Test

@@ -9,7 +9,7 @@ import kotlin.math.hypot
 private const val SwipeToggleThresholdPx = 72f
 
 /**
- * Tap or swipe toggles G-meter ↔ inclinometer; long-press opens calibrate sheet.
+ * Tap or swipe advances the attitude display cycle; long-press opens calibrate.
  */
 fun Modifier.attitudeGaugeInteraction(
     onToggleDisplay: () -> Unit,

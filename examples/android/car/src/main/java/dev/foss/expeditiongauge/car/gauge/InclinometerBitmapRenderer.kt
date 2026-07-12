@@ -28,6 +28,8 @@ class InclinometerBitmapRenderer(
         labelPitchDeg: Float? = null,
         labelRollDeg: Float? = null,
         yawDeg: Float? = null,
+        latG: Float? = null,
+        lonG: Float? = null,
     ): Bitmap {
         canvas.drawColor(InclinometerColor.BACKGROUND)
         val alert = pitchAlert || rollAlert
@@ -37,13 +39,17 @@ class InclinometerBitmapRenderer(
             InclinometerStyle.LADDER -> renderLadder(
                 pitchDeg, rollDeg, pitchAlert, rollAlert,
                 maxPitchThresholdDeg, maxRollThresholdDeg,
-                labelP, labelR, yawDeg,
+                labelP, labelR, yawDeg, latG, lonG,
             )
             InclinometerStyle.HORIZON -> horizon.draw(
-                pitchDeg, rollDeg, alert, labelP, labelR, yawDeg,
+                pitchDeg, rollDeg, alert, labelP, labelR, yawDeg, latG, lonG,
             )
-            InclinometerStyle.DUAL_DIAL -> dualDial.draw(pitchDeg, rollDeg, alert, yawDeg)
-            InclinometerStyle.BUBBLE -> bubble.draw(pitchDeg, rollDeg, alert, yawDeg)
+            InclinometerStyle.DUAL_DIAL -> dualDial.draw(
+                pitchDeg, rollDeg, alert, yawDeg, latG, lonG,
+            )
+            InclinometerStyle.BUBBLE -> bubble.draw(
+                pitchDeg, rollDeg, alert, yawDeg, latG, lonG,
+            )
         }
         return bitmap
     }
@@ -58,6 +64,8 @@ class InclinometerBitmapRenderer(
         labelPitchDeg: Float,
         labelRollDeg: Float,
         yawDeg: Float?,
+        latG: Float?,
+        lonG: Float?,
     ) {
         val frame = InclinometerSegmentLogic.frame(
             pitchDeg, rollDeg, maxPitchThresholdDeg, maxRollThresholdDeg,
@@ -67,7 +75,7 @@ class InclinometerBitmapRenderer(
         ladder.drawRoll(left = true, fill = frame.leftRollFill, rollDeg = frame.rollDeg, cx = cx, cy = cy)
         ladder.drawRoll(left = false, fill = frame.rightRollFill, rollDeg = frame.rollDeg, cx = cx, cy = cy)
         ladder.drawPitch(frame, cx, cy)
-        ladder.drawReadouts(labelPitchDeg, labelRollDeg, cx, yawDeg)
+        ladder.drawCornerReadouts(labelPitchDeg, labelRollDeg, yawDeg, latG, lonG)
         if (pitchAlert || rollAlert) ladder.drawAlertFrame()
     }
 

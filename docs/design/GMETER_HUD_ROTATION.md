@@ -14,33 +14,32 @@ Validated on OnePlus 12 (`b5214fc6`) in **portrait layout** at `ROTATION_0`.
 |-----------|------------|
 | Roll | `normalizedX` |
 | Pitch | `normalizedY` |
-
 ## Pipeline (`mapDeviceBallToHudScreen`)
 
 ```
 device ball
-  → [portrait layout only] mirror pitch (Y) + 90° CW
+  → [portrait layout] identity (roll→X, pitch→Y)
   → rotateBall(displayRotation)
   → [landscape layout only] applyLandscapePostRemap(displayRotation)
   → HUD screen ball
+
 ```
 
 ## Portrait HUD tile (`isPortraitLayout == true`)
 
-Locked step before `rotateBall`:
+Vehicle-natural axes (updated 2026-07-12):
 
-1. Negate pitch (`normalizedY *= −1`)
-2. `rotate90Clockwise()` — **never CCW, never skip**
+1. **Identity** — no pitch mirror, no 90° swap
+2. Braking (−pitch) → ball toward **front/top** (−Y); accel (+pitch) → **rear/bottom** (+Y)
+3. Roll stays on screen X
 
-| `displayRotation` | Pitch on screen | Roll on screen | Braking (ROTATION_0) |
-|-------------------|-----------------|----------------|----------------------|
-| 0 | X (lateral) | Y (vertical) | left |
-| 180 | X | Y | mirrored with phone |
-| 90 / 270 | follows `rotateBall` | follows `rotateBall` | follows phone |
+| `displayRotation` | Pitch on screen | Roll on screen |
+|-------------------|-----------------|----------------|
+| 0 | Y (vertical) | X (lateral) |
+| 90 / 180 / 270 | follows `rotateBall` | follows `rotateBall` |
+Edge numerals: **pitch** top/bottom (`ball.normalizedY`), **roll** left/right (`ball.normalizedX`).
 
-Edge numerals: **roll** top/bottom (`ball.normalizedY`), **pitch** left/right (`ball.normalizedX`).
-
-**Mistake to avoid:** negating `normalizedX` when you mean pitch — after 90° CW, pitch is on screen X and comes from device Y.
+**Mistake to avoid:** mirroring pitch or applying 90° CW in portrait — either swaps or reverses front/rear.
 
 ## Landscape HUD tile (`isPortraitLayout == false`)
 
@@ -54,16 +53,14 @@ Post-remap after `rotateBall`:
 | 90 (CCW from portrait) | 90° **CCW** | undoes lateral tilt so pitch stays vertical on tile |
 | 180 | negate X and Y | upside-down landscape |
 | 270 (CW from portrait) | 90° **CW** | mirror of 90 |
-
 Phone CCW → landscape (`ROTATION_90`) applies **CCW on the ball after display rotation** so the cube keeps pitch up/down and roll left/right. This is the landscape complement of the portrait **CW** cube step.
 
 ## Edge numerals
 
 | Layout | Pitch edges | Roll edges |
 |--------|-------------|------------|
-| Portrait | left / right | top / bottom |
+| Portrait | top / bottom | left / right |
 | Landscape | top / bottom | left / right |
-
 Numerals follow `ball.normalizedX` / `ball.normalizedY` after the full pipeline.
 
 ## Tests
@@ -89,6 +86,7 @@ device accel/gyro
   → VehicleAttitudeLogic.fromDevice(..., displayRotation=0)  // locked pitch↔roll swap
   → CalibrationStore offsets (vehicle frame)
   → inclinometer / horizon (passthrough)
+
 ```
 
 | Step | Contract |
@@ -97,7 +95,6 @@ device accel/gyro
 | Portrait swap | vehicle pitch ← device roll, vehicle roll ← device pitch — **never change** |
 | Rotation source | Activity `Display.getRotation()` authoritative; `DisplayManager` fallback |
 | Madgwick reset | On every `displayRotation` change |
-
 ### Mistakes that broke landscape (do not reintroduce)
 
 1. **Application `WindowManager` on every gyro sample** — on some OEMs reports

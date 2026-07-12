@@ -14,9 +14,10 @@ import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
 
 private const val REFERENCE_TILE_DP = 180f
-private const val MIN_FONT_SCALE = 0.65f
-private const val MAX_FONT_SCALE = 1f
+private const val MIN_FONT_SCALE = 0.7f
+private const val MAX_FONT_SCALE = 1.85f
 
+/** Square HUD tile; parent should pass equal width and height (e.g. Modifier.size(edge)). */
 @Composable
 fun HudSquareTile(
     modifier: Modifier = Modifier,

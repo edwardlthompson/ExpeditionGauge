@@ -31,10 +31,14 @@ internal class TrackGaugePreferences(private val context: Context) {
 
     val attitudeGaugeMode: Flow<AttitudeGaugeMode> = context.settingsDataStore.data.map { prefs ->
         when (prefs[attitudeGaugeModeKey]) {
-            "g_force" -> AttitudeGaugeMode.G_FORCE
-            "hybrid" -> AttitudeGaugeMode.HYBRID
-            "inclinometer" -> AttitudeGaugeMode.INCLINOMETER
-            else -> AttitudeGaugeMode.ATTITUDE
+            // Legacy attitude / hybrid / bare g_force keys → single G-meter ball.
+            "attitude", "hybrid", "g_force" -> AttitudeGaugeMode.G_FORCE
+            "inclinometer", "inclinometer_ladder" -> AttitudeGaugeMode.INCLINOMETER_LADDER
+            "inclinometer_horizon" -> AttitudeGaugeMode.INCLINOMETER_HORIZON
+            "inclinometer_dual_dial" -> AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL
+            "inclinometer_bubble" -> AttitudeGaugeMode.INCLINOMETER_BUBBLE
+            "compass_ball" -> AttitudeGaugeMode.COMPASS_BALL
+            else -> AttitudeGaugeMode.G_FORCE
         }
     }
 
@@ -62,9 +66,11 @@ internal class TrackGaugePreferences(private val context: Context) {
         context.settingsDataStore.edit {
             it[attitudeGaugeModeKey] = when (mode) {
                 AttitudeGaugeMode.G_FORCE -> "g_force"
-                AttitudeGaugeMode.HYBRID -> "hybrid"
-                AttitudeGaugeMode.INCLINOMETER -> "inclinometer"
-                AttitudeGaugeMode.ATTITUDE -> "attitude"
+                AttitudeGaugeMode.INCLINOMETER_LADDER -> "inclinometer_ladder"
+                AttitudeGaugeMode.INCLINOMETER_HORIZON -> "inclinometer_horizon"
+                AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL -> "inclinometer_dual_dial"
+                AttitudeGaugeMode.INCLINOMETER_BUBBLE -> "inclinometer_bubble"
+                AttitudeGaugeMode.COMPASS_BALL -> "compass_ball"
             }
         }
     }

@@ -6,8 +6,9 @@ package dev.foss.expeditiongauge.gauge
  * Locked contract: `docs/design/GMETER_HUD_ROTATION.md`
  *
  * Pipeline:
- * 1. Portrait layout: pitch mirror + 90° CW in **device** space (validated on OnePlus 12).
- * 2. [rotateBall] for [displayRotation] (all orientations).
+ * 1. Portrait layout: identity cube (roll→X, pitch→Y). Do not 90°-swap or mirror pitch —
+ *    braking (−pitch) → ball toward front/top; accel (+pitch) → ball toward rear/bottom.
+ * 2. [rotateBall] for [displayRotation] (legacy device-ball paths).
  * 3. Landscape layout only: extra cube remap per rotation so pitch stays vertical on the tile.
  */
 object GaugeDisplayRotation {
@@ -42,9 +43,11 @@ object GaugeDisplayRotation {
     fun mirrorPitch(position: BallPosition): BallPosition =
         position.copy(normalizedY = (-position.normalizedY).coerceIn(-1f, 1f))
 
-    /** Portrait tile: mirror pitch (device Y) then 90° CW — device space, before [rotateBall]. */
-    fun applyPortraitCubeRemap(position: BallPosition): BallPosition =
-        rotate90Clockwise(mirrorPitch(position))
+    /**
+     * Portrait tile: keep vehicle axes — roll on screen X, pitch on screen Y.
+     * Identity (no pitch mirror / no 90° swap): braking → front/top, accel → rear/bottom.
+     */
+    fun applyPortraitCubeRemap(position: BallPosition): BallPosition = position
 
     /** Landscape tile: extra remap after [rotateBall] so pitch stays on screen Y, roll on X. */
     fun applyLandscapePostRemap(position: BallPosition, displayRotation: Int): BallPosition =
@@ -118,10 +121,7 @@ object GaugeDisplayRotation {
     ): Pair<Float, Float> {
         val ball = mapAttitude(pitchDeg, rollDeg, displayRotation, isPortraitLayout)
         val max = AttitudeBallLogic.MAX_ANGLE_DEG
-        return if (isPortraitLayout) {
-            (ball.normalizedX * max) to (ball.normalizedY * max)
-        } else {
-            (ball.normalizedY * max) to (ball.normalizedX * max)
-        }
+        // Ball X = roll, Y = pitch (portrait and landscape vehicle-frame).
+        return (ball.normalizedY * max) to (ball.normalizedX * max)
     }
 }

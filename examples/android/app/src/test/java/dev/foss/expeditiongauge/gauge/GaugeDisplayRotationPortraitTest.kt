@@ -4,36 +4,41 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Locks portrait G-meter to pitch mirror + 90° CW — see docs/design/GMETER_HUD_ROTATION.md */
+/** Portrait G-meter: roll lateral, pitch vertical — braking toward front/top. */
 class GaugeDisplayRotationPortraitTest {
     @Test
-    fun mapAttitude_portraitAppliesPitchMirrorThen90Clockwise() {
-        val mirrored = GaugeDisplayRotation.rotate90Clockwise(
-            BallPosition(0.5f, -0.4f, GaugeZone.Safe),
-        )
+    fun mapAttitude_portraitKeepsDeviceAxes() {
+        val device = AttitudeBallLogic.mapPitchRoll(12f, 15f)
         val portrait = GaugeDisplayRotation.mapAttitude(12f, 15f, displayRotation = 0, isPortraitLayout = true)
-        assertEquals(mirrored.normalizedX, portrait.normalizedX, 0.001f)
-        assertEquals(mirrored.normalizedY, portrait.normalizedY, 0.001f)
+        assertEquals(device.normalizedX, portrait.normalizedX, 0.001f)
+        assertEquals(device.normalizedY, portrait.normalizedY, 0.001f)
     }
 
     @Test
-    fun positiveRoll_portraitMapsToBottomOnVerticalAxis() {
+    fun positiveRoll_portraitMapsRightOnHorizontalAxis() {
         val ball = GaugeDisplayRotation.mapAttitude(0f, 15f, displayRotation = 0, isPortraitLayout = true)
-        assertTrue(ball.normalizedY > 0.1f)
+        assertTrue(ball.normalizedX > 0.1f)
+        assertTrue(kotlin.math.abs(ball.normalizedY) < 0.05f)
     }
 
     @Test
-    fun negativePitch_portraitMapsToLeftAfterPitchMirror() {
+    fun braking_portraitMapsBallTowardFrontTop() {
+        // −pitch (braking / nose down) → negative screen Y (toward top / vehicle front)
         val ball = GaugeDisplayRotation.mapAttitude(-12f, 0f, displayRotation = 0, isPortraitLayout = true)
-        assertTrue(ball.normalizedX < -0.1f)
+        assertTrue(ball.normalizedY < -0.1f)
+        assertTrue(kotlin.math.abs(ball.normalizedX) < 0.05f)
     }
 
     @Test
-    fun rotate90Clockwise_mapsPitchToXAndRollToY() {
-        val rotated = GaugeDisplayRotation.rotate90Clockwise(
-            BallPosition(0.5f, -0.3f, GaugeZone.Safe),
-        )
-        assertEquals(0.3f, rotated.normalizedX, 0.001f)
-        assertEquals(0.5f, rotated.normalizedY, 0.001f)
+    fun accel_portraitMapsBallTowardRearBottom() {
+        val ball = GaugeDisplayRotation.mapAttitude(12f, 0f, displayRotation = 0, isPortraitLayout = true)
+        assertTrue(ball.normalizedY > 0.1f)
+        assertTrue(kotlin.math.abs(ball.normalizedX) < 0.05f)
+    }
+
+    @Test
+    fun mapGForce_portraitKeepsLatOnX() {
+        val ball = GaugeDisplayRotation.mapGForce(0.5f, 0f, displayRotation = 0, isPortraitLayout = true)
+        assertTrue(ball.normalizedX > 0.1f)
     }
 }

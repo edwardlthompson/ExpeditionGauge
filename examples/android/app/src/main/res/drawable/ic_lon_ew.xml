@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Left / right arrows for longitude (W–E) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M2,12 L8,7 L8,10 L11,10 L11,14 L8,14 L8,17 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M22,12 L16,17 L16,14 L13,14 L13,10 L16,10 L16,7 Z" />
+</vector>

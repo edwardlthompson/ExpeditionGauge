@@ -12,7 +12,10 @@ import dev.foss.expeditiongauge.live.LiveTelemetryModule
 import dev.foss.expeditiongauge.alerts.AlertService
 import dev.foss.expeditiongauge.car.gauge.next
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
-import dev.foss.expeditiongauge.gauge.toggleGMeterInclinometer
+import dev.foss.expeditiongauge.gauge.nextAttitudeDisplay
+import dev.foss.expeditiongauge.gauge.toAttitudeGaugeMode
+import dev.foss.expeditiongauge.gauge.toInclinometerStyle
+import dev.foss.expeditiongauge.car.gauge.next
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.recording.RecordingMode
@@ -196,15 +199,17 @@ class DashboardViewModel(
 
     fun toggleAttitudeDisplay() {
         viewModelScope.launch {
-            val next = settingsPreferences.attitudeGaugeMode.first().toggleGMeterInclinometer()
+            val next = settingsPreferences.attitudeGaugeMode.first().nextAttitudeDisplay()
             settingsPreferences.setAttitudeGaugeMode(next)
+            next.toInclinometerStyle()?.let { settingsPreferences.setInclinometerStyle(it) }
         }
     }
 
     fun cycleInclinometerStyle() {
         viewModelScope.launch {
-            val next = settingsPreferences.inclinometerStyle.first().next()
-            settingsPreferences.setInclinometerStyle(next)
+            val nextStyle = settingsPreferences.inclinometerStyle.first().next()
+            settingsPreferences.setInclinometerStyle(nextStyle)
+            settingsPreferences.setAttitudeGaugeMode(nextStyle.toAttitudeGaugeMode())
         }
     }
 
@@ -257,4 +262,4 @@ class DashboardViewModel(
 }
 
 internal fun gaugeModeForPreset(presetId: DashboardPresetId): AttitudeGaugeMode? =
-    if (presetId == DashboardPresetId.Offroad) AttitudeGaugeMode.INCLINOMETER else null
+    if (presetId == DashboardPresetId.Offroad) AttitudeGaugeMode.INCLINOMETER_LADDER else null

@@ -40,7 +40,7 @@ fun DashboardHudLayout(
     pressureUnit: PressureUnit = PressureUnit.PSI,
     tempUnit: TempUnit = TempUnit.CELSIUS,
     speedUnit: SpeedUnit = SpeedUnit.METRIC,
-    attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.ATTITUDE,
+    attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.G_FORCE,
     inclinometerStyle: InclinometerStyle = InclinometerStyle.LADDER,
     activeAlerts: Set<AlertType> = emptySet(),
     maxPitchAlertDeg: Float? = null,
@@ -49,6 +49,11 @@ fun DashboardHudLayout(
     motionReduced: Boolean = false,
     highContrast: Boolean = false,
     themeMode: ThemeMode = ThemeMode.System,
+    isLive: Boolean = false,
+    onMenuClick: () -> Unit = {},
+    onRecordClick: () -> Unit = {},
+    onMarkEvent: () -> Unit = {},
+    onScreenshotClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -80,6 +85,11 @@ fun DashboardHudLayout(
             motionReduced = motionReduced || animatorReduced,
             highContrast = highContrast,
             themeMode = themeMode,
+            isLive = isLive,
+            onMenuClick = onMenuClick,
+            onRecordClick = onRecordClick,
+            onMarkEvent = onMarkEvent,
+            onScreenshotClick = onScreenshotClick,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

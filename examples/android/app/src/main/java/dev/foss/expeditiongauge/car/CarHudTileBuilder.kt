@@ -28,7 +28,6 @@ object CarHudTileBuilder {
                 title = "Attitude",
                 line1 = "P ${GaugeLogic.formatSignedDegrees(snapshot.pitchDeg)}",
                 line2 = "R ${GaugeLogic.formatSignedDegrees(snapshot.rollDeg)}",
-                line3 = "Y ${GaugeLogic.formatWholeDegrees(snapshot.bodyYawDeg ?: snapshot.headingDeg)}",
             ),
             telemetry = CarHudTile(
                 title = "Telemetry",

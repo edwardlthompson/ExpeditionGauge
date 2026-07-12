@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.settings
 
 import android.content.Context
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
@@ -95,6 +96,14 @@ class SettingsPreferences(private val context: Context) {
             .coerceIn(SessionStorageBudget.MIN_PERCENT, SessionStorageBudget.MAX_PERCENT)
     }
 
+    val coordFormatDecimal: Flow<Boolean> = context.settingsDataStore.data.map {
+        it[keys.coordFormatDecimal] ?: false
+    }
+
+    val hudScreenshotMode: Flow<HudScreenshotMode> = context.settingsDataStore.data.map {
+        keys.hudScreenshotModeFrom(it)
+    }
+
     suspend fun setSpeedUnit(unit: SpeedUnit) = store.setSpeedUnit(unit)
     suspend fun setLogIntervalMs(ms: Long) = store.setLogIntervalMs(ms)
     suspend fun setObdDeviceAddress(address: String?) = store.setObdDeviceAddress(address)
@@ -124,4 +133,14 @@ class SettingsPreferences(private val context: Context) {
     suspend fun setSessionStorageFreePercent(percent: Int) = store.setSessionStorageFreePercent(percent)
     suspend fun resetCalibrationFlag() = store.resetCalibrationFlag()
     suspend fun setAutoCalibrateWhenStill(enabled: Boolean) = store.setAutoCalibrateWhenStill(enabled)
+    suspend fun setCoordFormatDecimal(decimal: Boolean) = store.setCoordFormatDecimal(decimal)
+
+    suspend fun setHudScreenshotMode(mode: HudScreenshotMode) {
+        context.settingsDataStore.edit {
+            it[keys.hudScreenshotMode] = when (mode) {
+                HudScreenshotMode.EACH_CUBE -> "each_cube"
+                HudScreenshotMode.FULL_SCREEN -> "full_screen"
+            }
+        }
+    }
 }

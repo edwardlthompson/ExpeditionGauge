@@ -20,6 +20,7 @@ import dev.foss.expeditiongauge.accessibility.MetricTtsReadout
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.alerts.AlertThresholds
+import dev.foss.expeditiongauge.settings.HudScreenshotMode
 import dev.foss.expeditiongauge.settings.MediaCompressionQuality
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsLogic
@@ -76,6 +77,8 @@ fun AppScreenDashboardRoute(
     )
     val compression by services.settingsPreferences.mediaCompressionQuality
         .collectAsStateWithLifecycle(initialValue = MediaCompressionQuality.BALANCED)
+    val screenshotMode by services.settingsPreferences.hudScreenshotMode
+        .collectAsStateWithLifecycle(initialValue = HudScreenshotMode.FULL_SCREEN)
     var pendingCaptureFile by remember { mutableStateOf<File?>(null) }
 
     fun attachTimestampMs(): Long = telemetry.timestampMs
@@ -188,5 +191,9 @@ fun AppScreenDashboardRoute(
         maxPitchAlertDeg = alertThresholds.maxPitchDeg,
         maxRollAlertDeg = alertThresholds.maxRollDeg,
         statsAggregate = statsAggregate,
+        screenshotMode = screenshotMode,
+        onScreenshotModeSelected = { mode ->
+            scope.launch { services.settingsPreferences.setHudScreenshotMode(mode) }
+        },
     )
 }

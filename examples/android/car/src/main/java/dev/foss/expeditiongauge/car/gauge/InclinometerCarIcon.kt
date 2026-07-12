@@ -18,6 +18,8 @@ object InclinometerCarIcon {
         labelPitchDeg: Float? = null,
         labelRollDeg: Float? = null,
         yawDeg: Float? = null,
+        latG: Float? = null,
+        lonG: Float? = null,
     ): CarIcon {
         val bitmap = renderer.render(
             pitchDeg = pitchDeg,
@@ -30,6 +32,8 @@ object InclinometerCarIcon {
             labelPitchDeg = labelPitchDeg,
             labelRollDeg = labelRollDeg,
             yawDeg = yawDeg,
+            latG = latG,
+            lonG = lonG,
         )
         return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
     }
@@ -45,6 +49,8 @@ object InclinometerCarIcon {
         labelPitchDeg: Float? = null,
         labelRollDeg: Float? = null,
         yawDeg: Float? = null,
+        latG: Float? = null,
+        lonG: Float? = null,
     ): Bitmap = renderer.render(
         pitchDeg = pitchDeg,
         rollDeg = rollDeg,
@@ -56,5 +62,7 @@ object InclinometerCarIcon {
         labelPitchDeg = labelPitchDeg,
         labelRollDeg = labelRollDeg,
         yawDeg = yawDeg,
+        latG = latG,
+        lonG = lonG,
     )
 }

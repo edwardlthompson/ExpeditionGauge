@@ -20,6 +20,7 @@ import dev.foss.expeditiongauge.video.VideoBurnInExporter
 import dev.foss.expeditiongauge.video.VideoSyncEngine
 import dev.foss.expeditiongauge.video.VideoSyncEngineStub
 import dev.foss.expeditiongauge.fusion.SensorFusionEngine
+import dev.foss.expeditiongauge.gps.DemElevationLookup
 import dev.foss.expeditiongauge.gps.ExternalNmeaGpsManager
 import dev.foss.expeditiongauge.gps.FusedGpsLocationProvider
 import dev.foss.expeditiongauge.live.LiveTelemetryModule
@@ -122,6 +123,7 @@ class ExpeditionGaugeServices(
             driftEstimator = driftEstimator,
             sensorProvider = phoneSensorProvider,
             externalGps = externalGpsManager,
+            demElevation = DemElevationLookup(scope),
         )
         telemetryOrchestrator = TelemetryOrchestrator(
             telemetryBus = telemetryBus,

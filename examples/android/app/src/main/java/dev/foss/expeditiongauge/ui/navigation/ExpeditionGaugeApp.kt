@@ -103,7 +103,7 @@ fun ExpeditionGaugeApp(
     val lapTimingEnabled by services.settingsPreferences.lapTimingEnabled
         .collectAsStateWithLifecycle(initialValue = false)
     val attitudeGaugeMode by services.settingsPreferences.attitudeGaugeMode
-        .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE)
+        .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.G_FORCE)
     val inclinometerStyle by services.settingsPreferences.inclinometerStyle
         .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.car.gauge.InclinometerStyle.LADDER)
     val alertThresholds by services.alertThresholdsPreferences.thresholds

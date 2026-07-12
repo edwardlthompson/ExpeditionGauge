@@ -19,6 +19,13 @@
 
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
+### 2026-07-12 — Gauge cycle, G-meter axes, USGS DEM elevation
+- **Status:** Accepted
+- **Context:** Users need each inclinometer style as a standalone gauge; Attitude/Hybrid redundant with G-meter; weak GNSS altitude was tens of meters off vs USGS terrain
+- **Decision:** Six-mode cycle (ladder/horizon/dual/bubble/G-meter/compass); single pitch/roll G-meter ball with identity portrait cube; DEM fallback via USGS EPQS when sats/vAcc are poor; A-GPS inject for fix quality only
+- **Alternatives considered:** Accel-G / hybrid ball modes (rejected — user preference); ASTER-only DEM (rejected — 72 ft vs USGS 7.8 ft at Guaynabo); barometer fusion (deferred — needs sea-level reference)
+- **Consequences:** v2.16.0; elevation needs network once per cell; legacy attitude/hybrid prefs map to G-meter
+
 ### 2026-07-12 — Integer P/R/Y + stationary pose autocalibrate
 - **Status:** Accepted
 - **Context:** Decimal attitude jitter; mount pose needs a still-window Zero with honest yaw/compass behavior

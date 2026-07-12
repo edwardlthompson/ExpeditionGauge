@@ -29,15 +29,19 @@ internal class InclinometerDualDialDraw(
         strokeCap = Paint.Cap.ROUND
     }
 
-    fun draw(pitchDeg: Float, rollDeg: Float, alert: Boolean, yawDeg: Float? = null) {
+    fun draw(
+        pitchDeg: Float,
+        rollDeg: Float,
+        alert: Boolean,
+        yawDeg: Float? = null,
+        latG: Float? = null,
+        lonG: Float? = null,
+    ) {
         val cy = sizePx / 2f
         val r = sizePx * 0.22f
-        drawDial(sizePx * 0.28f, cy, r, pitchDeg, "P")
-        drawDial(sizePx * 0.72f, cy, r, rollDeg, "R")
-        yawDeg?.let {
-            kit.text.textSize = sizePx * 0.06f
-            canvas.drawText("Y ${kit.formatAngle(it)}", sizePx / 2f, sizePx * 0.96f, kit.text)
-        }
+        drawDial(sizePx * 0.28f, cy, r, pitchDeg)
+        drawDial(sizePx * 0.72f, cy, r, rollDeg)
+        InclinometerCornerReadouts.draw(canvas, sizePx, kit, pitchDeg, rollDeg, yawDeg, latG, lonG)
         if (alert) {
             canvas.drawRect(
                 sizePx * 0.025f, sizePx * 0.025f,
@@ -47,7 +51,7 @@ internal class InclinometerDualDialDraw(
         }
     }
 
-    private fun drawDial(cx: Float, cy: Float, r: Float, deg: Float, label: String) {
+    private fun drawDial(cx: Float, cy: Float, r: Float, deg: Float) {
         val oval = RectF(cx - r, cy - r, cx + r, cy + r)
         canvas.drawArc(oval, 135f, 270f, false, track)
         val n = (deg / InclinometerColor.MAX_DEG).coerceIn(-1f, 1f)
@@ -59,8 +63,5 @@ internal class InclinometerDualDialDraw(
         val ny = cy + r * 0.75f * sin(needleRad).toFloat()
         canvas.drawLine(cx, cy, nx, ny, needle)
         canvas.drawCircle(cx, cy, sizePx * 0.02f, kit.pointer)
-        kit.text.textSize = sizePx * 0.065f
-        canvas.drawText(label, cx, cy - r - sizePx * 0.04f, kit.text)
-        canvas.drawText(kit.formatAngle(deg), cx, cy + r + sizePx * 0.1f, kit.text)
     }
 }

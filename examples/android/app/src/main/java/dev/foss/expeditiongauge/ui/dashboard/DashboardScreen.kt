@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -84,12 +85,15 @@ fun DashboardScreen(
     lapTimingEnabled: Boolean = false,
     lapTimingState: PredictiveTimingState = PredictiveTimingState(),
     attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
-        dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.ATTITUDE,
+        dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.G_FORCE,
     inclinometerStyle: dev.foss.expeditiongauge.car.gauge.InclinometerStyle =
         dev.foss.expeditiongauge.car.gauge.InclinometerStyle.LADDER,
     maxPitchAlertDeg: Float? = null,
     maxRollAlertDeg: Float? = null,
     statsAggregate: SessionAggregateStats = SessionAggregateStats(0, 0L, null),
+    screenshotMode: dev.foss.expeditiongauge.settings.HudScreenshotMode =
+        dev.foss.expeditiongauge.settings.HudScreenshotMode.FULL_SCREEN,
+    onScreenshotModeSelected: (dev.foss.expeditiongauge.settings.HudScreenshotMode) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
@@ -98,6 +102,7 @@ fun DashboardScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showRecordingAdvanced by remember { mutableStateOf(false) }
     var drawerOpen by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     // configChanges keeps the Activity; push live Display.rotation into fusion every frame.
     val configuration = LocalConfiguration.current
     val view = LocalView.current
@@ -131,6 +136,7 @@ fun DashboardScreen(
         liveTelemetryEnabled = liveTelemetryEnabled,
         activePresetId = preset.id,
         themeMode = themeMode,
+        screenshotMode = screenshotMode,
         onStartRecording = viewModel::startRecording,
         onStopRecording = viewModel::stopRecording,
         onSessionsOpen = onSessionsOpen,
@@ -143,6 +149,7 @@ fun DashboardScreen(
         onSettingsOpen = onSettingsOpen,
         onAboutOpen = onAboutOpen,
         onThemeToggle = onThemeToggle,
+        onScreenshotModeSelected = onScreenshotModeSelected,
     ) {
         InsetAwareScaffold(
             containerColor = GaugeBackground,
@@ -255,19 +262,16 @@ fun DashboardScreen(
                             maxRollAlertDeg = maxRollAlertDeg,
                             displayRotation = displayRotation,
                             themeMode = themeMode,
+                            isLive = uiState.isLive,
+                            onMenuClick = { drawerOpen = true },
+                            onRecordClick = {
+                                if (uiState.recording) viewModel.stopRecording() else viewModel.startRecording()
+                            },
+                            onMarkEvent = onMarkEvent,
+                            onScreenshotClick = { context.captureHudScreenshot(screenshotMode) },
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                         )
                     }
-                    DashboardHudTopChrome(
-                        recording = uiState.recording,
-                        isLive = uiState.isLive,
-                        onMenuClick = { drawerOpen = true },
-                        onRecordClick = {
-                            if (uiState.recording) viewModel.stopRecording() else viewModel.startRecording()
-                        },
-                        onMarkEvent = onMarkEvent,
-                        modifier = Modifier.align(androidx.compose.ui.Alignment.TopCenter),
-                    )
                     RecordingAdvancedSheet(
                         visible = showRecordingAdvanced && uiState.recording,
                         logIntervalHz = (1000 / logIntervalMs.coerceAtLeast(1)).toInt(),
@@ -292,3 +296,4 @@ fun DashboardScreen(
         }
     }
 }
+

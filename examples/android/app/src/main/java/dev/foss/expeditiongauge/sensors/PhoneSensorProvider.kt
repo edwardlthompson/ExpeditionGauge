@@ -15,6 +15,7 @@ import dev.foss.expeditiongauge.fusion.SensorFusionEngine
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 class PhoneSensorProvider(
@@ -46,17 +47,23 @@ class PhoneSensorProvider(
 
     fun start() {
         scope.launch {
-            calibrationStore.offsets.collect { offsets ->
+            // Apply persisted zero before IMU listeners so cold start matches last calibrate.
+            val initial = calibrationStore.currentOffsets()
+            fusionEngine.setCalibrationOffsets(initial)
+            if (initial.hasPersistedZero()) {
+                autocalibrationController?.restorePersistedZeroCooldown()
+            }
+            syncDisplayRotation()
+            displayManager.registerDisplayListener(displayListener, null)
+            val imuDelay = SensorPollScheduler.phoneImuSensorDelay
+            accelerometer?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
+            gyroscope?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
+            magnetometer?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
+            calibrationStore.offsets.drop(1).collect { offsets ->
                 fusionEngine.setCalibrationOffsets(offsets)
                 publisher.resetSessionPeaks()
             }
         }
-        syncDisplayRotation()
-        displayManager.registerDisplayListener(displayListener, null)
-        val imuDelay = SensorPollScheduler.phoneImuSensorDelay
-        accelerometer?.let { sensorManager.registerListener(this, it, imuDelay) }
-        gyroscope?.let { sensorManager.registerListener(this, it, imuDelay) }
-        magnetometer?.let { sensorManager.registerListener(this, it, imuDelay) }
     }
 
     fun stop() {

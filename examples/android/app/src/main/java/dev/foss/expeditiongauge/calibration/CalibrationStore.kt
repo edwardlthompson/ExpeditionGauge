@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -20,13 +21,22 @@ data class CalibrationOffsets(
     val yawOffsetDeg: Float = 0f,
     /** Surface.ROTATION_* when Zero was last applied. */
     val displayRotationAtCalibrate: Int = 0,
-)
+    /** Epoch ms of last successful zero (survives process death). */
+    val lastZeroAtMs: Long = 0L,
+) {
+    fun hasPersistedZero(): Boolean =
+        lastZeroAtMs > 0L ||
+            abs(pitchOffsetDeg) > 0.01f ||
+            abs(rollOffsetDeg) > 0.01f ||
+            abs(yawOffsetDeg) > 0.01f
+}
 
 class CalibrationStore(private val context: Context) {
     private val pitchKey = floatPreferencesKey("pitch_offset_deg")
     private val rollKey = floatPreferencesKey("roll_offset_deg")
     private val yawKey = floatPreferencesKey("yaw_offset_deg")
     private val rotationKey = intPreferencesKey("display_rotation_at_calibrate")
+    private val lastZeroAtKey = longPreferencesKey("last_zero_at_ms")
 
     val offsets: Flow<CalibrationOffsets> = context.calibrationDataStore.data.map { prefs ->
         CalibrationOffsets(
@@ -34,8 +44,12 @@ class CalibrationStore(private val context: Context) {
             rollOffsetDeg = prefs[rollKey] ?: 0f,
             yawOffsetDeg = prefs[yawKey] ?: 0f,
             displayRotationAtCalibrate = prefs[rotationKey] ?: 0,
+            lastZeroAtMs = prefs[lastZeroAtKey] ?: 0L,
         )
     }
+
+    /** Blocking-friendly first read for sensor bootstrap before IMU listeners attach. */
+    suspend fun currentOffsets(): CalibrationOffsets = offsets.first()
 
     suspend fun setLevel(
         pitchDeg: Float,
@@ -48,6 +62,7 @@ class CalibrationStore(private val context: Context) {
             prefs[rollKey] = rollDeg
             prefs[yawKey] = yawDeg
             prefs[rotationKey] = displayRotation.mod(4)
+            prefs[lastZeroAtKey] = System.currentTimeMillis()
         }
     }
 
@@ -77,6 +92,7 @@ class CalibrationStore(private val context: Context) {
             prefs[rollKey] = 0f
             prefs[yawKey] = 0f
             prefs[rotationKey] = 0
+            prefs[lastZeroAtKey] = 0L
         }
     }
 
@@ -118,6 +134,7 @@ class CalibrationStore(private val context: Context) {
                 current.yawOffsetDeg
             },
             displayRotationAtCalibrate = current.displayRotationAtCalibrate,
+            lastZeroAtMs = current.lastZeroAtMs,
         )
 
         fun wrapSigned180(deg: Float): Float {

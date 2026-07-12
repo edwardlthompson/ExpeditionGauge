@@ -11,13 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
-import kotlin.math.hypot
-import kotlin.math.roundToInt
 
 @Composable
 fun TelemetryHudAttitudeRow(
@@ -59,21 +58,13 @@ fun TelemetryHudAttitudeRow(
 fun TelemetryHudVehicleRow(
     rpm: Float?,
     batteryVoltage: Float?,
-    latG: Float,
-    lonG: Float,
     slipRatio: Float?,
     modifier: Modifier = Modifier,
 ) {
-    val scale = LocalTextScale.current
-    val style = MaterialTheme.typography.labelLarge.copy(
-        fontWeight = FontWeight.Medium,
-        fontSize = MaterialTheme.typography.labelLarge.fontSize * scale,
-    )
+    val style = hudCubeTextStyle()
     val parts = buildList {
         rpm?.let { add(stringResource(R.string.playback_rpm, it)) }
         batteryVoltage?.let { add(stringResource(R.string.gauge_voltage_value, it)) }
-        val gMag = hypot(latG.toDouble(), lonG.toDouble()).toFloat().roundToInt()
-        if (gMag > 0) add(stringResource(R.string.gauge_g_magnitude, gMag))
         slipRatio?.let { add(stringResource(R.string.gauge_slip_ratio, it)) }
     }
     if (parts.isEmpty()) return

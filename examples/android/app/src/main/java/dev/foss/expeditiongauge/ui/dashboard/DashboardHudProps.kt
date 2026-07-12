@@ -34,4 +34,9 @@ data class DashboardHudProps(
     val motionReduced: Boolean = false,
     val highContrast: Boolean = false,
     val themeMode: ThemeMode = ThemeMode.System,
+    val isLive: Boolean = false,
+    val onMenuClick: () -> Unit = {},
+    val onRecordClick: () -> Unit = {},
+    val onMarkEvent: () -> Unit = {},
+    val onScreenshotClick: () -> Unit = {},
 )

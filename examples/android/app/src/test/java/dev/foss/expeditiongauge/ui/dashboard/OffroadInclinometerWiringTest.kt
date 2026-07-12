@@ -9,7 +9,7 @@ import org.junit.Test
 class OffroadInclinometerWiringTest {
     @Test
     fun offroadPreset_selectsInclinometerMode() {
-        assertEquals(AttitudeGaugeMode.INCLINOMETER, gaugeModeForPreset(DashboardPresetId.Offroad))
+        assertEquals(AttitudeGaugeMode.INCLINOMETER_LADDER, gaugeModeForPreset(DashboardPresetId.Offroad))
     }
 
     @Test

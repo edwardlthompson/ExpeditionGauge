@@ -29,6 +29,13 @@ object GaugeLogic {
         }
     }
 
+    /** Compact HUD altitude digits (no unit — pair with ELEV label). */
+    fun formatAltitudePadded(meters: Double?, useMetric: Boolean): String {
+        if (meters == null) return "----"
+        val value = if (useMetric) meters.roundToInt() else (meters * 3.28084).roundToInt()
+        return value.coerceIn(-9999, 99999).toString().padStart(4, '0')
+    }
+
     fun formatHeading(headingDeg: Float): String {
         val normalized = ((headingDeg % 360f) + 360f) % 360f
         return "${normalized.toInt()}°"

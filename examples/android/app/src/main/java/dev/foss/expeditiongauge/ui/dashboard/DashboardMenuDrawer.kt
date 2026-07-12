@@ -27,6 +27,7 @@ import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
+import dev.foss.expeditiongauge.settings.HudScreenshotMode
 import dev.foss.expeditiongauge.ui.components.ThemeToggle
 import dev.foss.expeditiongauge.ui.theme.GaugeBackground
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -43,6 +44,7 @@ fun DashboardMenuDrawer(
     liveTelemetryEnabled: Boolean,
     activePresetId: DashboardPresetId,
     themeMode: ThemeMode,
+    screenshotMode: HudScreenshotMode,
     onStartRecording: () -> Unit,
     onStopRecording: () -> Unit,
     onSessionsOpen: () -> Unit,
@@ -55,6 +57,7 @@ fun DashboardMenuDrawer(
     onSettingsOpen: () -> Unit,
     onAboutOpen: () -> Unit,
     onThemeToggle: () -> Unit,
+    onScreenshotModeSelected: (HudScreenshotMode) -> Unit,
     content: @Composable () -> Unit,
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -131,6 +134,28 @@ fun DashboardMenuDrawer(
                         }
                     }
                     HorizontalDivider(modifier = Modifier.padding(vertical = SpacingMd))
+                    Text(
+                        text = stringResource(R.string.dashboard_screenshot_mode),
+                        color = GaugeYellow,
+                    )
+                    ScreenshotModeRow(
+                        labelRes = R.string.dashboard_screenshot_full,
+                        selected = screenshotMode == HudScreenshotMode.FULL_SCREEN,
+                        testTag = "drawer_screenshot_full",
+                        onSelect = {
+                            onScreenshotModeSelected(HudScreenshotMode.FULL_SCREEN)
+                            onDrawerOpenChange(false)
+                        },
+                    )
+                    ScreenshotModeRow(
+                        labelRes = R.string.dashboard_screenshot_cubes,
+                        selected = screenshotMode == HudScreenshotMode.EACH_CUBE,
+                        testTag = "drawer_screenshot_cubes",
+                        onSelect = {
+                            onScreenshotModeSelected(HudScreenshotMode.EACH_CUBE)
+                            onDrawerOpenChange(false)
+                        },
+                    )
                     DrawerNavItem(R.string.imu_management_title, onImuManage) { onDrawerOpenChange(false) }
                     if (liveTelemetryEnabled && FeatureFlags.liveTelemetryEnabled) {
                         DrawerNavItem(
@@ -176,6 +201,26 @@ private fun DrawerNavItem(
             unselectedContainerColor = GaugeBackground,
         ),
     )
+}
+
+@Composable
+private fun ScreenshotModeRow(
+    labelRes: Int,
+    selected: Boolean,
+    testTag: String,
+    onSelect: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelect)
+            .padding(vertical = SpacingMd / 2)
+            .testTag(testTag),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(selected = selected, onClick = onSelect)
+        Text(text = stringResource(labelRes), color = GaugeScaleWhite)
+    }
 }
 
 @Composable
