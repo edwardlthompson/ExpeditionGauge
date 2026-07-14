@@ -96,7 +96,7 @@ dependencies {
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.16.1")
-    testImplementation("org.bouncycastle:bcprov-jdk18on:1.84")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.85")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
