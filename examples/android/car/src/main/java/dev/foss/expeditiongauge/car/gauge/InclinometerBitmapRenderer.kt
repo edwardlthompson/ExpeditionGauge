@@ -30,8 +30,11 @@ class InclinometerBitmapRenderer(
         yawDeg: Float? = null,
         latG: Float? = null,
         lonG: Float? = null,
+        darkBackground: Boolean = true,
     ): Bitmap {
-        canvas.drawColor(InclinometerColor.BACKGROUND)
+        canvas.drawColor(
+            if (darkBackground) InclinometerColor.BACKGROUND else InclinometerColor.BACKGROUND_LIGHT,
+        )
         val alert = pitchAlert || rollAlert
         val labelP = labelPitchDeg ?: pitchDeg
         val labelR = labelRollDeg ?: rollDeg

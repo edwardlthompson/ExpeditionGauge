@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.16.1] — AA GridItem crash fix + HU display spec (2026-07-13)
+
+### Added
+
+* Local crash log (`files/crash/last_crash.txt`) with Settings → Android Auto preview / Share / Clear (FOSS, no network)
+* `AaDisplaySpec` — Android Auto layout from head-unit width/height/density (independent of phone portrait/landscape)
+
+### Fixed
+
+* Android Auto launch crash: `IllegalStateException: When a grid item is loading, the image must not be set and vice versa` (Telemetry/TPMS GridItems now always set a `CarIcon`)
+
+### Changed
+
+* Inclinometer AA bitmap size follows HU `AaDisplaySpec` (148/180 dp × car density) instead of a fixed 256 px
+
 ## [2.16.0] — Gauge cycle, G-meter axes, USGS elevation (2026-07-12)
 
 ### Added

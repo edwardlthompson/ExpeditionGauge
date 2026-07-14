@@ -87,7 +87,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 | Status | Owner | Task |
 |--------|-------|------|
-| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.14.2** (`category.POI` + soft HU features) → `aa-refresh-host.ps1 -Clear` → Customize launcher → USB head unit; alt routes in `docs/help/HEAD_UNIT_ROUTES.md`; if still missing see Escalation in `docs/help/ANDROID_AUTO.md` (no more category swaps) |
+| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.16.1** (GridItem image fix + `AaDisplaySpec` HU layout) → Customize launcher → USB head unit; confirm no GridItem FATAL; phone portrait + landscape HU P/R OK; alt routes in `docs/help/HEAD_UNIT_ROUTES.md`; if still missing see Escalation in `docs/help/ANDROID_AUTO.md` |
 
 ---
 

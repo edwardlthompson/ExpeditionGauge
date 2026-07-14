@@ -4,6 +4,7 @@ import android.app.Application
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.car.AndroidAutoBridge
 import dev.foss.expeditiongauge.car.CarAppBridgeRegistry
+import dev.foss.expeditiongauge.crash.CrashReporter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,6 +17,7 @@ class ExpeditionGaugeApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashReporter.install(this)
         services = ExpeditionGaugeServices(applicationContext, applicationScope)
         val accessibilityPreferences = AccessibilityPreferences(applicationContext)
         services.initialize(applicationScope, accessibilityPreferences)
@@ -23,6 +25,7 @@ class ExpeditionGaugeApplication : Application() {
             services,
             services.settingsPreferences,
             applicationScope,
+            applicationContext,
         )
     }
 }

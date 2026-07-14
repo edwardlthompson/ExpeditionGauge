@@ -58,5 +58,18 @@ Selecting **Offroad** on the dashboard sets `AttitudeGaugeMode.INCLINOMETER`. Ta
 
 ## AA asset
 
-- Square bitmap targeting **128×128 dp** (`GridItem.IMAGE_TYPE_LARGE`)
-- Bitmap includes pitch/roll digital readouts; AA tile text may still show `P` / `R` lines
+- Bitmap size follows **head-unit** `AaDisplaySpec` (148 dp portrait / 180 dp landscape × car density), not a fixed 256 px
+- `GridItem.IMAGE_TYPE_LARGE`; includes pitch/roll digital readouts; AA tile text may still show `P` / `R` lines
+- Telemetry / TPMS tiles always carry a `CarIcon` (resource or `CarIcon.APP_ICON`) — Car App Library forbids GridItems with neither image nor loading
+
+## Mixed orientations (phone vs HU)
+
+Phone `Display.rotation` and HU `Configuration` are **independent**:
+
+| Domain | Owns |
+|--------|------|
+| Phone | IMU `SensorAxisRemap` + Compose HUD layout |
+| Head unit | `AaDisplaySpec` (bitmap size, grid tile budget, night mode) |
+| Shared | Vehicle-frame `pitchDeg` / `rollDeg` from fusion (ADR-0013) |
+
+Phone portrait + landscape HU (and the reverse) must show the same vehicle P/R. Do not feed phone rotation into AA bitmap layout or AA Zero (`displayRotation = 0`).

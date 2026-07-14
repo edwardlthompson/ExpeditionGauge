@@ -1,8 +1,8 @@
 package dev.foss.expeditiongauge.car
 
+import android.content.Context
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.alerts.AlertType
-import dev.foss.expeditiongauge.car.gauge.InclinometerCarIcon
 import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
@@ -20,6 +20,7 @@ class AndroidAutoBridge(
     private val services: ExpeditionGaugeServices,
     private val settings: SettingsPreferences,
     scope: CoroutineScope,
+    appContext: Context,
 ) : CarAppBridge {
 
     @Volatile private var snapshot: TelemetrySnapshot = TelemetrySnapshot.empty()
@@ -32,6 +33,7 @@ class AndroidAutoBridge(
     @Volatile private var invalidationListener: (() -> Unit)? = null
 
     private val invalidation = AaScreenInvalidation()
+    private val hudComposer = AaHudComposer(appContext)
 
     init {
         scope.launch {
@@ -72,23 +74,11 @@ class AndroidAutoBridge(
 
     override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
 
-    override fun hudTiles(): CarHudTiles {
+    override fun hudTiles(displaySpec: AaDisplaySpec): CarHudTiles {
         val built = CarHudTileBuilder.build(snapshot, speedUnit, pressureUnit, tempUnit)
-        val icon = runCatching {
-            InclinometerCarIcon.fromAttitude(
-                pitchDeg = snapshot.pitchDeg,
-                rollDeg = snapshot.rollDeg,
-                style = inclinometerStyle,
-                pitchAlert = AlertType.PITCH in activeAlerts,
-                rollAlert = AlertType.ROLL in activeAlerts,
-                maxPitchThresholdDeg = alertThresholds.maxPitchDeg,
-                maxRollThresholdDeg = alertThresholds.maxRollDeg,
-                yawDeg = snapshot.bodyYawDeg ?: snapshot.headingDeg,
-                latG = snapshot.latG,
-                lonG = snapshot.lonG,
-            )
-        }.getOrNull()
-        return built.copy(gMeter = built.gMeter.copy(image = icon))
+        return hudComposer.compose(
+            snapshot, inclinometerStyle, activeAlerts, alertThresholds, displaySpec, built,
+        )
     }
 
     override fun metricValues(): Map<String, String> =
@@ -116,6 +106,7 @@ class AndroidAutoBridge(
 
     override fun zeroAttitude(): Boolean = runBlocking {
         if (snapshot.fusionSource != "phone") return@runBlocking false
+        // Vehicle-frame Zero — never phone Display.rotation (phone may be portrait, HU landscape).
         services.autocalibrationController.manualZero(
             pitchDeg = snapshot.pitchDeg,
             rollDeg = snapshot.rollDeg,

@@ -21,20 +21,20 @@ $label = "ExpeditionGauge"
 $outDir = Join-Path $Root ".cursor"
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 
-function Adb([string[]]$Args) {
-    & adb -s $Serial @Args
-    if ($LASTEXITCODE -ne 0) { throw "adb failed: $($Args -join ' ')" }
+function Invoke-AdbCmd([string[]]$CmdArgs) {
+    & adb.exe -s $Serial @CmdArgs
+    if ($LASTEXITCODE -ne 0) { throw "adb failed: $($CmdArgs -join ' ')" }
 }
 
 function Ensure-Root {
-    Adb @("root") | Out-Null
+    Invoke-AdbCmd @("root") | Out-Null
     Start-Sleep -Seconds 1
-    $id = (& adb -s $Serial shell id) -join ""
+    $id = (& adb.exe -s $Serial shell id) -join ""
     if ($id -notmatch "uid=0") { Write-Error "aa-smoke-customize-launcher: need root (got $id)" }
 }
 
 function Dump-PackageFacts {
-    $dump = (Adb @("shell", "dumpsys", "package", $pkg)) -join "`n"
+    $dump = (Invoke-AdbCmd @("shell", "dumpsys", "package", $pkg)) -join "`n"
     $facts = [ordered]@{
         versionName = if ($dump -match "versionName=(\S+)") { $Matches[1] } else { "?" }
         categoryPOI = [bool]($dump -match "androidx\.car\.app\.category\.POI")
@@ -42,24 +42,27 @@ function Dump-PackageFacts {
         initiator = if ($dump -match "initiatingPackageName=(\S+)") { $Matches[1] } else { "null" }
         unknownSources = $false
     }
-    $prefs = (Adb @("shell", "cat", "/data/data/$aa/shared_prefs/action_developer_settings.xml")) -join "`n"
+    $prefs = (& adb.exe -s $Serial shell "cat /data/data/$aa/shared_prefs/action_developer_settings.xml 2>/dev/null") -join "`n"
+    if (-not $prefs) {
+        $prefs = (& adb.exe -s $Serial shell "cat /data/user/0/$aa/shared_prefs/action_developer_settings.xml 2>/dev/null") -join "`n"
+    }
     $facts.unknownSources = $prefs -match 'allow_unknown_sources" value="true"'
     return $facts
 }
 
 function Open-CustomizeLauncher {
     # Companion settings home, then try deep-link / preference search via UI.
-    Adb @("shell", "am", "force-stop", $aa) | Out-Null
+    Invoke-AdbCmd @("shell", "am", "force-stop", $aa) | Out-Null
     Start-Sleep -Milliseconds 400
-    Adb @("shell", "am", "start", "-a", "com.google.android.projection.gearhead.SETTINGS", "-n", "$aa/.companion.settings.DefaultSettingsActivity") | Out-Null
+    Invoke-AdbCmd @("shell", "am", "start", "-a", "com.google.android.projection.gearhead.SETTINGS", "-n", "$aa/.companion.settings.DefaultSettingsActivity") | Out-Null
     Start-Sleep -Seconds 2
 }
 
 function Dump-Ui([string]$Tag) {
     $remote = "/sdcard/aa-ui-$Tag.xml"
     $local = Join-Path $outDir "aa-ui-$Tag.xml"
-    Adb @("shell", "uiautomator", "dump", $remote) | Out-Null
-    Adb @("pull", $remote, $local) | Out-Null
+    Invoke-AdbCmd @("shell", "uiautomator", "dump", $remote) | Out-Null
+    Invoke-AdbCmd @("pull", $remote, $local) | Out-Null
     return Get-Content $local -Raw -ErrorAction SilentlyContinue
 }
 
@@ -77,7 +80,7 @@ function Tap-Text([string]$Ui, [string]$Text) {
     if (-not $m.Success) { return $false }
     $x = [int](([int]$m.Groups[1].Value + [int]$m.Groups[3].Value) / 2)
     $y = [int](([int]$m.Groups[2].Value + [int]$m.Groups[4].Value) / 2)
-    Adb @("shell", "input", "tap", "$x", "$y") | Out-Null
+    Invoke-AdbCmd @("shell", "input", "tap", "$x", "$y") | Out-Null
     Start-Sleep -Seconds 1
     return $true
 }
@@ -91,7 +94,7 @@ function Test-ListedInCustomize {
     }
     if (-not $tapped) {
         # Scroll and retry once
-        Adb @("shell", "input", "swipe", "500", "1600", "500", "400", "300") | Out-Null
+        Invoke-AdbCmd @("shell", "input", "swipe", "500", "1600", "500", "400", "300") | Out-Null
         Start-Sleep -Seconds 1
         $ui = Dump-Ui "settings-scrolled"
         foreach ($candidate in @("Customize launcher", "Customise launcher", "Customize Launcher", "Apps")) {
@@ -110,14 +113,14 @@ function Test-ListedInCustomize {
 function Apply-Phenotype {
     $sqlLocal = Join-Path $PSScriptRoot "aa-phenotype-whitelist.sql"
     $sqlRemote = "/data/local/tmp/aa-phenotype-whitelist.sql"
-    Adb @("push", $sqlLocal, $sqlRemote) | Out-Null
-    $owner = (Adb @("shell", "stat", "-c", "%U", "/data/data/com.google.android.gms/databases/phenotype.db")) -join ""
-    Adb @("shell", "am", "force-stop", "com.google.android.gms") | Out-Null
-    Adb @("shell", "am", "force-stop", $aa) | Out-Null
-    Adb @("shell", "chown", "root:root", "/data/data/com.google.android.gms/databases/phenotype.db") | Out-Null
-    $apply = Adb @("shell", "/system/bin/sqlite3", "/data/data/com.google.android.gms/databases/phenotype.db", ".read $sqlRemote")
-    Adb @("shell", "chown", "${owner}:${owner}", "/data/data/com.google.android.gms/databases/phenotype.db") | Out-Null
-    $check = (Adb @("shell", "/system/bin/sqlite3", "/data/data/com.google.android.gms/databases/phenotype.db", "SELECT name, stringVal, boolVal FROM FlagOverrides WHERE name LIKE '%AppValidation%' OR name LIKE '%white_list%';")) -join "`n"
+    Invoke-AdbCmd @("push", $sqlLocal, $sqlRemote) | Out-Null
+    $owner = (Invoke-AdbCmd @("shell", "stat", "-c", "%U", "/data/data/com.google.android.gms/databases/phenotype.db")) -join ""
+    Invoke-AdbCmd @("shell", "am", "force-stop", "com.google.android.gms") | Out-Null
+    Invoke-AdbCmd @("shell", "am", "force-stop", $aa) | Out-Null
+    Invoke-AdbCmd @("shell", "chown", "root:root", "/data/data/com.google.android.gms/databases/phenotype.db") | Out-Null
+    $apply = Invoke-AdbCmd @("shell", "/system/bin/sqlite3", "/data/data/com.google.android.gms/databases/phenotype.db", ".read $sqlRemote")
+    Invoke-AdbCmd @("shell", "chown", "${owner}:${owner}", "/data/data/com.google.android.gms/databases/phenotype.db") | Out-Null
+    $check = (Invoke-AdbCmd @("shell", "/system/bin/sqlite3", "/data/data/com.google.android.gms/databases/phenotype.db", "SELECT name, stringVal, boolVal FROM FlagOverrides WHERE name LIKE '%AppValidation%' OR name LIKE '%white_list%';")) -join "`n"
     return @{ apply = ($apply -join "`n"); flags = $check }
 }
 
@@ -128,6 +131,9 @@ $facts0 = Dump-PackageFacts
 $facts0 | ConvertTo-Json -Compress | Write-Host
 $smoke0 = Test-ListedInCustomize
 Write-Host ("listed={0} openedCustomize={1}" -f $smoke0.listed, $smoke0.openedCustomize)
+if ($smoke0.listed) {
+    Write-JsonResult @{ status = "ok"; attempt = "baseline_after_play_spoof"; listed = $true; facts = $facts0 } 0
+}
 
 if (-not $SkipReinstall) {
     Write-Host "=== ATTEMPT 1: reinstall -t -i com.android.vending ===" -ForegroundColor Cyan
@@ -136,13 +142,13 @@ if (-not $SkipReinstall) {
     }
     if (-not $Apk -or -not (Test-Path $Apk)) { Write-Error "APK required (-Apk)" }
     $remoteApk = "/data/local/tmp/eg-aa.apk"
-    Adb @("push", $Apk, $remoteApk) | Out-Null
+    Invoke-AdbCmd @("push", $Apk, $remoteApk) | Out-Null
     # AA-Tweaker uses -t (test) + -i vending after mv/uninstall cycle for stubborn hosts
-    Adb @("shell", "pm", "path", $pkg) | Out-Null
-    Adb @("shell", "pm", "uninstall", $pkg) | Out-Null
-    Adb @("shell", "pm", "install", "-t", "-i", "com.android.vending", "-r", $remoteApk)
-    Adb @("shell", "cmd", "package", "set-installer", $pkg, "com.android.vending") | Out-Null
-    Adb @("shell", "am", "start", "-n", "$pkg/.MainActivity") | Out-Null
+    Invoke-AdbCmd @("shell", "pm", "path", $pkg) | Out-Null
+    Invoke-AdbCmd @("shell", "pm", "uninstall", $pkg) | Out-Null
+    Invoke-AdbCmd @("shell", "pm", "install", "-t", "-i", "com.android.vending", "-r", $remoteApk)
+    Invoke-AdbCmd @("shell", "cmd", "package", "set-installer", $pkg, "com.android.vending") | Out-Null
+    Invoke-AdbCmd @("shell", "am", "start", "-n", "$pkg/.MainActivity") | Out-Null
     Start-Sleep -Seconds 2
     $facts1 = Dump-PackageFacts
     $facts1 | ConvertTo-Json -Compress | Write-Host
@@ -157,8 +163,8 @@ if (-not $SkipPhenotype) {
     Write-Host "=== ATTEMPT 2: phenotype AppValidation whitelist ===" -ForegroundColor Cyan
     $ph = Apply-Phenotype
     Write-Host $ph.flags
-    Adb @("shell", "am", "force-stop", $aa) | Out-Null
-    Adb @("shell", "am", "force-stop", "com.google.android.gms") | Out-Null
+    Invoke-AdbCmd @("shell", "am", "force-stop", $aa) | Out-Null
+    Invoke-AdbCmd @("shell", "am", "force-stop", "com.google.android.gms") | Out-Null
     Start-Sleep -Seconds 2
     $smoke2 = Test-ListedInCustomize
     Write-Host ("AFTER PHENOTYPE listed={0} openedCustomize={1}" -f $smoke2.listed, $smoke2.openedCustomize)

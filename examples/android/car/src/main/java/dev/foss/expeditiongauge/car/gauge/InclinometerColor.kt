@@ -10,6 +10,7 @@ object InclinometerColor {
     private const val YELLOW = 0xFFFFDD00.toInt()
     private const val RED = 0xFFFF3333.toInt()
     const val BACKGROUND = 0xFF000000.toInt()
+    const val BACKGROUND_LIGHT = 0xFFF0F0F0.toInt()
     const val SCALE_TICK = 0x99FFFFFF.toInt()
     const val SCALE_RAIL = 0x55FFFFFF.toInt()
     const val SEGMENT_DIM = 0xFF1A1A1A.toInt()

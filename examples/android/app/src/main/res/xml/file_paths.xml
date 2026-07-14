@@ -3,4 +3,5 @@
     <cache-path name="updates" path="updates/" />
     <cache-path name="exports" path="exports/" />
     <files-path name="session_photos" path="sessions/" />
+    <files-path name="crash" path="crash/" />
 </paths>

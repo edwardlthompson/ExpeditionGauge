@@ -3,9 +3,24 @@ package dev.foss.expeditiongauge.car.gauge
 import android.graphics.Bitmap
 import androidx.car.app.model.CarIcon
 import androidx.core.graphics.drawable.IconCompat
+import dev.foss.expeditiongauge.car.AaDisplaySpec
 
 object InclinometerCarIcon {
-    private val renderer = InclinometerBitmapRenderer()
+    private val rendererLock = Any()
+    private var cachedSizePx: Int = InclinometerBitmapRenderer.DEFAULT_SIZE_PX
+    private var renderer: InclinometerBitmapRenderer =
+        InclinometerBitmapRenderer(InclinometerBitmapRenderer.DEFAULT_SIZE_PX)
+
+    private fun rendererFor(sizePx: Int): InclinometerBitmapRenderer {
+        val clamped = sizePx.coerceIn(AaDisplaySpec.MIN_BITMAP_PX, AaDisplaySpec.MAX_BITMAP_PX)
+        synchronized(rendererLock) {
+            if (clamped != cachedSizePx) {
+                cachedSizePx = clamped
+                renderer = InclinometerBitmapRenderer(clamped)
+            }
+            return renderer
+        }
+    }
 
     fun fromAttitude(
         pitchDeg: Float,
@@ -20,8 +35,10 @@ object InclinometerCarIcon {
         yawDeg: Float? = null,
         latG: Float? = null,
         lonG: Float? = null,
+        sizePx: Int = InclinometerBitmapRenderer.DEFAULT_SIZE_PX,
+        darkBackground: Boolean = true,
     ): CarIcon {
-        val bitmap = renderer.render(
+        val bitmap = rendererFor(sizePx).render(
             pitchDeg = pitchDeg,
             rollDeg = rollDeg,
             style = style,
@@ -34,6 +51,7 @@ object InclinometerCarIcon {
             yawDeg = yawDeg,
             latG = latG,
             lonG = lonG,
+            darkBackground = darkBackground,
         )
         return CarIcon.Builder(IconCompat.createWithBitmap(bitmap)).build()
     }
@@ -51,7 +69,9 @@ object InclinometerCarIcon {
         yawDeg: Float? = null,
         latG: Float? = null,
         lonG: Float? = null,
-    ): Bitmap = renderer.render(
+        sizePx: Int = InclinometerBitmapRenderer.DEFAULT_SIZE_PX,
+        darkBackground: Boolean = true,
+    ): Bitmap = rendererFor(sizePx).render(
         pitchDeg = pitchDeg,
         rollDeg = rollDeg,
         style = style,
@@ -64,5 +84,6 @@ object InclinometerCarIcon {
         yawDeg = yawDeg,
         latG = latG,
         lonG = lonG,
+        darkBackground = darkBackground,
     )
 }

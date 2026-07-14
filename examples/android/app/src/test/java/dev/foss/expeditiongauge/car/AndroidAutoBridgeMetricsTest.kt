@@ -43,7 +43,7 @@ class AndroidAutoBridgeMetricsTest {
 
         override fun isAndroidAutoEnabled(): Boolean = true
 
-        override fun hudTiles(): CarHudTiles = CarHudTiles(
+        override fun hudTiles(displaySpec: AaDisplaySpec): CarHudTiles = CarHudTiles(
             gMeter = CarHudTile("G", "", ""),
             telemetry = CarHudTile("T", "", ""),
             tpms = CarHudTile("P", "", ""),

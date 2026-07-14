@@ -124,6 +124,8 @@ ExpeditionGauge uses **POI** for **sideload / projected Android Auto** discovery
 | Stale telemetry | Phone screen can sleep if **Keep screen awake** is off in Settings |
 | TPMS shows `--` | Pair TPMS in phone Settings → TPMS |
 | Zero does nothing | Phone fusion must be active (not external-only IMU path) |
+| App crashes when opening on HU | `IllegalStateException: When a grid item is loading, the image must not be set and vice versa` — fixed by always setting GridItem images. Pull log: Settings → Android Auto → Last crash, or `adb shell run-as dev.foss.expeditiongauge cat files/crash/last_crash.txt` |
+| Wrong layout after rotating phone | AA layout uses HU config only; phone portrait + landscape HU is supported. Confirm P/R still match vehicle frame |
 
 ## Escalation (stop-rule — no more category swaps)
 

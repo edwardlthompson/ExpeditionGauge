@@ -63,6 +63,11 @@
     <string name="settings_android_auto_heading">Android Auto</string>
     <string name="settings_android_auto_auto_connect">Android Auto connects automatically when your phone is linked to a compatible head unit.</string>
     <string name="settings_android_auto_setup_hint">Enable Android Auto developer mode and allow unknown sources for sideloaded apps. See docs/help/ANDROID_AUTO.md.</string>
+    <string name="settings_crash_heading">Last crash</string>
+    <string name="settings_crash_none">No crash log saved.</string>
+    <string name="settings_crash_share">Share crash log</string>
+    <string name="settings_crash_clear">Clear crash log</string>
+    <string name="settings_crash_share_subject">ExpeditionGauge crash log</string>
     <string name="settings_maps_heading">Offline maps</string>
     <string name="settings_maps_home_summary">Home region: %1$.4f, %2$.4f (%3$.0f km radius)</string>
     <string name="settings_maps_home_unset">No home map region saved.</string>

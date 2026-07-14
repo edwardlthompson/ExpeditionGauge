@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-07-13 — AA GridItem crash fix + HU-independent display spec + local crash log
+- **Status:** Accepted
+- **Context:** OP13 + truck HU: launching ExpeditionGauge on Android Auto killed phone and HU with `IllegalStateException: When a grid item is loading, the image must not be set and vice versa` (Telemetry/TPMS GridItems had no image). Phone portrait + landscape HU must keep working.
+- **Decision:** Always `setImage` on GridItems (resource icons + `CarIcon.APP_ICON` fallback); `AaDisplaySpec` from CarContext only (never phone Display.rotation); local `CrashLogStore` + Settings share; AA Zero stays vehicle-frame `displayRotation=0`.
+- **Alternatives considered:** `setLoading(true)` for text tiles (rejected — spinner UX); PaneTemplate (rejected — ADR-0010); remote crash SDKs (rejected — FOSS/privacy).
+- **Consequences:** v2.16.1; Settings → Android Auto → Last crash; mixed phone/HU orientations supported by construction.
+
 _Seed template ADR: `docs/adr/0000-template-baseline.md`. Child repos use `docs/adr/0001-core-architecture.md`._
 
 ### 2026-07-12 — Gauge cycle, G-meter axes, USGS DEM elevation
