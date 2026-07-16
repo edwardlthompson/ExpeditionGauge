@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     ) { grants ->
         permissionsGranted = PermissionsHelper.hasAll(this)
         if (grants.values.any { it }) {
-            services.startSensors()
+            services.refreshSensorsIfHeld()
         }
     }
 
@@ -120,13 +120,13 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         permissionsGranted = PermissionsHelper.hasAll(this)
         if (permissionsGranted) {
-            services.startSensors()
+            services.acquireSensors()
         }
         services.thermalMonitor.refresh()
     }
 
     override fun onStop() {
-        services.stopSensors()
+        services.releaseSensors()
         super.onStop()
     }
 

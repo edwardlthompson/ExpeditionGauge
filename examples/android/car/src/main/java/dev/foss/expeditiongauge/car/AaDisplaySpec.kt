@@ -24,7 +24,7 @@ data class AaDisplaySpec(
         const val ULTRA_WIDE_RATIO = 2.0f
         const val DEFAULT_GRID_LIMIT = 3
         const val MIN_BITMAP_PX = 96
-        const val MAX_BITMAP_PX = 512
+        const val MAX_BITMAP_PX = 256
 
         val DEFAULT = AaDisplaySpec(
             isLandscape = true,

@@ -27,13 +27,16 @@ class CarHudTileBuilderTest {
             TempUnit.CELSIUS,
         )
         assertTrue(tiles.gMeter.title == "Attitude")
-        assertTrue(tiles.gMeter.line1.startsWith("P "))
-        assertTrue(tiles.gMeter.line2.startsWith("R "))
-        assertTrue(tiles.gMeter.line3.isBlank())
+        assertTrue(tiles.gMeter.line1.contains("P "))
+        assertTrue(tiles.gMeter.line1.contains("R "))
+        assertTrue(!tiles.gMeter.line1.contains("\n"))
+        assertTrue(tiles.gMeter.line2.isBlank())
         assertTrue(!tiles.gMeter.line1.contains("."))
-        assertTrue(!tiles.gMeter.line2.contains("."))
         assertTrue(tiles.telemetry.line1.contains("KM/H"))
-        assertTrue(tiles.telemetry.line2.contains("090"))
+        assertTrue(tiles.telemetry.line1.contains("090"))
+        assertTrue(!tiles.telemetry.line1.contains("\n"))
         assertTrue(tiles.tpms.line1.contains("FL"))
+        assertTrue(!tiles.tpms.line1.contains("\n"))
+        assertTrue(CarHudTileBuilder.secondaryText(tiles.tpms) == tiles.tpms.line1)
     }
 }

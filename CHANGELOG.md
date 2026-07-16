@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.16.2] — AA smoothness hardening (2026-07-15)
+
+### Fixed
+
+* Android Auto immediate crash: `Action list exceeded max number of 1 actions with custom titles` — Record/Stop keeps the single custom title; Zero is icon-only
+* Record on HU no longer kills the process when session storage is full (`StorageCapBlockedException` was escaping Car App click handlers)
+* Shared inclinometer bitmap no longer races phone Offroad vs AA (size-keyed pool + immutable copies)
+* AA tiles no longer freeze when the phone Activity stops (refcounted sensor hold while car session is live)
+
+### Changed
+
+* GridItem secondary text is a single truncated line; session-locked HU display spec; invalidate floor 500 ms; AA bitmap cap 256 px
+* Zero is parked-only; Record has an icon; async bridge mutators + `CarToast` feedback
+* ADR-0010 / `ANDROID_AUTO.md` / M-003 checklist updated for HU retest
+
 ## [2.16.1] — AA GridItem crash fix + HU display spec (2026-07-13)
 
 ### Added

@@ -29,7 +29,7 @@ internal class AaScreenInvalidation {
     }
 
     companion object {
-        const val AA_INVALIDATE_MIN_INTERVAL_MS = 250L
+        const val AA_INVALIDATE_MIN_INTERVAL_MS = 500L
         private const val PERIODIC_REFRESH_MS = 1_000L
     }
 }

@@ -10,7 +10,6 @@ Simplified pitch/roll inclinometer for **Android Auto** (bitmap `CarIcon`) and p
 |--------|----------|
 | **Center** | Vertical pitch ladder (±45°) with dual rails, tick labels, red pointer triangles, digital pitch readout on top |
 | **Left / right** | Roll columns as communicating vessels: one side **fills** as the other **drains**; red pointer tracks roll; digital roll readout at bottom |
-
 ## Scale
 
 | Constant | Value |
@@ -19,7 +18,6 @@ Simplified pitch/roll inclinometer for **Android Auto** (bitmap `CarIcon`) and p
 | Tick marks | 15° · 30° · 45° |
 | Pitch bars | 5 per side of center (9° per step) |
 | Roll segments | 10 per side (fill fraction = `(1 ± roll/45) / 2`) |
-
 Display clamps lighting at ±45°; numeric readout shows true angle within scale.
 
 ## Sign convention
@@ -44,7 +42,6 @@ unwrap. Inclinometer / horizon are a passthrough of fusion. Tap/swipe cycles
 | `HORIZON` | Artificial horizon (aviation attitude indicator) |
 | `DUAL_DIAL` | Twin circular dials P / R |
 | `BUBBLE` | Spirit-level tubes (vertical pitch, horizontal roll) |
-
 **Calibration:** `CalibrationStore.zeroToCurrentDisplay` updates shared fusion offsets used by
 both G-meter and inclinometer; peak-hold clears when offsets change.
 
@@ -58,8 +55,10 @@ Selecting **Offroad** on the dashboard sets `AttitudeGaugeMode.INCLINOMETER`. Ta
 
 ## AA asset
 
-- Bitmap size follows **head-unit** `AaDisplaySpec` (148 dp portrait / 180 dp landscape × car density), not a fixed 256 px
-- `GridItem.IMAGE_TYPE_LARGE`; includes pitch/roll digital readouts; AA tile text may still show `P` / `R` lines
+- Bitmap size follows **head-unit** `AaDisplaySpec` (148 dp portrait / 180 dp landscape × car density), capped at **256 px** for AA
+- Size-keyed renderer pool + **immutable bitmap copies** — phone Offroad Compose and AA must not share a live canvas buffer
+- `GridItem.IMAGE_TYPE_LARGE`; inclinometer bitmap includes pitch/roll digital readouts
+- GridItem secondary text is a **single** truncated line (e.g. `P +2° · R −1°`); do not rely on `\n` multi-line layout
 - Telemetry / TPMS tiles always carry a `CarIcon` (resource or `CarIcon.APP_ICON`) — Car App Library forbids GridItems with neither image nor loading
 
 ## Mixed orientations (phone vs HU)
@@ -71,5 +70,4 @@ Phone `Display.rotation` and HU `Configuration` are **independent**:
 | Phone | IMU `SensorAxisRemap` + Compose HUD layout |
 | Head unit | `AaDisplaySpec` (bitmap size, grid tile budget, night mode) |
 | Shared | Vehicle-frame `pitchDeg` / `rollDeg` from fusion (ADR-0013) |
-
 Phone portrait + landscape HU (and the reverse) must show the same vehicle P/R. Do not feed phone rotation into AA bitmap layout or AA Zero (`displayRotation = 0`).

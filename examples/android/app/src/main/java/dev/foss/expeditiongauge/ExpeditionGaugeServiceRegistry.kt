@@ -100,16 +100,39 @@ private data class AlertProcessInput(
     val audible: Boolean,
 )
 
-fun ExpeditionGaugeServices.startSensors() {
+private fun ExpeditionGaugeServices.startSensorsInternal() {
     phoneSensorProvider.start()
     fusedGpsProvider.startPhone()
     bleImuManager.startScan()
     if (FeatureFlags.tpmsEnabled) bleTpmsManager.startScan()
 }
 
-fun ExpeditionGaugeServices.stopSensors() {
+private fun ExpeditionGaugeServices.stopSensorsInternal() {
     phoneSensorProvider.stop()
     fusedGpsProvider.stopPhone()
     bleImuManager.stopScan()
     bleTpmsManager.stopScan()
+}
+
+private val sensorHolds = java.util.concurrent.ConcurrentHashMap<ExpeditionGaugeServices, SensorHold>()
+
+private fun ExpeditionGaugeServices.sensorHold(): SensorHold =
+    sensorHolds.getOrPut(this) {
+        SensorHold(
+            onStart = { startSensorsInternal() },
+            onStop = { stopSensorsInternal() },
+        )
+    }
+
+fun ExpeditionGaugeServices.acquireSensors() {
+    sensorHold().acquire()
+}
+
+fun ExpeditionGaugeServices.releaseSensors() {
+    sensorHold().release()
+}
+
+/** Restart providers while a hold is active (e.g. after permission grant). */
+fun ExpeditionGaugeServices.refreshSensorsIfHeld() {
+    if (sensorHold().holdCount() > 0) startSensorsInternal()
 }

@@ -1,130 +1,101 @@
 package dev.foss.expeditiongauge.car.ui
 
-import android.content.res.Configuration
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
-import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.Action
-import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
-import androidx.car.app.model.CarText
-import androidx.car.app.model.GridItem
 import androidx.car.app.model.GridTemplate
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.Template
+import androidx.core.graphics.drawable.IconCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.CarAppBridgeRegistry
-import dev.foss.expeditiongauge.car.CarHudTile
-import dev.foss.expeditiongauge.car.GridItemImagePolicy
+import dev.foss.expeditiongauge.car.R
 
 class TelemetryGridScreen(carContext: CarContext) : Screen(carContext) {
 
+    /** Locked for the life of this screen; refreshed only via [refreshDisplaySpec]. */
+    private var lockedDisplaySpec: AaDisplaySpec? = null
+
     init {
-        CarAppBridgeRegistry.bridge?.setInvalidationListener { invalidate() }
+        val bridge = CarAppBridgeRegistry.bridge
+        bridge?.setInvalidationListener { invalidate() }
+        bridge?.setToastHandler { message ->
+            runCatching {
+                CarToast.makeText(carContext, message, CarToast.LENGTH_SHORT).show()
+            }
+        }
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                CarAppBridgeRegistry.bridge?.onCarSessionStarted()
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                val b = CarAppBridgeRegistry.bridge
+                b?.onCarSessionStopped()
+                b?.setInvalidationListener(null)
+                b?.setToastHandler(null)
+            }
+        })
+    }
+
+    fun refreshDisplaySpec() {
+        lockedDisplaySpec = TelemetryGridTemplates.readDisplaySpec(carContext)
     }
 
     override fun onGetTemplate(): Template {
         val bridge = CarAppBridgeRegistry.bridge
-        if (bridge == null) {
-            return waitingTemplate("Start ExpeditionGauge on phone")
-        }
+            ?: return TelemetryGridTemplates.waitingTemplate("Open ExpeditionGauge on phone")
 
-        val spec = resolveDisplaySpec()
+        val spec = lockedDisplaySpec
+            ?: TelemetryGridTemplates.readDisplaySpec(carContext).also { lockedDisplaySpec = it }
         val tiles = bridge.hudTiles(spec)
         val listBuilder = ItemList.Builder()
-            .addItem(gridItem(tiles.gMeter))
-            .addItem(gridItem(tiles.telemetry))
+            .addItem(TelemetryGridTemplates.gridItem(tiles.gMeter))
+            .addItem(TelemetryGridTemplates.gridItem(tiles.telemetry))
         if (spec.maxGridItems >= 3) {
-            listBuilder.addItem(gridItem(tiles.tpms))
-        }
-        val gridItems = listBuilder.build()
-
-        val recordAction = if (bridge.isRecording()) {
-            Action.Builder()
-                .setTitle("Stop")
-                .setOnClickListener {
-                    bridge.stopRecording()
-                    invalidate()
-                }
-                .build()
-        } else {
-            Action.Builder()
-                .setTitle("Record")
-                .setOnClickListener {
-                    bridge.startRecording()
-                    invalidate()
-                }
-                .build()
+            listBuilder.addItem(TelemetryGridTemplates.gridItem(tiles.tpms))
         }
 
-        val zeroAction = Action.Builder()
-            .setTitle("Zero")
-            .setOnClickListener {
-                bridge.zeroAttitude()
-                invalidate()
-            }
-            .build()
-
+        val zeroIcon = resourceIcon(R.drawable.ic_aa_zero)
+        val recordRes = if (bridge.isRecording()) R.drawable.ic_aa_stop else R.drawable.ic_aa_record
         return GridTemplate.Builder()
             .setTitle("ExpeditionGauge")
             .setHeaderAction(Action.APP_ICON)
-            .setSingleList(gridItems)
+            .setSingleList(listBuilder.build())
             .setActionStrip(
-                ActionStrip.Builder()
-                    .addAction(recordAction)
-                    .addAction(zeroAction)
-                    .build(),
+                TelemetryGridActions.build(
+                    isRecording = bridge.isRecording(),
+                    recordIcon = resourceIcon(recordRes),
+                    zeroIcon = zeroIcon,
+                    onRecordToggle = {
+                        if (bridge.isRecording()) bridge.stopRecording() else bridge.startRecording()
+                        invalidate()
+                    },
+                    onZero = {
+                        if (!bridge.zeroAttitude()) {
+                            runCatching {
+                                CarToast.makeText(
+                                    carContext,
+                                    "Zero needs phone sensors",
+                                    CarToast.LENGTH_SHORT,
+                                ).show()
+                            }
+                        }
+                        invalidate()
+                    },
+                ),
             )
             .build()
     }
 
-    /** Re-read car config every template build (hosts may skip configuration callbacks). */
-    fun resolveDisplaySpec(): AaDisplaySpec {
-        val cfg = carContext.resources.configuration
-        val density = carContext.resources.displayMetrics.density
-        val limit = runCatching {
-            carContext.getCarService(ConstraintManager::class.java)
-                .getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_GRID)
-        }.getOrDefault(AaDisplaySpec.DEFAULT_GRID_LIMIT)
-        val night = (cfg.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        return AaDisplaySpec.from(
-            widthDp = cfg.screenWidthDp,
-            heightDp = cfg.screenHeightDp,
-            density = density,
-            maxGridItems = limit,
-            isDarkMode = night || carContext.isDarkMode,
-        )
-    }
+    fun resolveDisplaySpec(): AaDisplaySpec =
+        lockedDisplaySpec
+            ?: TelemetryGridTemplates.readDisplaySpec(carContext).also { lockedDisplaySpec = it }
 
-    private fun gridItem(tile: CarHudTile): GridItem {
-        val text = buildString {
-            append(tile.line1)
-            if (tile.line2.isNotBlank()) {
-                append('\n')
-                append(tile.line2)
-            }
-            if (tile.line3.isNotBlank()) {
-                append('\n')
-                append(tile.line3)
-            }
-        }
-        val image = GridItemImagePolicy.resolve(tile.image)
-        return GridItem.Builder()
-            .setTitle(tile.title)
-            .setText(CarText.create(text))
-            .setImage(image, GridItem.IMAGE_TYPE_LARGE)
-            .build()
-    }
-
-    private fun waitingTemplate(message: String): Template {
-        val item = GridItem.Builder()
-            .setTitle("ExpeditionGauge")
-            .setText(CarText.create(message))
-            .setImage(CarIcon.APP_ICON, GridItem.IMAGE_TYPE_LARGE)
-            .build()
-        return GridTemplate.Builder()
-            .setTitle("ExpeditionGauge")
-            .setSingleList(ItemList.Builder().addItem(item).build())
-            .build()
-    }
+    private fun resourceIcon(drawableRes: Int): CarIcon =
+        CarIcon.Builder(IconCompat.createWithResource(carContext, drawableRes)).build()
 }

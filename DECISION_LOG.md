@@ -17,6 +17,20 @@
 
 ## Entries
 
+### 2026-07-15 — AA smoothness hardening (bridge, bitmap, sensors, GridTemplate)
+- **Status:** Accepted
+- **Context:** Deep AA audit after ActionStrip crash: `StorageCapBlockedException` escaped host clicks (process FATAL); shared mutable inclinometer bitmap raced phone Offroad vs AA; Activity `onStop` froze AA sensors; GridItem `\n` text is single-line truncated; ConstraintManager polled every template; invalidate at 250 ms overworked hosts.
+- **Decision:** Async `runCatching` bridge mutators + `CarToast`; size-keyed renderer pool + `Bitmap.copy`; AA max 256 px + CarIcon cache (0.1°); single-line tile text; session-locked `AaDisplaySpec`; sensor refcount for Activity+AA; Record icon + parked-only Zero; invalidate floor 500 ms; delete dead `CarTelemetryHost`.
+- **Alternatives considered:** `runBlocking` with try/catch only (rejected — still blocks Binder/main); share renderer without copy (rejected — bleed); ParkedOnly on Record (rejected — allow record while driving).
+- **Consequences:** Debug APK path ready for HU retest; ship as **v2.16.2**; ADR-0010 items 11–13.
+
+### 2026-07-15 — AA GridTemplate ActionStrip max one custom title
+- **Status:** Accepted
+- **Context:** OP13 logcat: launching ExpeditionGauge on Android Auto crashed immediately with `IllegalArgumentException: Action list exceeded max number of 1 actions with custom titles` at `TelemetryGridScreen.onGetTemplate` (`GridTemplate.setActionStrip`). v2.16.1 still used titled **Record/Stop** and titled **Zero**.
+- **Decision:** Keep titled Record/Stop (single custom-title slot); make Zero **icon-only** (`ic_aa_zero`); extract `TelemetryGridActions` + Robolectric regression that `GridTemplate` accepts the strip and rejects two titled actions.
+- **Alternatives considered:** Move Zero onto Attitude tile click (rejected — accidental calibrate); PaneTemplate / second screen (rejected — ADR-0010 strip UX).
+- **Consequences:** Debug APK installed on OP13 for HU retest; patch release (e.g. 2.16.2) when human ships; docs note icon-only Zero.
+
 ### 2026-07-13 — AA GridItem crash fix + HU-independent display spec + local crash log
 - **Status:** Accepted
 - **Context:** OP13 + truck HU: launching ExpeditionGauge on Android Auto killed phone and HU with `IllegalStateException: When a grid item is loading, the image must not be set and vice versa` (Telemetry/TPMS GridItems had no image). Phone portrait + landscape HU must keep working.

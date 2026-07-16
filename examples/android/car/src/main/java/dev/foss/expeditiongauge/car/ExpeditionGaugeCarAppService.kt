@@ -20,7 +20,11 @@ private class ExpeditionGaugeCarSession : Session() {
     override fun onCarConfigurationChanged(newConfiguration: Configuration) {
         // HU portrait/landscape/density — independent of phone Display.rotation.
         runCatching {
-            carContext.getCarService(ScreenManager::class.java).top.invalidate()
+            val top = carContext.getCarService(ScreenManager::class.java).top
+            if (top is TelemetryGridScreen) {
+                top.refreshDisplaySpec()
+            }
+            top.invalidate()
         }
     }
 }

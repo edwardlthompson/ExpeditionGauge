@@ -15,19 +15,24 @@ Drivers want live speed and attitude on the head unit without proprietary Google
 3. **Always-on when capable** — no Settings opt-out; `isAndroidAutoEnabled()` reflects build capability (`FeatureFlags.androidAutoCapable`), not a user toggle.
 4. **`GridTemplate` with 3 tiles** — **Attitude** (bitmap inclinometer ±45° + pitch/roll text), telemetry (speed/HDG/alt), TPMS (text corners only). **No maps.**
 5. **Bitmap inclinometer** — `CarIcon` from shared `:car` `InclinometerBitmapRenderer` (progressive green→yellow→red by angle). Not a custom OpenGL surface.
-6. **Action strip** — **Record / Stop** and **Zero** (set level); mark-event and advanced features stay on phone.
-7. **Live refresh** — bridge rate-limits `Screen.invalidate()` to **250 ms** app-side (host may cap lower).
+6. **Action strip** — **Record / Stop** (one custom title + icon) and **Zero** as **icon-only** + `ParkedOnlyOnClickListener` (GridTemplate allows max one custom-titled action); mark-event and advanced features stay on phone.
+7. **Live refresh** — bridge rate-limits `Screen.invalidate()` to **500 ms** app-side (host may cap near ~1 Hz).
 8. **Sideload discovery** — `CarAppService` declares a **single** `androidx.car.app.category.POI` category (not IOT, not dual categories, not NAVIGATION). Many real projected head units filter IOT even with Unknown sources; DHU is more permissive. POI is the least-wrong AA-allowed category for this FOSS telemetry grid — **not Play-certification-ready**. Also requires Android Auto developer mode + unknown sources + Customize launcher (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
 9. **HostValidator** — `ALLOW_ALL_HOSTS_VALIDATOR` for sideload/DHU/MITM adapters; stricter validators deferred until a Play path exists.
 10. **Non-AA dash routes** — same APK also targets aftermarket Android HUs and AAOS sideload (soft hardware features, distraction-optimized `MainActivity`); see `docs/help/HEAD_UNIT_ROUTES.md`.
+11. **Bridge crash contract** — `CarAppBridge` mutators never throw into host click callbacks (Car App Library only catches `RuntimeException`; checked failures like `StorageCapBlockedException` were fatal). Implement with `runCatching` + async IO; toast via `CarToast` on failure.
+12. **Bitmap isolation** — size-keyed `InclinometerBitmapRenderer` pool; always hand an immutable `Bitmap.copy` to `CarIcon` / Compose so phone Offroad and AA never share a live canvas buffer. AA caps at `AaDisplaySpec.MAX_BITMAP_PX` (256).
+13. **Sensor hold** — refcounted `acquireSensors` / `releaseSensors` so an active AA session keeps IMU/GPS/BLE alive after Activity `onStop`.
 
 ## Consequences
 
 - Same APK ships phone + car entry points; Play listing out of scope until an honest category + templates exist.
 - After category/APK upgrades, force-stop (and preferably clear) Android Auto so the host rediscovers services — see `aa-refresh-host.ps1`.
 - DHU/head-unit validation remains M-003; if Customize launcher stays empty after POI + reset, escalate OEM/cable only — do not churn categories.
-- Phone **Offroad** preset selects `AttitudeGaugeMode.INCLINOMETER` using the same renderer at full size.
+- Phone **Offroad** preset selects `AttitudeGaugeMode.INCLINOMETER` using the same renderer family at phone max size (separate pool entry / copy).
 - Pitch/roll angle alerts reuse Settings thresholds; red frame on AA attitude tile when active.
+- GridItem secondary text is a **single** truncated line (no multi-line `\n` layout).
+- Session-locked `maxGridItems` / display spec — re-resolve only on HU `onCarConfigurationChanged`.
 
 ## Alternatives Considered
 

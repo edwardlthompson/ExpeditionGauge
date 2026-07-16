@@ -68,5 +68,11 @@ class AndroidAutoBridgeMetricsTest {
         override fun zeroAttitude(): Boolean = true
 
         override fun setInvalidationListener(listener: (() -> Unit)?) = Unit
+
+        override fun setToastHandler(handler: ((String) -> Unit)?) = Unit
+
+        override fun onCarSessionStarted() = Unit
+
+        override fun onCarSessionStopped() = Unit
     }
 }

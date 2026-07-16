@@ -87,7 +87,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 | Status | Owner | Task |
 |--------|-------|------|
-| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.16.1** (GridItem image fix + `AaDisplaySpec` HU layout) → Customize launcher → USB head unit; confirm no GridItem FATAL; phone portrait + landscape HU P/R OK; alt routes in `docs/help/HEAD_UNIT_ROUTES.md`; if still missing see Escalation in `docs/help/ANDROID_AUTO.md` |
+| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.16.2** (ActionStrip + smoothness hardening) → Customize launcher → USB head unit; confirm no FATAL on open; Record/Zero/toast; phone Offroad + AA together; sensors with screen off; phone portrait + landscape HU P/R OK; see `docs/help/ANDROID_AUTO.md` |
 
 ---
 

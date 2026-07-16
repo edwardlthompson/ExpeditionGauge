@@ -9,7 +9,13 @@ data class CarHudTile(
     val line2: String,
     val line3: String = "",
     val image: CarIcon? = null,
-)
+) {
+    /** GridItem secondary text is a single truncated line — join without newlines. */
+    fun secondaryText(): String =
+        listOf(line1, line2, line3)
+            .filter { it.isNotBlank() }
+            .joinToString(" · ")
+}
 
 data class CarHudTiles(
     val gMeter: CarHudTile,

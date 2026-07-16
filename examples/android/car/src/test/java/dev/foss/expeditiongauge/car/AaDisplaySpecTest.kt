@@ -11,7 +11,7 @@ class AaDisplaySpecTest {
         val spec = AaDisplaySpec.from(widthDp = 700, heightDp = 400, density = 2f)
         assertTrue(spec.isLandscape)
         assertEquals(AaDisplaySpec.LANDSCAPE_ATTITUDE_DP, spec.attitudeSizeDp, 0.01f)
-        assertEquals(360, spec.bitmapSizePx)
+        assertEquals(256, spec.bitmapSizePx)
         assertFalse(spec.isUltraWide)
     }
 
@@ -20,7 +20,7 @@ class AaDisplaySpecTest {
         val spec = AaDisplaySpec.from(widthDp = 400, heightDp = 800, density = 2f)
         assertFalse(spec.isLandscape)
         assertEquals(AaDisplaySpec.PORTRAIT_ATTITUDE_DP, spec.attitudeSizeDp, 0.01f)
-        assertEquals(296, spec.bitmapSizePx)
+        assertEquals(256, spec.bitmapSizePx)
     }
 
     @Test
@@ -34,9 +34,11 @@ class AaDisplaySpecTest {
     fun mixedOrientationContract_vehicleAxesIndependentOfHuAspect() {
         // Same vehicle-frame P/R must drive tiles regardless of HU portrait/landscape.
         // Spec only changes size fields — never remaps attitude.
-        val portraitHu = AaDisplaySpec.from(400, 800, 2f)
-        val landscapeHu = AaDisplaySpec.from(800, 400, 2f)
+        val portraitHu = AaDisplaySpec.from(400, 800, 1f)
+        val landscapeHu = AaDisplaySpec.from(800, 400, 1f)
         assertTrue(portraitHu.bitmapSizePx != landscapeHu.bitmapSizePx)
+        assertEquals(AaDisplaySpec.PORTRAIT_ATTITUDE_DP.toInt(), portraitHu.bitmapSizePx)
+        assertEquals(AaDisplaySpec.LANDSCAPE_ATTITUDE_DP.toInt(), landscapeHu.bitmapSizePx)
         assertEquals(portraitHu.isDarkMode, landscapeHu.isDarkMode)
     }
 

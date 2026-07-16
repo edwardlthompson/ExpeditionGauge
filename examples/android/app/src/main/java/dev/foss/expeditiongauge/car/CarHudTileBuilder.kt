@@ -8,7 +8,10 @@ import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.telemetry.TirePressureReading
 
-/** Builds 3-tile car HUD from a telemetry snapshot + unit prefs. */
+/**
+ * Builds 3-tile car HUD from a telemetry snapshot + unit prefs.
+ * GridItem secondary text is a **single** truncated line — no newlines.
+ */
 object CarHudTileBuilder {
     fun build(
         snapshot: TelemetrySnapshot,
@@ -23,27 +26,24 @@ object CarHudTileBuilder {
             "${UnitDisplay.altitudeMToDisplay(it, useMetric)} ${UnitDisplay.altitudeUnitLabel(useMetric)}"
         } ?: "—"
 
+        val attitude = "P ${GaugeLogic.formatSignedDegrees(snapshot.pitchDeg)} · R ${GaugeLogic.formatSignedDegrees(snapshot.rollDeg)}"
+        val telemetry = "$speedText · HDG %03d° · Alt $alt".format(hdg)
+        val tpms = listOf(
+            cornerLabel("FL", snapshot.frontLeftPressure, pressureUnit, tempUnit),
+            cornerLabel("FR", snapshot.frontRightPressure, pressureUnit, tempUnit),
+            cornerLabel("RL", snapshot.rearLeftPressure, pressureUnit, tempUnit),
+            cornerLabel("RR", snapshot.rearRightPressure, pressureUnit, tempUnit),
+        ).joinToString(" · ")
+
         return CarHudTiles(
-            gMeter = CarHudTile(
-                title = "Attitude",
-                line1 = "P ${GaugeLogic.formatSignedDegrees(snapshot.pitchDeg)}",
-                line2 = "R ${GaugeLogic.formatSignedDegrees(snapshot.rollDeg)}",
-            ),
-            telemetry = CarHudTile(
-                title = "Telemetry",
-                line1 = speedText,
-                line2 = "HDG %03d°".format(hdg),
-                line3 = "Alt $alt",
-            ),
-            tpms = CarHudTile(
-                title = "TPMS",
-                line1 = cornerLabel("FL", snapshot.frontLeftPressure, pressureUnit, tempUnit),
-                line2 = cornerLabel("FR", snapshot.frontRightPressure, pressureUnit, tempUnit),
-                line3 = "${cornerLabel("RL", snapshot.rearLeftPressure, pressureUnit, tempUnit)}  " +
-                    cornerLabel("RR", snapshot.rearRightPressure, pressureUnit, tempUnit),
-            ),
+            gMeter = CarHudTile(title = "Attitude", line1 = attitude, line2 = ""),
+            telemetry = CarHudTile(title = "Telemetry", line1 = telemetry, line2 = ""),
+            tpms = CarHudTile(title = "TPMS", line1 = tpms, line2 = ""),
         )
     }
+
+    /** Flatten tile lines to one GridItem secondary string (no newlines). */
+    fun secondaryText(tile: CarHudTile): String = tile.secondaryText()
 
     private fun cornerLabel(
         corner: String,
