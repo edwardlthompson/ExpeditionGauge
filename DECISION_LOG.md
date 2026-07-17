@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-07-17 — Ship AA-install-kit.zip on every GitHub Release
+- **Status:** Accepted
+- **Context:** README promised `ExpeditionGauge-*-AA-install-kit.zip` but `create-release.ps1` only uploaded the APK; after plain sideloads Customize launcher stayed empty (`initiatingPackageName=com.android.shell`).
+- **Decision:** Add `pack-aa-install-kit.ps1` + `aa-spoof-adb.sh`; attach the kit from `create-release.ps1`; document a copy-paste ADB spoof in README; keep Magisk `su` with `run-as-uid-arm64` fallback for adb-root devices.
+- **Alternatives considered:** Document-only (rejected — users still lacked the zip); rename APK as “spoofed” (rejected — bytes are unchanged; attribution is install-time).
+- **Consequences:** v2.16.3+ releases include kit; upgrades must re-run spoof install or AA hides the app.
+
 ### 2026-07-15 — AA smoothness hardening (bridge, bitmap, sensors, GridTemplate)
 - **Status:** Accepted
 - **Context:** Deep AA audit after ActionStrip crash: `StorageCapBlockedException` escaped host clicks (process FATAL); shared mutable inclinometer bitmap raced phone Offroad vs AA; Activity `onStop` froze AA sensors; GridItem `\n` text is single-line truncated; ConstraintManager polled every template; invalidate at 250 ms overworked hosts.

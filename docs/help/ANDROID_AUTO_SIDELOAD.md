@@ -11,22 +11,28 @@ Browser install / plain `adb install` / `pm install -i com.android.vending` usua
 
 ## Path A — Rooted phone + PC (recommended, proven)
 
-Works on Magisk/rooted devices including Android 14/15/16.
+Works on Magisk/rooted devices including Android 14/15/16. Every GitHub Release ships:
+
+| Asset | Purpose |
+|-------|---------|
+| `ExpeditionGauge-X.Y.Z.apk` | App binary |
+| `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` | Same APK + Play Store spoof scripts (`aa-spoof-adb.sh`, `install-aa-from-pc.ps1`) + `bin/run-as-uid-arm64` for `adb root` devices without Magisk `su` |
 
 1. Enable USB debugging; connect phone.
-2. Download `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) **or** clone the repo.
-3. Put `ExpeditionGauge-X.Y.Z.apk` next to the scripts (or pass `-Apk`).
-4. Run:
+2. Download and unzip `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) **or** clone the repo.
+3. In the kit folder, run:
 
 ```powershell
-pwsh install-aa-from-pc.ps1 -Apk ExpeditionGauge-2.14.2.apk
+pwsh install-aa-from-pc.ps1 -Apk ExpeditionGauge-2.16.3.apk
 ```
 
 ```bash
-bash install-aa-from-pc.sh ExpeditionGauge-2.14.2.apk
+bash aa-spoof-adb.sh ExpeditionGauge-2.16.3.apk
 ```
 
-5. Confirm:
+Or paste the copy-paste ADB block from the [README](../../README.md#copy-paste-adb-spoof-git-bash--wsl--macos--linux).
+
+4. Confirm:
 
 ```text
 adb shell dumpsys package dev.foss.expeditiongauge | grep -E "installerPackageName|initiatingPackageName"
@@ -34,9 +40,9 @@ adb shell dumpsys package dev.foss.expeditiongauge | grep -E "installerPackageNa
 
 Both lines must show `com.android.vending`.
 
-6. Phone: Android Auto → developer mode → **Unknown sources** → **Customize launcher** → enable ExpeditionGauge → USB to car.
+5. Phone: Android Auto → developer mode → **Unknown sources** → **Customize launcher** → enable ExpeditionGauge → USB to car.
 
-Repo equivalent: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk …`
+Repo equivalent: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk …` · pack kit locally: `pwsh scripts/expedition/pack-aa-install-kit.ps1 -Apk ExpeditionGauge-X.Y.Z.apk`
 
 ## Path B — Unrooted phone (software)
 

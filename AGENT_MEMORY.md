@@ -29,6 +29,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Gauge cycle + elev DEM | 2.16.0 | ✅ Standalone gauges; G-meter axes; USGS DEM + A-GPS |
 | AA GridItem crash + HU spec | 2.16.1 | ✅ Always setImage; AaDisplaySpec; local crash log |
 | AA smoothness hardening | 2.16.2 | ✅ ActionStrip titles; async bridge; bitmap isolate; sensor hold |
+| AA Play Store spoof kit | 2.16.3 | ✅ AA-install-kit.zip on Releases; aa-spoof-adb.sh; README copy-paste |
 
 ## G-meter HUD rotation (locked 2026-07-12, supersedes 2026-06-30 CW cube)
 

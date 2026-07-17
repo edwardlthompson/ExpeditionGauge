@@ -48,8 +48,8 @@ ExpeditionGauge is FOSS and is **not** on the public Play Store. Android Auto wi
 
 Download assets from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases):
 
-- `ExpeditionGauge-X.Y.Z.apk` — the app
-- `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` — APK + PC install scripts + guide
+- `ExpeditionGauge-X.Y.Z.apk` — the app (phone / HU / AAOS)
+- `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` — **Play Store spoof sideload kit**: same APK + `aa-spoof-adb.sh` / `install-aa-from-pc.ps1` + `bin/run-as-uid-arm64` helper + guide
 
 Full matrix: [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDELOAD.md) · day-to-day AA use: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md)
 
@@ -57,27 +57,55 @@ Full matrix: [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDEL
 
 | Your situation | What to do |
 |----------------|------------|
-| **Rooted phone** (Magisk) + PC | Use the AA install kit (Path A below) — proven on Android 14/15/16 |
+| **Rooted phone** (Magisk / `adb root`) + PC | Unzip the **AA-install-kit** and run the spoof script (Path A) — proven on Android 14/15/16 |
 | **Unrooted, Android ≤ 13** | [KingInstaller](https://github.com/fcaronte/KingInstaller/releases) “Install as king” (enable OnePlus/Oppo/Realme option if needed) |
 | **Unrooted, Android 14+** | No reliable software-only spoof. Use **root** (Path A), a **wireless AA adapter** with developer/MITM mode, or a **private Play track** (see alternatives below) |
 
 ### Path A — Rooted PC install (recommended)
 
 1. USB debugging on; connect the phone; allow this computer.
-2. Unzip `ExpeditionGauge-*-AA-install-kit.zip` (or use the repo scripts).
-3. Run:
+2. Download and unzip `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases).
+3. In that folder, run **one** of:
 
 ```powershell
-pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.14.2.apk
+pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.16.3.apk
 ```
 
 ```bash
-bash ./install-aa-from-pc.sh ExpeditionGauge-2.14.2.apk
+bash ./aa-spoof-adb.sh ExpeditionGauge-2.16.3.apk
 ```
 
-From a full clone: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.14.2.apk`
+From a full clone: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.16.3.apk`
 
-4. Confirm both lines show Play Store:
+#### Copy-paste ADB spoof (Git Bash / WSL / macOS / Linux)
+
+Unzip the AA-install-kit, `cd` into it, then paste:
+
+```bash
+# Play Store spoof install — rooted phone + USB adb
+# Sets installerPackageName AND initiatingPackageName to com.android.vending
+APK=$(ls ExpeditionGauge-*.apk | head -1)
+adb root; sleep 1
+adb push "$APK" /data/local/tmp/ExpeditionGauge-aa-install.apk
+UID=$(adb shell cmd package list packages -U com.android.vending | sed -n 's/.*uid:\([0-9]*\).*/\1/p' | head -1 | tr -d '\r')
+SIZE=$(adb shell stat -c %s /data/local/tmp/ExpeditionGauge-aa-install.apk | tr -d '\r')
+CREATE=$(adb shell "su $UID -c \"pm install-create --user 0 -i com.android.vending -r -S $SIZE\"" 2>&1 | tr -d '\r')
+if ! echo "$CREATE" | grep -q '\[[0-9]\+\]'; then
+  adb push bin/run-as-uid-arm64 /data/local/tmp/run-as-uid
+  adb shell chmod 755 /data/local/tmp/run-as-uid
+  CREATE=$(adb shell "/data/local/tmp/run-as-uid $UID pm install-create --user 0 -i com.android.vending -r -S $SIZE" | tr -d '\r')
+fi
+SID=$(echo "$CREATE" | sed -n 's/.*\[\([0-9]*\)\].*/\1/p')
+adb shell pm install-write -S "$SIZE" "$SID" base /data/local/tmp/ExpeditionGauge-aa-install.apk
+adb shell pm install-commit "$SID"
+adb shell rm -f /data/local/tmp/ExpeditionGauge-aa-install.apk
+adb shell am force-stop com.google.android.projection.gearhead
+adb shell dumpsys package dev.foss.expeditiongauge | grep -E 'installerPackageName|initiatingPackageName'
+```
+
+Both printed lines must be `com.android.vending`. Prefer `bash ./aa-spoof-adb.sh` from the kit if you want the same logic with clearer errors.
+
+4. Confirm (Windows `cmd` / PowerShell):
 
 ```text
 adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackageName initiatingPackageName"
@@ -90,7 +118,7 @@ adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackag
 3. Android Auto settings → **Customize launcher** → enable **ExpeditionGauge**.
 4. USB to the car (preferred first time) → **Apps** → **ExpeditionGauge**. Keep the phone app running.
 
-**After every upgrade:** reinstall with Path A (or KingInstaller on ≤13), then re-check Unknown sources + Customize launcher.
+**After every upgrade:** reinstall with the AA-install-kit spoof (or KingInstaller on ≤13) — plain `adb install -r` will hide the app again — then re-check Unknown sources + Customize launcher.
 
 ### Are there other options besides Play Store or root?
 

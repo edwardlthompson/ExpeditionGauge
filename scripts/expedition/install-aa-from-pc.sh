@@ -1,73 +1,10 @@
 #!/usr/bin/env bash
 # Install ExpeditionGauge for Android Auto (PC + rooted phone).
-# Sets installerPackageName AND initiatingPackageName to com.android.vending.
+# Thin wrapper around aa-spoof-adb.sh (Play Store installer + initiator spoof).
 #
 # Usage:
-#   bash install-aa-from-pc.sh ExpeditionGauge-2.14.1.apk
-#   SERIAL=b5214fc6 bash install-aa-from-pc.sh ExpeditionGauge-2.14.1.apk
+#   bash install-aa-from-pc.sh ExpeditionGauge-2.16.2.apk
+#   SERIAL=8bf09993 bash install-aa-from-pc.sh ExpeditionGauge-2.16.2.apk
 set -euo pipefail
-
-PLAY=com.android.vending
-PKG=dev.foss.expeditiongauge
-APK="${1:-}"
-ADB=(adb)
-if [[ -n "${SERIAL:-}" ]]; then ADB=(adb -s "$SERIAL"); fi
-
-if [[ -z "$APK" ]]; then
-  APK=$(ls -t ExpeditionGauge-*.apk 2>/dev/null | head -1 || true)
-fi
-if [[ -z "$APK" || ! -f "$APK" ]]; then
-  echo "Usage: $0 ExpeditionGauge-X.Y.Z.apk" >&2
-  exit 1
-fi
-
-if ! command -v adb >/dev/null; then
-  echo "adb not found" >&2
-  exit 1
-fi
-
-"${ADB[@]}" root >/dev/null
-sleep 1
-if ! "${ADB[@]}" shell id | grep -q 'uid=0'; then
-  cat >&2 <<'EOF'
-Device is not rooted (adb root failed).
-
-Unrooted: see ANDROID_AUTO_SIDELOAD.md — KingInstaller (Android <=13) or Magisk (14+).
-EOF
-  exit 1
-fi
-
-REMOTE=/data/local/tmp/ExpeditionGauge-aa-install.apk
-"${ADB[@]}" push "$APK" "$REMOTE" >/dev/null
-UID_PLAY=$("${ADB[@]}" shell cmd package list packages -U "$PLAY" | sed -n 's/.*uid:\([0-9]*\).*/\1/p' | head -1 | tr -d '\r')
-if [[ -z "$UID_PLAY" ]]; then
-  UID_PLAY=$("${ADB[@]}" shell dumpsys package "$PLAY" | sed -n 's/.*\(userId\|appId\)=\([0-9]*\).*/\2/p' | head -1 | tr -d '\r')
-fi
-if [[ -z "$UID_PLAY" ]]; then
-  echo "Play Store ($PLAY) uid not found" >&2
-  exit 1
-fi
-SIZE=$("${ADB[@]}" shell stat -c %s "$REMOTE" | tr -d '\r')
-CREATE=$("${ADB[@]}" shell "su $UID_PLAY -c \"pm install-create --user 0 -i $PLAY -r -S $SIZE\"" | tr -d '\r')
-SID=$(echo "$CREATE" | sed -n 's/.*\[\([0-9]*\)\].*/\1/p')
-if [[ -z "$SID" ]]; then
-  echo "install-create failed: $CREATE" >&2
-  exit 1
-fi
-echo "Session $SID as uid $UID_PLAY ($PLAY)"
-"${ADB[@]}" shell "pm install-write -S $SIZE $SID base $REMOTE" >/dev/null
-"${ADB[@]}" shell "pm install-commit $SID" >/dev/null
-"${ADB[@]}" shell "rm -f $REMOTE" >/dev/null
-"${ADB[@]}" shell "am start -n $PKG/.MainActivity" >/dev/null || true
-
-DUMP=$("${ADB[@]}" shell dumpsys package "$PKG")
-echo "$DUMP" | grep -E 'installerPackageName|initiatingPackageName' || true
-echo "$DUMP" | grep -q "installerPackageName=$PLAY" || { echo "installer attribution failed" >&2; exit 1; }
-echo "$DUMP" | grep -q "initiatingPackageName=$PLAY" || { echo "initiator attribution failed" >&2; exit 1; }
-
-cat <<EOF
-
-OK — Play Store attribution set.
-
-On the phone: AA developer mode → Unknown sources → Customize launcher → enable ExpeditionGauge → USB to car.
-EOF
+HERE="$(cd "$(dirname "$0")" && pwd)"
+exec bash "$HERE/aa-spoof-adb.sh" "$@"

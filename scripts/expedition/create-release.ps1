@@ -56,10 +56,15 @@ if (-not (Test-Path $apk)) {
     Write-Error "create-release: signed APK missing at $apk (run assembleRelease + sign-release-apk.ps1)"
 }
 
+$kit = & "$PSScriptRoot\pack-aa-install-kit.ps1" -Apk $apk -OutDir $Root
+if ($LASTEXITCODE -ne 0 -or -not $kit -or -not (Test-Path "$kit")) {
+    Write-Error "create-release: AA install kit pack failed"
+}
+
 $draftFlag = if ($Draft -or $config.releaseDraft) { "--draft" } else { "" }
 
 $notes = Join-Path $Root "RELEASE_NOTES.md"
-$ghArgs = @("release", "create", $Tag, "--title", $Tag, $apk)
+$ghArgs = @("release", "create", $Tag, "--title", $Tag, $apk, "$kit")
 if ($draftFlag) { $ghArgs += "--draft" }
 if (Test-Path $notes) { $ghArgs += @("--notes-file", $notes) }
 

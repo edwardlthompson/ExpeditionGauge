@@ -35,6 +35,7 @@ Thumbs.db
 .cursor/run-as-uid.c
 
 # Local AA install kits (built by packaging scripts; not source)
+*-AA-install-kit.zip
 packaging/*-AA-install-kit.zip
 packaging/aa-install-kit/
 

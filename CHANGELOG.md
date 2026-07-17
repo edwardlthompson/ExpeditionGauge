@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.16.3] — AA Play Store spoof install kit (2026-07-17)
+
+### Added
+
+* GitHub Releases ship `ExpeditionGauge-*-AA-install-kit.zip` (APK + Play Store spoof ADB scripts + `run-as-uid-arm64`)
+* README copy-paste ADB spoof block for Customize launcher sideload
+* `pack-aa-install-kit.ps1` / `aa-spoof-adb.sh`; `create-release.ps1` attaches the kit
+
 ## [2.16.2] — AA smoothness hardening (2026-07-15)
 
 ### Fixed
