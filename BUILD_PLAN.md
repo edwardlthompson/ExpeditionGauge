@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.16.0** (2026-07-12).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell, **v2.14** landscape IMU remap + inclinometer styles / AA discovery, **v2.15** integer P/R/Y + stationary autocalibrate, **v2.16** gauge cycle + G-meter axes + USGS elevation.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.16.3** (2026-07-17).
+- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell, **v2.14** landscape IMU remap + inclinometer styles / AA discovery, **v2.15** integer P/R/Y + stationary autocalibrate, **v2.16** gauge cycle + elev DEM + AA smoothness; **v2.16.3** AA-install-kit.zip on Releases.
 - **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
 - **Audit 2026-07-12:** MSYS path + multi-strict + stack sync archived; Dependabot 0 open.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
