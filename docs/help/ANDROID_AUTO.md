@@ -112,7 +112,7 @@ The app requests updates every **500 ms** when attitude is changing (1 Hz when s
 
 ## Desktop Head Unit preview (CLI — no Android Studio UI)
 
-Projected AA cannot mirror the phone Compose HUD. Use DHU to preview the **GridTemplate** tiles while editing in Cursor.
+Projected AA cannot mirror the phone Compose HUD. Use DHU to preview the **Surface 3×1 Drive HUD** (Attitude | Telemetry | TPMS) while editing in Cursor.
 
 **One-time SDK install** (CLI or Studio SDK Manager once):
 
@@ -126,28 +126,30 @@ Binary lands under `%ANDROID_SDK_ROOT%\extras\google\auto\` (`desktop-head-unit.
 **Day-to-day loop (Cursor + PowerShell):**
 
 ```powershell
-# Optional: install/refresh after a build
-pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk path\to\ExpeditionGauge.apk
+# Optional: install/refresh after a build (Play Store spoof)
+pwsh scripts/expedition/aa-refresh-host.ps1 -Serial <adb-serial> -Apk path\to\ExpeditionGauge.apk
 
-# Forward ADB + launch DHU (keeps AS closed)
-pwsh scripts/expedition/dhu-preview.ps1 -Serial b5214fc6
+# Smoke: head-unit server + DHU + open app + capture
+pwsh scripts/expedition/dhu-smoke.ps1 -Serial <adb-serial> -RestartDhu
+
+# Or forward + launch DHU only
+pwsh scripts/expedition/dhu-preview.ps1 -Serial <adb-serial>
 
 ```
 
-Flags: `-InstallApk <apk>` (runs refresh then DHU), `-ForwardOnly` (port forward only), `-InputMode rotary`, `-Headless`.
+Flags (`dhu-preview`): `-InstallApk <apk>`, `-ForwardOnly`, `-InputMode rotary`, `-Headless`.
 
-**Bitmap-only review (no phone/DHU):** render Attitude / Telemetry / TPMS glance PNGs for Cursor:
+**Bitmap-only review (no phone/DHU):** render glance PNGs for Cursor:
 
 ```powershell
 pwsh scripts/expedition/aa-bitmap-preview.ps1
 
 ```
 
-Outputs under `.cursor/screenshots/aa-tile-*.png`.
+Outputs under `.cursor/screenshots/aa-tile-*.png` / `dhu-live.png`.
 
-Phone-like dash UI requires **native APK on the aftermarket HU** (Route A) — see [`HEAD_UNIT_ROUTES.md`](HEAD_UNIT_ROUTES.md).
-
-## Manual DHU / head unit checklist (M-003)
+Product validation path is **phone → Android Auto** (DHU or car). Native Compose on an aftermarket HU is not an active gate — see [`HEAD_UNIT_ROUTES.md`](HEAD_UNIT_ROUTES.md).
+## Manual DHU checklist (M-003 — Desktop Head Unit)
 
 Use when `adb-smoke.ps1 -Scenario aa-inclinometer` reports `aa_host: disconnected` or for full sign-off:
 
@@ -205,7 +207,7 @@ Then only:
 - Prefer USB over wireless for discovery
 - Known-good cable/port; unrestricted battery for ExpeditionGauge + Android Auto
 - Confirm Unknown sources survived reboot
-- Record phone AA version + head-unit model in [`HUMAN_BACKLOG.md`](../../HUMAN_BACKLOG.md) and leave BUILD_PLAN **M-003** open
+- Optional: record phone AA version in [`HUMAN_BACKLOG.md`](../../HUMAN_BACKLOG.md); BUILD_PLAN **M-003** is closed via DHU
 
 ## Privacy
 

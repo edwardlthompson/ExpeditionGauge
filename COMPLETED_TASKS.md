@@ -2,6 +2,12 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## AA ADB scope trim (2026-07-19)
+
+- ✅ [ADB] M-003 Projected AA on **Desktop Head Unit**: install ≥ 2.17.0 AA-install-kit → Unknown sources + Customize launcher → `dhu-smoke.ps1` / DHU; confirm Surface HUD (Screenshot/Record/Level), no FATAL; capture `dhu-live.png` — done OP13 (2026-07-19)
+- ✅ [ADB] M-003 Device validation via **Desktop Head Unit** (OP13 + `dhu-smoke` / Surface HUD) — physical car USB optional, not a plan gate
+- ❌ [ADB] M-004 Native HU Route A — **dropped** (not installing Compose APK on aftermarket HU; projected AA only)
+
 ## AA HU UX + Surface Drive HUD — v2.17.0 (2026-07-19)
 
 - ✅ [AGENT] AA densify: Telemetry/TPMS glance bitmaps + secondary-text priority (speed·HDG; TPMS pressures); unit tests

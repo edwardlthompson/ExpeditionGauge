@@ -5,7 +5,7 @@
 ## Current state
 
 - Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.17.0** (2026-07-19).
-- **Shipped:** through **v2.17.0** AA Surface Drive HUD (NavTemplate + 3×1 Surface; DHU preview). **Open ADB:** M-003 USB HU retest; M-004 native HU Route A.
+- **Shipped:** through **v2.17.0** AA Surface Drive HUD. **In progress:** Audit 2026-07-19 (docs/release hygiene).
 - **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
 - **Audit 2026-07-12:** MSYS path + multi-strict + stack sync archived; Dependabot 0 open.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
@@ -74,20 +74,22 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Audit 2026-07-09 evening | inclinometer landscape ADR-0013 (A-001–A-004) | same |
 | Audit 2026-07-12 | MSYS paths + multi-strict + stack sync (A-001–A-004) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
+| AA HU UX + ADB trim | v2.17.0 Surface HUD + DHU M-003; M-004 dropped | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
 
-> **Audit 2026-07-12** archived in COMPLETED_TASKS.md (MSYS path + multi-strict + stack sync).
+> Prior AA HU UX + ADB trim archived in COMPLETED_TASKS.md.
 
-### AA device validation (open)
+### Audit 2026-07-19 — post v2.17 docs/release hygiene
 
 | Status | Owner | Task |
 |--------|-------|------|
-| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.17.0** Surface HUD → Customize launcher → USB head unit; Record/Screenshot/Level; phone Offroad + AA; see `docs/help/ANDROID_AUTO.md` |
-| 🔲 | [ADB] | M-004 Native HU (Route A): confirm aftermarket unit can sideload APK; install release; Keep screen awake; Compose HUD + sensors (BLE if no IMU); note model in `docs/help/HEAD_UNIT_ROUTES.md` |
-
-> **AA HU UX + preview (v2.17)** AGENT rows archived in COMPLETED_TASKS.md (Surface HUD + DHU verified on OP13).
+| ✅ | [AGENT] | A-001 Fix F-001: `ANDROID_AUTO.md` DHU section — Surface 3×1 / `dhu-smoke`; demote Route A |
+| ✅ | [AGENT] | A-002 Fix F-002: `pre-release-gate.ps1` / `create-release.ps1` pass `JAVA_HOME`+PATH into bash (KB-025) |
+| ✅ | [AGENT] | A-003 Fix F-003: `project.config.json` + `DEV_DEVICE.md` for OP13 serial; note OP12 |
+| ✅ | [AGENT] | A-004 Fix F-004: `HEAD_UNIT_ROUTES.md` matrix — Route A inactive; lead with phone AA |
+| ✅ | [AGENT] | A-005 Fix F-005: commit audit + prior ADB-trim board/docs; encoding check |
 
 ---
 

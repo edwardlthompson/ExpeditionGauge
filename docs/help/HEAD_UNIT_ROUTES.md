@@ -1,17 +1,17 @@
 # Head-unit routes (beyond stock Android Auto)
 
-Stock Android Auto on modern phones blocks normal GitHub sideloads (Play install attribution). These routes get ExpeditionGauge onto a dash display **without** relying on the public Play Store.
+**Active product path:** install on the **phone** with the [ADB Play Store spoof](../../README.md#install-with-adb-play-store-spoof), then project via Android Auto (car or Desktop Head Unit). See [`ANDROID_AUTO.md`](ANDROID_AUTO.md).
 
-Same APK (`ExpeditionGauge-*.apk`) is intended for all routes below. From **v2.14.2**: hardware features are soft (installable on HUs without phone IMU), `MainActivity` is distraction-optimized for AAOS, and the projected **Car App** path still serves wireless MITM / AA.
+Other routes below are optional / community. Same APK (`ExpeditionGauge-*.apk`) can install on AAOS or unlocked HUs, but **Route A (native Compose on aftermarket HU) is not an active BUILD_PLAN gate**.
 
-| Route | Where the UI runs | Needs Play attribution? | App readiness |
-|-------|-------------------|-------------------------|---------------|
-| **A. Aftermarket Android head unit** | Native Compose HUD on the HU | No — sideload APK on the unit | Ready — full phone UI; enable **Keep screen awake**; pair BLE IMU/GPS/OBD if the HU has no sensors |
-| **B. Wireless AA MITM adapter** | Phone Car App → car (via adapter) | Often bypassed by adapter “developer / DHU” mode | Ready — `CarAppService` + `category.POI` + `HostValidator.ALLOW_ALL` |
-| **C. DIY OpenAuto / Pi-style HU** | Usually phone Car App → DIY head unit | Same as phone AA / MITM | Ready — same projected AA path as B |
-| **D. OEM Android Automotive (AAOS)** | Native app **on the car** | No Play phone-attribution; car may still gate unknown sources | Ready to **install** (soft `type.automotive`, distraction-optimized). Full AAOS UX polish is best-effort — park to grant permissions; use external sensors if the car has no usable IMU |
-| **E. Magisk / private Play / KingInstaller** | Phone Car App → stock AA | Yes (or root spoof) | Ready — see [`ANDROID_AUTO_SIDELOAD.md`](ANDROID_AUTO_SIDELOAD.md) |
-## A — Aftermarket Android head unit (recommended FOSS path)
+| Route | Where the UI runs | Needs Play attribution? | Status |
+|-------|-------------------|-------------------------|--------|
+| **E. Phone AA (Magisk spoof kit)** | Phone Car App → car / DHU | Yes — AA-install-kit spoof | **Active** — README + Releases kit |
+| **B. Wireless AA MITM adapter** | Phone Car App → car (via adapter) | Often bypassed by adapter “developer / DHU” mode | Optional |
+| **C. DIY OpenAuto / Pi-style HU** | Usually phone Car App → DIY head unit | Same as phone AA / MITM | Optional |
+| **D. OEM Android Automotive (AAOS)** | Native app **on the car** | No Play phone-attribution; car may still gate unknown sources | Optional / best-effort |
+| **A. Aftermarket Android head unit** | Native Compose HUD on the HU | No — sideload APK on the unit | **Inactive gate** — possible, not validated per model |
+## A — Aftermarket Android head unit (not an active validation path)
 
 **Examples:** ATOTO S8/X10 class, Mekede/Dasaita, Joying, Xtrons, and similar unlocked Android radios.
 
@@ -24,22 +24,15 @@ This is the **only** path that can show the full phone Compose HUD (cubes / dens
 
 This bypasses Google’s Android Auto projection gate entirely: the HUD is a normal Android app on the dash.
 
-### Route A validation checklist (M-004)
+### Route A status
 
-Use once per head-unit model; leave BUILD_PLAN **M-004** open until done.
-
-1. Confirm the unit boots a full Android launcher (file manager / Play / sideload UI), not AA-only projection chrome.
-2. `adb devices` shows the HU (or copy APK via USB stick).
-3. Install APK → launch ExpeditionGauge → grant permissions while parked.
-4. Enable **Keep screen awake**; confirm Compose dashboard (not the 3-tile AA grid).
-5. Pitch/roll respond (built-in IMU or paired BLE); note gaps in [`HUMAN_BACKLOG.md`](../../HUMAN_BACKLOG.md) if sensors missing.
-6. Append model + Android version under **Validated native HUs** below (or create the section).
+**Not an active BUILD_PLAN gate.** Product validation is **phone → Android Auto** (Desktop Head Unit or car). Native Compose on an aftermarket HU remains technically possible with the same APK, but we are not tracking per-model M-004 checklists.
 
 ### Validated native HUs
 
 | Model | Android | Sensors | Notes | Date |
 |-------|---------|---------|-------|------|
-| _(none yet — complete M-004)_ | | | | |
+| _(none — Route A not pursued)_ | | | | |
 ## B — Wireless AA adapter (MITM / developer mode)
 
 **Examples:** [AAWireless](https://www.aawireless.io/) (enable developer mode in its app), FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs).

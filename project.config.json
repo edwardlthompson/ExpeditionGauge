@@ -25,11 +25,13 @@
   },
   "projectName": "ExpeditionGauge",
   "devDevice": {
-    "adbSerial": "b5214fc6",
+    "adbSerial": "8bf09993",
     "bootloaderUnlocked": true,
     "rooted": true,
-    "model": "OnePlus 12",
-    "connection": "usb-adb"
+    "model": "OnePlus 13",
+    "connection": "usb-adb",
+    "alternateSerial": "b5214fc6",
+    "alternateModel": "OnePlus 12"
   },
   "stack": "android",
   "donationsUrl": "",

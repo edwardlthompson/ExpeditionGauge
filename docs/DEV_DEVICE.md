@@ -2,17 +2,21 @@
 
 | Field | Value |
 |-------|-------|
-| Model | OnePlus 12 (CPH2583) |
+| Model | OnePlus 13 (CPH2655) |
 | Connection | USB ADB |
 | Bootloader | Unlocked |
-| Root | Yes |
-| ADB serial | `b5214fc6` |
+| Root | Yes (adb-root / Magisk as available) |
+| ADB serial | `8bf09993` |
+
+**Alternate:** OnePlus 12 (CPH2583) · serial `b5214fc6` — still valid; set `project.config.json` → `devDevice.adbSerial` when that phone is attached.
 
 Detect serial: `adb devices -l`
 
 Configure in `project.config.json` → `devDevice.adbSerial` when multiple devices are attached.
 
 Smoke tests: `pwsh scripts/expedition/adb-smoke.ps1 -Sprint N -Scenario <name>`
+
+AA / DHU: `pwsh scripts/expedition/dhu-smoke.ps1 -Serial <serial> -RestartDhu`
 
 ## Local Android gates
 
