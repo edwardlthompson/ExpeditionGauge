@@ -67,7 +67,6 @@ fun TelemetryHudCube(
             TelemetryHudSatRow(
                 gpsFix = telemetry.gpsFix,
                 numSatellites = telemetry.numSatellites,
-                hdop = telemetry.hdop,
                 modifier = Modifier.fillMaxWidth(),
             )
             TelemetryHudClockRow(modifier = Modifier.fillMaxWidth())

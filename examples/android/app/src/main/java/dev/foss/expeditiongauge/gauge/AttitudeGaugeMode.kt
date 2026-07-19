@@ -67,13 +67,22 @@ fun AttitudeGaugeMode.nextAttitudeDisplay(): AttitudeGaugeMode {
 }
 
 /**
- * Android Auto keeps rendering the inclinometer icon family — map compass/G-meter to ladder;
- * style-specific inclinometer modes stay as-is for AA style sync.
+ * AA Surface now paints G-meter and compass bitmaps — no mode remapping.
  */
-fun AttitudeGaugeMode.forAndroidAuto(): AttitudeGaugeMode =
+fun AttitudeGaugeMode.forAndroidAuto(): AttitudeGaugeMode = this
+
+fun AttitudeGaugeMode.toAaAttitudeMode(): dev.foss.expeditiongauge.car.gauge.AaAttitudeMode =
     when (this) {
-        AttitudeGaugeMode.COMPASS_BALL,
-        AttitudeGaugeMode.G_FORCE,
-        -> AttitudeGaugeMode.INCLINOMETER_LADDER
-        else -> this
+        AttitudeGaugeMode.INCLINOMETER_LADDER ->
+            dev.foss.expeditiongauge.car.gauge.AaAttitudeMode.INCLINOMETER_LADDER
+        AttitudeGaugeMode.INCLINOMETER_HORIZON ->
+            dev.foss.expeditiongauge.car.gauge.AaAttitudeMode.INCLINOMETER_HORIZON
+        AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL ->
+            dev.foss.expeditiongauge.car.gauge.AaAttitudeMode.INCLINOMETER_DUAL_DIAL
+        AttitudeGaugeMode.INCLINOMETER_BUBBLE ->
+            dev.foss.expeditiongauge.car.gauge.AaAttitudeMode.INCLINOMETER_BUBBLE
+        AttitudeGaugeMode.G_FORCE ->
+            dev.foss.expeditiongauge.car.gauge.AaAttitudeMode.G_FORCE
+        AttitudeGaugeMode.COMPASS_BALL ->
+            dev.foss.expeditiongauge.car.gauge.AaAttitudeMode.COMPASS_BALL
     }

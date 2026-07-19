@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.media
 
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Build
@@ -54,6 +55,13 @@ internal object HudScreenshotIo {
         bitmap: Bitmap,
         suffix: String?,
         stamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()),
+    ): Boolean = insertBitmap(activity as Context, bitmap, suffix, stamp)
+
+    fun insertBitmap(
+        context: Context,
+        bitmap: Bitmap,
+        suffix: String?,
+        stamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()),
     ): Boolean {
         val name = "ExpeditionGauge_${stamp}${suffix.orEmpty()}.jpg"
         val values = ContentValues().apply {
@@ -64,7 +72,7 @@ internal object HudScreenshotIo {
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
         }
-        val resolver = activity.contentResolver
+        val resolver = context.contentResolver
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) ?: return false
         return try {
             resolver.openOutputStream(uri)?.use { out ->

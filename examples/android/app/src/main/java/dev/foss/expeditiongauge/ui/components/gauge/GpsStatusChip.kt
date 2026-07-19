@@ -20,7 +20,6 @@ fun GpsStatusChip(
     gpsFix: Boolean,
     gpsSource: String,
     numSatellites: Int?,
-    hdop: Float?,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -39,7 +38,6 @@ fun GpsStatusChip(
                 R.string.gps_status_chip,
                 gpsSource.uppercase(),
                 numSatellites ?: 0,
-                hdop ?: 0f,
             ),
             color = GaugeYellow,
             style = MaterialTheme.typography.labelSmall,

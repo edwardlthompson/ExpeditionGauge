@@ -41,7 +41,7 @@
     <string name="playback_tpms_rl">RL: %1$s</string>
     <string name="playback_tpms_rr">RR: %1$s</string>
     <string name="playback_multi_imu">Multi-IMU corners available</string>
-    <string name="playback_gps_source">GPS: %1$s · %2$d sats · HDOP %3$.1f</string>
+    <string name="playback_gps_source">GPS: %1$s · %2$d sats</string>
     <string name="playback_alerts_title">Alerts (%1$d)</string>
     <string name="playback_alert_row">%1$s  value %2$.2f  limit %3$.2f</string>
     <string name="ghost_lap_mismatch">Track layout mismatch — ghost disabled</string>

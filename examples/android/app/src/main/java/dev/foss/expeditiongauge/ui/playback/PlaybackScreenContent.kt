@@ -159,7 +159,6 @@ internal fun PlaybackMetricsPanel(
                 R.string.playback_gps_source,
                 gps.gpsSource.uppercase(),
                 gps.numSatellites ?: 0,
-                gps.hdop ?: 0f,
             ),
             color = if (dev.foss.expeditiongauge.playback.SampleGpsMetadata.prefersExternal(sample)) {
                 GaugeYellow

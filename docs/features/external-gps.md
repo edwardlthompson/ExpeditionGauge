@@ -7,7 +7,7 @@
 - ✅ NMEA parser (GGA, RMC, VTG, GSA) with unit-test fixtures
 - ✅ `ExternalNmeaGpsManager` over Classic SPP
 - ✅ `FusedGpsLocationProvider` prefers external when valid; phone fallback
-- ✅ GPS status chip: source, satellites, HDOP
+- ✅ GPS status chip: source, satellites (HDOP parsed/recorded, not shown on HUD)
 - ✅ Gated by `FeatureFlags.externalGpsEnabled`
 
 - ✅ Settings: enable toggle, device picker, forget device; GPS status chip on HUD
@@ -26,4 +26,4 @@
 
 1. Pair Garmin GLO 2 or Dual XGPS
 2. Settings → External GPS → select device
-3. Chip shows EXTERNAL, sat count, HDOP; speed/HDG prefer external fix
+3. Chip shows EXTERNAL + sat count; speed/HDG prefer external fix

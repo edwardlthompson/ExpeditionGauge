@@ -14,6 +14,19 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    // Opt-in AA glance PNG export: -PaaPreviewDir=path (see aa-bitmap-preview.ps1)
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            all {
+                it.systemProperty(
+                    "aa.preview.dir",
+                    (project.findProperty("aaPreviewDir") as String?) ?: "",
+                )
+            }
+        }
+    }
 }
 
 kotlin {

@@ -34,10 +34,14 @@ class AttitudeGaugeModeToggleTest {
     }
 
     @Test
-    fun forAndroidAuto_mapsCompassToLadder() {
+    fun forAndroidAuto_keepsAllModes() {
         assertEquals(
-            AttitudeGaugeMode.INCLINOMETER_LADDER,
+            AttitudeGaugeMode.COMPASS_BALL,
             AttitudeGaugeMode.COMPASS_BALL.forAndroidAuto(),
+        )
+        assertEquals(
+            AttitudeGaugeMode.G_FORCE,
+            AttitudeGaugeMode.G_FORCE.forAndroidAuto(),
         )
     }
 }

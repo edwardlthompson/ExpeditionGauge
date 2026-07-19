@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.12.0** (Relive wave + Dashboard HUD v2 + AA grid + offline maps). **Dev device:** OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.17.0** (AA Surface Drive HUD). **Dev devices:** OnePlus 12 (`b5214fc6`), OnePlus 13 (`8bf09993`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -30,6 +30,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | AA GridItem crash + HU spec | 2.16.1 | ✅ Always setImage; AaDisplaySpec; local crash log |
 | AA smoothness hardening | 2.16.2 | ✅ ActionStrip titles; async bridge; bitmap isolate; sensor hold |
 | AA Play Store spoof kit | 2.16.3 | ✅ AA-install-kit.zip on Releases; aa-spoof-adb.sh; README copy-paste |
+| AA Surface Drive HUD | 2.17.0 | ✅ NavTemplate Surface 3×1; DHU preview; Elev./stacked coords/TPMS 2-line |
 
 ## G-meter HUD rotation (locked 2026-07-12, supersedes 2026-06-30 CW cube)
 

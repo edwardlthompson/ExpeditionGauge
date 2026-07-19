@@ -11,18 +11,35 @@ Same APK (`ExpeditionGauge-*.apk`) is intended for all routes below. From **v2.1
 | **C. DIY OpenAuto / Pi-style HU** | Usually phone Car App → DIY head unit | Same as phone AA / MITM | Ready — same projected AA path as B |
 | **D. OEM Android Automotive (AAOS)** | Native app **on the car** | No Play phone-attribution; car may still gate unknown sources | Ready to **install** (soft `type.automotive`, distraction-optimized). Full AAOS UX polish is best-effort — park to grant permissions; use external sensors if the car has no usable IMU |
 | **E. Magisk / private Play / KingInstaller** | Phone Car App → stock AA | Yes (or root spoof) | Ready — see [`ANDROID_AUTO_SIDELOAD.md`](ANDROID_AUTO_SIDELOAD.md) |
-
 ## A — Aftermarket Android head unit (recommended FOSS path)
 
 **Examples:** ATOTO S8/X10 class, Mekede/Dasaita, Joying, Xtrons, and similar unlocked Android radios.
 
+This is the **only** path that can show the full phone Compose HUD (cubes / dense gauges). Projected Android Auto (Routes B/C/E) is limited to Car App Library templates — see [ADR-0010](../adr/0010-android-auto.md).
+
 1. Enable **Unknown apps** / ADB on the head unit.
-2. Install `ExpeditionGauge-*.apk` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) (USB stick, file manager, or `adb install`).
+2. Install `ExpeditionGauge-*.apk` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) (USB stick, file manager, or `adb install` to the HU serial — not the phone).
 3. Open the app → Settings → enable **Keep screen awake**.
-4. If the unit has weak/no IMU or GPS, pair **BLE IMU**, **NMEA GPS**, and/or **OBD-II** from phone Settings (same as on a phone).
+4. If the unit has weak/no IMU or GPS, pair **BLE IMU**, **NMEA GPS**, and/or **OBD-II** from Settings (same as on a phone).
 
 This bypasses Google’s Android Auto projection gate entirely: the HUD is a normal Android app on the dash.
 
+### Route A validation checklist (M-004)
+
+Use once per head-unit model; leave BUILD_PLAN **M-004** open until done.
+
+1. Confirm the unit boots a full Android launcher (file manager / Play / sideload UI), not AA-only projection chrome.
+2. `adb devices` shows the HU (or copy APK via USB stick).
+3. Install APK → launch ExpeditionGauge → grant permissions while parked.
+4. Enable **Keep screen awake**; confirm Compose dashboard (not the 3-tile AA grid).
+5. Pitch/roll respond (built-in IMU or paired BLE); note gaps in [`HUMAN_BACKLOG.md`](../../HUMAN_BACKLOG.md) if sensors missing.
+6. Append model + Android version under **Validated native HUs** below (or create the section).
+
+### Validated native HUs
+
+| Model | Android | Sensors | Notes | Date |
+|-------|---------|---------|-------|------|
+| _(none yet — complete M-004)_ | | | | |
 ## B — Wireless AA adapter (MITM / developer mode)
 
 **Examples:** [AAWireless](https://www.aawireless.io/) (enable developer mode in its app), FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs).
@@ -63,7 +80,6 @@ Use the Magisk AA install kit, KingInstaller (≤13), or a private Play track �
 | `CarAppService` POI templates | Routes B, C, E (projected AA) |
 | BLE IMU / NMEA / OBD | Head units without usable built-in sensors |
 | Keep screen awake setting | Dash mounts that would otherwise dim |
-
 ## Not supported as a product goal
 
 - Replacing Google Android Auto inside locked OEM radios without MITM hardware

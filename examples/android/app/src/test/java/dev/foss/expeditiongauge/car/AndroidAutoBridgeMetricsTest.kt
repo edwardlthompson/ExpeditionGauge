@@ -49,6 +49,17 @@ class AndroidAutoBridgeMetricsTest {
             tpms = CarHudTile("P", "", ""),
         )
 
+        override fun driveHud(displaySpec: AaDisplaySpec): DriveHudContent =
+            DriveHudContent(
+                image = androidx.car.app.model.CarIcon.APP_ICON,
+                rows = listOf(DriveHudRow("T", "—")),
+            )
+
+        override fun driveHudBitmap(
+            displaySpec: AaDisplaySpec,
+            cubePxOverride: Int?,
+        ): android.graphics.Bitmap? = null
+
         override fun metricValues(): Map<String, String> = emptyMap()
 
         override fun isRecording(): Boolean = recording
@@ -66,6 +77,10 @@ class AndroidAutoBridgeMetricsTest {
         override fun markEvent(): Boolean = recording
 
         override fun zeroAttitude(): Boolean = true
+
+        override fun cycleAttitudeDisplay(): Boolean = true
+
+        override fun captureAaScreenshot(): Boolean = true
 
         override fun setInvalidationListener(listener: (() -> Unit)?) = Unit
 

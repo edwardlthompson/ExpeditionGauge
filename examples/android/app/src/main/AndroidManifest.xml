@@ -15,6 +15,10 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <!-- AA full-bleed Surface HUD (NavigationTemplate canvas; POI discovery). -->
+    <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES" />
+    <uses-permission android:name="androidx.car.app.MAP_TEMPLATES" />
+    <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
 
     <!-- Soft requirements: aftermarket HUs / AAOS often lack phone IMU/camera/telephony.
          Phone sensors still used when present; BLE IMU / NMEA / OBD cover the rest. -->
@@ -67,7 +71,7 @@
             </intent-filter>
             <meta-data
                 android:name="androidx.car.app.minCarApiLevel"
-                android:value="1" />
+                android:value="7" />
         </service>
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -15,16 +15,59 @@ data class AaDisplaySpec(
     val isDarkMode: Boolean,
     val isUltraWide: Boolean,
 ) {
+    /** Edge length of one HUD cube (px). Pane image is 3×1 cubes. */
+    val cubeSizePx: Int
+        get() = (CUBE_TARGET_DP * density).toInt().coerceIn(MIN_CUBE_PX, MAX_CUBE_PX)
+
+    val paneWidthPx: Int
+        get() = cubeSizePx * CUBE_COUNT
+
+    /** Native 3×1 strip height (one cube). */
+    val paneHeightPx: Int
+        get() = cubeSizePx
+
+    /** Pane fallback square edge (= strip width). */
+    val paneBitmapSizePx: Int
+        get() = paneWidthPx
+
     val bitmapSizePx: Int
-        get() = (attitudeSizeDp * density).toInt().coerceIn(MIN_BITMAP_PX, MAX_BITMAP_PX)
+        get() = cubeSizePx
 
     companion object {
         const val PORTRAIT_ATTITUDE_DP = 148f
         const val LANDSCAPE_ATTITUDE_DP = 180f
+        /** Per-cube edge so 3×1 width ≈ Pane 480 dp guidance box. */
+        const val CUBE_TARGET_DP = 160f
+        const val CUBE_COUNT = 3
         const val ULTRA_WIDE_RATIO = 2.0f
         const val DEFAULT_GRID_LIMIT = 3
         const val MIN_BITMAP_PX = 96
+        const val MIN_CUBE_PX = 120
+        /** Pane / Grid cube cap (host image slots stay modest). */
+        const val MAX_CUBE_PX = 320
+        /**
+         * Surface HUD cube cap — match host visible height so we do not upscale a
+         * 320 px strip across a 720+ px Surface (looks pixelated).
+         */
+        const val MAX_SURFACE_CUBE_PX = 720
         const val MAX_BITMAP_PX = 256
+        /** Max width for 3×1 pane (3 × MAX_CUBE_PX). */
+        const val MAX_PANE_BITMAP_PX = MAX_CUBE_PX * CUBE_COUNT
+
+        /**
+         * Cube edge for Surface paint. Prefer matching visible **height** (3×1 strip
+         * may letterbox horizontally) so we never upscale a short bitmap. Floor at
+         * [MAX_CUBE_PX] so narrow HUs still get Pane-quality pixels + FILTER downscale.
+         */
+        fun surfaceCubePx(visibleW: Int, visibleH: Int): Int {
+            if (visibleW <= 0 || visibleH <= 0) return DEFAULT.cubeSizePx
+            // 1.5× supersample when height allows — FILTER downscale looks sharper than 1:1.
+            val preferred = maxOf(visibleH, (visibleH * 3) / 2)
+            return preferred.coerceIn(MAX_CUBE_PX, MAX_SURFACE_CUBE_PX)
+        }
+
+        /** @deprecated use [CUBE_TARGET_DP] — kept for older tests/docs. */
+        const val PANE_TARGET_DP = 480f
 
         val DEFAULT = AaDisplaySpec(
             isLandscape = true,

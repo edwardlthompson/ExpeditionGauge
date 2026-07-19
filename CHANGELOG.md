@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.17.0] — AA Surface Drive HUD (2026-07-19)
+
+### Added
+
+* Android Auto **NavigationTemplate + Surface** full-bleed 3×1 Drive HUD (Attitude | Telemetry | TPMS)
+* G-meter and 3D compass ball bitmaps on AA; tap left cube cycles full attitude display cycle
+* DHU workflow: `dhu-preview.ps1`, `dhu-smoke.ps1`, `aa-bitmap-preview.ps1`, head-unit server helper
+* Stacked lat/long on telemetry cube; two-line TPMS (pressure + temperature) per wheel
+* Corner digital readouts on AA G-meter; elevation label **Elev.** on HU
+
+### Changed
+
+* Primary AA path is Surface HUD (PaneTemplate retained as fallback); chrome titles Screenshot / Record / Level
+* Drive HUD follows AA light/dark theme for telemetry/TPMS cube chrome
+
+### Fixed
+
+* Logic files split under 150-line AGENTS.md limit (`AaHudComposer`, `AndroidAutoBridge`, Drive HUD renderer/screen)
+
 ## [2.16.3] — AA Play Store spoof install kit (2026-07-17)
 
 ### Added

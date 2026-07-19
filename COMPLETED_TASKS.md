@@ -2,6 +2,14 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## AA HU UX + Surface Drive HUD — v2.17.0 (2026-07-19)
+
+- ✅ [AGENT] AA densify: Telemetry/TPMS glance bitmaps + secondary-text priority (speed·HDG; TPMS pressures); unit tests
+- ✅ [AGENT] `dhu-preview.ps1` + DHU CLI section in `docs/help/ANDROID_AUTO.md`
+- ✅ [AGENT] `aa-bitmap-preview.ps1` — PNG snapshots of Attitude/Telemetry/TPMS tiles for Cursor review
+- ✅ [AGENT] AA Pane/Surface Drive HUD: NavigationTemplate Surface 3×1 + Pane fallback; ADR-0010 revise
+- ✅ [ADB] M-005 DHU: install Surface HUD build on OP13; confirm Elev./stacked coords/TPMS 2-line; capture `dhu-live.png`
+
 ## Audit 2026-07-12 — MSYS paths + autocal hygiene
 
 - ✅ [AGENT] A-001 Fix F-001: MSYS `/c/...` → Windows root (`repo_paths.py`, sync-cursor-features, agent-progress, readme-health, watch-gates)

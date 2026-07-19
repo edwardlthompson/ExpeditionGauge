@@ -1,9 +1,13 @@
 package dev.foss.expeditiongauge.car
 
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
+import dev.foss.expeditiongauge.gauge.nextAttitudeDisplay
+import dev.foss.expeditiongauge.gauge.toInclinometerStyle
 import dev.foss.expeditiongauge.recording.StorageCapBlockedException
+import dev.foss.expeditiongauge.settings.SettingsPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -11,6 +15,7 @@ import kotlinx.coroutines.withContext
 internal class AndroidAutoBridgeMutators(
     private val services: ExpeditionGaugeServices,
     private val scope: CoroutineScope,
+    private val settings: SettingsPreferences,
     private val toast: () -> ((String) -> Unit)?,
     private val invalidateForce: () -> Unit,
 ) {
@@ -72,6 +77,20 @@ internal class AndroidAutoBridgeMutators(
                 )
             }.onFailure {
                 withContext(Dispatchers.Main.immediate) { toast()?.invoke("Zero failed") }
+            }
+            withContext(Dispatchers.Main.immediate) { invalidateForce() }
+        }
+        return true
+    }
+
+    fun cycleAttitudeDisplay(): Boolean {
+        scope.launch(Dispatchers.IO) {
+            runCatching {
+                val next = settings.attitudeGaugeMode.first().nextAttitudeDisplay()
+                settings.setAttitudeGaugeMode(next)
+                next.toInclinometerStyle()?.let { settings.setInclinometerStyle(it) }
+            }.onFailure {
+                withContext(Dispatchers.Main.immediate) { toast()?.invoke("Cycle failed") }
             }
             withContext(Dispatchers.Main.immediate) { invalidateForce() }
         }

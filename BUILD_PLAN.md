@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.16.3** (2026-07-17).
-- **Shipped:** core v1 (0–8), polish (9–17b), v2 video/live/insets/orientation/AA (18–21), Relive wave (22–27), Dashboard HUD v2 (28–32), v2.11 keep-screen-awake, **v2.12** AA grid / imperial / route colors / offline maps, **v2.13** AA inclinometer + quiet agent shell, **v2.14** landscape IMU remap + inclinometer styles / AA discovery, **v2.15** integer P/R/Y + stationary autocalibrate, **v2.16** gauge cycle + elev DEM + AA smoothness; **v2.16.3** AA-install-kit.zip on Releases.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.17.0** (2026-07-19).
+- **Shipped:** through **v2.17.0** AA Surface Drive HUD (NavTemplate + 3×1 Surface; DHU preview). **Open ADB:** M-003 USB HU retest; M-004 native HU Route A.
 - **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
 - **Audit 2026-07-12:** MSYS path + multi-strict + stack sync archived; Dependabot 0 open.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
@@ -19,7 +19,6 @@
 | [`BUILD_PLAN.md`](BUILD_PLAN.md) | Active board — **edit here only** |
 | [`project.config.json`](project.config.json) | Sprint toggles, release repo |
 | [`docs/START_HERE.md`](docs/START_HERE.md) | Agent cold-start |
-
 After Cursor reopen: `pwsh scripts/expedition/resume-agent.ps1`. CI: `verify-plan-persisted.ps1`.
 
 ---
@@ -54,7 +53,6 @@ Script catalog: [`scripts/expedition/`](scripts/expedition/) · toggles: `projec
 | BLE | `BleConnectionBudget` caps concurrent GATT |
 | Privacy | Local default; live telemetry opt-in P2P; `allowBackup=false` |
 | FOSS | No Play Services / Firebase in APK |
-
 Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs/features/`](docs/features/).
 
 ---
@@ -76,18 +74,20 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Audit 2026-07-09 evening | inclinometer landscape ADR-0013 (A-001–A-004) | same |
 | Audit 2026-07-12 | MSYS paths + multi-strict + stack sync (A-001–A-004) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
-
 ---
 
 ## Active board
 
 > **Audit 2026-07-12** archived in COMPLETED_TASKS.md (MSYS path + multi-strict + stack sync).
 
-### v2.14 / AA device (open)
+### AA device validation (open)
 
 | Status | Owner | Task |
 |--------|-------|------|
-| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.16.2** (ActionStrip + smoothness hardening) → Customize launcher → USB head unit; confirm no FATAL on open; Record/Zero/toast; phone Offroad + AA together; sensors with screen off; phone portrait + landscape HU P/R OK; see `docs/help/ANDROID_AUTO.md` |
+| 🔲 | [ADB] | M-003 Device validation: install **≥ 2.17.0** Surface HUD → Customize launcher → USB head unit; Record/Screenshot/Level; phone Offroad + AA; see `docs/help/ANDROID_AUTO.md` |
+| 🔲 | [ADB] | M-004 Native HU (Route A): confirm aftermarket unit can sideload APK; install release; Keep screen awake; Compose HUD + sensors (BLE if no IMU); note model in `docs/help/HEAD_UNIT_ROUTES.md` |
+
+> **AA HU UX + preview (v2.17)** AGENT rows archived in COMPLETED_TASKS.md (Surface HUD + DHU verified on OP13).
 
 ---
 
@@ -100,7 +100,6 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Relive (22–27) | `media/`, `export/`, `flyover/`, `share/` |
 | Layout | `ui/layout/InsetAwareScaffold.kt` |
 | ADB smokes | `scripts/expedition/adb-smoke.ps1`, `adb-scenarios/relive.ps1`, `adb-scenarios/aa-inclinometer.ps1` |
-
 ---
 
 ### Critique
@@ -126,7 +125,6 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | JAVA_HOME unset / WSL bash (F-001) | Prefer Git Bash in `agent-run.py`; set `JAVA_HOME` to JDK 17 — [`DEV_DEVICE.md`](docs/DEV_DEVICE.md) |
 | Dependabot gradle without lockfile (F-002) | Regenerate `app/gradle.lockfile` on bump PRs; see SECURITY_TRIAGE |
 | weekly-health red on every push | Push stub job; full health on schedule/dispatch only |
-
 **Deferred:** Custom Canvas on Android Auto; AAOS standalone APK; real-time recording graphs; production FOSS offline tile CDN (partial prefetch shipped v2.12.0 — tune cache completion in ROADMAP) → [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ---

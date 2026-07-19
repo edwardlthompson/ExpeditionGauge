@@ -45,7 +45,7 @@ Legacy reference: landscape three-panel `Row` maps to cube row at sufficient wid
 ## Center — Speed / GPS / HDG
 
 - Enlarged row: **000** speed beside **000** heading (40sp base, zero-padded)
-- Meta row: altitude + clock time; GPS source · sats · HDOP below
+- Meta row: altitude + clock time; GPS sats below (HDOP kept in telemetry/recording, not shown on HUD)
 - Bold monospace DMS coordinates (two lines); pitch/roll and OBD extras when available
 - Split top chrome: menu (start) and record (end) overlay the HUD — no full-width app bar
 - Dashboard content respects **navigation bar** inset; nothing draws behind system nav buttons

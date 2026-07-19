@@ -56,13 +56,13 @@ class CompassBallLogicTest {
     }
 
     @Test
-    fun forAndroidAuto_mapsCompassToInclinometer() {
+    fun forAndroidAuto_keepsCompassAndGMeter() {
         assertEquals(
-            AttitudeGaugeMode.INCLINOMETER_LADDER,
+            AttitudeGaugeMode.COMPASS_BALL,
             AttitudeGaugeMode.COMPASS_BALL.forAndroidAuto(),
         )
         assertEquals(
-            AttitudeGaugeMode.INCLINOMETER_LADDER,
+            AttitudeGaugeMode.G_FORCE,
             AttitudeGaugeMode.G_FORCE.forAndroidAuto(),
         )
     }

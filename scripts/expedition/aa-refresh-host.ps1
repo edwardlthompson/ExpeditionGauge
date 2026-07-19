@@ -104,6 +104,13 @@ if ($Clear) {
     Invoke-Adb shell pm clear $aaPkg
 }
 
+# Restart DHU head-unit server (force-stop kills DeveloperHeadUnitNetworkService / :5277).
+Write-Host "Restarting Android Auto head unit server ..." -ForegroundColor Cyan
+& pwsh -NoProfile -File "$PSScriptRoot\aa-start-head-unit-server.ps1" -Serial $Serial
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "aa-refresh-host: head unit server not up — Start it from Android Auto menu, or re-run aa-start-head-unit-server.ps1"
+}
+
 $dump = (Invoke-Adb shell dumpsys package $pkg) -join "`n"
 if ($dump -notmatch "ExpeditionGaugeCarAppService") {
     Write-Error "aa-refresh-host: ExpeditionGaugeCarAppService not registered — install ExpeditionGauge first"
@@ -123,10 +130,10 @@ Write-Host @"
 OK  Package shows CarAppService + category.POI
     Expect installerPackageName=$playInstaller AND initiatingPackageName=$playInstaller
 
-Next (on phone):
-  1. Android Auto → Unknown sources ON
-  2. Customize launcher → enable ExpeditionGauge (should be listed)
-  3. USB reconnect to the head unit
+Next:
+  1. Android Auto → Unknown sources ON (Customize launcher → enable ExpeditionGauge)
+  2. DHU smoke: pwsh scripts/expedition/dhu-smoke.ps1 -RestartDhu
+     (head unit server is restarted above when possible)
 
 Smoke: pwsh scripts/expedition/aa-smoke-customize-launcher.ps1 -SkipReinstall -SkipPhenotype
 "@ -ForegroundColor Green

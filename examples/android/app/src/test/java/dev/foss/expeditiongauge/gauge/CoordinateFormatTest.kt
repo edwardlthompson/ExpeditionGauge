@@ -40,4 +40,13 @@ class CoordinateFormatTest {
         assertEquals("10°30'0.0\"N", dms)
         assertEquals("10.500000°N", dec)
     }
+
+    @Test
+    fun formatCompactAa_twoLinesOrPlaceholder() {
+        assertEquals("GPS —", CoordinateFormat.formatCompactAa(null, null))
+        assertEquals(
+            "18.4573°N\n66.1846°W",
+            CoordinateFormat.formatCompactAa(18.45725, -66.184583),
+        )
+    }
 }

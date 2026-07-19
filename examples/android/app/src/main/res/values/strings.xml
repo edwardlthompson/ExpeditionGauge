@@ -103,8 +103,8 @@
     <string name="imu_signal_quality">Signal: %1$s</string>
     <string name="imu_none_connected">No IMU connected — tap to manage</string>
     <string name="imu_status_chip">%1$s %2$s</string>
-    <string name="gps_status_chip">%1$s · %2$d sats · HDOP %3$.1f</string>
-    <string name="gps_status_chip_hud">%1$d sats  HDOP %2$.1f</string>
+    <string name="gps_status_chip">%1$s · %2$d sats</string>
+    <string name="gps_status_chip_hud">%1$d sats</string>
     <string name="gauge_time_date_hud">%1$s  %2$s</string>
     <string name="coords_copied">Copied location</string>
     <string name="screenshot_saved">Screenshot saved to gallery</string>

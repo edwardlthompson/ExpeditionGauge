@@ -25,6 +25,15 @@ object CoordinateFormat {
     fun formatPair(latitude: Double, longitude: Double, mode: Mode): String =
         "${formatLine(latitude, true, mode)}\n${formatLine(longitude, false, mode)}"
 
+    /** Two-line compact coords for AA telemetry cube (lat then lon, 4 decimal places). */
+    fun formatCompactAa(latitude: Double?, longitude: Double?): String {
+        if (latitude == null || longitude == null) return "GPS —"
+        return "${formatCompact(latitude, true)}\n${formatCompact(longitude, false)}"
+    }
+
+    private fun formatCompact(value: Double, isLatitude: Boolean): String =
+        "${"%.4f".format(kotlin.math.abs(value))}°${hemisphere(value, isLatitude)}"
+
     private fun hemisphere(value: Double, isLatitude: Boolean): String = when {
         isLatitude && value >= 0 -> "N"
         isLatitude -> "S"

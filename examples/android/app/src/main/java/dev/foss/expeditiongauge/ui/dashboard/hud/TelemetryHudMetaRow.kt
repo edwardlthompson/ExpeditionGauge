@@ -24,7 +24,6 @@ import dev.foss.expeditiongauge.ui.theme.LocalTextScale
 fun TelemetryHudSatRow(
     gpsFix: Boolean,
     numSatellites: Int?,
-    hdop: Float?,
     modifier: Modifier = Modifier,
 ) {
     val style = hudCubeTextStyle()
@@ -33,12 +32,11 @@ fun TelemetryHudSatRow(
     val satText = stringResource(
         R.string.gps_status_chip_hud,
         numSatellites ?: 0,
-        hdop ?: 0f,
     )
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Start,
     ) {
         Icon(
             imageVector = Icons.Filled.SatelliteAlt,
@@ -55,10 +53,8 @@ fun TelemetryHudSatRow(
             minSp = 9f,
             maxSp = baseSp,
             maxLines = 1,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(start = 6.dp)
-                .weight(1f),
+            textAlign = TextAlign.Start,
+            modifier = Modifier.padding(start = 6.dp),
         )
     }
 }

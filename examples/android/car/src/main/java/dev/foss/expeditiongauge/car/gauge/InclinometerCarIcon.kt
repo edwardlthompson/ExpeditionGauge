@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap
 object InclinometerCarIcon {
     private val pool = ConcurrentHashMap<Int, InclinometerBitmapRenderer>()
 
-    /** Phone Compose may render larger than the AA [AaDisplaySpec.MAX_BITMAP_PX] cap. */
-    const val PHONE_MAX_BITMAP_PX = 512
+    /** Phone Compose / Surface HUD may exceed the AA Grid [AaDisplaySpec.MAX_BITMAP_PX] cap. */
+    const val PHONE_MAX_BITMAP_PX = AaDisplaySpec.MAX_SURFACE_CUBE_PX
 
     private fun rendererFor(sizePx: Int, maxPx: Int): InclinometerBitmapRenderer {
         val clamped = sizePx.coerceIn(AaDisplaySpec.MIN_BITMAP_PX, maxPx)

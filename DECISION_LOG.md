@@ -17,6 +17,28 @@
 
 ## Entries
 
+### 2026-07-19 — AA NavigationTemplate Surface Drive HUD (primary)
+- **Status:** Accepted (supersedes Pane-as-primary from 2026-07-18 for the live path)
+- **Context:** Pane large-image slot still letterboxed; stakeholders wanted a full-bleed native 3×1 strip with tap-to-cycle attitude and titled chrome.
+- **Decision:** Primary AA screen is `DriveMapHudScreen` + `NavigationTemplate` + host Surface (`DriveHudSurfacePainter`); 3×1 Attitude|Telemetry|TPMS; left-third tap cycles `AttitudeGaugeMode` (needs `Action.PAN`); PaneTemplate remains fallback; chrome Screenshot/Record/Level with `FLAG_IS_PERSISTENT`.
+- **Alternatives considered:** Pane-only (kept as fallback); Grid thumbs (rejected — too small); custom Compose on AA (impossible).
+- **Consequences:** v2.17.0; DHU verified on OP13; USB HU retest remains M-003; light/dark cube chrome from host `isDarkMode`.
+
+
+### 2026-07-18 — AA PaneTemplate Drive HUD (large image)
+- **Status:** Accepted
+- **Context:** GridTemplate thumbs (~128 dp) were unusable as a driving HUD even with denser glance bitmaps; stakeholders needed larger imagery within Car App Library rules.
+- **Decision:** Primary AA screen is `DrivePaneScreen` + `PaneTemplate` with `Pane.setImage` (~480 dp guidance, `MAX_PANE_BITMAP_PX=640`); composite `DriveHudBitmapRenderer`; Record/Zero as pane body actions; `minCarApiLevel` 4; revise ADR-0010.
+- **Alternatives considered:** `GridTemplate.setItemSize(LARGE)` only (rejected — still multi-thumb); Tab of three Panes (deferred); Navigation/Map templates (rejected — category/ADR).
+- **Consequences:** Reinstall + DHU retest (M-005); Grid helpers retained but not session entry.
+
+### 2026-07-18 — AA HU UX densify + Cursor/DHU preview
+- **Status:** Accepted
+- **Context:** Projected Android Auto on the aftermarket HU showed a sparse 3-tile GridTemplate that cannot mirror the phone Compose HUD; stakeholders wanted denser glanceables and a way to preview in Cursor without living in Android Studio.
+- **Decision:** Keep ADR-0010 `GridTemplate`; put glanceable numbers on Telemetry/TPMS `CarIcon` bitmaps; prioritize secondary text (speed·HDG; TPMS pressures); add `dhu-preview.ps1` + `aa-bitmap-preview.ps1` (Robolectric `@GraphicsMode(NATIVE)` PNGs); document native APK Route A (M-004) for phone-like HUD.
+- **Alternatives considered:** Phone-identical AA Compose (impossible — host templates); shrink host fonts (not app-controlled); text-only List/Pane as primary (rejected — worse attitude UX); AS-only refresh loop (rejected — DHU CLI is enough).
+- **Consequences:** BUILD_PLAN AA HU UX sprint; M-003/M-004 remain `[ADB]`; denser tiles on next APK install to HU.
+
 ### 2026-07-17 — Ship AA-install-kit.zip on every GitHub Release
 - **Status:** Accepted
 - **Context:** README promised `ExpeditionGauge-*-AA-install-kit.zip` but `create-release.ps1` only uploaded the APK; after plain sideloads Customize launcher stayed empty (`initiatingPackageName=com.android.shell`).
