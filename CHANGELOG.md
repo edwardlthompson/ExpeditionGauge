@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* README install path is **ADB Play Store spoof only** — beginner guide (developer mode → USB debugging → platform-tools → AA-install-kit copy-paste); other sideload methods removed
+
 ## [2.17.0] — AA Surface Drive HUD (2026-07-19)
 
 ### Added

@@ -6,7 +6,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.14.2-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.17.0-0969da?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
@@ -23,63 +23,143 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Playback** | MapLibre route map, scrubber, elevation profile, ghost lap, media markers |
 | **Export & share** | GPX/ZIP, playback video burn-in, 3D flyover MP4, stats card share sheet |
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
-| **Android Auto** | 3-tile grid HUD (Attitude / telemetry / TPMS); always-on when host connects — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
-| **Other head units** | Aftermarket Android HU, AAOS sideload, wireless MITM, DIY OpenAuto — [`docs/help/HEAD_UNIT_ROUTES.md`](docs/help/HEAD_UNIT_ROUTES.md) |
+| **Android Auto** | Full-bleed 3×1 Drive HUD on the head unit (Attitude / Telemetry / TPMS) — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
 
-Shipped through **v2.14.2** — soft hardware features for HU/AAOS install, AA head-unit discovery (`category.POI`), landscape inclinometer. See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.17.0**. See [`CHANGELOG.md`](CHANGELOG.md).
 
-## Other head-unit routes (no public Play Store)
+---
 
-If stock Android Auto on the phone is too locked down, use a display path Google does not gate the same way. Full matrix: [`docs/help/HEAD_UNIT_ROUTES.md`](docs/help/HEAD_UNIT_ROUTES.md).
+## Install with ADB (Play Store spoof)
 
-| Route | What to buy / use | How ExpeditionGauge runs |
-|-------|-------------------|---------------------------|
-| **Aftermarket Android HU** | ATOTO S8/X10-class, Mekede/Dasaita, Joying, Xtrons, similar unlocked radios | Sideload the APK **on the head unit** — full Compose HUD (best FOSS car path) |
-| **Wireless AA MITM** | [AAWireless](https://www.aawireless.io/) (developer mode) or FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs) | Phone keeps the app; adapter presents like DHU so the **Car App** grid can appear |
-| **DIY Pi / OpenAuto** | OpenAuto, Crankshaft, or Android-on-SBC | Usually phone → DIY AA head unit (same Car App path); native Android SBCs = treat like aftermarket HU |
-| **OEM Android Automotive** | Polestar 2/3/4, Volvo EX30/EX90/XC40 Recharge (most sideload-friendly); others vary | Sideload APK **on the car**; park for permissions; external BLE/NMEA if no IMU |
-| **Stock AA on phone** | Magisk kit / KingInstaller ≤13 / private Play track | See [Install without the Play Store](#install-without-the-play-store-android-auto) below |
+ExpeditionGauge is FOSS and is **not** on the public Play Store. On modern phones, Android Auto only shows apps that look like they came from the Play Store. A normal “open the APK and tap Install” (or plain `adb install`) will put the app on your phone, but **Android Auto will hide it**.
 
-**App readiness (v2.14.2+):** one APK serves all routes — soft `uses-feature` so HUs without phone sensors can install; `distractionOptimized` for AAOS; projected `CarAppService` for MITM/AA; BLE IMU / NMEA / OBD when the unit has no usable sensors. Enable **Keep screen awake** on dash mounts.
+The install method below uses a USB cable, a free tool called **ADB**, and a **Play Store spoof** so Android Auto accepts the app. It is the simplest universal path we support.
 
-## Install without the Play Store (Android Auto)
+### What you need
 
-ExpeditionGauge is FOSS and is **not** on the public Play Store. Android Auto will **not** list a normal GitHub sideload on modern phones — it requires Play Store install attribution (`installerPackageName` **and** `initiatingPackageName` = `com.android.vending`).
+1. A **Windows, macOS, or Linux** computer
+2. A **USB cable** that can transfer data (not charge-only)
+3. An Android phone with:
+   - **USB debugging** enabled (steps below)
+   - **Root** via Magisk (or another setup where `adb root` works) — required for the spoof
+4. About 10–15 minutes
 
-Download assets from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases):
+> **Why root?** Android Auto checks *who started the install*. Only a root (or `adb root`) session can create the install as the Play Store app (`com.android.vending`). Without that, Customize launcher stays empty.
 
-- `ExpeditionGauge-X.Y.Z.apk` — the app (phone / HU / AAOS)
-- `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` — **Play Store spoof sideload kit**: same APK + `aa-spoof-adb.sh` / `install-aa-from-pc.ps1` + `bin/run-as-uid-arm64` helper + guide
+---
 
-Full matrix: [`docs/help/ANDROID_AUTO_SIDELOAD.md`](docs/help/ANDROID_AUTO_SIDELOAD.md) · day-to-day AA use: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md)
+### Step 1 — Turn on Developer options on the phone
 
-### Pick an install path
+1. Open **Settings**.
+2. Tap **About phone** (sometimes under **System** → **About phone**).
+3. Find **Build number**.
+4. Tap **Build number** about **7 times** until you see a message like “You are now a developer!”
+5. Go back, then open **Settings → System → Developer options**  
+   (On some phones: **Settings → Additional settings → Developer options**.)
 
-| Your situation | What to do |
-|----------------|------------|
-| **Rooted phone** (Magisk / `adb root`) + PC | Unzip the **AA-install-kit** and run the spoof script (Path A) — proven on Android 14/15/16 |
-| **Unrooted, Android ≤ 13** | [KingInstaller](https://github.com/fcaronte/KingInstaller/releases) “Install as king” (enable OnePlus/Oppo/Realme option if needed) |
-| **Unrooted, Android 14+** | No reliable software-only spoof. Use **root** (Path A), a **wireless AA adapter** with developer/MITM mode, or a **private Play track** (see alternatives below) |
+---
 
-### Path A — Rooted PC install (recommended)
+### Step 2 — Enable USB debugging
 
-1. USB debugging on; connect the phone; allow this computer.
-2. Download and unzip `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases).
-3. In that folder, run **one** of:
+Still in **Developer options**:
+
+1. Turn **USB debugging** **ON**.
+2. (Recommended) Turn **Install via USB** / **USB debugging (Security settings)** **ON** if your phone shows those switches.
+3. Plug the phone into the computer with the USB cable.
+4. On the phone, when asked **Allow USB debugging?**, check **Always allow from this computer** and tap **Allow**.
+
+---
+
+### Step 3 — Install ADB on the computer
+
+ADB (“Android Debug Bridge”) is a small command-line tool from Google.
+
+#### Windows
+
+1. Download [Platform Tools for Windows](https://developer.android.com/tools/releases/platform-tools) (zip from Google).
+2. Unzip it somewhere easy, for example: `C:\platform-tools`
+3. Open **PowerShell** or **Command Prompt**.
+4. Go into that folder:
 
 ```powershell
-pwsh .\install-aa-from-pc.ps1 -Apk .\ExpeditionGauge-2.16.3.apk
+cd C:\platform-tools
 ```
+
+5. Check that ADB works and sees your phone:
+
+```powershell
+.\adb devices
+```
+
+You should see your device listed as `device` (not `unauthorized`). If it says `unauthorized`, unlock the phone and accept the USB debugging prompt again.
+
+> Tip: keep this PowerShell/CMD window open — you will run all later commands from the folder that contains `adb.exe`, **or** add `C:\platform-tools` to your PATH.
+
+#### macOS
 
 ```bash
-bash ./aa-spoof-adb.sh ExpeditionGauge-2.16.3.apk
+brew install android-platform-tools
+adb devices
 ```
 
-From a full clone: `pwsh scripts/expedition/aa-refresh-host.ps1 -Apk ExpeditionGauge-2.16.3.apk`
+(Or download [Platform Tools for Mac](https://developer.android.com/tools/releases/platform-tools) and run `./adb` from the unzipped folder.)
 
-#### Copy-paste ADB spoof (Git Bash / WSL / macOS / Linux)
+#### Linux
 
-Unzip the AA-install-kit, `cd` into it, then paste:
+```bash
+# Debian / Ubuntu
+sudo apt update && sudo apt install android-tools-adb
+
+adb devices
+```
+
+---
+
+### Step 4 — Download the AA install kit
+
+1. Open the latest [GitHub Release](https://github.com/edwardlthompson/ExpeditionGauge/releases).
+2. Download **`ExpeditionGauge-X.Y.Z-AA-install-kit.zip`**  
+   (example: `ExpeditionGauge-2.17.0-AA-install-kit.zip`).
+3. Unzip it to a folder you can find easily, for example:
+   - Windows: `C:\ExpeditionGauge-install`
+   - macOS/Linux: `~/Downloads/ExpeditionGauge-install`
+
+Inside the unzipped folder you should see at least:
+
+- `ExpeditionGauge-X.Y.Z.apk`
+- `aa-spoof-adb.sh`
+- `bin/run-as-uid-arm64` (helper used on some phones)
+
+---
+
+### Step 5 — Sideload with the Play Store spoof (copy and paste)
+
+Open a terminal:
+
+- **Windows:** PowerShell or Command Prompt  
+  Prefer **Git Bash** if you have [Git for Windows](https://git-scm.com/download/win) (easiest for the paste block below). You can also run `pwsh .\install-aa-from-pc.ps1` from the kit if that script is present.
+- **macOS / Linux:** Terminal
+
+1. Change into the unzipped kit folder (adjust the path):
+
+```bash
+cd /c/ExpeditionGauge-install
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+cd C:\ExpeditionGauge-install
+```
+
+2. Confirm the phone is still connected:
+
+```bash
+adb devices
+```
+
+3. **Copy the entire block below**, paste it into the terminal, and press Enter.  
+   Run this from the **AA-install-kit folder** (so `bin/run-as-uid-arm64` is found).
 
 ```bash
 # Play Store spoof install — rooted phone + USB adb
@@ -103,77 +183,65 @@ adb shell am force-stop com.google.android.projection.gearhead
 adb shell dumpsys package dev.foss.expeditiongauge | grep -E 'installerPackageName|initiatingPackageName'
 ```
 
-Both printed lines must be `com.android.vending`. Prefer `bash ./aa-spoof-adb.sh` from the kit if you want the same logic with clearer errors.
+Easier alternative (same result): if `aa-spoof-adb.sh` is in the kit folder:
 
-4. Confirm (Windows `cmd` / PowerShell):
+```bash
+bash ./aa-spoof-adb.sh
+```
+
+Windows PowerShell alternative (from the kit folder):
+
+```powershell
+pwsh .\install-aa-from-pc.ps1
+```
+
+---
+
+### Step 6 — Confirm the spoof worked
+
+After the commands finish, you should see **two** lines similar to:
 
 ```text
+installerPackageName=com.android.vending
+initiatingPackageName=com.android.vending
+```
+
+**Both** must say `com.android.vending`.
+
+On Windows Command Prompt / PowerShell (if you are not in Git Bash):
+
+```powershell
 adb shell dumpsys package dev.foss.expeditiongauge | findstr /i "installerPackageName initiatingPackageName"
 ```
 
-### Path B — After install: enable AA + Customize launcher
+If either line shows `com.android.shell` (or something else), Android Auto will hide the app — run Step 5 again and make sure `adb root` / Magisk is working.
 
-1. Open **Android Auto** on the phone → menu → **About** / **Version** → tap the version **~10 times** (developer mode).
-2. Menu → **Developer settings** → **Unknown sources** ON.
-3. Android Auto settings → **Customize launcher** → enable **ExpeditionGauge**.
-4. USB to the car (preferred first time) → **Apps** → **ExpeditionGauge**. Keep the phone app running.
+---
 
-**After every upgrade:** reinstall with the AA-install-kit spoof (or KingInstaller on ≤13) — plain `adb install -r` will hide the app again — then re-check Unknown sources + Customize launcher.
+### Step 7 — Enable ExpeditionGauge in Android Auto
 
-### Are there other options besides Play Store or root?
+1. On the phone, open the **Android Auto** app (or **Settings → Connected devices → Android Auto**).
+2. Open the menu (⋮) → **About** / **Version**.
+3. Tap the version / build line about **10 times** until developer mode unlocks.
+4. Go back → menu → **Developer settings**.
+5. Turn **Unknown sources** **ON**.
+6. Go to Android Auto settings → **Customize launcher**.
+7. Enable **ExpeditionGauge**.
+8. Connect the phone to the car (USB preferred the first time), open **Apps**, and launch **ExpeditionGauge**. Keep the phone app running so sensors stay live.
 
-**Short answer:** nothing simple and FOSS that works on a stock Android 14+ phone over a normal USB cable. Community options:
+Day-to-day tips: [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md).
 
-| Approach | Root? | Notes |
-|----------|-------|--------|
-| **Wireless AA adapter + developer/MITM mode** | No | Commercial [AAWireless](https://www.aawireless.io/) (enable developer mode in its app) or DIY FOSS [aa-proxy-rs](https://github.com/aa-proxy/aa-proxy-rs) on a Pi/dongle — presents like DHU and can show sideloaded apps |
-| **Google Play Internal testing / Internal app sharing** | No | Upload the APK/AAB to a **private** Play Console track; testers install “from Play” so attribution is real. Needs a Play developer account; not a public listing |
-| **KingInstaller** | No | Works on many **Android ≤ 13** phones; usually **fails on 14+** (initiator becomes KingInstaller) |
-| **[AAAD](https://github.com/shmykelsa/AAAD)** | No | Installs a **curated catalog** of third-party AA apps (paid unlock). Not a general “any GitHub APK” installer for ExpeditionGauge. Unreliable on Android 14+; maintainer often points people at AAWireless |
-| **Desktop Head Unit / Headunit Reloaded** | No | Dev/emulator path — not a substitute for a real car head unit |
-| **LSPosed / AA XLauncher Unlocked** | Yes (Magisk) | Hooks AA’s Play checks; still root |
-| **Shizuku alone** | No | **Cannot** unlock third-party AA apps (hooks need Xposed) |
+---
 
-**Bottom line for ExpeditionGauge on a stock Android 14+ phone:** use Magisk + the AA install kit, a wireless MITM adapter, or a private Play track. There is no reliable FOSS phone-only trick that sets `initiatingPackageName=com.android.vending` for an arbitrary APK. If Customize launcher stays empty, dumpsys initiator is still wrong — do not change car-app categories again.
+### Upgrading later
 
-Prefer skipping phone AA entirely? Use an [aftermarket Android head unit or AAOS sideload](#other-head-unit-routes-no-public-play-store) — [`docs/help/HEAD_UNIT_ROUTES.md`](docs/help/HEAD_UNIT_ROUTES.md).
+Every time you install a new version from GitHub:
 
-## Quick start
+1. Download the new **AA-install-kit** zip.
+2. Repeat **Step 5** (spoof install) — do **not** use plain `adb install -r` or “Open with Package Installer”.
+3. Re-check **Unknown sources** and **Customize launcher** if the app disappears from Android Auto.
 
-### Build release APK (reproducible)
-
-```bash
-export SOURCE_DATE_EPOCH=1700000000
-python scripts/expedition/sync-app-icon.py
-cd examples/android
-./gradlew assembleRelease
-```
-
-CI verifies byte-identical `app-release-unsigned.apk` hashes. For device install, sign the unsigned output:
-
-```powershell
-pwsh scripts/expedition/sign-release-apk.ps1
-```
-
-Requires Android 8+ (API 26). Debug builds: `./gradlew assembleDebug`.
-
-### Run unit tests
-
-```bash
-bash scripts/sync-app-update-from-config.sh
-cd examples/android
-./gradlew :app:testDebugUnitTest
-```
-
-### Device smoke tests
-
-Connect hardware via USB ADB, then:
-
-```powershell
-pwsh scripts/expedition/adb-smoke.ps1 -Scenario cold-start
-```
-
-Recording uses top-bar `record_play` / `record_stop` icons (not bottom buttons). Scenario list: `scripts/expedition/adb-smoke.ps1`.
+---
 
 ## Privacy & security
 
@@ -184,6 +252,30 @@ Recording uses top-bar `record_play` / `record_stop` icons (not bottom buttons).
 - **Opt-in network** — update checks and live telemetry are off by default
 
 See [`docs/PRIVACY.md`](docs/PRIVACY.md), [`SECURITY.md`](SECURITY.md), and [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md).
+
+## Build from source (developers)
+
+```bash
+export SOURCE_DATE_EPOCH=1700000000
+python scripts/expedition/sync-app-icon.py
+cd examples/android
+./gradlew assembleRelease
+```
+
+Sign for device install:
+
+```powershell
+pwsh scripts/expedition/sign-release-apk.ps1
+```
+
+Then install with the **AA-install-kit / Step 5 spoof** above (not plain `adb install`).
+
+Unit tests:
+
+```bash
+cd examples/android
+./gradlew :app:testDebugUnitTest
+```
 
 ## Agent development
 
