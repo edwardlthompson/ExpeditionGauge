@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * README install path is **ADB Play Store spoof only** — beginner guide (developer mode → USB debugging → platform-tools → AA-install-kit copy-paste); other sideload methods removed
+* Post-v2.17 audit hygiene: Surface/DHU docs, Route A demoted, OP13 primary \devDevice\, \pre-release-gate.ps1\ prefers \gent-run.py\ (KB-025)
 
 ## [2.17.0] — AA Surface Drive HUD (2026-07-19)
 
