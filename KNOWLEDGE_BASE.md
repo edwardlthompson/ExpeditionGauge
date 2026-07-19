@@ -226,3 +226,13 @@
 | **Cause** | Init smoke path expects template-update sidecar written by prune/init; Windows `/tmp` clone + web-stack init does not always emit the file in ExpeditionGauge child context |
 | **Fix** | Treat as non-blocking for android-only `/ship` when CI `CI` + Security + CodeQL are green; re-run under Git Bash after `cygpath` clone fix (KB-023) or skip web init smoke for `stack=android` |
 | **Prevention** | Prefer CI upgrade job / android feature-gate for child-repo release regression; do not fail `/regress` solely on local web init smoke |
+
+### KB-025 — create-release.ps1 nested bash loses JAVA_HOME/gh (Ship 2026-07-19)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | create-release.ps1 fails pre-release gate: JAVA_HOME not set; Android gate skipped and gh CLI required even when set in the parent PowerShell session |
+| **Cause** | Gate runs via ash scripts/pre-release-gate.sh from a nested pwsh that does not reliably inherit Windows env / PATH for Git Bash |
+| **Fix** | Export JAVA_HOME/ANDROID_HOME and put gh + JDK on PATH in the same shell before release steps; or run python3 scripts/agent-run.py pre-release-gate then manually ssembleRelease → sign-release-apk.ps1 → pack-aa-install-kit.ps1 → gh release create |
+| **Prevention** | Prefer gent-run.py pre-release-gate + explicit release upload on Windows; fix create-release to pass env into bash (nv JAVA_HOME=... bash ...) in a follow-up |
+
