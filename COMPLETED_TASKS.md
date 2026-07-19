@@ -2,6 +2,14 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Audit 2026-07-19 — post v2.17 docs/release hygiene
+
+- ✅ [AGENT] A-001 Fix F-001: `ANDROID_AUTO.md` DHU section — Surface 3×1 / `dhu-smoke`; demote Route A
+- ✅ [AGENT] A-002 Fix F-002: `pre-release-gate.ps1` / `create-release.ps1` pass `JAVA_HOME`+PATH into bash (KB-025)
+- ✅ [AGENT] A-003 Fix F-003: `project.config.json` + `DEV_DEVICE.md` for OP13 serial; note OP12
+- ✅ [AGENT] A-004 Fix F-004: `HEAD_UNIT_ROUTES.md` matrix — Route A inactive; lead with phone AA
+- ✅ [AGENT] A-005 Fix F-005: commit audit + prior ADB-trim board/docs; encoding check
+
 ## AA ADB scope trim (2026-07-19)
 
 - ✅ [ADB] M-003 Projected AA on **Desktop Head Unit**: install ≥ 2.17.0 AA-install-kit → Unknown sources + Customize launcher → `dhu-smoke.ps1` / DHU; confirm Surface HUD (Screenshot/Record/Level), no FATAL; capture `dhu-live.png` — done OP13 (2026-07-19)

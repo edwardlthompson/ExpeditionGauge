@@ -5,7 +5,7 @@
 ## Current state
 
 - Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.17.0** (2026-07-19).
-- **Shipped:** through **v2.17.0** AA Surface Drive HUD. **In progress:** Audit 2026-07-19 (docs/release hygiene).
+- **Shipped:** through **v2.17.0** AA Surface Drive HUD. Audit 2026-07-19 hygiene archived.
 - **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
 - **Audit 2026-07-12:** MSYS path + multi-strict + stack sync archived; Dependabot 0 open.
 - **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
@@ -75,21 +75,14 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Audit 2026-07-12 | MSYS paths + multi-strict + stack sync (A-001–A-004) | same |
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 | AA HU UX + ADB trim | v2.17.0 Surface HUD + DHU M-003; M-004 dropped | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
+| Audit 2026-07-19 | post v2.17 docs/release hygiene (A-001–A-005) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
 
-> Prior AA HU UX + ADB trim archived in COMPLETED_TASKS.md.
+> **Audit 2026-07-19** archived in COMPLETED_TASKS.md @ `61c54dd`.
 
-### Audit 2026-07-19 — post v2.17 docs/release hygiene
-
-| Status | Owner | Task |
-|--------|-------|------|
-| ✅ | [AGENT] | A-001 Fix F-001: `ANDROID_AUTO.md` DHU section — Surface 3×1 / `dhu-smoke`; demote Route A |
-| ✅ | [AGENT] | A-002 Fix F-002: `pre-release-gate.ps1` / `create-release.ps1` pass `JAVA_HOME`+PATH into bash (KB-025) |
-| ✅ | [AGENT] | A-003 Fix F-003: `project.config.json` + `DEV_DEVICE.md` for OP13 serial; note OP12 |
-| ✅ | [AGENT] | A-004 Fix F-004: `HEAD_UNIT_ROUTES.md` matrix — Route A inactive; lead with phone AA |
-| ✅ | [AGENT] | A-005 Fix F-005: commit audit + prior ADB-trim board/docs; encoding check |
+> No open `[AGENT]` / `[AUTO]` / `[ADB]` rows. Next work: new BUILD_PLAN feature block or `/ship` docs push.
 
 ---
 
