@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * README install path is **ADB Play Store spoof only** — beginner guide; other sideload methods removed
 * Post-v2.17 audit hygiene: Surface/DHU docs, Route A demoted, OP13 primary `devDevice`, `pre-release-gate.ps1` prefers `agent-run.py` (KB-025)
 
+### Fixed
+
+* Revert AGP 9.3.0 / Kotlin 2.4.10 Dependabot bump — broke `:app:processDebugNavigationResources` and CodeQL Kotlin extractor
+
 ## [2.17.0] — AA Surface Drive HUD (2026-07-19)
 
 ### Added
