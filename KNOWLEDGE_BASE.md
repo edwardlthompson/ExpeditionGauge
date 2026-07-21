@@ -232,7 +232,16 @@
 | Field | Detail |
 |-------|--------|
 | **Symptom** | create-release.ps1 fails pre-release gate: JAVA_HOME not set; Android gate skipped and gh CLI required even when set in the parent PowerShell session |
-| **Cause** | Gate runs via ash scripts/pre-release-gate.sh from a nested pwsh that does not reliably inherit Windows env / PATH for Git Bash |
-| **Fix** | Export JAVA_HOME/ANDROID_HOME and put gh + JDK on PATH in the same shell before release steps; or run python3 scripts/agent-run.py pre-release-gate then manually ssembleRelease → sign-release-apk.ps1 → pack-aa-install-kit.ps1 → gh release create |
-| **Prevention** | Prefer gent-run.py pre-release-gate + explicit release upload on Windows; fix create-release to pass env into bash (nv JAVA_HOME=... bash ...) in a follow-up |
+| **Cause** | Gate runs via bash scripts/pre-release-gate.sh from a nested pwsh that does not reliably inherit Windows env / PATH for Git Bash |
+| **Fix** | Prefer `python3 scripts/agent-run.py pre-release-gate` (primary path in `pre-release-gate.ps1`). Fallback here-string must use `${prefixColon}:`$PATH` (not `$prefixColon:`) or PowerShell parses a drive-scoped variable and aborts before bash runs (fixed 2026-07-21). Manual: assembleRelease → sign-release-apk.ps1 → pack-aa-install-kit.ps1 → gh release create |
+| **Prevention** | Keep agent-run as the Windows gate entry; add a smoke test that parses `pre-release-gate.ps1` under pwsh |
+
+### KB-026 — AGP 9.3.0 / Kotlin 2.4.10 Dependabot breaks Android CI (Ship 2026-07-21)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | After Dependabot #11, CI fails `:app:processDebugNavigationResources` / CodeQL reports Kotlin version too new |
+| **Cause** | AGP 9.3.0 + Kotlin 2.4.10 not yet compatible with this project's Gradle/CodeQL bundle |
+| **Fix** | Revert plugins to AGP 9.2.1 / Kotlin 2.4.0 (`examples/android/build.gradle.kts`) |
+| **Prevention** | Hold android-dependencies group until AGP 9.3 + CodeQL extractor are validated locally and in CI |
 
