@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-07-21 — AA telemetry cube type scale + cardinals
+- **Status:** Accepted
+- **Context:** DHU night mode made HDG/elev/coords hard to read; spare vertical space in the middle cube; stakeholders wanted N/NE/… after the digital heading.
+- **Decision:** Keep speed at `0.14×` cube; enlarge secondary/tertiary; brighten dark `secondaryText`; vertically center the text block via font metrics; append 16-point `GaugeLogic.cardinalAbbreviation` to AA `HDG` labels.
+- **Alternatives considered:** Grow speed too (rejected — keep hero hierarchy); 8-point only (rejected — “variations in between”); host template fonts (not app-controlled).
+- **Consequences:** v2.17.1; verified OP13 + DHU with Play Store spoof install.
+
 ### 2026-07-19 — AA NavigationTemplate Surface Drive HUD (primary)
 - **Status:** Accepted (supersedes Pane-as-primary from 2026-07-18 for the live path)
 - **Context:** Pane large-image slot still letterboxed; stakeholders wanted a full-bleed native 3×1 strip with tap-to-cycle attitude and titled chrome.

@@ -35,6 +35,7 @@ class CarHudTileBuilderTest {
         assertTrue(!tiles.gMeter.line1.contains("."))
         assertTrue(tiles.telemetry.line1.contains("KM/H"))
         assertTrue(tiles.telemetry.line1.contains("090"))
+        assertTrue(tiles.telemetry.line1.contains(" E"))
         assertTrue(!tiles.telemetry.line1.contains("\n"))
         // Secondary prioritizes speed·HDG; altitude lives on the glance bitmap.
         assertFalse(tiles.telemetry.line1.contains("Alt"))

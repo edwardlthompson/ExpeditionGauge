@@ -39,7 +39,7 @@ object CarHudTileBuilder {
         val useMetric = speedUnit == SpeedUnit.METRIC
         val speedText = "${GaugeLogic.formatSpeedMps(snapshot.speedMps, useMetric)} ${GaugeLogic.speedUnitLabel(useMetric)}"
         val hdg = snapshot.headingDeg.toInt().mod(360)
-        val hdgText = "HDG %03d°".format(hdg)
+        val hdgText = "HDG %03d° %s".format(hdg, GaugeLogic.cardinalAbbreviation(snapshot.headingDeg))
         val alt = snapshot.altitudeM?.let {
             "${UnitDisplay.altitudeMToDisplay(it, useMetric)} ${UnitDisplay.altitudeUnitLabel(useMetric)}"
         } ?: "—"

@@ -47,25 +47,33 @@ internal class DriveHudCubeDraw(
         speed: String, heading: String, alt: String, coords: String,
     ) {
         drawCubeChrome(x, y, size, theme)
+        val coordLines = coords.lines().filter { it.isNotBlank() }.take(2)
+        val hasCoords = coordLines.isNotEmpty()
         val primary = paint(theme.primaryText, size * 0.14f, bold = true)
-        val secondary = paint(theme.secondaryText, size * 0.08f, bold = true)
-        val tertiary = paint(theme.secondaryText, size * 0.06f, bold = true)
-        val cx = x + size / 2f
-        val coordLines = coords.lines().filter { it.isNotBlank() }
-        val stacked = coordLines.size >= 2
+        val secondary = paint(theme.secondaryText, size * (if (hasCoords) 0.135f else 0.145f), bold = true)
+        val tertiary = paint(theme.secondaryText, size * 0.115f, bold = true)
         fit(primary, speed, size * 0.88f)
-        canvas.drawText(speed, cx, y + size * (if (stacked) 0.28f else 0.34f), primary)
-        fit(secondary, heading, size * 0.88f)
-        canvas.drawText(heading, cx, y + size * (if (stacked) 0.44f else 0.52f), secondary)
-        fit(secondary, alt, size * 0.88f)
-        canvas.drawText(alt, cx, y + size * (if (stacked) 0.58f else 0.68f), secondary)
-        if (coordLines.isNotEmpty()) {
-            val lineH = size * 0.085f
-            val baseY = y + size * (if (stacked) 0.74f else 0.86f)
-            coordLines.take(2).forEachIndexed { i, line ->
-                fit(tertiary, line, size * 0.92f)
-                canvas.drawText(line, cx, baseY + i * lineH, tertiary)
-            }
+        fit(secondary, heading, size * 0.96f)
+        fit(secondary, alt, size * 0.96f)
+        coordLines.forEach { fit(tertiary, it, size * 0.96f) }
+
+        val lines = buildList {
+            add(primary to speed)
+            add(secondary to heading)
+            add(secondary to alt)
+            coordLines.forEach { add(tertiary to it) }
+        }
+        val gap = size * 0.035f
+        val heights = lines.map { (p, _) -> p.descent() - p.ascent() }
+        val blockH = heights.sum() + gap * (lines.size - 1).coerceAtLeast(0)
+        val inset = size * 0.06f
+        val available = (size - inset * 2).coerceAtLeast(1f)
+        val top = y + inset + ((available - blockH) / 2f).coerceAtLeast(0f)
+        val cx = x + size / 2f
+        var cursor = top
+        lines.forEachIndexed { i, (p, text) ->
+            canvas.drawText(text, cx, cursor - p.ascent(), p)
+            cursor += heights[i] + gap
         }
     }
 

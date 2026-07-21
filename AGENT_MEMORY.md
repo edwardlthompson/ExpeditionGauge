@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.17.0** (AA Surface Drive HUD). **Dev devices:** OnePlus 12 (`b5214fc6`), OnePlus 13 (`8bf09993`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.17.1** (AA telemetry cube readability). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -31,6 +31,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | AA smoothness hardening | 2.16.2 | ✅ ActionStrip titles; async bridge; bitmap isolate; sensor hold |
 | AA Play Store spoof kit | 2.16.3 | ✅ AA-install-kit.zip on Releases; aa-spoof-adb.sh; README copy-paste |
 | AA Surface Drive HUD | 2.17.0 | ✅ NavTemplate Surface 3×1; DHU preview; Elev./stacked coords/TPMS 2-line |
+| AA telemetry readability | 2.17.1 | ✅ Larger HDG/elev/coords; night contrast; vertical center; 16-pt cardinals |
 
 ## G-meter HUD rotation (locked 2026-07-12, supersedes 2026-06-30 CW cube)
 

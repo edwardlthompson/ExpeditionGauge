@@ -8,10 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.17.1] — AA telemetry cube readability (2026-07-21)
+
+### Added
+
+* 16-point cardinal abbreviation after digital heading on AA (`HDG 249° WSW`)
+
 ### Changed
 
-* README install path is **ADB Play Store spoof only** — beginner guide (developer mode → USB debugging → platform-tools → AA-install-kit copy-paste); other sideload methods removed
-* Post-v2.17 audit hygiene: Surface/DHU docs, Route A demoted, OP13 primary \devDevice\, \pre-release-gate.ps1\ prefers \gent-run.py\ (KB-025)
+* AA telemetry cube: larger HDG/elev/coords text (speed unchanged); vertically centered stack
+* Night-mode secondary text brighter for glanceable contrast on dark cubes
+* README install path is **ADB Play Store spoof only** — beginner guide; other sideload methods removed
+* Post-v2.17 audit hygiene: Surface/DHU docs, Route A demoted, OP13 primary `devDevice`, `pre-release-gate.ps1` prefers `agent-run.py` (KB-025)
 
 ## [2.17.0] — AA Surface Drive HUD (2026-07-19)
 

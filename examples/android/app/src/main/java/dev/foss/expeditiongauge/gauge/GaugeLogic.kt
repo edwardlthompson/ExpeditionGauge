@@ -41,6 +41,16 @@ object GaugeLogic {
         return "${normalized.toInt()}°"
     }
 
+    /**
+     * 16-point compass rose abbreviation for [headingDeg] (0 = N, clockwise).
+     * Sectors are 22.5° centered on each point (N, NNE, NE, …, NNW).
+     */
+    fun cardinalAbbreviation(headingDeg: Float): String {
+        val normalized = ((headingDeg % 360f) + 360f) % 360f
+        val index = ((normalized + 11.25f) / 22.5f).toInt() % CARDINALS_16.size
+        return CARDINALS_16[index]
+    }
+
     fun formatSpeedMps(speedMps: Float, useMetric: Boolean = true): String {
         val value = if (useMetric) speedMps * 3.6f else speedMps * 2.23694f
         return value.toInt().toString()
@@ -67,4 +77,9 @@ object GaugeLogic {
         magnitudeDeg >= safeThreshold -> GaugeZone.Caution
         else -> GaugeZone.Safe
     }
+
+    private val CARDINALS_16 = arrayOf(
+        "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+        "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
+    )
 }

@@ -18,7 +18,8 @@ data class DriveHudTheme(
             cubeFill = 0xFF161C24.toInt(),
             cubeStroke = 0xFF3A4654.toInt(),
             primaryText = 0xFFF2F5F8.toInt(),
-            secondaryText = 0xFFB4BEC9.toInt(),
+            // Near-primary so night HDG/alt/coords stay glanceable at distance.
+            secondaryText = 0xFFE4EAF0.toInt(),
             divider = 0xFF2A3340.toInt(),
         )
 

@@ -17,7 +17,7 @@ class AaGlanceTileIconsTest {
     fun telemetryBitmap_hasExpectedSize() {
         val bmp = AaGlanceTileIcons.renderTelemetryBitmap(
             speedLabel = "62 MPH",
-            headingLabel = "HDG 090°",
+            headingLabel = "HDG 090° E",
             altLabel = "Alt 1200 ft",
             sizePx = 128,
         )
@@ -42,7 +42,7 @@ class AaGlanceTileIconsTest {
     @Test
     fun carIcons_buildWithoutThrow() {
         assertNotNull(
-            AaGlanceTileIcons.telemetry("10 MPH", "HDG 000°", "Alt —", sizePx = 96),
+            AaGlanceTileIcons.telemetry("10 MPH", "HDG 000° N", "Alt —", sizePx = 96),
         )
         assertNotNull(
             AaGlanceTileIcons.tpms("--", "--", "--", "--", sizePx = 96),
