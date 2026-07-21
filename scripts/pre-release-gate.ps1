@@ -41,7 +41,7 @@ $bashCmd = @"
 set -e
 $(if ($jh) { "export JAVA_HOME=`"$jh`"" })
 $(if ($ah) { "export ANDROID_HOME=`"$ah`"; export ANDROID_SDK_ROOT=`"$ah`"" })
-$(if ($prefixColon) { "export PATH=`"$prefixColon:`$PATH`"" })
+$(if ($prefixColon) { "export PATH=`"${prefixColon}:`$PATH`"" })
 cd `"$Root`"
 scripts/pre-release-gate.sh
 "@
