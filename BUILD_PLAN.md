@@ -76,13 +76,14 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Dashboard HUD v2 | v2.10.0 G-trail, drawer, storage loop | same |
 | AA HU UX + ADB trim | v2.17.0 Surface HUD + DHU M-003; M-004 dropped | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Audit 2026-07-19 | post v2.17 docs/release hygiene (A-001–A-005) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
+| Bootstrap alignment 0.15.1 | template tooling (S0–S4 + R2 N/A) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
 
-> **Audit 2026-07-19** archived in COMPLETED_TASKS.md @ `61c54dd`.
+> **Bootstrap alignment 0.15.1** archived in COMPLETED_TASKS.md (push pending short-sha).
 
-> No open `[AGENT]` / `[AUTO]` / `[ADB]` rows. Next work: new BUILD_PLAN feature block or `/ship` docs push.
+> No open `[AGENT]` / `[AUTO]` / `[ADB]` rows. Next work: new BUILD_PLAN feature block or `/ship` (app still **v2.17.1**). Gap log: [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md).
 
 ---
 

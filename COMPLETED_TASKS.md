@@ -2,6 +2,15 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Bootstrap alignment 0.15.1 (2026-07-22)
+
+- ✅ [AGENT] S0 — Write `docs/BOOTSTRAP_ALIGNMENT.md`, DECISION_LOG entry, this sprint block
+- ✅ [AGENT] S1 — Adopt `local-compute.mdc`, 4 skills, worktrees+setup scripts, `permissions.json`; refresh AGENTS / CURSOR_INTEGRATIONS
+- ✅ [AGENT] S2 — Add `run_checks_parallel.py` + validate wiring, FOSS plugin pack, `docs/CURSOR_CLI.md`; never touch `scripts/expedition/**`
+- ✅ [AGENT] S3 — Surgical CI diff review (document skips); no automerge; no version bump yet
+- ✅ [AGENT] S4 — Gates (encoding, hooks smoke, validate-bootstrap --quick, hygiene, cursor-integrations); bump `.template-version` to 0.15.1; memory + Migration notes
+- ✅ [HUMAN] Evaluate Release Please automerge (R2) — **N/A**: `release-please.yml` is template-only; ExpeditionGauge ships via Gradle + `create-release.ps1`
+
 ## Audit 2026-07-19 — post v2.17 docs/release hygiene
 
 - ✅ [AGENT] A-001 Fix F-001: `ANDROID_AUTO.md` DHU section — Surface 3×1 / `dhu-smoke`; demote Route A

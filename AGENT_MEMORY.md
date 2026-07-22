@@ -32,6 +32,9 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | AA Play Store spoof kit | 2.16.3 | ✅ AA-install-kit.zip on Releases; aa-spoof-adb.sh; README copy-paste |
 | AA Surface Drive HUD | 2.17.0 | ✅ NavTemplate Surface 3×1; DHU preview; Elev./stacked coords/TPMS 2-line |
 | AA telemetry readability | 2.17.1 | ✅ Larger HDG/elev/coords; night contrast; vertical center; 16-pt cardinals |
+| Bootstrap alignment | template 0.15.1 | ✅ FOSS Cursor surfaces + multicore validate; see `docs/BOOTSTRAP_ALIGNMENT.md` |
+
+**Template lineage:** `.template-version` **0.15.1** (aligned 2026-07-22). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 
 ## G-meter HUD rotation (locked 2026-07-12, supersedes 2026-06-30 CW cube)
 

@@ -46,9 +46,13 @@ Activate only the modules matching your stack. See `modules/*/MODULE.md`.
 Shipped in template (see `docs/CURSOR_INTEGRATIONS.md`):
 
 - **Hooks** — `.cursor/hooks.json` enforces destructive-ops + UTF-8 (fail-open; `/push` session override)
-- **Skills (3)** — `.cursor/skills/` progressive-load companions for `/gates`, `/scope`, `/fix`
+- **Local compute** — `.cursor/rules/local-compute.mdc` prefers This Computer + parallel Task/worktrees over Cloud
+- **Permissions** — `.cursor/permissions.json` dual-layer ACL with destructive-ops themes
+- **Worktrees** — `.cursor/worktrees.json` + `setup-worktree-*.{sh,ps1}`
+- **Skills (7)** — `.cursor/skills/` progressive-load companions (`/gates`, `/scope`, `/fix`, hygiene, Sprint 0, features, canvas status)
 - **Subagents (3)** — `.cursor/agents/` verifier, gate-fixer, explorer
 - **Optional MCP** — copy `.cursor/mcp.foss.example` → gitignored `.cursor/mcp.json`
+- **Alignment log** — [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md)
 
 ## Ecosystem-Specific Rules
 

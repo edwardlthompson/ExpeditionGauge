@@ -17,6 +17,20 @@
 
 ## Entries
 
+### 2026-07-22 — Release Please automerge N/A for ExpeditionGauge
+- **Status:** Accepted
+- **Context:** Alignment left `[HUMAN]` R2 open to evaluate upstream `release-please-automerge.yml`. Local `release-please.yml` is gated to `edwardlthompson/agent-project-bootstrap` only; app ships via Gradle `versionName` + `create-release.ps1`.
+- **Decision:** Do not add automerge. Close R2 as N/A; keep Android release path.
+- **Alternatives considered:** Re-enable Release Please for this child and auto-merge (rejected — fights app semver / existing release tooling).
+- **Consequences:** No `release-please--*` PRs on this repo; template lineage version stays in `.template-version` for upgrade tracking only.
+
+### 2026-07-21 — Bootstrap alignment 0.11.1 → 0.15.1
+- **Status:** Accepted (automerge deferral superseded by 2026-07-22 N/A)
+- **Context:** Child repo already had full agent surface at template 0.11.1; upstream reached v0.15.1 (local-compute, skills, worktrees/permissions, multicore validate). Live Android product must not be rewritten.
+- **Decision:** Surgical FOSS alignment only: adopt local-compute + 4 skills + worktree bundle + permissions + parallel check helper + CURSOR_CLI + FOSS plugin pack; defer `release-please-automerge.yml` pending HUMAN evaluate; skip commercial tier; never overwrite `scripts/expedition/**` or product sources; bump `.template-version` only after local gates pass. Gap/risk log: [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md).
+- **Alternatives considered:** Blind template sync (rejected — CI/product risk); enable Release Please automerge now (deferred then closed N/A); commercial-compliance activation (rejected — foss tier).
+- **Consequences:** Agent tooling closer to upstream 0.15.1; Release Please remains template-repo-only for this child.
+
 ### 2026-07-21 — AA telemetry cube type scale + cardinals
 - **Status:** Accepted
 - **Context:** DHU night mode made HDG/elev/coords hard to read; spare vertical space in the middle cube; stakeholders wanted N/NE/… after the digital heading.

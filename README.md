@@ -285,8 +285,12 @@ This repo uses [agent-project-bootstrap](https://github.com/edwardlthompson/agen
 |-----|---------|
 | [`docs/START_HERE.md`](docs/START_HERE.md) | Agent cold-start read order |
 | [`BUILD_PLAN.md`](BUILD_PLAN.md) | Active sprint board |
+| [`docs/CURSOR_MODES.md`](docs/CURSOR_MODES.md) | Ask / Plan / Agent / Debug routing |
 | [`docs/help/BATCH_COMMANDS.md`](docs/help/BATCH_COMMANDS.md) | Slash commands (`/build`, `/verify`, `/ship`) |
 | [`AGENTS.md`](AGENTS.md) | Router and session protocol |
+| [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md) | Template alignment gap log (0.15.x) |
+
+How agents work: read START_HERE → pick Cursor mode → execute Sequential `[AGENT]` rows first; after each step run `python3 scripts/agent-run.py watch-agent-gates --once --autofix`. Prefer local compute (`.cursor/rules/local-compute.mdc`).
 
 Resume the next task: `pwsh scripts/expedition/resume-agent.ps1`
 

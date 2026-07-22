@@ -45,6 +45,18 @@ Read the upstream release notes at `github.com/edwardlthompson/agent-project-boo
 | `HUMAN_BACKLOG.md.example` | Copy; never overwrite live `HUMAN_BACKLOG.md` | AGENT |
 | `scripts/expedition/*` | Child-only — do not overwrite from template | HUMAN |
 | `examples/android/` (product app) | Child-only — reference GoldenPath patterns only | HUMAN |
+| `.cursor/rules/local-compute.mdc` | Copy (0.15 local-first compute) | AGENT |
+| `.cursor/permissions.json` | Copy; keep dual-layer with destructive-ops | AGENT |
+| `.cursor/worktrees.json` + `setup-worktree-*.{sh,ps1}` | Copy as a set | AGENT |
+| `.cursor/skills/*` (7 skills) | Copy new/changed SKILL.md | AGENT |
+| `scripts/lib/run_checks_parallel.py` | Copy; wire via `validate-bootstrap.sh` | AGENT |
+| `docs/CURSOR_CLI.md` | Copy | AGENT |
+| `.cursor-plugin/` + `scripts/pack-cursor-plugin.*` | Copy FOSS plugin pack | AGENT |
+| `.github/workflows/release-please-automerge.yml` | Skip on ExpeditionGauge — RP gated to template repo; Android ships via Gradle | HUMAN (closed N/A) |
+| `docs/BOOTSTRAP_ALIGNMENT.md` | Child gap/risk log for this upgrade | AGENT |
+
+See also: [`docs/BOOTSTRAP_ALIGNMENT.md`](BOOTSTRAP_ALIGNMENT.md).
+
 ## Version Compatibility
 
 | Upgrade | Notes |

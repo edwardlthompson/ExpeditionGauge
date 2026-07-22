@@ -1,5 +1,5 @@
 {
-  "template_version": "0.11.1",
+  "template_version": "0.15.1",
   "entry_points": {
     "bootstrap": "docs/START_HERE.md",
     "reference": "docs/FOR_AGENTS.md",
@@ -277,7 +277,7 @@
     },
     {
       "path": ".github/workflows/dependency-review.yml",
-      "purpose": "PR dependency review \u2014 fail on new High/Critical vulnerabilities",
+      "purpose": "PR dependency review — fail on new High/Critical vulnerabilities",
       "read_when": "contributing",
       "update_when": "milestone_boundary",
       "owner": "maintainer"
@@ -1366,6 +1366,111 @@
       "read_when": "prompt_needed",
       "update_when": "milestone_boundary",
       "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/rules/local-compute.mdc",
+      "purpose": "Prefer local parallel Agent/worktrees over Cloud on This Computer",
+      "read_when": "session_start",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/lib/run_checks_parallel.py",
+      "purpose": "Multi-core runner for independent bootstrap checks",
+      "read_when": "validation",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/worktrees.json",
+      "purpose": "Cursor native worktree setup manifest",
+      "read_when": "cursor_setup",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/permissions.json",
+      "purpose": "Auto-review allow/block instructions (dual layer with hooks)",
+      "read_when": "cursor_setup",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor-plugin/plugin.json",
+      "purpose": "FOSS Cursor plugin manifest for pack/local install",
+      "read_when": "cursor_setup",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/pack-cursor-plugin.sh",
+      "purpose": "Pack FOSS Cursor components to dist/cursor-plugin",
+      "read_when": "cursor_setup",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": "docs/CURSOR_CLI.md",
+      "purpose": "Cursor CLI and opt-in GHA headless recipe",
+      "read_when": "cursor_setup",
+      "update_when": "milestone_boundary",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/setup-worktree-unix.sh",
+      "purpose": "Unix worktree setup helper",
+      "read_when": "parallel_dispatch",
+      "update_when": "template_sync",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/setup-worktree-windows.ps1",
+      "purpose": "Windows worktree setup helper",
+      "read_when": "parallel_dispatch",
+      "update_when": "template_sync",
+      "owner": "maintainer"
+    },
+    {
+      "path": "docs/BOOTSTRAP_ALIGNMENT.md",
+      "purpose": "Child gap analysis and migration notes vs upstream template",
+      "read_when": "session_start",
+      "update_when": "milestone",
+      "owner": "maintainer"
+    },
+    {
+      "path": "scripts/pack-cursor-plugin.ps1",
+      "purpose": "Pack FOSS Cursor plugin (Windows)",
+      "read_when": "release",
+      "update_when": "template_sync",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/skills/canvas-bootstrap-status/SKILL.md",
+      "purpose": "Cursor skill: canvas-bootstrap-status",
+      "read_when": "command",
+      "update_when": "template_sync",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/skills/check-repo-hygiene/SKILL.md",
+      "purpose": "Cursor skill: check-repo-hygiene",
+      "read_when": "command",
+      "update_when": "template_sync",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/skills/feature-vertical-slice/SKILL.md",
+      "purpose": "Cursor skill: feature-vertical-slice",
+      "read_when": "command",
+      "update_when": "template_sync",
+      "owner": "maintainer"
+    },
+    {
+      "path": ".cursor/skills/sprint0-signoff/SKILL.md",
+      "purpose": "Cursor skill: sprint0-signoff",
+      "read_when": "command",
+      "update_when": "template_sync",
+      "owner": "maintainer"
     }
   ],
   "modules": {
@@ -1391,7 +1496,7 @@
     }
   },
   "roadmap": {
-    "active": "BUILD_PLAN.md \u2014 maintenance + human open items",
+    "active": "BUILD_PLAN.md — maintenance + human open items",
     "completed_archive": "COMPLETED_TASKS.md",
     "batch_commands": [
       ".cursor/commands/audit.md",

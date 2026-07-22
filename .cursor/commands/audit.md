@@ -1,5 +1,7 @@
 # Full repo review and BUILD_PLAN execution
 
+> Skill: `.cursor/skills/check-repo-hygiene/`
+
 Framework: use AGENT/HUMAN/ADB/AUTO labels; Sequential before Parallel; gates after AGENT steps; update memory files at milestones.
 
 ## Step 1 — Review

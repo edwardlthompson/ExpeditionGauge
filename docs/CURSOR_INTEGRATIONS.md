@@ -8,12 +8,15 @@ After `scripts/init-project.sh --distribution-tier foss`:
 
 | Layer | Artifact | Status |
 |-------|----------|--------|
-| Rules | `.cursor/rules/*.mdc` | Shipped (14) |
+| Rules | `.cursor/rules/*.mdc` (incl. `local-compute.mdc`) | Shipped (16+) |
 | Commands | `.cursor/commands/*.md` | Shipped (26) |
 | Hooks | `.cursor/hooks.json` + `.cursor/hooks/` | Shipped |
-| Skills | `.cursor/skills/` (3) | Shipped |
+| Permissions | `.cursor/permissions.json` | Shipped |
+| Worktrees | `.cursor/worktrees.json` + setup scripts | Shipped |
+| Skills | `.cursor/skills/` (7) | Shipped |
 | Subagents | `.cursor/agents/` (3) | Shipped |
 | Modes | `docs/CURSOR_MODES.md` | Shipped |
+| CLI | `docs/CURSOR_CLI.md` | Shipped |
 | Parallel `/scope` | `scripts/plan-parallel-dispatch.sh` | Shipped |
 | Autonomous `/build` | `scripts/build-sprint-status.sh` | Shipped |
 | GitHub MCP (optional) | Copy `.cursor/mcp.foss.example` → `.cursor/mcp.json` | Example |
@@ -64,11 +67,19 @@ Underlying `scripts/*.sh` remain for CI and human Git Bash use; only **agent com
 
 Commands remain canonical UX. Skills wrap high-churn flows:
 
-| Skill | Command |
-|-------|---------|
+| Skill | Command / use |
+|-------|----------------|
 | `validate-bootstrap` | `/gates` |
 | `parallel-scope` | `/scope` |
 | `watch-gates-autofix` | `/fix` |
+| `check-repo-hygiene` | Pre-push hygiene |
+| `sprint0-signoff` | Sprint 0 local sign-off |
+| `feature-vertical-slice` | Feature module slice |
+| `canvas-bootstrap-status` | Bootstrap status canvas |
+
+## Local compute
+
+See [`.cursor/rules/local-compute.mdc`](../.cursor/rules/local-compute.mdc). On Windows prefer `BOOTSTRAP_CHECK_JOBS=2` for multicore bootstrap checks ([`BOOTSTRAP_ALIGNMENT.md`](BOOTSTRAP_ALIGNMENT.md)).
 
 ## Subagents
 

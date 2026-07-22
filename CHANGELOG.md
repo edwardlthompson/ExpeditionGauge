@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Bootstrap alignment to agent-project-bootstrap **0.15.1**: `local-compute` rule, 7 Cursor skills, worktrees/permissions, FOSS plugin pack, `docs/CURSOR_CLI.md`, multicore `validate-bootstrap` (`run_checks_parallel.py`)
+* `docs/BOOTSTRAP_ALIGNMENT.md` gap/risk log for template upgrades
+
+### Changed
+
+* Agent docs (`AGENTS.md`, START_HERE, CURSOR_INTEGRATIONS, UPGRADING) for 0.15 surfaces; README agent section
+* Release Please automerge closed **N/A** for this child (RP template-repo-only; ship via Gradle + `create-release.ps1`)
+
 ## [2.17.1] — AA telemetry cube readability (2026-07-21)
 
 ### Added

@@ -19,10 +19,17 @@ pwsh scripts/expedition/resume-agent.ps1
 Execute the next `🔲 [AGENT]` row in BUILD_PLAN.md. After each step:
 
 ```powershell
-pwsh scripts/watch-agent-gates.ps1
+python3 scripts/agent-run.py watch-agent-gates --once --autofix
 ```
 
-Mark completed rows via sprint sign-off or `mark-task.ps1`.
+On Windows, keep multicore bootstrap checks modest:
+
+```powershell
+$env:BOOTSTRAP_CHECK_JOBS = "2"
+python3 scripts/agent-run.py validate-bootstrap --quick
+```
+
+Template alignment notes: [`BOOTSTRAP_ALIGNMENT.md`](BOOTSTRAP_ALIGNMENT.md). Mark completed rows via sprint sign-off or `mark-task.ps1`.
 
 ## Blockers {#blockers}
 

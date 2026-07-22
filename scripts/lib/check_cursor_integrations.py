@@ -2,15 +2,26 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
-SKILLS = ("validate-bootstrap", "parallel-scope", "watch-gates-autofix")
+SKILLS = (
+    "validate-bootstrap",
+    "parallel-scope",
+    "watch-gates-autofix",
+    "check-repo-hygiene",
+    "sprint0-signoff",
+    "feature-vertical-slice",
+    "canvas-bootstrap-status",
+)
 AGENTS = ("verifier", "gate-fixer", "explorer")
 COMMAND_SKILL = {
-    "gates.md": "validate-bootstrap",
-    "scope.md": "parallel-scope",
-    "fix.md": "watch-gates-autofix",
+    "gates.md": ("validate-bootstrap", "check-repo-hygiene", "canvas-bootstrap-status"),
+    "scope.md": ("parallel-scope",),
+    "fix.md": ("watch-gates-autofix",),
+    "audit.md": ("check-repo-hygiene",),
+    "feature.md": ("feature-vertical-slice",),
 }
 
 COMMERCIAL_LIVE = (
@@ -22,6 +33,8 @@ COMMERCIAL_LIVE = (
 FOSS_EXAMPLES = (
     ".cursor/mcp.foss.example",
     ".cursor/hooks.json",
+    ".cursor/worktrees.json",
+    ".cursor/permissions.json",
 )
 
 
@@ -49,13 +62,15 @@ def validate_artifacts(root: Path) -> list[str]:
         if not agent.is_file():
             errors.append(f"missing agent: {name}")
 
-    for cmd, skill in COMMAND_SKILL.items():
+    for cmd, skills in COMMAND_SKILL.items():
         path = root / ".cursor/commands" / cmd
         if not path.is_file():
             errors.append(f"missing command: {cmd}")
             continue
-        if skill not in read_text(path):
-            errors.append(f"{cmd} missing skill pointer for {skill}")
+        body = read_text(path)
+        for skill in skills:
+            if skill not in body:
+                errors.append(f"{cmd} missing skill pointer for {skill}")
 
     registry = root / "docs/CURSOR_FEATURE_REGISTRY.json"
     if not registry.is_file():
@@ -105,12 +120,24 @@ def validate_tier(root: Path, tier: str) -> list[str]:
                 errors.append(f"foss tier: commercial live file present: {rel}")
         mcp = root / ".cursor/mcp.json"
         if mcp.is_file():
-            errors.append("foss tier: .cursor/mcp.json should not be committed (gitignored live copy)")
+            tracked = subprocess.run(
+                ["git", "ls-files", "--error-unmatch", ".cursor/mcp.json"],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if tracked.returncode == 0:
+                errors.append(
+                    "foss tier: .cursor/mcp.json is tracked — keep live MCP config gitignored"
+                )
 
     if tier == "commercial":
         for rel in (".cursor/BUGBOT.md", ".cursor/environment.json"):
             if not (root / rel).is_file():
-                warnings.append(f"commercial tier: {rel} not activated (copy from *.commercial.example)")
+                warnings.append(
+                    f"commercial tier: {rel} not activated (copy from *.commercial.example)"
+                )
 
     sel = root / ".cursor/stack-selection.json"
     manifest = root / ".cursor/cursor-features.json"
@@ -125,12 +152,8 @@ def validate_tier(root: Path, tier: str) -> list[str]:
         except json.JSONDecodeError:
             errors.append("invalid stack-selection or cursor-features JSON")
 
-    if tier == "foss":
-        for warn in warnings:
-            print(f"WARN: {warn}", file=sys.stderr)
-    else:
-        for warn in warnings:
-            print(f"WARN: {warn}", file=sys.stderr)
+    for warn in warnings:
+        print(f"WARN: {warn}", file=sys.stderr)
 
     return errors
 
