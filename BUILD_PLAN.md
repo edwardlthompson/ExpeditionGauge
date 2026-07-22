@@ -81,7 +81,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 ## Active board
 
-> **Bootstrap alignment 0.15.1** archived in COMPLETED_TASKS.md (push pending short-sha).
+> **Bootstrap alignment 0.15.1** archived in COMPLETED_TASKS.md @ `58cdca5`.
 
 > No open `[AGENT]` / `[AUTO]` / `[ADB]` rows. Next work: new BUILD_PLAN feature block or `/ship` (app still **v2.17.1**). Gap log: [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md).
 
