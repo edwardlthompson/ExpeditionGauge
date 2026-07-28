@@ -245,3 +245,13 @@
 | **Fix** | Revert plugins to AGP 9.2.1 / Kotlin 2.4.0 (`examples/android/build.gradle.kts`); append new Netty CVE IDs to `.trivyignore` (KB-014) |
 | **Prevention** | Hold android-dependencies group until AGP 9.3 + CodeQL extractor are validated locally and in CI; disable automerge for that group if needed |
 
+
+### KB-027 — OBDex DTC asset over 500 KB hygiene gate (Ship 2026-07-28)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | CI Repo Hygiene / Feature Gate fail: obdex_en.json 545 KB > 500 KB |
+| **Cause** | Full OBDex English title map is ~560 KB JSON; local pre-release missed it while untracked (large-file check uses HEAD sizes) |
+| **Fix** | Store ssets/dtc/obdex_en.gz (~70 KB). aapt decompresses .gz and strips the extension — runtime open dtc/obdex_en as plain JSON |
+| **Prevention** | Do not commit uncompressed catalogs over 500 KB; regen via etch-obdex-dtc.py writes .gz; avoid .json.gz filename (merger clashes with .json) |
+
