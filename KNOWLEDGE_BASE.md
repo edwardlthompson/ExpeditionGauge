@@ -236,12 +236,12 @@
 | **Fix** | Prefer `python3 scripts/agent-run.py pre-release-gate` (primary path in `pre-release-gate.ps1`). Fallback here-string must use `${prefixColon}:`$PATH` (not `$prefixColon:`) or PowerShell parses a drive-scoped variable and aborts before bash runs (fixed 2026-07-21). Manual: assembleRelease → sign-release-apk.ps1 → pack-aa-install-kit.ps1 → gh release create |
 | **Prevention** | Keep agent-run as the Windows gate entry; add a smoke test that parses `pre-release-gate.ps1` under pwsh |
 
-### KB-026 — AGP 9.3.0 / Kotlin 2.4.10 Dependabot breaks Android CI (Ship 2026-07-21)
+### KB-026 — AGP 9.3.x / Kotlin 2.4.10 Dependabot breaks Android CI (Ship 2026-07-21; re-hit 2026-07-28)
 
 | Field | Detail |
 |-------|--------|
-| **Symptom** | After Dependabot #11, CI fails `:app:processDebugNavigationResources` / CodeQL reports Kotlin version too new |
-| **Cause** | AGP 9.3.0 + Kotlin 2.4.10 not yet compatible with this project's Gradle/CodeQL bundle |
-| **Fix** | Revert plugins to AGP 9.2.1 / Kotlin 2.4.0 (`examples/android/build.gradle.kts`) |
-| **Prevention** | Hold android-dependencies group until AGP 9.3 + CodeQL extractor are validated locally and in CI |
+| **Symptom** | After Dependabot #11 / #13, CI fails `:app:processDebugNavigationResources` / CodeQL reports Kotlin version too new; Security Scan also fails on new AGP-test Netty CVEs |
+| **Cause** | AGP 9.3.x + Kotlin 2.4.10 not yet compatible with this project's Gradle/CodeQL bundle; Trivy DB adds HIGH Netty CVEs on `unified-test-platform` lockfile pins |
+| **Fix** | Revert plugins to AGP 9.2.1 / Kotlin 2.4.0 (`examples/android/build.gradle.kts`); append new Netty CVE IDs to `.trivyignore` (KB-014) |
+| **Prevention** | Hold android-dependencies group until AGP 9.3 + CodeQL extractor are validated locally and in CI; disable automerge for that group if needed |
 
