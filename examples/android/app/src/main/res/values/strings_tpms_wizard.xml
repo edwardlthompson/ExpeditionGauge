@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tpms_wizard_title">TPMS setup wizard</string>
+    <string name="tpms_wizard_start">Setup wizard</string>
+    <string name="tpms_wizard_intro">Scan the QR code on each valve-stem sensor, or enter its BLE MAC. Assignments are remembered for FL, FR, RL, and RR.</string>
+    <string name="tpms_wizard_intro_bt_off">Bluetooth is off. Turn it on to detect sensors after assign. You can still enter MACs manually.</string>
+    <string name="tpms_wizard_enable_bt">Enable Bluetooth</string>
+    <string name="tpms_wizard_camera_rationale">Camera is used only to read the sensor QR. Nothing is uploaded.</string>
+    <string name="tpms_wizard_allow_camera">Allow camera</string>
+    <string name="tpms_wizard_open_app_settings">Open app settings</string>
+    <string name="tpms_wizard_continue_manual">Continue with manual entry</string>
+    <string name="tpms_wizard_continue">Continue</string>
+    <string name="tpms_wizard_corner_title">Scan %1$s sensor</string>
+    <string name="tpms_wizard_corner_hint">Point the camera at the QR on the %1$s module. If the code is not a MAC, enter the BLE address from the label.</string>
+    <string name="tpms_wizard_enter_manual">Enter MAC manually</string>
+    <string name="tpms_wizard_skip">Skip this tire</string>
+    <string name="tpms_wizard_back">Back</string>
+    <string name="tpms_wizard_manual_title">Enter BLE MAC</string>
+    <string name="tpms_wizard_manual_hint">Example: AA:BB:CC:DD:EE:FF</string>
+    <string name="tpms_wizard_manual_confirm">Use this MAC</string>
+    <string name="tpms_wizard_confirm_title">Confirm assignment</string>
+    <string name="tpms_wizard_confirm_body">Assign %1$s to %2$s?</string>
+    <string name="tpms_wizard_accept">Accept</string>
+    <string name="tpms_wizard_rescan">Rescan</string>
+    <string name="tpms_wizard_saved_waiting">Saved. Waiting for BLE advertisement…</string>
+    <string name="tpms_wizard_summary_title">TPMS setup complete</string>
+    <string name="tpms_wizard_summary_row">%1$s — %2$s</string>
+    <string name="tpms_wizard_summary_skipped">skipped</string>
+    <string name="tpms_wizard_done">Done</string>
+    <string name="tpms_wizard_error_empty">No code detected. Try again or enter the MAC manually.</string>
+    <string name="tpms_wizard_error_no_mac">QR has no BLE MAC. Enter the address from the sensor label.</string>
+    <string name="tpms_wizard_error_bad_length">Code length is not a MAC or binding ID (need 4/6/8 hex, or full MAC).</string>
+    <string name="tpms_wizard_error_bad_charset">Code is not a valid MAC or binding ID.</string>
+    <string name="tpms_waiting_signal">Waiting for signal</string>
+    <string name="tpms_wizard_step">Step %1$d of %2$d</string>
+    <string name="tpms_wizard_scanning">Looking for QR…</string>
+    <string name="tpms_wizard_resolve_title">Match %1$s sensor ID</string>
+    <string name="tpms_wizard_resolve_id">Binding ID: %1$s</string>
+    <string name="tpms_wizard_resolve_hint">Moman C4 / DJTPMS print a short ID = last bytes of the BLE MAC. Wake the sensor (press on / reinstall on the valve) until a live advertisement appears — we only bind to sensors we can hear (no guessed addresses).</string>
+    <string name="tpms_wizard_resolve_waiting">Listening for BLE ads ending with this ID…</string>
+    <string name="tpms_wizard_resolve_live">Use live sensor %1$s</string>
+    <string name="tpms_wizard_resolve_guess">Predicted MAC %1$s (unused)</string>
+</resources>

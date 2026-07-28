@@ -3,7 +3,7 @@ package dev.foss.expeditiongauge.car
 import dev.foss.expeditiongauge.car.gauge.AaAttitudeMode
 import kotlin.math.abs
 
-/** Cache key for Drive HUD bitmap reuse (attitude + labels + theme). */
+/** Cache key for Drive HUD bitmap reuse (attitude + labels + theme + DTC frame). */
 internal data class AaHudDriveKey(
     val pitchDeg: Float,
     val rollDeg: Float,
@@ -22,6 +22,14 @@ internal data class AaHudDriveKey(
     val rr: String,
     val cubePx: Int,
     val dark: Boolean,
+    val gpsLinked: Boolean = false,
+    val obdLinked: Boolean = false,
+    val tpmsLinked: Boolean = false,
+    val imuLinked: Boolean = false,
+    val speedAlert: Boolean = false,
+    val orientation: HudStripOrientation = HudStripOrientation.ROW,
+    /** Carousel line for ROW footer; null/blank → no footer. */
+    val dtcFooterLine: String? = null,
 ) {
     fun sameForReuse(other: AaHudDriveKey): Boolean =
         attitudeMode == other.attitudeMode &&
@@ -36,6 +44,13 @@ internal data class AaHudDriveKey(
             fl == other.fl && fr == other.fr && rl == other.rl && rr == other.rr &&
             cubePx == other.cubePx &&
             dark == other.dark &&
+            gpsLinked == other.gpsLinked &&
+            obdLinked == other.obdLinked &&
+            tpmsLinked == other.tpmsLinked &&
+            imuLinked == other.imuLinked &&
+            speedAlert == other.speedAlert &&
+            orientation == other.orientation &&
+            dtcFooterLine == other.dtcFooterLine &&
             abs(pitchDeg - other.pitchDeg) <= AaHudComposer.ATTITUDE_EPS_DEG &&
             abs(rollDeg - other.rollDeg) <= AaHudComposer.ATTITUDE_EPS_DEG
 }

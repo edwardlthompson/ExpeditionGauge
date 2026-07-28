@@ -4,11 +4,18 @@ import android.graphics.Bitmap
 import androidx.car.app.model.CarIcon
 import androidx.core.graphics.drawable.IconCompat
 import dev.foss.expeditiongauge.car.AaDisplaySpec
+import dev.foss.expeditiongauge.car.HudStripOrientation
 import java.util.concurrent.ConcurrentHashMap
 
-/** Size-keyed 3×1 Drive HUD bitmaps for PaneTemplate (immutable copies). */
+/** Size+orientation keyed Drive HUD bitmaps (immutable copies). Max one renderer per orientation. */
 object DriveHudCarIcon {
-    private val pool = ConcurrentHashMap<Int, DriveHudBitmapRenderer>()
+    private data class PoolKey(
+        val cubePx: Int,
+        val orientation: HudStripOrientation,
+        val footerPx: Int,
+    )
+
+    private val pool = ConcurrentHashMap<PoolKey, DriveHudBitmapRenderer>()
 
     fun from(
         pitchDeg: Float,
@@ -31,11 +38,19 @@ object DriveHudCarIcon {
         rr: String,
         cubePx: Int,
         darkBackground: Boolean = true,
+        gpsLinked: Boolean = false,
+        obdLinked: Boolean = false,
+        tpmsLinked: Boolean = false,
+        imuLinked: Boolean = false,
+        speedAlert: Boolean = false,
+        orientation: HudStripOrientation = HudStripOrientation.ROW,
+        dtcFooterLine: String? = null,
     ): CarIcon {
         val bmp = renderBitmap(
             pitchDeg, rollDeg, attitudeMode, pitchAlert, rollAlert,
             maxPitchThresholdDeg, maxRollThresholdDeg, yawDeg, latG, lonG,
             speedLabel, headingLabel, altLabel, coordsLabel, fl, fr, rl, rr, cubePx, darkBackground,
+            gpsLinked, obdLinked, tpmsLinked, imuLinked, speedAlert, orientation, dtcFooterLine,
         )
         return CarIcon.Builder(IconCompat.createWithBitmap(bmp)).build()
     }
@@ -61,33 +76,41 @@ object DriveHudCarIcon {
         rr: String,
         cubePx: Int,
         darkBackground: Boolean = true,
+        gpsLinked: Boolean = false,
+        obdLinked: Boolean = false,
+        tpmsLinked: Boolean = false,
+        imuLinked: Boolean = false,
+        speedAlert: Boolean = false,
+        orientation: HudStripOrientation = HudStripOrientation.ROW,
+        dtcFooterLine: String? = null,
     ): Bitmap {
         val clamped = cubePx.coerceIn(AaDisplaySpec.MIN_CUBE_PX, AaDisplaySpec.MAX_SURFACE_CUBE_PX)
-        val rendered = pool.getOrPut(clamped) { DriveHudBitmapRenderer(clamped) }.render(
-            pitchDeg = pitchDeg,
-            rollDeg = rollDeg,
-            attitudeMode = attitudeMode,
-            pitchAlert = pitchAlert,
-            rollAlert = rollAlert,
+        // ROW always reserves the DTC band (empty when no codes); COLUMN never has a footer.
+        val footerPx =
+            if (orientation == HudStripOrientation.ROW) {
+                DriveHudBitmapRenderer.footerPxFor(clamped)
+            } else {
+                0
+            }
+        val key = PoolKey(clamped, orientation, footerPx)
+        pool.keys.filter { it.orientation == orientation && it != key }.forEach { pool.remove(it) }
+        val rendered = pool.getOrPut(key) {
+            DriveHudBitmapRenderer(clamped, orientation, footerPx)
+        }.render(
+            pitchDeg = pitchDeg, rollDeg = rollDeg, attitudeMode = attitudeMode,
+            pitchAlert = pitchAlert, rollAlert = rollAlert,
             maxPitchThresholdDeg = maxPitchThresholdDeg,
             maxRollThresholdDeg = maxRollThresholdDeg,
-            yawDeg = yawDeg,
-            latG = latG,
-            lonG = lonG,
-            speedLabel = speedLabel,
-            headingLabel = headingLabel,
-            altLabel = altLabel,
-            coordsLabel = coordsLabel,
-            fl = fl,
-            fr = fr,
-            rl = rl,
-            rr = rr,
-            darkBackground = darkBackground,
+            yawDeg = yawDeg, latG = latG, lonG = lonG,
+            speedLabel = speedLabel, headingLabel = headingLabel, altLabel = altLabel,
+            coordsLabel = coordsLabel, fl = fl, fr = fr, rl = rl, rr = rr,
+            darkBackground = darkBackground, gpsLinked = gpsLinked, obdLinked = obdLinked,
+            tpmsLinked = tpmsLinked, imuLinked = imuLinked, speedAlert = speedAlert,
+            dtcFooterLine = dtcFooterLine,
         )
         return rendered.copy(Bitmap.Config.ARGB_8888, false)
     }
 
-    /** Legacy overload for inclinometer-only callers. */
     fun renderBitmap(
         pitchDeg: Float,
         rollDeg: Float,
@@ -109,10 +132,9 @@ object DriveHudCarIcon {
         rr: String,
         cubePx: Int,
         darkBackground: Boolean = true,
-    ): Bitmap = renderBitmap(
-        pitchDeg, rollDeg, AaAttitudeMode.fromInclinometerStyle(style),
-        pitchAlert, rollAlert, maxPitchThresholdDeg, maxRollThresholdDeg,
-        yawDeg, latG, lonG, speedLabel, headingLabel, altLabel, coordsLabel,
-        fl, fr, rl, rr, cubePx, darkBackground,
+    ): Bitmap = DriveHudCarIconLegacy.renderBitmap(
+        pitchDeg, rollDeg, style, pitchAlert, rollAlert,
+        maxPitchThresholdDeg, maxRollThresholdDeg, yawDeg, latG, lonG,
+        speedLabel, headingLabel, altLabel, coordsLabel, fl, fr, rl, rr, cubePx, darkBackground,
     )
 }

@@ -50,11 +50,20 @@ class AaDisplaySpecTest {
 
     @Test
     fun surfaceCubePrefersHeightSupersampleAndFloor() {
-        // 400h → 600 preferred (1.5×), within cap
-        assertEquals(600, AaDisplaySpec.surfaceCubePx(800, 400))
+        // ROW reserves ~18% for DTC footer: 400h → edge 338 → 507 preferred (1.5×)
+        assertEquals(507, AaDisplaySpec.surfaceCubePx(800, 400, HudStripOrientation.ROW))
         // Tiny visible area still floors at Pane max (never below 320)
-        assertEquals(AaDisplaySpec.MAX_CUBE_PX, AaDisplaySpec.surfaceCubePx(200, 100))
+        assertEquals(AaDisplaySpec.MAX_CUBE_PX, AaDisplaySpec.surfaceCubePx(200, 100, HudStripOrientation.ROW))
         // Huge HU capped
-        assertEquals(AaDisplaySpec.MAX_SURFACE_CUBE_PX, AaDisplaySpec.surfaceCubePx(3000, 900))
+        assertEquals(AaDisplaySpec.MAX_SURFACE_CUBE_PX, AaDisplaySpec.surfaceCubePx(3000, 900, HudStripOrientation.ROW))
+    }
+
+    @Test
+    fun surfaceCubeColumnPrefersMinWidthOrHalfHeight() {
+        // 480×800 COLUMN → edge=min(480,400)=400 → 600 preferred
+        assertEquals(600, AaDisplaySpec.surfaceCubePx(480, 800, HudStripOrientation.COLUMN))
+        // Empty → default
+        assertEquals(AaDisplaySpec.DEFAULT.cubeSizePx, AaDisplaySpec.surfaceCubePx(0, 0, HudStripOrientation.COLUMN))
     }
 }
+

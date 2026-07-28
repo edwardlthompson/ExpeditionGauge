@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.17.1** (AA telemetry cube readability). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.0** (sensor links, TPMS QR, alert TTS, AA mute, OBD DTC footer). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -32,6 +32,9 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | AA Play Store spoof kit | 2.16.3 | ✅ AA-install-kit.zip on Releases; aa-spoof-adb.sh; README copy-paste |
 | AA Surface Drive HUD | 2.17.0 | ✅ NavTemplate Surface 3×1; DHU preview; Elev./stacked coords/TPMS 2-line |
 | AA telemetry readability | 2.17.1 | ✅ Larger HDG/elev/coords; night contrast; vertical center; 16-pt cardinals |
+| Sensor links / pairing / alert TTS / AA mute | 2.18.0 | ✅ Link row; wizards; Beep|TTS; Mute ActionStrip |
+| TPMS QR wizard | 2.18.0 | ✅ FL→FR→RL→RR scan/manual + DataStore |
+| AA OBD DTC footer | 2.18.0 | ✅ Mode 03 + OBDex CC0 carousel on ROW HUD |
 | Bootstrap alignment | template 0.15.1 | ✅ FOSS Cursor surfaces + multicore validate; see `docs/BOOTSTRAP_ALIGNMENT.md` |
 
 **Template lineage:** `.template-version` **0.15.1** (aligned 2026-07-22). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).

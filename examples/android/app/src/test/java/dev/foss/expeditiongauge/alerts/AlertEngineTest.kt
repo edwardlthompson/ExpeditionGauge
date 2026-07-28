@@ -21,11 +21,32 @@ class AlertEngineTest {
     }
 
     @Test
-    fun cooldownPreventsSpam() {
+    fun cooldownPreventsSpamWithinWindow() {
         val engine = AlertEngine(AlertThresholds(masterEnabled = true, maxLatG = 1f, cooldownMs = 5000L))
         engine.evaluate(TelemetrySnapshot(timestampMs = 1000L, latG = 1.5f))
         val second = engine.evaluate(TelemetrySnapshot(timestampMs = 2000L, latG = 1.5f))
         assertTrue(second.isEmpty())
+    }
+
+    @Test
+    fun levelTriggeredActiveStaysWhileOverLimit() {
+        val engine = AlertEngine(AlertThresholds(masterEnabled = true, maxSpeedMps = 20f, cooldownMs = 1000L))
+        val active1 = engine.evaluateActive(TelemetrySnapshot(timestampMs = 1000L, speedMps = 25f))
+        val active2 = engine.evaluateActive(TelemetrySnapshot(timestampMs = 1500L, speedMps = 25f))
+        assertEquals(1, active1.size)
+        assertEquals(1, active2.size)
+        assertEquals(AlertType.SPEED, active2.first().type)
+    }
+
+    @Test
+    fun feedbackRepeatsAfterOneSecond() {
+        val engine = AlertEngine(AlertThresholds(masterEnabled = true, maxSpeedMps = 20f, cooldownMs = 1000L))
+        val first = engine.evaluate(TelemetrySnapshot(timestampMs = 1000L, speedMps = 25f))
+        val mid = engine.evaluate(TelemetrySnapshot(timestampMs = 1500L, speedMps = 25f))
+        val again = engine.evaluate(TelemetrySnapshot(timestampMs = 2100L, speedMps = 25f))
+        assertEquals(1, first.size)
+        assertTrue(mid.isEmpty())
+        assertEquals(1, again.size)
     }
 
     @Test
@@ -57,14 +78,15 @@ class AlertEngineTest {
     }
 
     @Test
-    fun tirePressureAlert() {
+    fun tirePressureAlertIncludesCorner() {
         val engine = AlertEngine(AlertThresholds(masterEnabled = true, minTirePressureKpa = 200f))
         val tracker = TpmsPressureTracker()
         val tpms = dev.foss.expeditiongauge.telemetry.TpmsSnapshot(
-            frontLeft = dev.foss.expeditiongauge.telemetry.TpmsCornerReading(pressureKpa = 180f),
+            frontRight = dev.foss.expeditiongauge.telemetry.TpmsCornerReading(pressureKpa = 180f),
         )
         val events = engine.evaluateTpms(tpms, 1000L, tracker)
         assertEquals(1, events.size)
         assertEquals(AlertType.TIRE_PRESSURE, events.first().type)
+        assertEquals(TireCornerId.FR, events.first().tireCorner)
     }
 }

@@ -6,6 +6,7 @@ enum class AppScreen {
     About,
     ImuManage,
     TpmsManage,
+    TpmsWizard,
     Sessions,
     SessionEdit,
     TrackSetup,

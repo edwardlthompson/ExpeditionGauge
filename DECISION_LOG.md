@@ -17,6 +17,48 @@
 
 ## Entries
 
+### 2026-07-28 — AA OBD DTC footer (OBDex CC0)
+- **Status:** Accepted
+- **Context:** Drivers want stored DTCs glanceable on the AA ROW Drive HUD after OBD connect; OBDForge has a good catalog but is GPL-3.0-or-later (incompatible with MIT production path).
+- **Decision:** One-shot ELM Mode 03 after each successful connect (before Mode 01 poll); resolve titles from vendored slim **OBDex** CC0 asset (`assets/dtc/obdex_en.json` — same catalog OBDForge uses, not OBDForge sources). ROW HUD paints a bold-red single-line carousel (`n/N` + code + truncated desc, 5 s dwell); COLUMN omits footer; empty/`NO DATA` hides footer; disconnect clears. Regen via `scripts/expedition/fetch-obdex-dtc.py`.
+- **Alternatives considered:** Link/vendor OBDForge (rejected — GPL); continuous Mode 03 poll (rejected — bus spam); Mode 04 clear (out of scope); phone Compose footer (deferred).
+- **Consequences:** ~560 KB asset in APK; AA Surface cube height reserves ~12% for optional footer; carousel invalidate on dwell boundaries.
+
+### 2026-07-27 — AA tall Surface 1×2 (split-friendly)
+- **Status:** Accepted
+- **Context:** OEM split-screen gives a tall/narrow Surface where a 3×1 strip is unusable; users leave EG and lose sensor hold / alert TTS.
+- **Decision:** When visible `H` clearly exceeds `W` (15% enter / leave hysteresis), render Attitude|Telemetry **1×2**, omit TPMS tile and Capture/Record/Level; keep map PAN. Fully empty ActionStrip crashes AA host (“unexpected error”) — tall mode keeps **icon-only Mute** only. Wide path unchanged. `dhu-smoke -Tall` uses `dhu-tall.ini` at **720×1280** (480×800 ignored on Windows DHU 2.0).
+- **Alternatives considered:** Always 1×3 with TPMS (rejected — too tall/cramped); Session hold after Screen destroy (out of scope); MapWithContent side card (ADR-0010 rejected); zero-action strip (rejected — host crash).
+- **Consequences:** Tall mode shows Mute icon only; TPMS alerts still audio while session held; leaving EG still ends sensors.
+
+### 2026-07-26 — TPMS QR pairing wizard
+- **Status:** Accepted (amended 2026-07-27: live-only MAC resolve)
+- **Context:** Valve-stem BLE TPMS modules ship with printed QR codes; users need a guided FL→FR→RL→RR setup that remembers sensors across launches. Moman C4 / DJTPMS QRs encode short binding IDs (last 3 MAC bytes), not full MACs.
+- **Decision:** FOSS CameraX + ZXing decode; accept full MAC **or** 4/6/8-hex sensor IDs; resolve **only** via live advertisement suffix match (eucplanet/omadon). OUI guessing (`AC:15:85` vs `3B:60:00`) removed after wrong bindings. Confirm before persist; `assignCornerExclusive`; ghost sessions; camera-denied → manual ID/MAC.
+- **Alternatives considered:** ML Kit barcode (rejected — Play Services / FOSS); OUI prefix prediction (rejected — user picked wrong of two); deflate-to-identify heuristics (out of scope).
+- **Consequences:** Wizard waits for live ads; device map flipped to `3B:60:00:…` suffixes when user reported `AC:15:85` guesses wrong.
+
+### 2026-07-27 — Alert TTS AudioHardening mute (AA/DHU)
+- **Status:** Accepted
+- **Context:** Extreme pitch/roll fired TTS (`ExpeditionGauge/Alerts`) but no sound; logcat showed `AudioHardening background playback would be muted for com.google.android.tts`.
+- **Decision:** Request `AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK` with nav-guidance attrs before `TextToSpeech.speak` (`AlertAudioFocus` + utterance-scoped abandon); same transient media focus for beeps; default `audible_tones` preference to on.
+- **Alternatives considered:** Rely on USAGE alone without focus (rejected — OEM hardening mutes TTS process); play only on phone speaker stream (rejected — breaks AA path).
+- **Consequences:** DHU/car should duck media and hear “Extreme Pitch/Roll”; verify with `aa-audio-smoke.ps1` + AlertTts log lines.
+
+### 2026-07-27 — OBD speed spike + AA alert audio routing
+- **Status:** Accepted
+- **Context:** After OBD connect, HUD could jump to ~147 (mis-parsed ELM buffer / takeLast byte). Alert beeps used `STREAM_NOTIFICATION`, poor AA/DHU routing.
+- **Decision:** Anchor PID parses on `41xx` headers (`parseVehicleSpeedKmh`); reject OBD speed when GPS is near-rest but OBD claims highway; TTS `USAGE_ASSISTANCE_NAVIGATION_GUIDANCE`; beeps `STREAM_MUSIC`; `aa-audio-smoke.ps1` checklist.
+- **Alternatives considered:** Always prefer GPS (rejected — OBD useful when GPS weak); keep notification stream (rejected — weak AA projection).
+- **Consequences:** Unit tests for polluted `410D` buffers and plausibility gate.
+
+### 2026-07-26 — Sprint 28 sensor links, pairing, alert TTS, AA mute
+- **Status:** Accepted
+- **Context:** Stakeholders needed HUD link icons, real OBD/TPMS connection UX, continuous over-limit Beep|TTS, red/bold readouts, and one-tap AA mute while driving.
+- **Decision:** Ship Sprint 28 as sequential vertical slices: `SensorLinkState` icons; OBD ELM validate + cold-start reconnect + TPMS/IMU map persistence; level-triggered 1 s alert feedback with Beep|TTS + tire phrases; Settings-persisted `alertsMuted` mirrored as AA ActionStrip Mute (first). Mute silences audio only.
+- **Alternatives considered:** In-app Classic `createBond` without system BT settings (kept as helper + system settings CTA for OEM reliability); session-only AA mute (rejected — phone/AA stay in sync).
+- **Consequences:** `watch-agent-gates` green; unit tests for links/alerts/codec green. DHU mute screenshot needs human Start head unit server on OEM (adb cannot launch DeveloperSettingsActivity).
+
 ### 2026-07-22 — Release Please automerge N/A for ExpeditionGauge
 - **Status:** Accepted
 - **Context:** Alignment left `[HUMAN]` R2 open to evaluate upstream `release-please-automerge.yml`. Local `release-please.yml` is gated to `edwardlthompson/agent-project-bootstrap` only; app ships via Gradle `versionName` + `create-release.ps1`.
@@ -44,7 +86,6 @@
 - **Decision:** Primary AA screen is `DriveMapHudScreen` + `NavigationTemplate` + host Surface (`DriveHudSurfacePainter`); 3×1 Attitude|Telemetry|TPMS; left-third tap cycles `AttitudeGaugeMode` (needs `Action.PAN`); PaneTemplate remains fallback; chrome Screenshot/Record/Level with `FLAG_IS_PERSISTENT`.
 - **Alternatives considered:** Pane-only (kept as fallback); Grid thumbs (rejected — too small); custom Compose on AA (impossible).
 - **Consequences:** v2.17.0; DHU verified on OP13; USB HU retest remains M-003; light/dark cube chrome from host `isDarkMode`.
-
 
 ### 2026-07-18 — AA PaneTemplate Drive HUD (large image)
 - **Status:** Accepted

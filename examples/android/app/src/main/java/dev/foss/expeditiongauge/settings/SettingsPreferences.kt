@@ -17,6 +17,7 @@ class SettingsPreferences(private val context: Context) {
     private val trackGauge = TrackGaugePreferences(context)
     private val keys = SettingsPreferencesKeys
     private val store = SettingsPreferencesStore(context, trackGauge)
+    private val hardwareMaps = SettingsHardwareMaps(context)
 
     val speedUnit: Flow<SpeedUnit> = context.settingsDataStore.data.map { keys.speedUnitFrom(it) }
 
@@ -31,6 +32,9 @@ class SettingsPreferences(private val context: Context) {
     val obdPidConfig: Flow<ObdPidConfig> = context.settingsDataStore.data.map { keys.obdPidConfigFrom(it) }
 
     val tpmsEnabled: Flow<Boolean> = context.settingsDataStore.data.map { it[keys.tpmsEnabled] ?: false }
+    val tpmsCornerMap get() = hardwareMaps.tpmsCornerMap
+    val imuPlacementMap get() = hardwareMaps.imuPlacementMap
+    val imuPreferredDevices get() = hardwareMaps.imuPreferredDevices
     val pressureUnit: Flow<PressureUnit> = context.settingsDataStore.data.map { keys.pressureUnitFrom(it) }
     val tempUnit: Flow<TempUnit> = context.settingsDataStore.data.map { keys.tempUnitFrom(it) }
 
@@ -66,11 +70,8 @@ class SettingsPreferences(private val context: Context) {
 
     val androidAutoMetricAllowlist: Flow<Set<String>> = context.settingsDataStore.data.map { prefs ->
         val raw = prefs[keys.androidAutoMetrics]
-        if (raw.isNullOrBlank()) {
-            emptySet()
-        } else {
-            raw.split(',').map { it.trim() }.filter { it.isNotEmpty() }.toSet()
-        }
+        if (raw.isNullOrBlank()) emptySet()
+        else raw.split(',').map { it.trim() }.filter { it.isNotEmpty() }.toSet()
     }
 
     val mediaCompressionQuality: Flow<MediaCompressionQuality> = context.settingsDataStore.data.map { prefs ->
@@ -83,11 +84,7 @@ class SettingsPreferences(private val context: Context) {
     }
 
     val autoRecordDeviceAddresses: Flow<Set<String>> = context.settingsDataStore.data.map { prefs ->
-        prefs[keys.autoRecordDevices]
-            ?.split(',')
-            ?.map { it.trim() }
-            ?.filter { it.isNotEmpty() }
-            ?.toSet()
+        prefs[keys.autoRecordDevices]?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }?.toSet()
             ?: emptySet()
     }
 
@@ -107,12 +104,18 @@ class SettingsPreferences(private val context: Context) {
     suspend fun setSpeedUnit(unit: SpeedUnit) = store.setSpeedUnit(unit)
     suspend fun setLogIntervalMs(ms: Long) = store.setLogIntervalMs(ms)
     suspend fun setObdDeviceAddress(address: String?) = store.setObdDeviceAddress(address)
+    suspend fun forgetObdDevice() = store.forgetObdDevice()
     suspend fun setExternalGpsAddress(address: String?) = store.setExternalGpsAddress(address)
     suspend fun setExternalGpsEnabled(enabled: Boolean) = store.setExternalGpsEnabled(enabled)
     suspend fun forgetExternalGpsDevice() = store.forgetExternalGpsDevice()
-    suspend fun setTpmsEnabled(enabled: Boolean) = store.setTpmsEnabled(enabled)
-    suspend fun setPressureUnit(unit: PressureUnit) = store.setPressureUnit(unit)
-    suspend fun setTempUnit(unit: TempUnit) = store.setTempUnit(unit)
+    suspend fun setTpmsEnabled(enabled: Boolean) = hardwareMaps.setTpmsEnabled(enabled)
+    suspend fun setTpmsCornerMap(map: Map<String, dev.foss.expeditiongauge.ble.ImuPlacement>) =
+        hardwareMaps.setTpmsCornerMap(map)
+    suspend fun setImuPlacementMap(map: Map<String, dev.foss.expeditiongauge.ble.ImuPlacement>) =
+        hardwareMaps.setImuPlacementMap(map)
+    suspend fun setImuPreferredDevices(addresses: Set<String>) = hardwareMaps.setImuPreferredDevices(addresses)
+    suspend fun setPressureUnit(unit: PressureUnit) = hardwareMaps.setPressureUnit(unit)
+    suspend fun setTempUnit(unit: TempUnit) = hardwareMaps.setTempUnit(unit)
     suspend fun setObdPidConfig(config: ObdPidConfig) = store.setObdPidConfig(config)
     suspend fun setLapTimingEnabled(enabled: Boolean) = store.setLapTimingEnabled(enabled)
     suspend fun setTrackStartFinishGeoJson(geoJson: String?) = store.setTrackStartFinishGeoJson(geoJson)

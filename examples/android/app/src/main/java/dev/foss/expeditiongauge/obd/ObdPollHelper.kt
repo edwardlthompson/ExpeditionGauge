@@ -18,19 +18,19 @@ internal object ObdPollHelper {
             previous.rpm
         }
         val speed = if (config.speed) {
-            Elm327Protocol.queryPid(reader, writer, "010D")?.let { Elm327Protocol.parseSingleByte(it) }
+            Elm327Protocol.queryPid(reader, writer, "010D")?.let { Elm327Protocol.parseVehicleSpeedKmh(it) }
         } else {
             previous.speedKmh
         }
         val throttle = if (config.throttle) {
             Elm327Protocol.queryPid(reader, writer, "0111")
-                ?.let { Elm327Protocol.parseSingleByte(it) * 100f / 255f }
+                ?.let { raw -> Elm327Protocol.parsePidDataByte(raw, "4111")?.times(100f / 255f) }
         } else {
             previous.throttlePct
         }
         val load = if (config.load) {
             Elm327Protocol.queryPid(reader, writer, "0104")
-                ?.let { Elm327Protocol.parseSingleByte(it) * 100f / 255f }
+                ?.let { raw -> Elm327Protocol.parsePidDataByte(raw, "4104")?.times(100f / 255f) }
         } else {
             previous.engineLoadPct
         }
@@ -62,10 +62,10 @@ internal object ObdPollHelper {
         writer: OutputStreamWriter,
     ): Pair<Float?, Float?> {
         val left = Elm327Protocol.queryPid(reader, writer, "015A")
-            ?.let { Elm327Protocol.parseSingleByte(it) }
+            ?.let { Elm327Protocol.parsePidDataByte(it, "415A") }
             ?.takeIf { it > 0f }
         val right = Elm327Protocol.queryPid(reader, writer, "015B")
-            ?.let { Elm327Protocol.parseSingleByte(it) }
+            ?.let { Elm327Protocol.parsePidDataByte(it, "415B") }
             ?.takeIf { it > 0f }
         if (left != null || right != null) {
             return left to right

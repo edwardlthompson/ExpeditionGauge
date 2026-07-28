@@ -1,6 +1,11 @@
 # Android Auto setup (ExpeditionGauge)
 
-ExpeditionGauge shows a **full-bleed Surface Drive HUD** on Android Auto: a native **3×1** Attitude | Telemetry | TPMS strip painted on the host Surface (`NavigationTemplate`, no side content panel). Top: **Screenshot**, **Record/Stop**, parked-only **Level** (host may show icons only on narrow screens). Tap the **left** attitude cube to cycle inclinometer styles → G-meter → 3D compass. There is **no in-app toggle** — the car UI connects automatically when your phone is linked to a compatible head unit. There is **no real map** — the Surface is a free canvas for gauges (PAN is present only so Surface taps work).
+ExpeditionGauge shows a **full-bleed Surface Drive HUD** on Android Auto (`NavigationTemplate`, no side content panel):
+
+- **Wide** surface: native **3×1** Attitude | Telemetry | TPMS. Top: **Mute**, **Capture**, **Record/Stop**, parked-only **Level**. Tap the **left** attitude cube to cycle inclinometer styles → G-meter → 3D compass. A **permanent bottom DTC band** sits under the cubes (always reserved). When OBD Mode 03 (or debug sim) has codes, bold-red single-line text carousels each code (`n/N` + description, 5 s), **scaled to fit the row width** (shrink/expand; ellipsis only if still too long at minimum size), vertically centered in the band. Empty = blank band. Attitude taps ignore the footer.
+- **Tall / split** surface (`H` clearly greater than `W`): native **1×2** Attitude | Telemetry only (TPMS tile omitted). **No** DTC footer. **No** Capture/Record/Level — host requires at least one ActionStrip action, so **Mute** stays as an icon-only control. Tap the **top** cube to cycle attitude modes. Map **PAN** remains so Surface taps work. Tire pressure **alerts/TTS still run** while the AA session holds sensors; only the TPMS cube is hidden.
+
+The OEM chooses split-screen; EG cannot force a side pane. Leaving ExpeditionGauge on the head unit still ends the car Screen and sensor hold. There is **no in-app toggle** — the car UI connects automatically when your phone is linked. There is **no real map** — the Surface is a free canvas for gauges.
 
 > **Platform note:** Projected AA blocks custom Compose views. Pane `setImage` is square-only (letterbox/crop). The Surface path needs Car API **7+**, `NAVIGATION_TEMPLATES`, `MAP_TEMPLATES`, and `ACCESS_SURFACE` (POI discovery category kept). See [`AA_INCLINOMETER.md`](../design/AA_INCLINOMETER.md) and [ADR-0010](../adr/0010-android-auto.md).
 
@@ -14,12 +19,17 @@ Android Auto does **not** support long-press on Surface content. **Level** is th
 |--------|---------|
 | `aa-start-head-unit-server.ps1` | Starts `DeveloperHeadUnitNetworkService` so port **5277** listens again after AA force-stop |
 | `aa-refresh-host.ps1` | Play-spoof install + force-stop AA + **auto-restart** head unit server |
-| `dhu-smoke.ps1` | Server + forward + DHU + open ExpeditionGauge + capture `.cursor/screenshots/dhu-live.png` |
+| `dhu-start-controlled.ps1` | Start DHU with named-pipe → stdin bridge (enables scripted `tap`, no mouse) |
+| `dhu-console.ps1 -Command "tap x y"` | Send DHU console commands (Google’s stdin protocol) |
+| `dhu-open-expeditiongauge.ps1` | Open EG via console `tap` when controlled; mouse fallback otherwise |
+| `dhu-smoke.ps1` | Server + forward + **controlled** DHU + open ExpeditionGauge + capture `.cursor/screenshots/dhu-live.png` |
+| `dhu-smoke.ps1 -Tall` | Same with `examples/android/car/config/dhu-tall.ini` (**720×1280**; Windows DHU ignores 480×800); capture `dhu-vertical-2cube.png`; restores prior `headunit.ini` |
 | `capture-dhu-window.ps1` | Screenshot the DHU window only |
 
 ```powershell
 pwsh scripts/expedition/aa-refresh-host.ps1 -Apk path\to\app-debug.apk
 pwsh scripts/expedition/dhu-smoke.ps1 -RestartDhu
+
 ```
 
 ## Requirements
@@ -95,8 +105,8 @@ pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGaug
 
 1. Connect the phone to the car (**USB preferred** for first successful discover; wireless after that).
 2. On the head unit, open **Apps** → **ExpeditionGauge**.
-3. You should see a **wide 3×1 Drive HUD** (Attitude + Telemetry + TPMS) on the Surface. Top: **Screenshot**, **Record / Stop**, **Level** (parked-only). Tap the left cube to cycle attitude modes.
-4. Open ExpeditionGauge on the phone at least once so permissions are granted. While AA is connected, sensors stay live even if the phone screen turns off (sensor hold). **Keep screen awake** still helps if you want the phone HUD visible.
+3. You should see a **wide 3×1 Drive HUD** (Attitude + Telemetry + TPMS) on a landscape Surface, or a **tall 1×2** (Attitude + Telemetry) when the host gives a tall/narrow rect (OEM split). Wide chrome: **Mute/Unmute**, **Capture**, **Record / Stop**, **Level** (parked-only). Tall mode has no app ActionStrip — mute on the phone.
+4. Open ExpeditionGauge on the phone at least once so permissions are granted. While AA is connected **and EG is still the open car Screen**, sensors stay live even if the phone screen turns off (sensor hold). Leaving EG on the HU ends that hold. **Keep screen awake** still helps if you want the phone HUD visible.
 
 ## Level (set level)
 
@@ -104,7 +114,16 @@ pwsh scripts/expedition/aa-refresh-host.ps1 -Serial b5214fc6 -Apk ExpeditionGaug
 
 ## Angle alerts
 
-Configure **Settings → Alerts → Max pitch (°)** / **Max roll (°)** on the phone. When exceeded, the attitude tile shows a **red frame** on the head unit. Alert tones play on the phone (may route to car audio depending on head unit).
+Configure **Settings → Alerts → Max pitch (°)** / **Max roll (°)** on the phone. When exceeded, the attitude tile shows a **red frame** on the head unit and over-limit numbers turn **red + bold**. Alert TTS uses `USAGE_ASSISTANCE_NAVIGATION_GUIDANCE` **plus transient audio focus** (required so OEM AudioHardening does not mute `com.google.android.tts`); beeps use the music stream with the same focus pattern so DHU/car audio can duck media. Also leave **Settings → Audible alert tones** on and AA **Mute** off. Checklist: `pwsh scripts/expedition/aa-audio-smoke.ps1`.
+
+## DHU mute smoke
+
+```powershell
+pwsh scripts/expedition/dhu-smoke.ps1 -Serial <adb-serial> -RestartDhu
+# Confirm Mute is leftmost in the ActionStrip; toggle and verify Settings → Mute alert audio flips.
+# Optional: copy capture to .cursor/screenshots/dhu-mute.png
+
+```
 
 ## Refresh rate
 

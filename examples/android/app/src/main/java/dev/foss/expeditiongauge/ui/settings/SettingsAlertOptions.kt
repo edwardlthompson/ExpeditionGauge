@@ -2,8 +2,11 @@ package dev.foss.expeditiongauge.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,16 +16,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SettingsAlertOptions(
     thresholds: AlertThresholds,
     onThresholdsChange: (AlertThresholds) -> Unit,
     speedUnit: dev.foss.expeditiongauge.settings.SpeedUnit = dev.foss.expeditiongauge.settings.SpeedUnit.METRIC,
     pressureUnit: dev.foss.expeditiongauge.settings.PressureUnit = dev.foss.expeditiongauge.settings.PressureUnit.PSI,
+    alertAudioMode: AlertAudioMode = AlertAudioMode.BEEP,
+    onAlertAudioModeChange: (AlertAudioMode) -> Unit = {},
+    alertsMuted: Boolean = false,
+    onAlertsMutedChange: (Boolean) -> Unit = {},
 ) {
     if (!FeatureFlags.alertsEnabled) return
     Column(verticalArrangement = Arrangement.spacedBy(SpacingMd)) {
@@ -32,6 +41,27 @@ fun SettingsAlertOptions(
             checked = thresholds.masterEnabled,
             onCheckedChange = { onThresholdsChange(thresholds.copy(masterEnabled = it)) },
             modifier = Modifier.testTag("settings_alerts_master"),
+        )
+        Text(text = stringResource(R.string.alerts_audio_mode_label))
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
+            FilterChip(
+                selected = alertAudioMode == AlertAudioMode.BEEP,
+                onClick = { onAlertAudioModeChange(AlertAudioMode.BEEP) },
+                label = { Text(stringResource(R.string.alerts_audio_mode_beep)) },
+                modifier = Modifier.testTag("settings_alert_audio_beep"),
+            )
+            FilterChip(
+                selected = alertAudioMode == AlertAudioMode.TTS,
+                onClick = { onAlertAudioModeChange(AlertAudioMode.TTS) },
+                label = { Text(stringResource(R.string.alerts_audio_mode_tts)) },
+                modifier = Modifier.testTag("settings_alert_audio_tts"),
+            )
+        }
+        SettingsSwitchRow(
+            label = stringResource(R.string.alerts_mute_toggle),
+            checked = alertsMuted,
+            onCheckedChange = onAlertsMutedChange,
+            modifier = Modifier.testTag("settings_alerts_muted"),
         )
         AlertField(R.string.alerts_max_lat_g, thresholds.maxLatG, "settings_alerts_lat_g") {
             onThresholdsChange(thresholds.copy(maxLatG = it))

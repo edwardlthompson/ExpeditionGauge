@@ -27,6 +27,10 @@ internal class SettingsPreferencesStore(
         }
     }
 
+    suspend fun forgetObdDevice() {
+        context.settingsDataStore.edit { it.remove(keys.obdDevice) }
+    }
+
     suspend fun setExternalGpsAddress(address: String?) {
         context.settingsDataStore.edit {
             if (address == null) it.remove(keys.externalGpsDevice) else it[keys.externalGpsDevice] = address
@@ -41,22 +45,6 @@ internal class SettingsPreferencesStore(
         context.settingsDataStore.edit {
             it.remove(keys.externalGpsDevice)
             it[keys.externalGpsEnabled] = false
-        }
-    }
-
-    suspend fun setTpmsEnabled(enabled: Boolean) {
-        context.settingsDataStore.edit { it[keys.tpmsEnabled] = enabled }
-    }
-
-    suspend fun setPressureUnit(unit: PressureUnit) {
-        context.settingsDataStore.edit {
-            it[keys.pressureUnit] = if (unit == PressureUnit.PSI) "psi" else "kpa"
-        }
-    }
-
-    suspend fun setTempUnit(unit: TempUnit) {
-        context.settingsDataStore.edit {
-            it[keys.tempUnit] = if (unit == TempUnit.FAHRENHEIT) "fahrenheit" else "celsius"
         }
     }
 

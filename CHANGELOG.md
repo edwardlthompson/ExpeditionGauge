@@ -8,15 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.0] — Sensor links, TPMS QR, alert TTS, AA mute + OBD DTC footer (2026-07-28)
+
 ### Added
 
-* Bootstrap alignment to agent-project-bootstrap **0.15.1**: `local-compute` rule, 7 Cursor skills, worktrees/permissions, FOSS plugin pack, `docs/CURSOR_CLI.md`, multicore `validate-bootstrap` (`run_checks_parallel.py`)
+* Telemetry cube connection icons (GPS / OBD / TPMS / IMU) on phone + AA parity
+* Device pairing wizards: OBD discover/bond/validate/reconnect; TPMS corner persist; GPS/IMU polish
+* Alert audio **Beep|TTS** with 1 s level-triggered repeat, tire phrases, red/bold over-limit on phone/AA
+* Android Auto **Mute/Unmute** (Settings-persisted) first in ActionStrip
+* TPMS **QR setup wizard** (FL→FR→RL→RR scan/manual, exclusive corners, ghost sessions, DataStore remember)
+* AA ROW Drive HUD **OBD DTC footer**: one-shot Mode 03 on connect; vendored OBDex CC0 catalog; 5 s carousel; permanent band; COLUMN omits footer
+* Debug DTC inject for DHU preview (`dhu-sim-dtc.ps1` / `SimDtcReceiver`); OBDex fetch scripts
+* Bootstrap alignment to agent-project-bootstrap **0.15.1** (skills, worktrees, local-compute, multicore gates)
 * `docs/BOOTSTRAP_ALIGNMENT.md` gap/risk log for template upgrades
 
 ### Changed
 
-* Agent docs (`AGENTS.md`, START_HERE, CURSOR_INTEGRATIONS, UPGRADING) for 0.15 surfaces; README agent section
-* Release Please automerge closed **N/A** for this child (RP template-repo-only; ship via Gradle + `create-release.ps1`)
+* Agent docs for 0.15 Cursor surfaces; Release Please automerge **N/A** (ship via Gradle + `create-release.ps1`)
+* AA display spec reserves ~18% ROW height for permanent DTC footer band
+
+### Fixed
+
+* File splits under 150-line logic limit for AA bridge / Drive HUD / alerts / TPMS wizard modules
 
 ## [2.17.1] — AA telemetry cube readability (2026-07-21)
 

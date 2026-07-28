@@ -69,8 +69,9 @@ class TelemetryOrchestrator(
                 slipRatio = slip.slipRatio,
                 rearSlipRatio = slip.rearSlipRatio,
                 slipSource = slip.source,
-                speedFromObd = obd.connected && obd.speedKmh != null,
-                speedMps = if (obd.speedKmh != null) obd.speedKmh / 3.6f else current.speedMps,
+                speedFromObd = obd.connected && obd.speedKmh != null &&
+                    ObdSpeedPlausibility.isPlausible(obd.speedKmh, gpsSpeed),
+                speedMps = ObdSpeedPlausibility.resolveMps(obd.speedKmh, gpsSpeed, current.speedMps),
             ),
         )
         ObdTelemetryLog.publish(

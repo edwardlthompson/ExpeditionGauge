@@ -6,9 +6,9 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.Typeface
 
-/** Cube chrome + telemetry/TPMS paint helpers for [DriveHudBitmapRenderer]. */
+/** Cube chrome + TPMS paint helpers for [DriveHudBitmapRenderer]. */
 internal class DriveHudCubeDraw(
-    private val canvas: Canvas,
+    internal val canvas: Canvas,
     private val cubePx: Int,
 ) {
     fun drawCubeChrome(x: Int, y: Int, size: Int, theme: DriveHudTheme) {
@@ -40,41 +40,6 @@ internal class DriveHudCubeDraw(
     fun attitudeInnerPx(size: Int): Int {
         val inset = (size * 0.06f).toInt().coerceAtLeast(2)
         return (size - inset * 2).coerceAtLeast(32)
-    }
-
-    fun drawTelemetryCube(
-        x: Int, y: Int, size: Int, theme: DriveHudTheme,
-        speed: String, heading: String, alt: String, coords: String,
-    ) {
-        drawCubeChrome(x, y, size, theme)
-        val coordLines = coords.lines().filter { it.isNotBlank() }.take(2)
-        val hasCoords = coordLines.isNotEmpty()
-        val primary = paint(theme.primaryText, size * 0.14f, bold = true)
-        val secondary = paint(theme.secondaryText, size * (if (hasCoords) 0.135f else 0.145f), bold = true)
-        val tertiary = paint(theme.secondaryText, size * 0.115f, bold = true)
-        fit(primary, speed, size * 0.88f)
-        fit(secondary, heading, size * 0.96f)
-        fit(secondary, alt, size * 0.96f)
-        coordLines.forEach { fit(tertiary, it, size * 0.96f) }
-
-        val lines = buildList {
-            add(primary to speed)
-            add(secondary to heading)
-            add(secondary to alt)
-            coordLines.forEach { add(tertiary to it) }
-        }
-        val gap = size * 0.035f
-        val heights = lines.map { (p, _) -> p.descent() - p.ascent() }
-        val blockH = heights.sum() + gap * (lines.size - 1).coerceAtLeast(0)
-        val inset = size * 0.06f
-        val available = (size - inset * 2).coerceAtLeast(1f)
-        val top = y + inset + ((available - blockH) / 2f).coerceAtLeast(0f)
-        val cx = x + size / 2f
-        var cursor = top
-        lines.forEachIndexed { i, (p, text) ->
-            canvas.drawText(text, cx, cursor - p.ascent(), p)
-            cursor += heights[i] + gap
-        }
     }
 
     fun drawTpmsCube(
@@ -122,7 +87,7 @@ internal class DriveHudCubeDraw(
         corner(ox + cellW + gap, oy + cellH + gap, "RR", rr)
     }
 
-    private fun paint(color: Int, textSize: Float, bold: Boolean): Paint =
+    internal fun paint(color: Int, textSize: Float, bold: Boolean): Paint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
             this.textSize = textSize
@@ -131,7 +96,7 @@ internal class DriveHudCubeDraw(
             isFakeBoldText = bold
         }
 
-    private fun fit(paint: Paint, text: String, maxWidth: Float) {
+    internal fun fit(paint: Paint, text: String, maxWidth: Float) {
         var size = paint.textSize
         while (size > cubePx * 0.04f && paint.measureText(text) > maxWidth) {
             size *= 0.92f

@@ -1,7 +1,6 @@
 package dev.foss.expeditiongauge.ble.tpms
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanSettings
@@ -10,13 +9,8 @@ import android.os.ParcelUuid
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.ble.BleScanCoordinator
 import dev.foss.expeditiongauge.ble.ImuPlacement
-import dev.foss.expeditiongauge.telemetry.TpmsCornerReading
-import dev.foss.expeditiongauge.telemetry.TpmsSnapshot
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 
 @SuppressLint("MissingPermission")
 class BleTpmsManager(
@@ -25,14 +19,10 @@ class BleTpmsManager(
     private val parsers: List<TpmsParser> = listOf(BrTpmsParser(), PechamTpmsParser()),
 ) {
     private val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
-    private val sessions = ConcurrentHashMap<String, TpmsDeviceSession>()
-    private val cornerAssignments = ConcurrentHashMap<String, ImuPlacement>()
+    private val registry = BleTpmsSessionRegistry()
 
-    private val _snapshot = MutableStateFlow(TpmsSnapshot())
-    val snapshot: StateFlow<TpmsSnapshot> = _snapshot.asStateFlow()
-
-    private val _sessionsFlow = MutableStateFlow<List<TpmsDeviceSession>>(emptyList())
-    val sessionsFlow: StateFlow<List<TpmsDeviceSession>> = _sessionsFlow.asStateFlow()
+    val snapshot: StateFlow<dev.foss.expeditiongauge.telemetry.TpmsSnapshot> = registry.snapshot
+    val sessionsFlow: StateFlow<List<TpmsDeviceSession>> = registry.sessionsFlow
 
     private var scanning = false
 
@@ -40,28 +30,27 @@ class BleTpmsManager(
         scanCoordinator.addTpmsListener { result ->
             if (!FeatureFlags.tpmsEnabled) return@addTpmsListener
             val device = result.device
-            val mac = device.address
+            val mac = device.address.uppercase()
             val record = result.scanRecord ?: return@addTpmsListener
             val mfg = record.manufacturerSpecificData?.let { sparse ->
                 if (sparse.size() == 0) null else sparse.valueAt(0)
             } ?: return@addTpmsListener
             val parser = parsers.firstOrNull { it.canParse(device.name, mfg) } ?: return@addTpmsListener
             val reading = parser.parse(device.name, mfg) ?: return@addTpmsListener
-            val corner = cornerAssignments[mac] ?: sessions[mac]?.corner ?: ImuPlacement.Unassigned
-            val session = TpmsDeviceSession(mac, corner, reading.copy(macAddress = mac), parser.parserId, result.rssi)
-            sessions[mac] = session
-            refreshSessions()
-            publishSnapshot()
+            val corner = registry.cornerFor(mac)
+            registry.putLiveSession(
+                TpmsDeviceSession(mac, corner, reading.copy(macAddress = mac), parser.parserId, result.rssi),
+            )
         }
     }
+
+    fun isBluetoothEnabled(): Boolean = adapter?.isEnabled == true
 
     fun startScan() {
         if (!FeatureFlags.tpmsEnabled || scanning) return
         val scanner = adapter?.bluetoothLeScanner ?: return
         val filters = listOf(
-            ScanFilter.Builder()
-                .setServiceUuid(ParcelUuid(TPMS_SERVICE))
-                .build(),
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(TPMS_SERVICE)).build(),
         )
         scanner.startScan(filters, ScanSettings.Builder().build(), scanCoordinator.callback)
         scanning = true
@@ -73,42 +62,27 @@ class BleTpmsManager(
         scanning = false
     }
 
-    fun assignCorner(macAddress: String, corner: ImuPlacement) {
-        cornerAssignments[macAddress] = corner
-        sessions[macAddress]?.let { sessions[macAddress] = it.copy(corner = corner) }
-        refreshSessions()
-        publishSnapshot()
-    }
+    fun restoreAssignments(map: Map<String, ImuPlacement>) = registry.restoreAssignments(map)
 
-    fun knownSessions(): List<TpmsDeviceSession> = sessions.values.toList()
+    fun assignmentsSnapshot(): Map<String, ImuPlacement> = registry.assignmentsSnapshot()
 
-    private fun refreshSessions() {
-        _sessionsFlow.value = sessions.values.sortedBy { it.macAddress }
-    }
+    var onAssignmentsChanged: ((Map<String, ImuPlacement>) -> Unit)?
+        get() = registry.onAssignmentsChanged
+        set(value) { registry.onAssignmentsChanged = value }
 
-    private fun publishSnapshot() {
-        var snap = TpmsSnapshot()
-        sessions.values.forEach { session ->
-            val reading = session.lastReading ?: return@forEach
-            if (session.corner == ImuPlacement.Unassigned) return@forEach
-            val corner = TpmsCornerReading(
-                pressureKpa = reading.pressureKpa,
-                tempC = reading.tempC,
-                batteryPct = (reading.batteryVolts / 3.0f * 100f).toInt().coerceIn(0, 100),
-                lastSeenMs = reading.timestampMs,
-            )
-            snap = snap.withCorner(session.corner, corner)
-            TpmsTelemetryLog.publish(
-                corner = session.corner.label,
-                pressureKpa = reading.pressureKpa,
-                tempC = reading.tempC,
-                parserId = session.parserId,
-            )
-        }
-        _snapshot.value = snap
-    }
+    fun assignCorner(macAddress: String, corner: ImuPlacement) =
+        assignCornerExclusive(macAddress, corner)
+
+    fun assignCornerExclusive(macAddress: String, corner: ImuPlacement) =
+        registry.assignCornerExclusive(macAddress, corner)
+
+    fun ensureAssignedSession(macAddress: String, corner: ImuPlacement) =
+        registry.ensureAssignedSession(macAddress, corner)
+
+    fun knownSessions(): List<TpmsDeviceSession> = registry.knownSessions()
 
     companion object {
         val TPMS_SERVICE: UUID = UUID.fromString("000027a5-0000-1000-8000-00805f9b34fb")
+        const val PENDING_PARSER_ID = "pending"
     }
 }

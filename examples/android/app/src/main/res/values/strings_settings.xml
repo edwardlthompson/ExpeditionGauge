@@ -41,6 +41,15 @@
     <string name="settings_log_rate_label">Logging rate</string>
     <string name="settings_log_rate_hz">%1$d Hz</string>
     <string name="settings_obd_label">OBD device</string>
+    <string name="settings_obd_pair_hint">Pair the ELM327 adapter in system Bluetooth, then select it here. ExpeditionGauge validates the adapter with an ELM handshake before using it.</string>
+    <string name="settings_obd_pair_new">Open Bluetooth settings to pair</string>
+    <string name="settings_obd_retry">Retry OBD connect</string>
+    <string name="settings_obd_forget">Forget OBD device</string>
+    <string name="settings_obd_status_idle">OBD: not selected</string>
+    <string name="settings_obd_status_connecting">OBD: connecting…</string>
+    <string name="settings_obd_status_connected">OBD: connected</string>
+    <string name="settings_obd_status_failed">OBD: connection failed — retry or re-pair</string>
+    <string name="tpms_link_hint">Use Setup wizard to scan each sensor QR (Moman/DJTPMS short ID or full MAC) for FL→FR→RL→RR. Assignments are remembered. Advanced: scan ads and tap corner chips.</string>
     <string name="settings_external_gps_label">External GPS</string>
     <string name="settings_external_gps_enable">Enable external Bluetooth GPS</string>
     <string name="settings_external_gps_forget">Forget external GPS device</string>

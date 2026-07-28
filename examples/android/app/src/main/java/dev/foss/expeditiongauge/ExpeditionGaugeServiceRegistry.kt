@@ -53,6 +53,7 @@ internal fun ExpeditionGaugeServices.bindLifecycleFlows(
             }
         }
     }
+    bindSensorPreferenceFlows(scope)
     scope.launch {
         combine(recordingWriter.recording, settingsPreferences.tpmsEnabled) { recording, tpms ->
             recording to tpms
@@ -76,18 +77,37 @@ internal fun ExpeditionGaugeServices.bindLifecycleFlows(
     }
     scope.launch {
         combine(
-            telemetryBus.snapshots,
-            recordingWriter.recording,
-            recordingWriter.activeSessionId,
-            accessibilityPreferences.audibleTonesEnabled,
-        ) { snapshot, recording, sessionId, audible ->
-            AlertProcessInput(snapshot, recording, sessionId, audible)
+            combine(
+                telemetryBus.snapshots,
+                recordingWriter.recording,
+                recordingWriter.activeSessionId,
+            ) { snapshot, recording, sessionId ->
+                Triple(snapshot, recording, sessionId)
+            },
+            combine(
+                accessibilityPreferences.audibleTonesEnabled,
+                accessibilityPreferences.alertAudioMode,
+                accessibilityPreferences.alertsMuted,
+            ) { audible, mode, muted ->
+                Triple(audible, mode, muted)
+            },
+        ) { session, audio ->
+            AlertProcessInput(
+                snapshot = session.first,
+                recording = session.second,
+                sessionId = session.third,
+                audible = audio.first,
+                audioMode = audio.second,
+                muted = audio.third,
+            )
         }.collect { input ->
             alertService.process(
                 snapshot = input.snapshot,
                 sessionId = input.sessionId,
                 recording = input.recording,
                 audibleEnabled = input.audible,
+                audioMode = input.audioMode,
+                muted = input.muted,
             )
         }
     }
@@ -98,41 +118,6 @@ private data class AlertProcessInput(
     val recording: Boolean,
     val sessionId: Long?,
     val audible: Boolean,
+    val audioMode: dev.foss.expeditiongauge.alerts.AlertAudioMode,
+    val muted: Boolean,
 )
-
-private fun ExpeditionGaugeServices.startSensorsInternal() {
-    phoneSensorProvider.start()
-    fusedGpsProvider.startPhone()
-    bleImuManager.startScan()
-    if (FeatureFlags.tpmsEnabled) bleTpmsManager.startScan()
-}
-
-private fun ExpeditionGaugeServices.stopSensorsInternal() {
-    phoneSensorProvider.stop()
-    fusedGpsProvider.stopPhone()
-    bleImuManager.stopScan()
-    bleTpmsManager.stopScan()
-}
-
-private val sensorHolds = java.util.concurrent.ConcurrentHashMap<ExpeditionGaugeServices, SensorHold>()
-
-private fun ExpeditionGaugeServices.sensorHold(): SensorHold =
-    sensorHolds.getOrPut(this) {
-        SensorHold(
-            onStart = { startSensorsInternal() },
-            onStop = { stopSensorsInternal() },
-        )
-    }
-
-fun ExpeditionGaugeServices.acquireSensors() {
-    sensorHold().acquire()
-}
-
-fun ExpeditionGaugeServices.releaseSensors() {
-    sensorHold().release()
-}
-
-/** Restart providers while a hold is active (e.g. after permission grant). */
-fun ExpeditionGaugeServices.refreshSensorsIfHeld() {
-    if (sensorHold().holdCount() > 0) startSensorsInternal()
-}

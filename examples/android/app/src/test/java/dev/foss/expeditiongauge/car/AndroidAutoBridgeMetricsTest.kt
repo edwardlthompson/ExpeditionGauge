@@ -58,6 +58,7 @@ class AndroidAutoBridgeMetricsTest {
         override fun driveHudBitmap(
             displaySpec: AaDisplaySpec,
             cubePxOverride: Int?,
+            orientation: HudStripOrientation,
         ): android.graphics.Bitmap? = null
 
         override fun metricValues(): Map<String, String> = emptyMap()
@@ -81,6 +82,15 @@ class AndroidAutoBridgeMetricsTest {
         override fun cycleAttitudeDisplay(): Boolean = true
 
         override fun captureAaScreenshot(): Boolean = true
+
+        private var muted = false
+
+        override fun isAlertsMuted(): Boolean = muted
+
+        override fun setAlertsMuted(muted: Boolean): Boolean {
+            this.muted = muted
+            return true
+        }
 
         override fun setInvalidationListener(listener: (() -> Unit)?) = Unit
 

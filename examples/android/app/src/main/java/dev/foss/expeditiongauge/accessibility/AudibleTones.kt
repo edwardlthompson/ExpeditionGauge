@@ -7,7 +7,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -19,6 +21,8 @@ private val HIGH_CONTRAST_KEY = booleanPreferencesKey("high_contrast")
 private val AUDIBLE_TONES_KEY = booleanPreferencesKey("audible_tones")
 private val LARGE_TEXT_KEY = booleanPreferencesKey("large_text")
 private val TTS_READOUT_KEY = booleanPreferencesKey("tts_readout")
+private val ALERT_AUDIO_MODE_KEY = stringPreferencesKey("alert_audio_mode")
+private val ALERTS_MUTED_KEY = booleanPreferencesKey("alerts_muted")
 
 class AccessibilityPreferences(private val context: Context) {
     val highContrastEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
@@ -26,7 +30,8 @@ class AccessibilityPreferences(private val context: Context) {
     }
 
     val audibleTonesEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
-        prefs[AUDIBLE_TONES_KEY] ?: false
+        // Default on so Beep/TTS alerts are not silent until the accessibility toggle is found.
+        prefs[AUDIBLE_TONES_KEY] ?: true
     }
 
     val largeTextEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
@@ -35,6 +40,14 @@ class AccessibilityPreferences(private val context: Context) {
 
     val ttsReadoutEnabled: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
         prefs[TTS_READOUT_KEY] ?: false
+    }
+
+    val alertAudioMode: Flow<AlertAudioMode> = context.accessibilityDataStore.data.map { prefs ->
+        AlertAudioMode.fromPref(prefs[ALERT_AUDIO_MODE_KEY])
+    }
+
+    val alertsMuted: Flow<Boolean> = context.accessibilityDataStore.data.map { prefs ->
+        prefs[ALERTS_MUTED_KEY] ?: false
     }
 
     suspend fun setHighContrastEnabled(enabled: Boolean) {
@@ -60,6 +73,18 @@ class AccessibilityPreferences(private val context: Context) {
             prefs[TTS_READOUT_KEY] = enabled
         }
     }
+
+    suspend fun setAlertAudioMode(mode: AlertAudioMode) {
+        context.accessibilityDataStore.edit { prefs ->
+            prefs[ALERT_AUDIO_MODE_KEY] = mode.name
+        }
+    }
+
+    suspend fun setAlertsMuted(muted: Boolean) {
+        context.accessibilityDataStore.edit { prefs ->
+            prefs[ALERTS_MUTED_KEY] = muted
+        }
+    }
 }
 
 class AudibleTones(private val context: Context) {
@@ -69,7 +94,7 @@ class AudibleTones(private val context: Context) {
         if (!enabled) return
         runCatching {
             toneGenerator?.release()
-            toneGenerator = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 80)
+            toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 80)
             toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
         }
     }

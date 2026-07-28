@@ -1,19 +1,19 @@
 package dev.foss.expeditiongauge.car.surface
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.Log
 import android.view.Surface
 import androidx.car.app.SurfaceContainer
 import dev.foss.expeditiongauge.car.AaDisplaySpec
+import dev.foss.expeditiongauge.car.HudStripOrientation
 import dev.foss.expeditiongauge.car.gauge.DriveHudTheme
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Paints a native 3×1 Drive HUD bitmap into the AA host [Surface],
- * scale-to-fit centered in the visible rect.
+ * Paints a native Drive HUD bitmap into the AA host [Surface],
+ * scale-to-fit centered in the visible rect (3×1 row or 1×2 column).
  */
 class DriveHudSurfacePainter {
     private val hudBitmap = AtomicReference<Bitmap?>(null)
@@ -23,9 +23,9 @@ class DriveHudSurfacePainter {
     @Volatile private var surfaceW: Int = 0
     @Volatile private var surfaceH: Int = 0
     @Volatile private var visible = Rect()
+    @Volatile private var stableOrientation: HudStripOrientation = HudStripOrientation.ROW
     @Volatile private var lastDrawMs: Long = 0L
     @Volatile private var lastFrame: Bitmap? = null
-    /** Fired when visible layout changes so the screen can re-render at matching px. */
     var onLayoutChanged: (() -> Unit)? = null
 
     fun setHudBitmap(bitmap: Bitmap?, darkBackground: Boolean) {
@@ -33,17 +33,15 @@ class DriveHudSurfacePainter {
         darkMode.set(darkBackground)
     }
 
-    /** Cube edge matching current visible area (1:1 paint, no upscale). */
-    fun targetCubePx(): Int = AaDisplaySpec.surfaceCubePx(visible.width(), visible.height())
+    fun stripOrientation(): HudStripOrientation = stableOrientation
 
-    /** True when [x],[y] (surface coords) fall in the left third (attitude cube). */
-    fun isAttitudeCubeTap(x: Float, y: Float): Boolean {
-        val bounds = visible
-        if (bounds.width() <= 0 || bounds.height() <= 0) return false
-        if (y < bounds.top || y > bounds.bottom) return false
-        val third = bounds.left + bounds.width() / 3f
-        return x >= bounds.left && x < third
-    }
+    fun targetCubePx(): Int =
+        AaDisplaySpec.surfaceCubePx(visible.width(), visible.height(), stableOrientation)
+
+    fun isAttitudeCubeTap(x: Float, y: Float): Boolean =
+        DriveHudSurfaceGeometry.isAttitudeCubeTap(
+            x, y, visible, stableOrientation, hudBitmap.get(),
+        )
 
     fun onSurfaceAvailable(container: SurfaceContainer) {
         surface = container.surface
@@ -51,6 +49,9 @@ class DriveHudSurfacePainter {
         surfaceH = container.height
         if (visible.isEmpty) {
             visible = Rect(0, 0, surfaceW, surfaceH)
+            stableOrientation = HudStripOrientation.stable(
+                visible.width(), visible.height(), HudStripOrientation.ROW,
+            )
         }
         onLayoutChanged?.invoke()
         requestDraw(force = true)
@@ -58,8 +59,14 @@ class DriveHudSurfacePainter {
 
     fun onVisibleAreaChanged(rect: Rect) {
         val prev = visible
+        val prevOrientation = stableOrientation
         visible = Rect(rect)
-        if (prev.width() != visible.width() || prev.height() != visible.height()) {
+        stableOrientation = HudStripOrientation.stable(
+            visible.width(), visible.height(), prevOrientation,
+        )
+        if (prev.width() != visible.width() || prev.height() != visible.height() ||
+            prevOrientation != stableOrientation
+        ) {
             onLayoutChanged?.invoke()
         }
         requestDraw(force = true)
@@ -70,7 +77,6 @@ class DriveHudSurfacePainter {
         lastFrame = null
     }
 
-    /** Last frame painted (copy) for AA screenshot. */
     fun snapshotFrame(): Bitmap? = lastFrame?.copy(Bitmap.Config.ARGB_8888, false)
 
     fun requestDraw(force: Boolean = false) {
@@ -86,9 +92,8 @@ class DriveHudSurfacePainter {
             val canvas = s.lockCanvas(null) ?: return
             try {
                 canvas.drawColor(theme.background)
-                val dst = fitRect(strip.width, strip.height, bounds)
+                val dst = DriveHudSurfaceGeometry.fitRect(strip.width, strip.height, bounds)
                 canvas.drawBitmap(strip, null, dst, bitmapPaint)
-                // Keep a soft reference for screenshots — do not alloc a full frame every tick.
                 lastFrame = strip
                 lastDrawMs = now
             } finally {
@@ -101,20 +106,9 @@ class DriveHudSurfacePainter {
 
     companion object {
         private const val TAG = "DriveHudSurface"
-        private const val MIN_DRAW_INTERVAL_MS = 33L // ~30 Hz
+        private const val MIN_DRAW_INTERVAL_MS = 33L
 
-        /** Scale [srcW]×[srcH] into [bounds] preserving aspect, centered. */
-        fun fitRect(srcW: Int, srcH: Int, bounds: Rect): Rect {
-            if (srcW <= 0 || srcH <= 0 || bounds.isEmpty) return Rect(bounds)
-            val scale = minOf(
-                bounds.width().toFloat() / srcW,
-                bounds.height().toFloat() / srcH,
-            )
-            val w = (srcW * scale).toInt().coerceAtLeast(1)
-            val h = (srcH * scale).toInt().coerceAtLeast(1)
-            val left = bounds.left + (bounds.width() - w) / 2
-            val top = bounds.top + (bounds.height() - h) / 2
-            return Rect(left, top, left + w, top + h)
-        }
+        fun fitRect(srcW: Int, srcH: Int, bounds: Rect): Rect =
+            DriveHudSurfaceGeometry.fitRect(srcW, srcH, bounds)
     }
 }

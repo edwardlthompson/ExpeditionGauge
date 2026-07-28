@@ -13,16 +13,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AlertService(
-    context: Context,
+    private val context: Context,
     private val alertEventDao: AlertEventDao,
     thresholdsPreferences: AlertThresholdsPreferences,
     scope: CoroutineScope,
 ) {
     private val engine = AlertEngine()
     private val feedback = AlertFeedback(context)
+    private val tts = AlertTts(context)
     private val tpmsTracker = TpmsPressureTracker()
     private val _activeAlerts = MutableStateFlow<Set<AlertType>>(emptySet())
     val activeAlerts: StateFlow<Set<AlertType>> = _activeAlerts.asStateFlow()
+    private val _activeTireCorners = MutableStateFlow<Set<TireCornerId>>(emptySet())
+    val activeTireCorners: StateFlow<Set<TireCornerId>> = _activeTireCorners.asStateFlow()
+    private var previouslyActiveKeys = emptySet<String>()
 
     init {
         scope.launch {
@@ -35,32 +39,47 @@ class AlertService(
         sessionId: Long?,
         recording: Boolean,
         audibleEnabled: Boolean,
+        audioMode: AlertAudioMode = AlertAudioMode.BEEP,
+        muted: Boolean = false,
     ) {
         if (!FeatureFlags.alertsEnabled) {
             _activeAlerts.value = emptySet()
+            _activeTireCorners.value = emptySet()
             return
         }
         val nowMs = snapshot.timestampMs.takeIf { it > 0L } ?: System.currentTimeMillis()
-        val events = buildList {
-            addAll(engine.evaluate(snapshot, nowMs))
+        val active = buildList {
+            addAll(engine.evaluateActive(snapshot, nowMs))
             if (snapshot.obdConnected) {
                 addAll(
-                    engine.evaluateObd(
+                    engine.evaluateActiveObd(
                         rpm = snapshot.rpm,
-                        slipRatio = snapshot.slipRatio,
                         fuelRateLph = null,
                         speedMps = snapshot.speedMps,
                         nowMs = nowMs,
                     ),
                 )
             }
-            snapshot.tpms?.let { addAll(engine.evaluateTpms(it, nowMs, tpmsTracker)) }
+            snapshot.tpms?.let { addAll(engine.evaluateActiveTpms(it, nowMs, tpmsTracker)) }
         }
-        _activeAlerts.value = events.map { it.type }.toSet()
-        events.forEach { event ->
-            Log.d(TAG, "fired type=${event.type} value=${event.value} threshold=${event.threshold}")
-            feedback.onAlert(event.type, playTone = audibleEnabled)
-            if (recording && sessionId != null) {
+        _activeAlerts.value = active.map { it.type }.toSet()
+        _activeTireCorners.value = active.mapNotNull { it.tireCorner }.toSet()
+
+        val feedbackEvents = engine.filterFeedback(active, nowMs)
+        val playAudio = audibleEnabled && !muted
+        feedbackEvents.forEach { event ->
+            Log.d(
+                TAG,
+                "feedback type=${event.type} corner=${event.tireCorner} mode=$audioMode " +
+                    "playAudio=$playAudio audible=$audibleEnabled muted=$muted",
+            )
+            val key = "${event.type}:${event.tireCorner?.key.orEmpty()}"
+            val isEdge = key !in previouslyActiveKeys
+            feedback.onAlert(event.type, playTone = playAudio && audioMode == AlertAudioMode.BEEP, haptic = isEdge)
+            if (playAudio && audioMode == AlertAudioMode.TTS) {
+                tts.speak(AlertPhrases.phrase(context, event))
+            }
+            if (recording && sessionId != null && isEdge) {
                 alertEventDao.insert(
                     AlertEventEntity(
                         sessionId = sessionId,
@@ -72,9 +91,13 @@ class AlertService(
                 )
             }
         }
+        previouslyActiveKeys = active.map { "${it.type}:${it.tireCorner?.key.orEmpty()}" }.toSet()
     }
 
-    fun release() = feedback.release()
+    fun release() {
+        feedback.release()
+        tts.release()
+    }
 
     private companion object {
         const val TAG = "ExpeditionGauge/Alerts"

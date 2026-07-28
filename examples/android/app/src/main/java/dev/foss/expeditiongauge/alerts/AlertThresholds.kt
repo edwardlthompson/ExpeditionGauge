@@ -13,7 +13,8 @@ data class AlertThresholds(
     val minTirePressureKpa: Float? = null,
     val maxTireTempC: Float? = null,
     val rapidPressureLossKpaPerMin: Float? = null,
-    val cooldownMs: Long = 3_000L,
+    /** Repeat cadence while still over limit (beep/TTS). */
+    val cooldownMs: Long = 1_000L,
 ) {
     fun anyEnabled(): Boolean = masterEnabled && listOf(
         maxLatG, maxAbsDriftAngleDeg, maxSlipRatio, maxPitchDeg, maxRollDeg,
@@ -36,9 +37,23 @@ enum class AlertType {
     PRESSURE_LOSS,
 }
 
+enum class TireCornerId(val key: String) {
+    FL("fl"),
+    FR("fr"),
+    RL("rl"),
+    RR("rr"),
+    ;
+
+    companion object {
+        fun fromKey(key: String?): TireCornerId? =
+            entries.firstOrNull { it.key.equals(key, ignoreCase = true) }
+    }
+}
+
 data class AlertEvent(
     val type: AlertType,
     val value: Float,
     val threshold: Float,
     val timestampMs: Long,
+    val tireCorner: TireCornerId? = null,
 )

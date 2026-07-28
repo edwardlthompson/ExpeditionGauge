@@ -1,6 +1,6 @@
 # ADR-0010: Android Auto via AndroidX Car App Library
 
-- **Status:** Accepted (revised 2026-07-11)
+- **Status:** Accepted (revised 2026-07-27 — tall 1×2 Surface)
 - **Date:** 2026-06-30
 - **Deciders:** ExpeditionGauge team
 
@@ -13,9 +13,9 @@ Drivers want live speed and attitude on the head unit without proprietary Google
 1. **`androidx.car.app:app`** (Apache 2.0) in isolated **`:car`** Gradle module — no Play Services in production path.
 2. **`CarAppBridge`** registry — phone app implements bridge to `TelemetryBus` + `RecordingWriter` + `CalibrationStore`; car UI stays decoupled.
 3. **Always-on when capable** — no Settings opt-out; `isAndroidAutoEnabled()` reflects build capability (`FeatureFlags.androidAutoCapable`), not a user toggle.
-4. **`NavigationTemplate` + Surface Drive HUD** — paint native **3×1** Attitude | Telemetry | TPMS on a full-bleed host `Surface` (`ACCESS_SURFACE` + `NAVIGATION_TEMPLATES` + `MAP_TEMPLATES`, Car API **7+**). No side content panel (MapWithContent left card removed). POI category kept for discovery (not a real map). Pane letterbox remains **fallback** only.
-5. **Bitmap attitude family** — `DriveHudBitmapRenderer` paints inclinometer styles plus AA **G-meter** and **3D compass** bitmaps (`GMeterBitmapRenderer` / `CompassBallBitmapRenderer`). Tap the left cube to cycle the full phone `DISPLAY_CYCLE` (requires map **PAN** for Surface clicks). Telemetry cube includes compact lat/long.
-6. **Top actions** — map ActionStrip **PAN only** (required for Surface taps). Main ActionStrip: titled **Screenshot** + **Record/Stop** + parked-only **Level** (title+icon; host collapses to icons on narrow screens). Pane fallback keeps max one titled action (Record).
+4. **`NavigationTemplate` + Surface Drive HUD** — paint native **3×1** Attitude | Telemetry | TPMS on a wide host `Surface`, or **1×2** Attitude | Telemetry (no TPMS tile) when the visible rect is stably tall (`HudStripOrientation` hysteresis). Permissions: `ACCESS_SURFACE` + `NAVIGATION_TEMPLATES` + `MAP_TEMPLATES`, Car API **7+**. No side content panel. POI category kept for discovery. Pane letterbox remains **fallback** only (always ROW 3×1).
+5. **Bitmap attitude family** — `DriveHudBitmapRenderer` paints inclinometer styles plus AA **G-meter** and **3D compass** bitmaps. Tap attitude cube (left third wide / top half tall) to cycle `DISPLAY_CYCLE` (requires map **PAN**). Telemetry cube includes compact lat/long.
+6. **Top actions** — map ActionStrip **PAN only** (required for Surface taps). Wide: Mute + Capture + Record/Stop + parked-only Level. Tall/COLUMN: **icon-only Mute** (empty strip crashes the host). Pane fallback keeps max one titled action (Record).
 7. **Live refresh** — Surface HUD paints at ~**30 Hz** (bridge 33 ms) without per-tick `Screen.invalidate()` (host template rebuilds stay rare). Pane fallback still throttles template invalidate to **500 ms**.
 8. **Sideload discovery** — `CarAppService` declares a **single** `androidx.car.app.category.POI` category (not IOT, not dual categories, not NAVIGATION). Many real projected head units filter IOT even with Unknown sources; DHU is more permissive. POI is the least-wrong AA-allowed category for this FOSS telemetry grid — **not Play-certification-ready**. Also requires Android Auto developer mode + unknown sources + Customize launcher (platform policy); documented in `docs/help/ANDROID_AUTO.md`.
 9. **HostValidator** — `ALLOW_ALL_HOSTS_VALIDATOR` for sideload/DHU/MITM adapters; stricter validators deferred until a Play path exists.

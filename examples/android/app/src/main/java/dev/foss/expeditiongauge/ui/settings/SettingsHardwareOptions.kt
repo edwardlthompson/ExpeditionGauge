@@ -30,6 +30,10 @@ fun SettingsHardwareOptions(
     obdDevices: List<Pair<String, String>>,
     selectedObdAddress: String?,
     onObdDeviceSelect: (String) -> Unit,
+    obdConnectionStatus: String? = null,
+    onObdRetry: () -> Unit = {},
+    onForgetObd: () -> Unit = {},
+    onObdPairNew: () -> Unit = {},
     obdPidConfig: ObdPidConfig,
     onObdPidConfigChange: (ObdPidConfig) -> Unit,
     externalGpsEnabled: Boolean,
@@ -84,6 +88,7 @@ fun SettingsHardwareOptions(
         }
     }
     Text(text = stringResource(R.string.settings_obd_label))
+    Text(text = stringResource(R.string.settings_obd_pair_hint))
     FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
         obdDevices.forEach { (address, name) ->
             FilterChip(
@@ -92,6 +97,25 @@ fun SettingsHardwareOptions(
                 label = { Text(name) },
                 modifier = Modifier.testTag("obd_device_$address"),
             )
+        }
+    }
+    Button(
+        onClick = onObdPairNew,
+        modifier = Modifier.fillMaxWidth().testTag("settings_obd_pair_new"),
+    ) {
+        Text(stringResource(R.string.settings_obd_pair_new))
+    }
+    obdConnectionStatus?.let { status ->
+        Text(text = status, modifier = Modifier.fillMaxWidth().testTag("settings_obd_status"))
+    }
+    if (selectedObdAddress != null) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
+            Button(onClick = onObdRetry, modifier = Modifier.testTag("settings_obd_retry")) {
+                Text(stringResource(R.string.settings_obd_retry))
+            }
+            Button(onClick = onForgetObd, modifier = Modifier.testTag("settings_obd_forget")) {
+                Text(stringResource(R.string.settings_obd_forget))
+            }
         }
     }
     Text(text = stringResource(R.string.settings_obd_pids_label))

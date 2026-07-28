@@ -22,10 +22,11 @@ class ExpeditionGaugeApplication : Application() {
         val accessibilityPreferences = AccessibilityPreferences(applicationContext)
         services.initialize(applicationScope, accessibilityPreferences)
         CarAppBridgeRegistry.bridge = AndroidAutoBridge(
-            services,
-            services.settingsPreferences,
-            applicationScope,
-            applicationContext,
+            services = services,
+            settings = services.settingsPreferences,
+            accessibility = accessibilityPreferences,
+            scope = applicationScope,
+            appContext = applicationContext,
         )
     }
 }

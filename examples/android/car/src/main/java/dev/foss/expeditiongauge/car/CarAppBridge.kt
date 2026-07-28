@@ -10,12 +10,13 @@ interface CarAppBridge {
     /** Drive HUD image + optional alert rows (Pane fallback / Message content). */
     fun driveHud(displaySpec: AaDisplaySpec = AaDisplaySpec.DEFAULT): DriveHudContent
     /**
-     * Native 3×1 HUD bitmap for Surface painting (immutable copy).
-     * [cubePxOverride] matches host Surface visible size when set.
+     * Native Drive HUD bitmap for Surface painting (immutable copy).
+     * [cubePxOverride] / [orientation] match host Surface visible layout when set.
      */
     fun driveHudBitmap(
         displaySpec: AaDisplaySpec = AaDisplaySpec.DEFAULT,
         cubePxOverride: Int? = null,
+        orientation: HudStripOrientation = HudStripOrientation.ROW,
     ): Bitmap?
     fun metricValues(): Map<String, String>
     fun isRecording(): Boolean
@@ -39,6 +40,10 @@ interface CarAppBridge {
      * Returns false if no bitmap is available or MediaStore insert fails.
      */
     fun captureAaScreenshot(): Boolean
+    /** Persisted mute for alert beep/TTS (Settings + AA share the same flag). */
+    fun isAlertsMuted(): Boolean
+    fun setAlertsMuted(muted: Boolean): Boolean
+    fun toggleAlertsMuted(): Boolean = setAlertsMuted(!isAlertsMuted())
     fun setInvalidationListener(listener: (() -> Unit)?)
     /** Optional HU toast for async failures (storage full, etc.). */
     fun setToastHandler(handler: ((String) -> Unit)?)

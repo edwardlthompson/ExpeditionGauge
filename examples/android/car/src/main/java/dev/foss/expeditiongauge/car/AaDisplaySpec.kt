@@ -55,14 +55,30 @@ data class AaDisplaySpec(
         const val MAX_PANE_BITMAP_PX = MAX_CUBE_PX * CUBE_COUNT
 
         /**
-         * Cube edge for Surface paint. Prefer matching visible **height** (3×1 strip
-         * may letterbox horizontally) so we never upscale a short bitmap. Floor at
-         * [MAX_CUBE_PX] so narrow HUs still get Pane-quality pixels + FILTER downscale.
+         * Cube edge for Surface paint. [ROW] prefers visible height (3×1 strip);
+         * [COLUMN] prefers `min(w, h/2)` so two stacked cubes fill a tall pane.
+         * Floor at [MAX_CUBE_PX]; empty rect → [DEFAULT.cubeSizePx].
          */
-        fun surfaceCubePx(visibleW: Int, visibleH: Int): Int {
+        fun surfaceCubePx(visibleW: Int, visibleH: Int): Int =
+            surfaceCubePx(
+                visibleW,
+                visibleH,
+                HudStripOrientation.stable(visibleW, visibleH, HudStripOrientation.ROW),
+            )
+
+        fun surfaceCubePx(
+            visibleW: Int,
+            visibleH: Int,
+            orientation: HudStripOrientation,
+        ): Int {
             if (visibleW <= 0 || visibleH <= 0) return DEFAULT.cubeSizePx
-            // 1.5× supersample when height allows — FILTER downscale looks sharper than 1:1.
-            val preferred = maxOf(visibleH, (visibleH * 3) / 2)
+            val edge = when (orientation) {
+                // Reserve ~18% for permanent ROW DTC footer so cube+footer fits visibleH.
+                HudStripOrientation.ROW -> (visibleH * 100) / 118
+                HudStripOrientation.COLUMN -> minOf(visibleW, visibleH / 2)
+            }
+            // 1.5× supersample — FILTER downscale looks sharper than 1:1.
+            val preferred = maxOf(edge, (edge * 3) / 2)
             return preferred.coerceIn(MAX_CUBE_PX, MAX_SURFACE_CUBE_PX)
         }
 

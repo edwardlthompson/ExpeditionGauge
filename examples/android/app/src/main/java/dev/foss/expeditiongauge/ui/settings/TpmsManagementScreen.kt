@@ -33,6 +33,7 @@ import dev.foss.expeditiongauge.ui.theme.SpacingMd
 fun TpmsManagementScreen(
     sessions: List<TpmsDeviceSession>,
     bleTpmsManager: BleTpmsManager,
+    onWizard: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -44,28 +45,42 @@ fun TpmsManagementScreen(
                 .padding(SpacingMd),
             verticalArrangement = Arrangement.spacedBy(SpacingMd),
         ) {
-        Text(
-            text = stringResource(R.string.tpms_management_title),
-            style = MaterialTheme.typography.headlineSmall,
-            color = GaugeYellow,
-        )
-        Button(
-            onClick = { bleTpmsManager.startScan() },
-            modifier = Modifier.testTag("tpms_scan"),
-        ) {
-            Text(stringResource(R.string.tpms_scan))
-        }
-        Button(onClick = { bleTpmsManager.stopScan() }) {
-            Text(stringResource(R.string.tpms_stop_scan))
-        }
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(SpacingMd)) {
-            items(sessions, key = { it.macAddress }) { session ->
-                TpmsDeviceRow(session, bleTpmsManager)
+            Text(
+                text = stringResource(R.string.tpms_management_title),
+                style = MaterialTheme.typography.headlineSmall,
+                color = GaugeYellow,
+            )
+            Text(
+                text = stringResource(R.string.tpms_link_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = GaugeScaleWhite,
+            )
+            Button(
+                onClick = onWizard,
+                modifier = Modifier.testTag("tpms_wizard_start"),
+            ) {
+                Text(stringResource(R.string.tpms_wizard_start))
             }
-        }
-        Button(onClick = onBack) {
-            Text(stringResource(R.string.settings_close))
-        }
+            Button(
+                onClick = { bleTpmsManager.startScan() },
+                modifier = Modifier.testTag("tpms_scan"),
+            ) {
+                Text(stringResource(R.string.tpms_scan))
+            }
+            Button(onClick = { bleTpmsManager.stopScan() }) {
+                Text(stringResource(R.string.tpms_stop_scan))
+            }
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = true),
+                verticalArrangement = Arrangement.spacedBy(SpacingMd),
+            ) {
+                items(sessions, key = { it.macAddress }) { session ->
+                    TpmsDeviceRow(session, bleTpmsManager)
+                }
+            }
+            Button(onClick = onBack) {
+                Text(stringResource(R.string.settings_close))
+            }
         }
     }
 }
@@ -82,23 +97,29 @@ private fun TpmsDeviceRow(session: TpmsDeviceSession, manager: BleTpmsManager) {
         ) {
             Column {
                 Text(text = session.macAddress, style = MaterialTheme.typography.titleMedium)
-                reading?.let {
+                if (reading != null) {
                     Text(
                         text = stringResource(
                             R.string.tpms_reading_line,
-                            it.pressureKpa,
-                            it.tempC,
+                            reading.pressureKpa,
+                            reading.tempC,
                             session.parserId,
                         ),
                         style = MaterialTheme.typography.bodySmall,
                     )
+                } else {
+                    Text(
+                        text = stringResource(R.string.tpms_waiting_signal),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = GaugeScaleWhite,
+                    )
                 }
             }
             Text(
-                text = if (session.stale) {
-                    stringResource(R.string.tpms_stale)
-                } else {
-                    stringResource(R.string.tpms_active)
+                text = when {
+                    reading == null -> stringResource(R.string.tpms_waiting_signal)
+                    session.stale -> stringResource(R.string.tpms_stale)
+                    else -> stringResource(R.string.tpms_active)
                 },
                 style = MaterialTheme.typography.labelSmall,
             )
@@ -107,7 +128,7 @@ private fun TpmsDeviceRow(session: TpmsDeviceSession, manager: BleTpmsManager) {
             ImuPlacement.entries.filter { it != ImuPlacement.Unassigned }.forEach { placement ->
                 FilterChip(
                     selected = session.corner == placement,
-                    onClick = { manager.assignCorner(session.macAddress, placement) },
+                    onClick = { manager.assignCornerExclusive(session.macAddress, placement) },
                     label = { Text(placement.label) },
                 )
             }

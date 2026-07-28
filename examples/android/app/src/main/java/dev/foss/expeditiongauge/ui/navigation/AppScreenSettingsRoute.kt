@@ -55,6 +55,11 @@ fun AppScreenSettingsRoute(
     attitudeGaugeMode: AttitudeGaugeMode,
     alertThresholds: AlertThresholds,
     onAlertThresholdsChange: (AlertThresholds) -> Unit,
+    alertAudioMode: dev.foss.expeditiongauge.alerts.AlertAudioMode =
+        dev.foss.expeditiongauge.alerts.AlertAudioMode.BEEP,
+    onAlertAudioModeChange: (dev.foss.expeditiongauge.alerts.AlertAudioMode) -> Unit = {},
+    alertsMuted: Boolean = false,
+    onAlertsMutedChange: (Boolean) -> Unit = {},
     activePresetId: DashboardPresetId,
     onPresetSelected: (DashboardPresetId) -> Unit,
     onThemeModeSelect: (ThemeMode) -> Unit,
@@ -91,6 +96,7 @@ fun AppScreenSettingsRoute(
         sessionStorageUsed = services.sessionStorageBudget.usedBytes()
         sessionStorageAllowed = services.sessionStorageBudget.allowedBytes()
     }
+    val obd = rememberAppScreenSettingsObdWiring(context, scope, services, obdAddress)
     SettingsScreen(
         themeMode = themeMode,
         updateCheckEnabled = SettingsLogic.isUpdateCheckEnabled(checkInterval),
@@ -101,10 +107,14 @@ fun AppScreenSettingsRoute(
         audibleTonesEnabled = audibleTonesEnabled,
         speedUnit = speedUnit,
         logIntervalMs = logInterval,
-        obdDevices = services.obdManager.pairedDevices(),
+        obdDevices = services.obdManager.suggestedObdDevices(),
         externalGpsDevices = services.externalGpsManager.pairedDevices(),
         selectedObdAddress = obdAddress,
         selectedExternalGpsAddress = externalGpsAddress,
+        obdConnectionStatus = obd.connectionStatus,
+        onObdRetry = obd.onRetry,
+        onForgetObd = obd.onForget,
+        onObdPairNew = obd.onPairNew,
         obdPidConfig = obdPidConfig,
         onThemeModeSelect = onThemeModeSelect,
         onUpdateCheckChange = onUpdateCheckChange,
@@ -165,19 +175,8 @@ fun AppScreenSettingsRoute(
             }
         },
         onLogIntervalSelect = { ms -> scope.launch { services.settingsPreferences.setLogIntervalMs(ms) } },
-        onObdDeviceSelect = { address ->
-            scope.launch {
-                services.settingsPreferences.setObdDeviceAddress(address)
-                services.obdManager.selectDevice(address)
-                services.obdManager.connect()
-            }
-        },
-        onObdPidConfigChange = { config ->
-            scope.launch {
-                services.settingsPreferences.setObdPidConfig(config)
-                services.obdManager.pidConfig = config
-            }
-        },
+        onObdDeviceSelect = obd.onDeviceSelect,
+        onObdPidConfigChange = obd.onPidConfigChange,
         onExternalGpsSelect = { address ->
             scope.launch {
                 services.settingsPreferences.setExternalGpsEnabled(true)
@@ -228,9 +227,7 @@ fun AppScreenSettingsRoute(
             scope.launch { services.settingsPreferences.setTempUnit(unit) }
         },
         onCalibrationReset = {
-            scope.launch {
-                services.calibrationStore.clearOffsets()
-            }
+            scope.launch { services.calibrationStore.clearOffsets() }
         },
         onCalibrationTips = { onScreenChange(AppScreen.CalibrationTips) },
         onCalibrationWizard = { onScreenChange(AppScreen.CalibrationWizard) },
@@ -257,6 +254,10 @@ fun AppScreenSettingsRoute(
             scope.launch { services.settingsPreferences.setAttitudeGaugeMode(mode) }
         },
         alertThresholds = alertThresholds,
+        alertAudioMode = alertAudioMode,
+        onAlertAudioModeChange = onAlertAudioModeChange,
+        alertsMuted = alertsMuted,
+        onAlertsMutedChange = onAlertsMutedChange,
         onAlertThresholdsChange = onAlertThresholdsChange,
         activePresetId = activePresetId,
         onPresetSelected = onPresetSelected,

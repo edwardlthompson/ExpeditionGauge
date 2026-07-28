@@ -5,10 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.about.AppUpdatePreferences
@@ -17,6 +13,7 @@ import dev.foss.expeditiongauge.about.ReleaseAsset
 import dev.foss.expeditiongauge.about.UpdateApplyCoordinator
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.accessibility.AudibleTones
+import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
@@ -33,14 +30,15 @@ import dev.foss.expeditiongauge.ui.calibration.CalibrationTipsScreen
 import dev.foss.expeditiongauge.ui.calibration.CalibrationWizardScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
 import dev.foss.expeditiongauge.ui.developer.DeveloperModeScreen
-import dev.foss.expeditiongauge.ui.live.LiveReceiverScreen
 import dev.foss.expeditiongauge.ui.settings.ImuManagementScreen
 import dev.foss.expeditiongauge.ui.settings.TpmsManagementScreen
+import dev.foss.expeditiongauge.ui.settings.tpms.TpmsPairingWizardScreen
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
 import dev.foss.expeditiongauge.ui.timing.TrackSetupScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 @Composable
 fun AppScreenRouter(
     screen: AppScreen,
@@ -104,6 +102,10 @@ fun AppScreenRouter(
     inclinometerStyle: InclinometerStyle,
     alertThresholds: AlertThresholds,
     onAlertThresholdsChange: (AlertThresholds) -> Unit,
+    alertAudioMode: AlertAudioMode = AlertAudioMode.BEEP,
+    onAlertAudioModeChange: (AlertAudioMode) -> Unit = {},
+    alertsMuted: Boolean = false,
+    onAlertsMutedChange: (Boolean) -> Unit = {},
     activePresetId: DashboardPresetId,
     onPresetSelected: (DashboardPresetId) -> Unit,
 ) {
@@ -143,7 +145,7 @@ fun AppScreenRouter(
             ttsReadoutEnabled = ttsReadoutEnabled,
             statsAggregate = statsAggregate,
         )
-        AppScreen.Settings -> AppScreenSettingsRoute(
+        AppScreen.Settings -> AppScreenRouterSettings(
             context = context,
             onScreenChange = onScreenChange,
             scope = scope,
@@ -171,6 +173,10 @@ fun AppScreenRouter(
             attitudeGaugeMode = attitudeGaugeMode,
             alertThresholds = alertThresholds,
             onAlertThresholdsChange = onAlertThresholdsChange,
+            alertAudioMode = alertAudioMode,
+            onAlertAudioModeChange = onAlertAudioModeChange,
+            alertsMuted = alertsMuted,
+            onAlertsMutedChange = onAlertsMutedChange,
             activePresetId = activePresetId,
             onPresetSelected = onPresetSelected,
             onThemeModeSelect = onThemeModeSelect,
@@ -210,7 +216,12 @@ fun AppScreenRouter(
         AppScreen.TpmsManage -> TpmsManagementScreen(
             sessions = tpmsSessions,
             bleTpmsManager = services.bleTpmsManager,
+            onWizard = { onScreenChange(AppScreen.TpmsWizard) },
             onBack = { onScreenChange(AppScreen.Settings) },
+        )
+        AppScreen.TpmsWizard -> TpmsPairingWizardScreen(
+            bleTpmsManager = services.bleTpmsManager,
+            onDone = { onScreenChange(AppScreen.TpmsManage) },
         )
         AppScreen.TrackSetup -> TrackSetupScreen(
             telemetryBus = services.telemetryBus,
@@ -248,35 +259,13 @@ fun AppScreenRouter(
                 speedUnit = speedUnit,
             )
         }
-        AppScreen.LiveReceiver -> {
-            var sessionId by remember { mutableStateOf("") }
-            var sessionCode by remember { mutableStateOf("") }
-            var signalWss by remember { mutableStateOf(liveSignalWssUrl) }
-            LaunchedEffect(liveSignalWssUrl) { signalWss = liveSignalWssUrl }
-            val latestSample by services.liveTelemetryModule.receiver.latestSample
-                .collectAsStateWithLifecycle(initialValue = null)
-            val receiverState by services.liveTelemetryModule.receiver.state
-                .collectAsStateWithLifecycle(initialValue = dev.foss.expeditiongauge.live.LiveReceiverState.Idle)
-            LiveReceiverScreen(
-                latestSample = latestSample,
-                sessionId = sessionId,
-                onSessionIdChange = { sessionId = it },
-                sessionCode = sessionCode,
-                onSessionCodeChange = { sessionCode = it },
-                signalWss = signalWss,
-                onSignalWssChange = { signalWss = it },
-                onJoin = {
-                    services.liveTelemetryModule.joinReceiver(scope, sessionId, sessionCode, signalWss)
-                },
-                onDisconnect = { services.liveTelemetryModule.stopReceiver() },
-                isConnected = receiverState == dev.foss.expeditiongauge.live.LiveReceiverState.Connected,
-                onBack = {
-                    services.liveTelemetryModule.stopReceiver()
-                    onScreenChange(AppScreen.Settings)
-                },
-                speedUnit = speedUnit,
-            )
-        }
+        AppScreen.LiveReceiver -> AppScreenLiveReceiverRoute(
+            scope = scope,
+            services = services,
+            liveSignalWssUrl = liveSignalWssUrl,
+            speedUnit = speedUnit,
+            onScreenChange = onScreenChange,
+        )
         AppScreen.Sessions,
         AppScreen.SessionEdit,
         AppScreen.Playback,

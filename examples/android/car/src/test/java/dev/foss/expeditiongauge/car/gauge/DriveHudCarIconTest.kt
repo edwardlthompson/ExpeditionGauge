@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.car.gauge
 
+import dev.foss.expeditiongauge.car.HudStripOrientation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -13,6 +14,36 @@ import org.robolectric.annotation.GraphicsMode
 @Config(sdk = [26])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class DriveHudCarIconTest {
+    @Test
+    fun renderBitmap_columnIsOneByTwo() {
+        val cube = 280
+        val bmp = DriveHudCarIcon.renderBitmap(
+            pitchDeg = 5f,
+            rollDeg = 10f,
+            attitudeMode = AaAttitudeMode.INCLINOMETER_HORIZON,
+            pitchAlert = false,
+            rollAlert = false,
+            maxPitchThresholdDeg = null,
+            maxRollThresholdDeg = null,
+            yawDeg = 90f,
+            latG = 0.1f,
+            lonG = 0f,
+            speedLabel = "62 MPH",
+            headingLabel = "HDG 090° E",
+            altLabel = "Alt 1000 ft",
+            coordsLabel = "18.4573°N 66.1846°W",
+            fl = "32\n72F",
+            fr = "31\n70F",
+            rl = "--",
+            rr = "--",
+            cubePx = cube,
+            darkBackground = true,
+            orientation = HudStripOrientation.COLUMN,
+        )
+        assertEquals(cube, bmp.width)
+        assertEquals(cube * 2, bmp.height)
+    }
+
     @Test
     fun renderBitmap_isNativeThreeByOne() {
         val cube = 280
@@ -39,7 +70,7 @@ class DriveHudCarIconTest {
             darkBackground = true,
         )
         assertEquals(cube * 3, bmp.width)
-        assertEquals(cube, bmp.height)
+        assertEquals(cube + DriveHudBitmapRenderer.footerPxFor(cube), bmp.height)
         assertTrue(bmp.config == android.graphics.Bitmap.Config.ARGB_8888)
     }
 
@@ -67,7 +98,7 @@ class DriveHudCarIconTest {
                 cubePx = 200,
             )
             assertEquals(600, bmp.width)
-            assertEquals(200, bmp.height)
+            assertEquals(200 + DriveHudBitmapRenderer.footerPxFor(200), bmp.height)
         }
     }
 
@@ -97,4 +128,5 @@ class DriveHudCarIconTest {
             ),
         )
     }
+
 }

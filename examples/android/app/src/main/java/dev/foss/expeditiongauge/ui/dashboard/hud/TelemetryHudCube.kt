@@ -13,6 +13,7 @@ import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.telemetry.SensorLinkState
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.components.gauge.GpsReadoutPanel
 import dev.foss.expeditiongauge.ui.components.gauge.SpeedHeadingRow
@@ -35,7 +36,8 @@ fun TelemetryHudCube(
             .fillMaxSize()
             .padding(horizontal = SpacingSm / 3, vertical = SpacingSm / 4),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
+        // Pack content toward the top so the link-icon row stays visible at the bottom.
+        verticalArrangement = Arrangement.Top,
     ) {
         if (preset.showSpeed || preset.showHeading || preset.showGps) {
             SpeedHeadingRow(
@@ -47,6 +49,7 @@ fun TelemetryHudCube(
                 altitudeM = telemetry.altitudeM,
                 showAltitude = preset.showGps,
                 uniformCube = true,
+                speedOverLimit = AlertType.SPEED in activeAlerts,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -75,6 +78,11 @@ fun TelemetryHudCube(
             rpm = telemetry.rpm,
             batteryVoltage = telemetry.batteryVoltage,
             slipRatio = telemetry.slipRatio,
+            activeAlerts = activeAlerts,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        TelemetryHudLinkRow(
+            links = SensorLinkState.from(telemetry),
             modifier = Modifier.fillMaxWidth(),
         )
     }

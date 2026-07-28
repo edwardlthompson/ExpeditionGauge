@@ -2,8 +2,6 @@ package dev.foss.expeditiongauge.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -11,10 +9,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -27,7 +23,6 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
-import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
@@ -47,6 +42,10 @@ fun SettingsScreen(
     onSpeedUnitSelect: (SpeedUnit) -> Unit,
     onLogIntervalSelect: (Long) -> Unit,
     onObdDeviceSelect: (String) -> Unit,
+    obdConnectionStatus: String? = null,
+    onObdRetry: () -> Unit = {},
+    onForgetObd: () -> Unit = {},
+    onObdPairNew: () -> Unit = {},
     onExternalGpsSelect: (String) -> Unit,
     onImuManage: () -> Unit,
     onCalibrationReset: () -> Unit,
@@ -109,6 +108,11 @@ fun SettingsScreen(
         dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.G_FORCE,
     onAttitudeGaugeModeSelect: (dev.foss.expeditiongauge.gauge.AttitudeGaugeMode) -> Unit = {},
     alertThresholds: AlertThresholds = AlertThresholds(),
+    alertAudioMode: dev.foss.expeditiongauge.alerts.AlertAudioMode =
+        dev.foss.expeditiongauge.alerts.AlertAudioMode.BEEP,
+    onAlertAudioModeChange: (dev.foss.expeditiongauge.alerts.AlertAudioMode) -> Unit = {},
+    alertsMuted: Boolean = false,
+    onAlertsMutedChange: (Boolean) -> Unit = {},
     onAlertThresholdsChange: (AlertThresholds) -> Unit = {},
     activePresetId: DashboardPresetId = DashboardPresetId.Default,
     onPresetSelected: (DashboardPresetId) -> Unit = {},
@@ -153,43 +157,25 @@ fun SettingsScreen(
             attitudeGaugeMode = attitudeGaugeMode,
             onAttitudeGaugeModeSelect = onAttitudeGaugeModeSelect,
         )
-        SettingsAlertOptions(
+        SettingsAccessibilityOptions(
             thresholds = alertThresholds,
             onThresholdsChange = onAlertThresholdsChange,
             speedUnit = speedUnit,
             pressureUnit = pressureUnit,
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(SpacingMd),
-        ) {
-            Text(
-                text = stringResource(R.string.settings_update_check_label),
-                modifier = Modifier.weight(1f),
-            )
-            Switch(checked = updateCheckEnabled, onCheckedChange = onUpdateCheckChange)
-        }
-        SettingsSwitchRow(
-            label = stringResource(R.string.settings_high_contrast),
-            checked = highContrastEnabled,
-            onCheckedChange = onHighContrastChange,
-        )
-        SettingsSwitchRow(
-            label = stringResource(R.string.settings_large_text),
-            checked = largeTextEnabled,
-            onCheckedChange = onLargeTextChange,
-            modifier = Modifier.testTag("settings_large_text"),
-        )
-        SettingsSwitchRow(
-            label = stringResource(R.string.settings_tts_readout),
-            checked = ttsReadoutEnabled,
-            onCheckedChange = onTtsReadoutChange,
-            modifier = Modifier.testTag("settings_tts_readout"),
-        )
-        SettingsSwitchRow(
-            label = stringResource(R.string.settings_audible_tones),
-            checked = audibleTonesEnabled,
-            onCheckedChange = onAudibleTonesChange,
+            alertAudioMode = alertAudioMode,
+            onAlertAudioModeChange = onAlertAudioModeChange,
+            alertsMuted = alertsMuted,
+            onAlertsMutedChange = onAlertsMutedChange,
+            updateCheckEnabled = updateCheckEnabled,
+            onUpdateCheckChange = onUpdateCheckChange,
+            highContrastEnabled = highContrastEnabled,
+            onHighContrastChange = onHighContrastChange,
+            largeTextEnabled = largeTextEnabled,
+            onLargeTextChange = onLargeTextChange,
+            ttsReadoutEnabled = ttsReadoutEnabled,
+            onTtsReadoutChange = onTtsReadoutChange,
+            audibleTonesEnabled = audibleTonesEnabled,
+            onAudibleTonesChange = onAudibleTonesChange,
         )
         Button(onClick = onCalibrationTips, modifier = Modifier.testTag("settings_calibration_tips")) {
             Text(stringResource(R.string.calibration_tips_open))
@@ -263,6 +249,10 @@ fun SettingsScreen(
             obdDevices = obdDevices,
             selectedObdAddress = selectedObdAddress,
             onObdDeviceSelect = onObdDeviceSelect,
+            obdConnectionStatus = obdConnectionStatus,
+            onObdRetry = onObdRetry,
+            onForgetObd = onForgetObd,
+            onObdPairNew = onObdPairNew,
             obdPidConfig = obdPidConfig,
             onObdPidConfigChange = onObdPidConfigChange,
             externalGpsEnabled = externalGpsEnabled,

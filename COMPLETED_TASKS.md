@@ -2,6 +2,26 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprints 28–30 — Sensor links / TPMS QR / AA DTC footer — v2.18.0 (2026-07-28)
+
+### Sprint 28 — Sensor links, pairing, alert TTS, over-limit style, AA mute
+
+- ✅ [AGENT] Telemetry cube connection icons (GPS/OBD/TPMS/IMU link row + AA cube parity)
+- ✅ [AGENT] Device pairing / connection wizards (OBD discover/bond/validate/reconnect; TPMS corner persist; GPS/IMU polish)
+- ✅ [AGENT] Alert audio Beep|TTS + 1s level-triggered repeat + tire phrases + red/bold over-limit on phone/AA
+- ✅ [AGENT] AA Mute/Unmute (Settings-persisted) first in ActionStrip + DHU smoke
+- ✅ [AUTO] Sprint 28 gates (`watch-agent-gates --once` OK; unit tests for alerts/links/codec green). DHU mute visual smoke needs human: phone Android Auto → Start head unit server (adb cannot export DeveloperSettingsActivity on this OEM), then `pwsh scripts/expedition/dhu-smoke.ps1 -RestartDhu`
+
+### Sprint 29 — TPMS QR pairing wizard
+
+- ✅ [AGENT] TPMS QR setup wizard (FL→FR→RL→RR scan/manual, exclusive corners, ghost sessions, DataStore remember)
+- ✅ [AUTO] Sprint 29 gates (`watch-agent-gates --once --autofix` OK; TpmsQr/CornerAssign unit tests green)
+
+### Sprint 30 — AA OBD DTC footer (OBDex)
+
+- ✅ [AGENT] AA ROW Drive HUD DTC footer: one-shot Mode 03 on OBD connect; OBDex CC0 catalog; 5 s carousel; COLUMN omit; docs/gates
+- ✅ [AUTO] Sprint 30 gates (`watch-agent-gates --once --autofix` OK; Mode 03 / DtcCatalog / carousel / ROW footer unit tests green)
+
 ## Bootstrap alignment 0.15.1 (2026-07-22)
 
 - ✅ [AGENT] S0 — Write `docs/BOOTSTRAP_ALIGNMENT.md`, DECISION_LOG entry, this sprint block

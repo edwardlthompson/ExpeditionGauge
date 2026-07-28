@@ -13,7 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.GaugeLogic
+import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
@@ -59,21 +61,34 @@ fun TelemetryHudVehicleRow(
     rpm: Float?,
     batteryVoltage: Float?,
     slipRatio: Float?,
+    activeAlerts: Set<AlertType> = emptySet(),
     modifier: Modifier = Modifier,
 ) {
     val style = hudCubeTextStyle()
+    val bold = style.copy(fontWeight = FontWeight.Bold)
+    data class Part(val text: String, val alert: Boolean)
     val parts = buildList {
-        rpm?.let { add(stringResource(R.string.playback_rpm, it)) }
-        batteryVoltage?.let { add(stringResource(R.string.gauge_voltage_value, it)) }
-        slipRatio?.let { add(stringResource(R.string.gauge_slip_ratio, it)) }
+        rpm?.let {
+            add(Part(stringResource(R.string.playback_rpm, it), AlertType.RPM in activeAlerts))
+        }
+        batteryVoltage?.let {
+            add(Part(stringResource(R.string.gauge_voltage_value, it), false))
+        }
+        slipRatio?.let {
+            add(Part(stringResource(R.string.gauge_slip_ratio, it), AlertType.SLIP_RATIO in activeAlerts))
+        }
     }
     if (parts.isEmpty()) return
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        parts.forEach { line ->
-            Text(text = line, color = GaugeScaleWhite, style = style)
+        parts.forEach { part ->
+            Text(
+                text = part.text,
+                color = if (part.alert) GaugeRed else GaugeScaleWhite,
+                style = if (part.alert) bold else style,
+            )
         }
     }
 }

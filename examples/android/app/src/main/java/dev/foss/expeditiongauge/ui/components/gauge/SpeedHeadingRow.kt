@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.GaugeLogic
 import dev.foss.expeditiongauge.ui.dashboard.hud.HudAutoFitText
 import dev.foss.expeditiongauge.ui.dashboard.hud.hudCubeTextStyle
+import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
@@ -28,6 +31,7 @@ fun SpeedHeadingRow(
     altitudeM: Double? = null,
     showAltitude: Boolean = false,
     @Suppress("UNUSED_PARAMETER") uniformCube: Boolean = false,
+    speedOverLimit: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     if (!showSpeed && !showHeading && !showAltitude) return
@@ -47,6 +51,8 @@ fun SpeedHeadingRow(
                 style = style,
                 baseSp = baseSp,
                 contentAlignment = Alignment.Start,
+                valueColor = if (speedOverLimit) GaugeRed else GaugeScaleWhite,
+                valueBold = speedOverLimit,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -82,15 +88,18 @@ private fun HudCompactDigitColumn(
     baseSp: Float,
     contentAlignment: Alignment.Horizontal,
     modifier: Modifier = Modifier,
+    valueColor: Color = GaugeScaleWhite,
+    valueBold: Boolean = false,
 ) {
+    val valueStyle = if (valueBold) style.copy(fontWeight = FontWeight.Bold) else style
     Column(
         modifier = modifier,
         horizontalAlignment = contentAlignment,
     ) {
         HudAutoFitText(
             text = value,
-            color = GaugeScaleWhite,
-            style = style,
+            color = valueColor,
+            style = valueStyle,
             minSp = 9f,
             maxSp = baseSp,
             modifier = Modifier.fillMaxWidth(),

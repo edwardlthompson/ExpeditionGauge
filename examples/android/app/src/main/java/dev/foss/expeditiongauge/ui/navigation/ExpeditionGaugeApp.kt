@@ -71,6 +71,10 @@ fun ExpeditionGaugeApp(
     val largeText by accessibilityPreferences.largeTextEnabled.collectAsStateWithLifecycle(initialValue = false)
     val ttsReadout by accessibilityPreferences.ttsReadoutEnabled.collectAsStateWithLifecycle(initialValue = false)
     val audibleTonesEnabled by accessibilityPreferences.audibleTonesEnabled.collectAsStateWithLifecycle(initialValue = false)
+    val alertAudioMode by accessibilityPreferences.alertAudioMode.collectAsStateWithLifecycle(
+        initialValue = dev.foss.expeditiongauge.alerts.AlertAudioMode.BEEP,
+    )
+    val alertsMuted by accessibilityPreferences.alertsMuted.collectAsStateWithLifecycle(initialValue = false)
     val tourCompleted by onboardingPreferences.tourCompleted.collectAsStateWithLifecycle(initialValue = false)
     val isOnline by networkStatusMonitor.isOnline.collectAsStateWithLifecycle(initialValue = true)
     val installedFormat by appUpdatePreferences.installedFormat.collectAsStateWithLifecycle(initialValue = "apk")
@@ -276,6 +280,14 @@ fun ExpeditionGaugeApp(
                 alertThresholds = alertThresholds,
                 onAlertThresholdsChange = { thresholds ->
                     scope.launch { services.alertThresholdsPreferences.setThresholds(thresholds) }
+                },
+                alertAudioMode = alertAudioMode,
+                onAlertAudioModeChange = { mode ->
+                    scope.launch { accessibilityPreferences.setAlertAudioMode(mode) }
+                },
+                alertsMuted = alertsMuted,
+                onAlertsMutedChange = { muted ->
+                    scope.launch { accessibilityPreferences.setAlertsMuted(muted) }
                 },
                 activePresetId = activeProfile.presetId,
                 onPresetSelected = { presetId ->

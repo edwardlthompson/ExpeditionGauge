@@ -4,23 +4,25 @@ import android.content.Context
 import android.graphics.Bitmap
 import dev.foss.expeditiongauge.ExpeditionGaugeServices
 import dev.foss.expeditiongauge.FeatureFlags
+import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.acquireSensors
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
-import dev.foss.expeditiongauge.media.HudScreenshotIo
 import dev.foss.expeditiongauge.releaseSensors
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 
 class AndroidAutoBridge(
     private val services: ExpeditionGaugeServices,
     private val settings: SettingsPreferences,
-    scope: CoroutineScope,
+    private val accessibility: AccessibilityPreferences,
+    private val scope: CoroutineScope,
     private val appContext: Context,
 ) : CarAppBridge {
 
@@ -32,17 +34,23 @@ class AndroidAutoBridge(
     @Volatile private var alertThresholds: AlertThresholds = AlertThresholds()
     @Volatile private var attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.INCLINOMETER_LADDER
     @Volatile private var recording: Boolean = false
+    @Volatile private var alertsMuted: Boolean = false
+    @Volatile private var storedDtcs: List<DtcEntry> = emptyList()
     @Volatile private var invalidationListener: (() -> Unit)? = null
     @Volatile private var toastHandler: ((String) -> Unit)? = null
-
     private val invalidation = AaScreenInvalidation()
-    private val hudComposer = AaHudComposer(this.appContext)
+    private val hudCompose = AndroidAutoBridgeHudCompose(this.appContext)
+    private val mute = AndroidAutoBridgeMute(accessibility, scope) { muted ->
+        alertsMuted = muted
+        maybeInvalidate(force = true)
+    }
     private val mutators = AndroidAutoBridgeMutators(
-        services = services,
-        scope = scope,
-        settings = settings,
-        toast = { toastHandler },
-        invalidateForce = { maybeInvalidate(force = true) },
+        services = services, scope = scope, settings = settings,
+        toast = { toastHandler }, invalidateForce = { maybeInvalidate(force = true) },
+    )
+    private val dtc = AndroidAutoBridgeDtc(
+        scope = scope, storedDtcsFlow = services.obdManager.storedDtcs,
+        onDtcs = { storedDtcs = it }, invalidateForce = { maybeInvalidate(force = true) },
     )
 
     init {
@@ -57,41 +65,36 @@ class AndroidAutoBridge(
             recording = isRecording
             maybeInvalidate()
         }
+        mute.startCollect()
+        dtc.startCollect()
     }
 
     override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
 
-    override fun hudTiles(displaySpec: AaDisplaySpec): CarHudTiles {
-        val labels = CarHudTileBuilder.labels(snapshot, speedUnit, pressureUnit, tempUnit)
-        return CarHudTiles(
-            gMeter = CarHudTile("Attitude", labels.attitudeLine, ""),
-            telemetry = CarHudTile("Telemetry", labels.telemetrySecondary, ""),
-            tpms = CarHudTile("TPMS", labels.tpmsSecondary, ""),
-        )
-    }
+    override fun hudTiles(displaySpec: AaDisplaySpec): CarHudTiles =
+        hudCompose.hudTiles(snapshot, speedUnit, pressureUnit, tempUnit)
 
     override fun driveHud(displaySpec: AaDisplaySpec): DriveHudContent =
-        composeHud(displaySpec, cubePxOverride = null)
+        composeHud(displaySpec, null)
 
     override fun driveHudBitmap(
         displaySpec: AaDisplaySpec,
         cubePxOverride: Int?,
+        orientation: HudStripOrientation,
     ): Bitmap? {
-        composeHud(displaySpec, cubePxOverride)
-        return hudComposer.snapshotBitmap()
+        composeHud(displaySpec, cubePxOverride, orientation)
+        return hudCompose.snapshotBitmap()
     }
 
-    private fun composeHud(displaySpec: AaDisplaySpec, cubePxOverride: Int?): DriveHudContent =
-        hudComposer.composeDriveHud(
-            snapshot,
-            attitudeGaugeMode,
-            activeAlerts,
-            alertThresholds,
-            displaySpec,
-            speedUnit = speedUnit,
-            pressureUnit = pressureUnit,
-            tempUnit = tempUnit,
-            cubePxOverride = cubePxOverride,
+    private fun composeHud(
+        displaySpec: AaDisplaySpec,
+        cubePxOverride: Int?,
+        orientation: HudStripOrientation = HudStripOrientation.ROW,
+    ): DriveHudContent =
+        hudCompose.composeHud(
+            snapshot, attitudeGaugeMode, activeAlerts, alertThresholds, displaySpec,
+            speedUnit, pressureUnit, tempUnit, cubePxOverride, orientation,
+            storedDtcs = storedDtcs,
         )
 
     override fun metricValues(): Map<String, String> =
@@ -114,28 +117,20 @@ class AndroidAutoBridge(
 
     override fun cycleAttitudeDisplay(): Boolean = mutators.cycleAttitudeDisplay()
 
-    override fun captureAaScreenshot(): Boolean {
-        val bmp = hudComposer.snapshotBitmap() ?: run {
-            toastHandler?.invoke("Screenshot unavailable")
-            return false
-        }
-        val ok = runCatching {
-            HudScreenshotIo.insertBitmap(appContext, bmp, suffix = "_AA")
-        }.getOrDefault(false)
-        toastHandler?.invoke(if (ok) "Screenshot saved" else "Screenshot failed")
-        return ok
-    }
+    override fun captureAaScreenshot(): Boolean =
+        AndroidAutoBridgeActions.captureScreenshot(
+            hudCompose.snapshotBitmap(), appContext, toastHandler,
+        )
 
+    override fun isAlertsMuted(): Boolean = alertsMuted
+    override fun setAlertsMuted(muted: Boolean): Boolean = mute.setAlertsMuted(muted)
     override fun setInvalidationListener(listener: (() -> Unit)?) {
         invalidationListener = listener
     }
-
     override fun setToastHandler(handler: ((String) -> Unit)?) {
         toastHandler = handler
     }
-
     override fun onCarSessionStarted() = services.acquireSensors()
-
     override fun onCarSessionStopped() = services.releaseSensors()
 
     private fun maybeInvalidate(force: Boolean = false) {
@@ -144,6 +139,7 @@ class AndroidAutoBridge(
     }
 
     companion object {
-        const val AA_INVALIDATE_MIN_INTERVAL_MS = AaScreenInvalidation.AA_INVALIDATE_MIN_INTERVAL_MS
+        const val AA_INVALIDATE_MIN_INTERVAL_MS =
+            AaScreenInvalidation.AA_INVALIDATE_MIN_INTERVAL_MS
     }
 }
