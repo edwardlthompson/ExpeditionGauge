@@ -12,7 +12,7 @@
 - `slipSource` + rear slip in sample `extrasJson`
 - Shares `ClassicBluetoothBudget` with external GPS (max 2 SPP)
 - Sprint 28: pair via system Bluetooth → select → ELM handshake validate; cold-start auto-reconnect; Forget OBD; connection status in Settings
-- After each successful OBD connect: **one-shot Mode 03** stored-DTC read (no Mode 04 clear; no continuous spam). Codes resolve via vendored **OBDex CC0** English titles (`assets/dtc/obdex_en.json`) — the same catalog [OBDForge](https://github.com/edwardlthompson/OBDForge) uses; **no GPL OBDForge code**. Regen: `pwsh scripts/expedition/fetch-obdex-dtc.ps1`
+- After each successful OBD connect: **one-shot Mode 03** stored-DTC read (no Mode 04 clear; no continuous spam). Codes resolve via vendored **OBDex CC0** English titles (`assets/dtc/obdex_en.gz`) — the same catalog [OBDForge](https://github.com/edwardlthompson/OBDForge) uses; **no GPL OBDForge code**. Regen: `pwsh scripts/expedition/fetch-obdex-dtc.ps1`
 - Android Auto **ROW** (3×1) Drive HUD: bold-red single-line footer carousel (`n/N` + code + truncated title, 5 s dwell). **COLUMN** (1×2) omits the footer. Phone Compose HUD: out of scope this slice
 
 ## Container map
@@ -20,7 +20,7 @@
 | Layer | Path |
 |-------|------|
 | OBD | `obd/ObdClassicManager.kt`, `obd/Elm327Protocol.kt`, `obd/ClassicBluetoothBudget.kt` |
-| DTC | `obd/dtc/DtcCatalog.kt`, `DtcCarousel.kt`, `assets/dtc/obdex_en.json` |
+| DTC | `obd/dtc/DtcCatalog.kt`, `DtcCarousel.kt`, `assets/dtc/obdex_en.gz` |
 | Slip | `slip/TireSlipCalculator.kt` |
 | UI | Settings OBD picker + PID toggles; dashboard slip/rear slip + RPM; AA ROW DTC footer |
 | ADB log tag | `ExpeditionGauge/Obd` |

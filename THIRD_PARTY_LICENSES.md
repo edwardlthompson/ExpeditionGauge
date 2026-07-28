@@ -39,7 +39,7 @@ Lockfile: `examples/android/app/gradle.lockfile` (regenerate with `./gradlew :ap
 
 | Project | License | Use in ExpeditionGauge |
 |---------|---------|------------------------|
-| [foerbsnavi/OBDex](https://github.com/foerbsnavi/OBDex) | CC0-1.0 (data) | Slim English DTC titles in `assets/dtc/obdex_en.json` (same catalog [OBDForge](https://github.com/edwardlthompson/OBDForge) uses). Regen: `pwsh scripts/expedition/fetch-obdex-dtc.ps1`. **No** OBDForge / GPL sources are vendored. |
+| [foerbsnavi/OBDex](https://github.com/foerbsnavi/OBDex) | CC0-1.0 (data) | Slim English DTC titles in `assets/dtc/obdex_en.gz` (same catalog [OBDForge](https://github.com/edwardlthompson/OBDForge) uses). Regen: `pwsh scripts/expedition/fetch-obdex-dtc.ps1`. **No** OBDForge / GPL sources are vendored. |
 ## Reference implementations (not bundled)
 
 | Project | License | Use in ExpeditionGauge |

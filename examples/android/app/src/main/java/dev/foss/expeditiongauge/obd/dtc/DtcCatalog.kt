@@ -6,7 +6,11 @@ import java.io.InputStream
 
 /**
  * Slim OBDex CC0 lookup (code → English title). Same catalog OBDForge uses;
- * no GPL sources. Asset: `dtc/obdex_en.json`.
+ * no GPL sources.
+ *
+ * Repo stores `assets/dtc/obdex_en.gz` (gzip JSON under the 500 KB hygiene budget).
+ * aapt decompresses `.gz` and strips the extension, so runtime open path is
+ * [ASSET_PATH] with plain JSON bytes.
  */
 class DtcCatalog(private val titles: Map<String, String>) {
     fun describe(code: String): String =
@@ -16,7 +20,8 @@ class DtcCatalog(private val titles: Map<String, String>) {
 
     companion object {
         const val UNKNOWN = "Unknown code"
-        const val ASSET_PATH = "dtc/obdex_en.json"
+        /** Path after aapt merge (source file `obdex_en.gz`). */
+        const val ASSET_PATH = "dtc/obdex_en"
 
         fun load(context: Context): DtcCatalog =
             context.assets.open(ASSET_PATH).use { load(it) }

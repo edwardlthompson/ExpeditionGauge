@@ -9,6 +9,7 @@ Usage:
 """
 from __future__ import annotations
 
+import gzip
 import json
 import re
 import sys
@@ -16,7 +17,7 @@ import urllib.request
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-OUT = REPO_ROOT / "examples/android/app/src/main/assets/dtc/obdex_en.json"
+OUT = REPO_ROOT / "examples/android/app/src/main/assets/dtc/obdex_en.gz"
 BASE = "https://raw.githubusercontent.com/foerbsnavi/OBDex/main/data/generic"
 FILES = [
     "P0xxx_enriched.yaml",
@@ -66,11 +67,8 @@ def main() -> int:
         return 1
     OUT.parent.mkdir(parents=True, exist_ok=True)
     payload = dict(sorted(merged.items()))
-    OUT.write_text(
-        json.dumps(payload, ensure_ascii=False, separators=(",", ":")),
-        encoding="utf-8",
-        newline="\n",
-    )
+    raw = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    OUT.write_bytes(gzip.compress(raw, compresslevel=9))
     print(f"wrote {OUT} entries={len(payload)} bytes={OUT.stat().st_size}")
     print(f"sample P0420={payload.get('P0420')}")
     return 0

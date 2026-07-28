@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Alert audio **Beep|TTS** with 1 s level-triggered repeat, tire phrases, red/bold over-limit on phone/AA
 * Android Auto **Mute/Unmute** (Settings-persisted) first in ActionStrip
 * TPMS **QR setup wizard** (FL→FR→RL→RR scan/manual, exclusive corners, ghost sessions, DataStore remember)
-* AA ROW Drive HUD **OBD DTC footer**: one-shot Mode 03 on connect; vendored OBDex CC0 catalog; 5 s carousel; permanent band; COLUMN omits footer
+* AA ROW Drive HUD **OBD DTC footer**: one-shot Mode 03 on connect; vendored OBDex CC0 catalog (`obdex_en.gz`); 5 s carousel; permanent band; COLUMN omits footer
 * Debug DTC inject for DHU preview (`dhu-sim-dtc.ps1` / `SimDtcReceiver`); OBDex fetch scripts
 * Bootstrap alignment to agent-project-bootstrap **0.15.1** (skills, worktrees, local-compute, multicore gates)
 * `docs/BOOTSTRAP_ALIGNMENT.md` gap/risk log for template upgrades
@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * File splits under 150-line logic limit for AA bridge / Drive HUD / alerts / TPMS wizard modules
 * Revert AGP 9.3.1 / Kotlin 2.4.10 Dependabot #13 (KB-026); add AGP-test Netty CVEs to .trivyignore
+* Store OBDex DTC titles as gzip asset (obdex_en.gz) to stay under 500 KB tracked-file hygiene budget
 
 ## [2.17.1] — AA telemetry cube readability (2026-07-21)
 

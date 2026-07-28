@@ -20,7 +20,7 @@
 ### 2026-07-28 — AA OBD DTC footer (OBDex CC0)
 - **Status:** Accepted
 - **Context:** Drivers want stored DTCs glanceable on the AA ROW Drive HUD after OBD connect; OBDForge has a good catalog but is GPL-3.0-or-later (incompatible with MIT production path).
-- **Decision:** One-shot ELM Mode 03 after each successful connect (before Mode 01 poll); resolve titles from vendored slim **OBDex** CC0 asset (`assets/dtc/obdex_en.json` — same catalog OBDForge uses, not OBDForge sources). ROW HUD paints a bold-red single-line carousel (`n/N` + code + truncated desc, 5 s dwell); COLUMN omits footer; empty/`NO DATA` hides footer; disconnect clears. Regen via `scripts/expedition/fetch-obdex-dtc.py`.
+- **Decision:** One-shot ELM Mode 03 after each successful connect (before Mode 01 poll); resolve titles from vendored slim **OBDex** CC0 asset (`assets/dtc/obdex_en.gz` — same catalog OBDForge uses, not OBDForge sources). ROW HUD paints a bold-red single-line carousel (`n/N` + code + truncated desc, 5 s dwell); COLUMN omits footer; empty/`NO DATA` hides footer; disconnect clears. Regen via `scripts/expedition/fetch-obdex-dtc.py`.
 - **Alternatives considered:** Link/vendor OBDForge (rejected — GPL); continuous Mode 03 poll (rejected — bus spam); Mode 04 clear (out of scope); phone Compose footer (deferred).
 - **Consequences:** ~560 KB asset in APK; AA Surface cube height reserves ~12% for optional footer; carousel invalidate on dwell boundaries.
 
