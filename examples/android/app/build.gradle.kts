@@ -84,8 +84,8 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.11.2")
 
     // Pinned FOSS stack — Sprint 1; versions mirrored in app/gradle.lockfile
-    implementation("org.maplibre.compose:maplibre-compose:0.13.0")
-    implementation("org.maplibre.gl:android-sdk:13.3.1")
+    implementation("org.maplibre.compose:maplibre-compose:0.13.1")
+    implementation("org.maplibre.gl:android-sdk:13.4.1")
     implementation("com.github.eltonvs:kotlin-obd-api:1.4.1")
     implementation("androidx.media3:media3-exoplayer:1.10.1")
     implementation("androidx.media3:media3-ui:1.10.1")
