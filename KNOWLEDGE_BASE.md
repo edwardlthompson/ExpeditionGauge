@@ -250,8 +250,8 @@
 
 | Field | Detail |
 |-------|--------|
-| **Symptom** | CI Repo Hygiene / Feature Gate fail: obdex_en.json 545 KB > 500 KB |
+| **Symptom** | CI Repo Hygiene / Feature Gate fail: `obdex_en.json` 545 KB > 500 KB |
 | **Cause** | Full OBDex English title map is ~560 KB JSON; local pre-release missed it while untracked (large-file check uses HEAD sizes) |
-| **Fix** | Store ssets/dtc/obdex_en.gz (~70 KB). aapt decompresses .gz and strips the extension — runtime open dtc/obdex_en as plain JSON |
-| **Prevention** | Do not commit uncompressed catalogs over 500 KB; regen via etch-obdex-dtc.py writes .gz; avoid .json.gz filename (merger clashes with .json) |
+| **Fix** | Store `assets/dtc/obdex_en.gz` (~70 KB). aapt decompresses `.gz` and strips the extension — runtime open `dtc/obdex_en` as plain JSON |
+| **Prevention** | Do not commit uncompressed catalogs over 500 KB; regen via `fetch-obdex-dtc.py` writes `.gz`; avoid `.json.gz` filename (merger clashes with `.json`) |
 
