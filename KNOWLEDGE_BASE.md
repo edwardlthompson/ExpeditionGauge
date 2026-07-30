@@ -255,3 +255,12 @@
 | **Fix** | Store `assets/dtc/obdex_en.gz` (~70 KB). aapt decompresses `.gz` and strips the extension — runtime open `dtc/obdex_en` as plain JSON |
 | **Prevention** | Do not commit uncompressed catalogs over 500 KB; regen via `fetch-obdex-dtc.py` writes `.gz`; avoid `.json.gz` filename (merger clashes with `.json`) |
 
+### KB-028 — Logcat: gravity in latG + BLE scan rate + pitch TTS settle (Ship 2026-07-30)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Parked phone `latG≈0.95`; BLE `scanning too frequently` / callback wrapper on home/resume; “Extreme Pitch” TTS during Madgwick cold-start |
+| **Cause** | Raw accel (incl. gravity) used as latG; IMU+TPMS each restarted shared `startScan` (Android ~5/30s); time-only pitch grace still fired mid-converge |
+| **Fix** | Prefer `TYPE_LINEAR_ACCELERATION` (+ Madgwick gravity subtract); debounce shared BLE OS scan (`BleOsScanSession`); `AttitudeSettleGate` (~1 s within 2.5°) after 1.5 s floor |
+| **Prevention** | Never publish device-frame accel as vehicle G without gravity removal; coalesce multi-client BLE starts; gate attitude TTS on settle, not wall-clock alone |
+
