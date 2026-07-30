@@ -3,7 +3,6 @@ package dev.foss.expeditiongauge.sensors
 import dev.foss.expeditiongauge.ble.BleImuManager
 import dev.foss.expeditiongauge.ble.ImuFusionLog
 import dev.foss.expeditiongauge.drift.DriftAngleEstimator
-import dev.foss.expeditiongauge.fusion.MultiImuFusionOutput
 import dev.foss.expeditiongauge.fusion.SensorFusionEngine
 import dev.foss.expeditiongauge.gps.GpsCourseLogic
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
@@ -20,7 +19,6 @@ internal class PhoneImuTelemetryPublisher(
     private var peakPitch = 0f
     private var peakRoll = 0f
     private var lastGpsSnapshot = TelemetrySnapshot.empty()
-    private var logThrottleNs = 0L
 
     fun updateGpsContext(snapshot: TelemetrySnapshot) {
         lastGpsSnapshot = snapshot
@@ -45,7 +43,19 @@ internal class PhoneImuTelemetryPublisher(
         if (abs(roll) > abs(peakRoll)) peakRoll = roll
         val drift = driftEstimator.currentSample().copy(source = multiImu?.source ?: "phone")
         val fusionSource = multiImu?.source ?: "phone"
-        maybeLog(fusionSource, multiImu, drift.driftAngleDeg, latG, pitch, roll)
+        val (rawPitch, rawRoll) = fusionEngine.currentRawAttitude()
+        ImuFusionLog.publish(
+            fusionSource = fusionSource,
+            activeCount = multiImu?.activeCount ?: 0,
+            chassisTwistDeg = multiImu?.chassisTwistDeg,
+            driftAngleDeg = drift.driftAngleDeg,
+            latG = latG,
+            pitchDeg = pitch,
+            rollDeg = roll,
+            displayRotation = fusionEngine.currentDisplayRotation(),
+            rawPitchDeg = rawPitch,
+            rawRollDeg = rawRoll,
+        )
         val gpsCourse = lastGpsSnapshot.velocityHeadingDeg
             ?: lastGpsSnapshot.headingDeg.takeIf { lastGpsSnapshot.gpsFix }
         telemetryBus.publish(
@@ -69,32 +79,6 @@ internal class PhoneImuTelemetryPublisher(
                 peakPitchDeg = peakPitch,
                 peakRollDeg = peakRoll,
             ),
-        )
-    }
-
-    private fun maybeLog(
-        fusionSource: String,
-        multiImu: MultiImuFusionOutput?,
-        driftAngleDeg: Float?,
-        latG: Float,
-        pitch: Float,
-        roll: Float,
-    ) {
-        val nowNs = System.nanoTime()
-        if (nowNs - logThrottleNs <= 500_000_000L) return
-        logThrottleNs = nowNs
-        val (rawPitch, rawRoll) = fusionEngine.currentRawAttitude()
-        ImuFusionLog.publish(
-            fusionSource = fusionSource,
-            activeCount = multiImu?.activeCount ?: 0,
-            chassisTwistDeg = multiImu?.chassisTwistDeg,
-            driftAngleDeg = driftAngleDeg,
-            latG = latG,
-            pitchDeg = pitch,
-            rollDeg = roll,
-            displayRotation = fusionEngine.currentDisplayRotation(),
-            rawPitchDeg = rawPitch,
-            rawRollDeg = rawRoll,
         )
     }
 }

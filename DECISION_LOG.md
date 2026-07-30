@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-07-30 — Linear G + attitude settle gate
+- **Status:** Accepted
+- **Context:** Logcat showed parked phone `latG≈0.95` (raw accel including gravity) and “Extreme Pitch” TTS during Madgwick cold-start converge; BLE pause/resume hit Android scan-rate limits.
+- **Decision:** Prefer `TYPE_LINEAR_ACCELERATION` for latG/lonG (Madgwick gravity subtract fallback); debounce shared BLE OS scan; suppress pitch/roll feedback until attitude stable ~1 s within 2.5° (plus 1.5 s floor).
+- **Alternatives considered:** Accel low-pass as gravity (rejected — absorbs sustained cornering); longer fixed grace only (rejected — still fires mid-settle).
+- **Consequences:** G-meter at rest ~0 G; desk TTS quiet until settle; BLE startScan quota preserved on home/resume.
+
 ### 2026-07-28 — AA OBD DTC footer (OBDex CC0)
 - **Status:** Accepted
 - **Context:** Drivers want stored DTCs glanceable on the AA ROW Drive HUD after OBD connect; OBDForge has a good catalog but is GPL-3.0-or-later (incompatible with MIT production path).

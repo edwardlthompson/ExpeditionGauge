@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.1** (2026-07-29).
-- **Shipped:** through **v2.18.1** (sensor links, TPMS QR, alert TTS, AA mute, OBD DTC footer). Audit 2026-07-29 archived.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.2** (2026-07-30).
+- **Shipped:** through **v2.18.2** (linear G, BLE scan coalesce, attitude settle TTS gate). Audit 2026-07-29 archived.
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 

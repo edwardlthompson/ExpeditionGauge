@@ -57,4 +57,15 @@ class SensorAxisRemapTest {
         assertEquals(0f, y, 0f)
         assertEquals(9.81f, z, 0f)
     }
+
+    @Test
+    fun inverseRemap_roundTripsAllRotations() {
+        for (rot in 0..3) {
+            val remapped = SensorAxisRemap.remap(1.5f, -2.5f, 4f, rot)
+            val back = SensorAxisRemap.inverseRemap(remapped.first, remapped.second, remapped.third, rot)
+            assertEquals("rot=$rot x", 1.5f, back.first, 0.001f)
+            assertEquals("rot=$rot y", -2.5f, back.second, 0.001f)
+            assertEquals("rot=$rot z", 4f, back.third, 0.001f)
+        }
+    }
 }

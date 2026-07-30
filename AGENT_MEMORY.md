@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.1** (OBD DTC gated rescan + AGP automerge hold). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.2** (linear G / BLE scan / attitude settle). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|

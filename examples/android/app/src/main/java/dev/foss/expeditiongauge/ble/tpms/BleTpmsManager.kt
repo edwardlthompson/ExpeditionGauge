@@ -52,13 +52,18 @@ class BleTpmsManager(
         val filters = listOf(
             ScanFilter.Builder().setServiceUuid(ParcelUuid(TPMS_SERVICE)).build(),
         )
-        scanner.startScan(filters, ScanSettings.Builder().build(), scanCoordinator.callback)
+        scanCoordinator.startClient(
+            BleScanCoordinator.Client.TPMS,
+            scanner,
+            filters,
+            ScanSettings.Builder().build(),
+        )
         scanning = true
     }
 
     fun stopScan() {
         if (!scanning) return
-        adapter?.bluetoothLeScanner?.stopScan(scanCoordinator.callback)
+        scanCoordinator.stopClient(BleScanCoordinator.Client.TPMS)
         scanning = false
     }
 

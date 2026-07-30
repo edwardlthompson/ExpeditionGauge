@@ -86,6 +86,13 @@ class MadgwickFilter(
         return Math.toDegrees(yawRad.toDouble()).toFloat()
     }
 
+    /** Gravity unit vector in the same sensor frame as [update] accel inputs. */
+    fun gravityUnit(): Triple<Float, Float, Float> = Triple(
+        2f * (q1 * q3 - q0 * q2),
+        2f * (q0 * q1 + q2 * q3),
+        2f * (0.5f - q1 * q1 - q2 * q2),
+    )
+
     private fun normalizeQuaternion() {
         val norm = sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3)
         if (norm < 1e-6f) return

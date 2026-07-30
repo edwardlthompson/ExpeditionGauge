@@ -89,4 +89,57 @@ class AlertEngineTest {
         assertEquals(AlertType.TIRE_PRESSURE, events.first().type)
         assertEquals(TireCornerId.FR, events.first().tireCorner)
     }
+
+    @Test
+    fun startupGraceSuppressesPitchAndRollOnly() {
+        assertTrue(AlertStartupGrace.suppressFeedback(AlertType.PITCH, 0L, attitudeSettled = true))
+        assertTrue(AlertStartupGrace.suppressFeedback(AlertType.ROLL, 500L, attitudeSettled = true))
+        assertTrue(!AlertStartupGrace.suppressFeedback(AlertType.LAT_G, 0L, attitudeSettled = false))
+        assertTrue(
+            !AlertStartupGrace.suppressFeedback(
+                AlertType.PITCH,
+                AlertStartupGrace.ATTITUDE_GRACE_MS,
+                attitudeSettled = true,
+            ),
+        )
+        assertTrue(
+            AlertStartupGrace.suppressFeedback(
+                AlertType.PITCH,
+                AlertStartupGrace.ATTITUDE_GRACE_MS + 1,
+                attitudeSettled = false,
+            ),
+        )
+    }
+
+    @Test
+    fun attitudeSettleGateWaitsForStableWindow() {
+        val gate = AttitudeSettleGate(stableWindowMs = 1_000L, maxDeltaDeg = 2.5f, minSamples = 3)
+        assertTrue(!gate.onSample(-60f, 0f, 0L))
+        assertTrue(!gate.onSample(-59f, 0.5f, 400L))
+        assertTrue(!gate.onSample(-58.5f, 0.2f, 800L))
+        assertTrue(gate.onSample(-58.8f, 0.3f, 1_100L))
+        assertTrue(gate.isSettled())
+    }
+
+    @Test
+    fun attitudeSettleGateResetsWhenSwingContinues() {
+        val gate = AttitudeSettleGate(stableWindowMs = 1_000L, maxDeltaDeg = 2.5f, minSamples = 3)
+        gate.onSample(-50f, 0f, 0L)
+        gate.onSample(-49f, 0f, 500L)
+        assertTrue(!gate.onSample(-40f, 0f, 600L)) // swing resets window
+        assertTrue(!gate.isSettled())
+        gate.onSample(-40.5f, 0.2f, 1_200L)
+        gate.onSample(-40.2f, 0.1f, 1_600L)
+        assertTrue(gate.onSample(-40.0f, 0.0f, 2_200L))
+    }
+
+    @Test
+    fun attitudeSettleGateResettlesAfterLargeJump() {
+        val gate = AttitudeSettleGate(stableWindowMs = 500L, maxDeltaDeg = 2.5f, minSamples = 2)
+        gate.onSample(0f, 0f, 0L)
+        gate.onSample(0.5f, 0f, 300L)
+        assertTrue(gate.onSample(0.2f, 0f, 600L))
+        assertTrue(!gate.onSample(40f, 0f, 700L)) // Madgwick-style jump
+        assertTrue(!gate.isSettled())
+    }
 }

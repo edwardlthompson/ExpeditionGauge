@@ -107,14 +107,15 @@ internal class BleImuConnectionSupport(
             ScanFilter.Builder().setServiceUuid(ParcelUuid(BleImuManager.WIT_SERVICE)).build(),
         )
         val settings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
             .build()
-        scanner.startScan(filters, settings, scanCoordinator.callback)
+        scanCoordinator.startClient(BleScanCoordinator.Client.IMU, scanner, filters, settings)
         scanning = true
     }
 
     fun stopScan() {
-        adapter?.bluetoothLeScanner?.stopScan(scanCoordinator.callback)
+        if (!scanning) return
+        scanCoordinator.stopClient(BleScanCoordinator.Client.IMU)
         scanning = false
     }
 

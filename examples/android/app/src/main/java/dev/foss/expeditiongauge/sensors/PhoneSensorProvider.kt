@@ -31,6 +31,7 @@ class PhoneSensorProvider(
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     private val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    private val linearAcceleration = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
     private val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
     private val magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
     private val publisher = PhoneImuTelemetryPublisher(
@@ -57,6 +58,7 @@ class PhoneSensorProvider(
             displayManager.registerDisplayListener(displayListener, null)
             val imuDelay = SensorPollScheduler.phoneImuSensorDelay
             accelerometer?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
+            linearAcceleration?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
             gyroscope?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
             magnetometer?.let { sensorManager.registerListener(this@PhoneSensorProvider, it, imuDelay) }
             calibrationStore.offsets.drop(1).collect { offsets ->
@@ -85,6 +87,11 @@ class PhoneSensorProvider(
                     event.values[0], event.values[1], event.values[2], event.timestamp,
                 )
                 autocalibrationController?.onAccel(
+                    event.values[0], event.values[1], event.values[2],
+                )
+            }
+            Sensor.TYPE_LINEAR_ACCELERATION -> {
+                fusionEngine.onLinearAccelerometer(
                     event.values[0], event.values[1], event.values[2],
                 )
             }

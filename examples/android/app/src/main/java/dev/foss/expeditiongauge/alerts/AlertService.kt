@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.alerts
 
 import android.content.Context
+import android.os.SystemClock
 import android.util.Log
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.data.db.dao.AlertEventDao
@@ -27,6 +28,8 @@ class AlertService(
     private val _activeTireCorners = MutableStateFlow<Set<TireCornerId>>(emptySet())
     val activeTireCorners: StateFlow<Set<TireCornerId>> = _activeTireCorners.asStateFlow()
     private var previouslyActiveKeys = emptySet<String>()
+    private val startedAtElapsedMs = SystemClock.elapsedRealtime()
+    private val attitudeSettleGate = AttitudeSettleGate()
 
     init {
         scope.launch {
@@ -48,6 +51,7 @@ class AlertService(
             return
         }
         val nowMs = snapshot.timestampMs.takeIf { it > 0L } ?: System.currentTimeMillis()
+        val attitudeSettled = attitudeSettleGate.onSample(snapshot.pitchDeg, snapshot.rollDeg, nowMs)
         val active = buildList {
             addAll(engine.evaluateActive(snapshot, nowMs))
             if (snapshot.obdConnected) {
@@ -65,7 +69,11 @@ class AlertService(
         _activeAlerts.value = active.map { it.type }.toSet()
         _activeTireCorners.value = active.mapNotNull { it.tireCorner }.toSet()
 
-        val feedbackEvents = engine.filterFeedback(active, nowMs)
+        val elapsedMs = SystemClock.elapsedRealtime() - startedAtElapsedMs
+        val feedbackCandidates = active.filterNot { event ->
+            AlertStartupGrace.suppressFeedback(event.type, elapsedMs, attitudeSettled)
+        }
+        val feedbackEvents = engine.filterFeedback(feedbackCandidates, nowMs)
         val playAudio = audibleEnabled && !muted
         feedbackEvents.forEach { event ->
             Log.d(

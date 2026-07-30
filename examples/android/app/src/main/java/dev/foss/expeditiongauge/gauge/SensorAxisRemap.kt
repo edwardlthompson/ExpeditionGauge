@@ -19,4 +19,8 @@ object SensorAxisRemap {
             3 -> Triple(y, -x, z) // ROTATION_270
             else -> Triple(x, y, z)
         }
+
+    /** Inverse of [remap] — screen-stable → device frame. */
+    fun inverseRemap(x: Float, y: Float, z: Float, displayRotation: Int): Triple<Float, Float, Float> =
+        remap(x, y, z, (4 - displayRotation.mod(4)).mod(4))
 }

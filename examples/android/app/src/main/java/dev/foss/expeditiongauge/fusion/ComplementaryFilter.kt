@@ -42,4 +42,7 @@ class ComplementaryFilter(
     fun pitchDeg(): Float = pitchDeg
     fun rollDeg(): Float = rollDeg
     fun yawDeg(): Float = yawDeg
+
+    fun gravityUnit(): Triple<Float, Float, Float> =
+        GravityVector.fromPitchRollDeg(pitchDeg, rollDeg)
 }

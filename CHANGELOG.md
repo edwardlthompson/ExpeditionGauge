@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.2] — Logcat hardening: linear G, BLE scan, attitude settle (2026-07-30)
+
+### Fixed
+
+* Lateral/longitudinal G no longer includes gravity (OS `TYPE_LINEAR_ACCELERATION` + Madgwick fallback) — parked phone no longer shows ~1 G latG
+* BLE shared scan debounced/coalesced — stops Android “scanning too frequently” and callback-wrapper errors on pause/resume
+* Pitch/roll TTS gated until Madgwick attitude is stable (plus 1.5 s floor) — no desk “Extreme Pitch” during cold-start converge
+* Alert audio focus request/abandon idempotent — no focus thrash on warm resume
+
+### Changed
+
+* ImuFusion debug logs throttled (1 s burst / 2 s steady)
+* BLE scan mode `BALANCED` for shared IMU+TPMS session
+
 ## [2.18.1] — OBD DTC rescan + AGP automerge hold (2026-07-29)
 
 ### Changed

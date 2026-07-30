@@ -49,6 +49,12 @@ class SensorFusionEngine(
         lastTimestampNs = timestampNs
     }
 
+    /** OS gravity-removed accel (device frame). Preferred source for latG/lonG. */
+    fun onLinearAccelerometer(x: Float, y: Float, z: Float) {
+        lastLinearAccel = Triple(x, y, z)
+        hasLinearAccel = true
+    }
+
     fun onGyroscope(x: Float, y: Float, z: Float, timestampNs: Long) {
         val dtSec = if (lastTimestampNs > 0L) {
             ((timestampNs - lastTimestampNs).coerceAtLeast(1L)) / 1_000_000_000f
@@ -88,14 +94,31 @@ class SensorFusionEngine(
         val (pitch, roll, yaw) = calibrationStore.applyAttitude(
             vehiclePitch, vehicleRoll, rawYawEffective, calibrationOffsets,
         )
-        val (ax, ay, az) = lastAccel
+        val (latG, lonG) = deviceLinearLatLonG()
         return FusionOutput(
             pitchDeg = pitch,
             rollDeg = roll,
             yawDeg = yaw,
-            latG = ay / GRAVITY,
-            lonG = ax / GRAVITY,
+            latG = latG,
+            lonG = lonG,
         )
+    }
+
+    /**
+     * Prefer [Sensor.TYPE_LINEAR_ACCELERATION] when present; else subtract Madgwick /
+     * complementary gravity from raw accel (device frame for ADR-0013 ball remaps).
+     */
+    private fun deviceLinearLatLonG(): Pair<Float, Float> {
+        if (hasLinearAccel) {
+            val (lx, ly, _) = lastLinearAccel
+            return (ly / GravityVector.GRAVITY_MS2) to (lx / GravityVector.GRAVITY_MS2)
+        }
+        val (ax, ay, _) = lastAccel
+        val gravScreen = if (useMadgwick) madgwick.gravityUnit() else complementary.gravityUnit()
+        val (gx, gy, _) = SensorAxisRemap.inverseRemap(
+            gravScreen.first, gravScreen.second, gravScreen.third, displayRotation,
+        )
+        return GravityVector.linearLatLonG(ax, ay, Triple(gx, gy, 0f))
     }
 
     fun currentDisplayRotation(): Int = displayRotation
@@ -108,15 +131,13 @@ class SensorFusionEngine(
     }
 
     fun lastAccelOrNull(): Triple<Float, Float, Float>? =
-        lastAccel.takeIf { it != Triple(0f, 0f, GRAVITY) || lastTimestampNs > 0L }
+        lastAccel.takeIf { it != Triple(0f, 0f, GravityVector.GRAVITY_MS2) || lastTimestampNs > 0L }
 
     fun lastGyroRates(): Triple<Float, Float, Float>? = lastGyro
 
-    private var lastAccel: Triple<Float, Float, Float> = Triple(0f, 0f, GRAVITY)
+    private var lastAccel: Triple<Float, Float, Float> = Triple(0f, 0f, GravityVector.GRAVITY_MS2)
+    private var lastLinearAccel: Triple<Float, Float, Float> = Triple(0f, 0f, 0f)
+    private var hasLinearAccel: Boolean = false
     private var lastGyro: Triple<Float, Float, Float>? = null
     private var lastMag: Triple<Float, Float, Float>? = null
-
-    companion object {
-        private const val GRAVITY = 9.81f
-    }
 }

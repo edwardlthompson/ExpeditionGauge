@@ -23,8 +23,14 @@ class ImuOrientationFilter {
     fun rawYawDeg(): Float? = lastSample?.yawDeg
     fun pitchDeg(): Float = lastSample?.pitchDeg ?: 0f
     fun rollDeg(): Float = lastSample?.rollDeg ?: 0f
-    fun latG(): Float = (lastSample?.ayG ?: 0f)
-    fun lonG(): Float = (lastSample?.axG ?: 0f)
+    fun latG(): Float {
+        val s = lastSample ?: return 0f
+        return GravityVector.linearLatLonFromG(s.axG, s.ayG, s.pitchDeg, s.rollDeg).first
+    }
+    fun lonG(): Float {
+        val s = lastSample ?: return 0f
+        return GravityVector.linearLatLonFromG(s.axG, s.ayG, s.pitchDeg, s.rollDeg).second
+    }
     fun yawRateDegPerSec(): Float = lastSample?.gzDegPerSec ?: 0f
     fun quality(): Float = noiseScore
 }
