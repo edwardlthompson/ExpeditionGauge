@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.1] — OBD DTC rescan + AGP automerge hold (2026-07-29)
+
+### Changed
+
+* OBD stored-DTC refresh while connected: Mode 01 PID 01 gate + ~30 s Mode 03 rescan (AA footer picks up clears/new codes without reconnect)
+* Dependabot automerge skips AGP / Kotlin toolchain bumps (KB-026)
+* BUILD_PLAN Current state / MapLibre pin docs / AGENT_MEMORY template provenance aligned to v2.18.x / 0.15.1
+
+### Fixed
+
+* Poll-loop DTC refresh cancels with the OBD job (`isActive` on pollJob, not parent scope)
+
 ## [2.18.0] — Sensor links, TPMS QR, alert TTS, AA mute + OBD DTC footer (2026-07-28)
 
 ### Added

@@ -2,6 +2,14 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Audit 2026-07-29 — post v2.18.0 hygiene + DTC rescan
+
+- ✅ [AGENT] A-001 Fix F-003/F-004/F-007: land gated ~30s OBD DTC rescan (`ObdPollLoop`/`ObdMonitorStatus`/tests), pollJob `isActive`, CHANGELOG Unreleased
+- ✅ [AGENT] A-002 Fix F-001: BUILD_PLAN Current state → v2.18.0 / OP13 primary serial
+- ✅ [AGENT] A-003 Fix F-002: skip Dependabot automerge for AGP/Kotlin (KB-026)
+- ✅ [AGENT] A-004 Fix F-005/F-006: MapLibre 0.13.1 pin docs + AGENT_MEMORY template 0.15.1
+- ✅ [AUTO] A-005 Gates (`watch-agent-gates --once --autofix`); F-008 AGP 9.3 validation deferred
+
 ## Sprints 28–30 — Sensor links / TPMS QR / AA DTC footer — v2.18.0 (2026-07-28)
 
 ### Sprint 28 — Sensor links, pairing, alert TTS, over-limit style, AA mute

@@ -4,11 +4,10 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.17.0** (2026-07-19).
-- **Shipped:** through **v2.17.0** AA Surface Drive HUD. Audit 2026-07-19 hygiene archived.
-- **Audit 2026-06-30:** gates green; Dependabot zero open Critical/High; CodeQL zero open.
-- **Audit 2026-07-12:** MSYS path + multi-strict + stack sync archived; Dependabot 0 open.
-- **Dev device:** OnePlus 12 · serial `b5214fc6` · [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.1** (2026-07-29).
+- **Shipped:** through **v2.18.1** (sensor links, TPMS QR, alert TTS, AA mute, OBD DTC footer). Audit 2026-07-29 archived.
+- **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
+- **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
 ---
 
@@ -47,7 +46,7 @@ Script catalog: [`scripts/expedition/`](scripts/expedition/) · toggles: `projec
 
 | Layer | Choice |
 |-------|--------|
-| UI | Jetpack Compose + Canvas; MapLibre playback map (`maplibre-compose:0.13.0` pinned) |
+| UI | Jetpack Compose + Canvas; MapLibre playback map (`maplibre-compose:0.13.1` pinned) |
 | State | ViewModels + DataStore; Room sessions |
 | Sensors | `TelemetryBus` — single fusion pipeline |
 | BLE | `BleConnectionBudget` caps concurrent GATT |
@@ -78,11 +77,12 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Audit 2026-07-19 | post v2.17 docs/release hygiene (A-001–A-005) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Bootstrap alignment 0.15.1 | template tooling (S0–S4 + R2 N/A) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Sprint 28–30 / v2.18.0 | Sensor links, TPMS QR, alert TTS, AA mute, OBD DTC footer | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
+| Audit 2026-07-29 | post v2.18.0 hygiene + DTC rescan (A-001–A-005) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
 
-> **Sprints 28–30** archived in COMPLETED_TASKS.md (v2.18.0). Bootstrap alignment 0.15.1 @ `58cdca5`. Gap log: [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md).
+> **Audit 2026-07-29** archived in COMPLETED_TASKS.md. Sprints 28–30 / v2.18.0 archived earlier. Bootstrap alignment 0.15.1 @ `58cdca5`. Gap log: [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md). F-008 AGP 9.3 validation deferred.
 
 ---
 
@@ -105,7 +105,8 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 | Risk | Mitigation |
 |------|------------|
-| MapLibre API drift | Pin `maplibre-compose:0.13.0`; [`docs/design/maplibre-3d-terrain.md`](docs/design/maplibre-3d-terrain.md) |
+| MapLibre API drift | Pin `maplibre-compose:0.13.1`; [`docs/design/maplibre-3d-terrain.md`](docs/design/maplibre-3d-terrain.md) |
+| AGP/Kotlin Dependabot | Automerge skips `com.android.*` / `org.jetbrains.kotlin.*` (KB-026) |
 | Multi-BLE OEM variance | `BleConnectionBudget`; reconnect backoff in `ble/` |
 | 3D flyover thermal | WorkManager + `FlyoverThermalGuard.kt`; clip/frame caps |
 | Nav inset double-padding | `InsetAwareScaffold.kt` — one scaffold owner per route |

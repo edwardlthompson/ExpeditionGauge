@@ -243,7 +243,7 @@
 | **Symptom** | After Dependabot #11 / #13, CI fails `:app:processDebugNavigationResources` / CodeQL reports Kotlin version too new; Security Scan also fails on new AGP-test Netty CVEs |
 | **Cause** | AGP 9.3.x + Kotlin 2.4.10 not yet compatible with this project's Gradle/CodeQL bundle; Trivy DB adds HIGH Netty CVEs on `unified-test-platform` lockfile pins |
 | **Fix** | Revert plugins to AGP 9.2.1 / Kotlin 2.4.0 (`examples/android/build.gradle.kts`); append new Netty CVE IDs to `.trivyignore` (KB-014) |
-| **Prevention** | Hold android-dependencies group until AGP 9.3 + CodeQL extractor are validated locally and in CI; disable automerge for that group if needed |
+| **Prevention** | `dependabot-automerge.yml` skips `com.android.application` / `com.android.library` / `org.jetbrains.kotlin*` (2026-07-29). Hold full AGP 9.3 until local+CI+CodeQL validation on a trial branch |
 
 
 ### KB-027 — OBDex DTC asset over 500 KB hygiene gate (Ship 2026-07-28)

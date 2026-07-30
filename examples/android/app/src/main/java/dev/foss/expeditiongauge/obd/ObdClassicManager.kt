@@ -11,16 +11,12 @@ import dev.foss.expeditiongauge.settings.ObdPidConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 import java.util.UUID
 
 data class ObdSnapshot(
@@ -60,7 +56,7 @@ class ObdClassicManager(
     val phase: StateFlow<ObdConnectionPhase> = _phase.asStateFlow()
 
     private val _storedDtcs = MutableStateFlow<List<DtcEntry>>(emptyList())
-    /** Mode 03 / sim DTCs; cleared on disconnect. */
+    /** Mode 03 / sim DTCs; cleared on disconnect; refreshed ~every 30s while connected. */
     val storedDtcs: StateFlow<List<DtcEntry>> = _storedDtcs.asStateFlow()
 
     fun selectDevice(address: String) {
@@ -94,7 +90,17 @@ class ObdClassicManager(
                     _phase.value = ObdConnectionPhase.Connected
                     _snapshot.value = ObdSnapshot(connected = true)
                     _storedDtcs.value = ObdDtcReader.readOnce(sock, catalog)
-                    pollJob = scope.launch(Dispatchers.IO) { pollLoop(sock) }
+                    pollJob = scope.launch(Dispatchers.IO) {
+                        ObdPollLoop.run(
+                            sock = sock,
+                            pidConfig = pidConfig,
+                            catalog = catalog,
+                            isActive = { isActive },
+                            onSnapshot = { _snapshot.value = it },
+                            currentDtcs = { _storedDtcs.value },
+                            onDtcs = { _storedDtcs.value = it },
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "OBD connect/validate failed: ${e.message}")
@@ -126,24 +132,9 @@ class ObdClassicManager(
     fun simulateStoredDtcs(codes: List<String>) = ObdDtcSim.apply(codes, catalog, _storedDtcs)
     fun clearSimulatedDtcs() = ObdDtcSim.clear(_storedDtcs)
 
-    private suspend fun pollLoop(sock: BluetoothSocket) {
-        val writer = OutputStreamWriter(sock.outputStream)
-        val reader = BufferedReader(InputStreamReader(sock.inputStream))
-        while (scope.coroutineContext.isActive) {
-            _snapshot.value = ObdPollHelper.pollSnapshot(
-                reader = reader,
-                writer = writer,
-                config = pidConfig,
-                previous = _snapshot.value,
-            )
-            delay(POLL_INTERVAL_MS)
-        }
-    }
-
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"
         private val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
-        private const val POLL_INTERVAL_MS = 200L
         private const val CONNECT_TIMEOUT_MS = 15_000L
     }
 }

@@ -72,4 +72,21 @@ class Elm327ProtocolTest {
         assertEquals("B0001", Elm327Protocol.decodeDtcBytes(0x80, 0x01))
         assertEquals("U0100", Elm327Protocol.decodeDtcBytes(0xC1, 0x00))
     }
+
+    @Test
+    fun parseMonitorStatus_milAndCount() {
+        // 0x81 = MIL on + 1 code
+        val status = ObdMonitorStatus.parse("410181076504")
+        assertNotNull(status)
+        assertEquals(true, status!!.milOn)
+        assertEquals(1, status.storedDtcCount)
+    }
+
+    @Test
+    fun parseMonitorStatus_zeroCodes() {
+        val status = ObdMonitorStatus.parse("410100000000")
+        assertNotNull(status)
+        assertEquals(false, status!!.milOn)
+        assertEquals(0, status.storedDtcCount)
+    }
 }

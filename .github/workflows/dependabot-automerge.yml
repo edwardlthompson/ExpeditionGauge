@@ -18,11 +18,27 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # KB-026: AGP 9.3.x / Kotlin 2.4.10 minor bumps broke CI + CodeQL — never automerge those.
       - name: Enable auto-merge for patch/minor
         if: |
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+          (steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+           steps.metadata.outputs.update-type == 'version-update:semver-minor') &&
+          !contains(steps.metadata.outputs.dependency-names, 'com.android.application') &&
+          !contains(steps.metadata.outputs.dependency-names, 'com.android.library') &&
+          !contains(steps.metadata.outputs.dependency-names, 'org.jetbrains.kotlin')
         run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Skip AGP/Kotlin toolchain automerge
+        if: |
+          contains(steps.metadata.outputs.dependency-names, 'com.android.application') ||
+          contains(steps.metadata.outputs.dependency-names, 'com.android.library') ||
+          contains(steps.metadata.outputs.dependency-names, 'org.jetbrains.kotlin')
+        run: |
+          echo "Skipping automerge for Android toolchain bump (KB-026). Manual merge after local+CI validation."
+          gh pr comment "$PR_URL" --body "Automerge skipped for AGP/Kotlin (KB-026). Validate locally and in CI before merging."
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
