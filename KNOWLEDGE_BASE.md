@@ -136,6 +136,7 @@
 | **Cause** | Android Gradle Plugin `unified-test-platform-*` pulls Netty 4.1.110/4.1.93 for emulator/test plugins — not packaged in release APK |
 | **Fix** | Root `.trivyignore` lists affected CVE IDs; revisit when AGP bumps transitive Netty |
 | **Prevention** | Do not ignore Netty in runtime classpath; prefer AGP upgrade over blanket ignore when fix version ships |
+| **Update 2026-08-04** | Added `CVE-2026-56819` (netty-codec-http2 DoS) — still AGP test-harness only |
 
 ### KB-015 — BouncyCastle CVE-2025-14813 in lockfile (Ship 2026-06-30)
 

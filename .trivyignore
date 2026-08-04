@@ -13,6 +13,7 @@ CVE-2026-50010
 CVE-2026-55831
 CVE-2026-55833
 CVE-2026-56745
+CVE-2026-56819
 CVE-2026-59901
 GHSA-xpw8-rcwv-8f8p
 # AGP unified-test-platform / lint-check BouncyCastle (gradle.lockfile — not packaged in APK).
