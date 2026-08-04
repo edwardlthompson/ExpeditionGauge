@@ -25,16 +25,17 @@ internal object ObdPollLoop {
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
-        var nextDtcAt = SystemClock.elapsedRealtime() + ObdDtcReader.RESCAN_INTERVAL_MS
+        // Immediate first Mode 03 (after connect) so DTCs are not on the RFCOMM critical path.
+        var nextDtcAt = 0L
         var previous = ObdSnapshot(connected = true)
         while (isActive()) {
-            previous = ObdPollHelper.pollSnapshot(reader, writer, pidConfig, previous)
-            onSnapshot(previous)
             val now = SystemClock.elapsedRealtime()
             if (now >= nextDtcAt) {
                 nextDtcAt = now + ObdDtcReader.RESCAN_INTERVAL_MS
                 onDtcs(ObdDtcReader.refresh(reader, writer, catalog, currentDtcs()))
             }
+            previous = ObdPollHelper.pollSnapshot(reader, writer, pidConfig, previous)
+            onSnapshot(previous)
             delay(POLL_INTERVAL_MS)
         }
     }

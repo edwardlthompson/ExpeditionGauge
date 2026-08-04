@@ -8,29 +8,20 @@ object Elm327Protocol {
     fun init(sock: BluetoothSocket) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(sock.inputStream.reader())
-        listOf("ATZ", "ATE0", "ATL0", "ATSP0").forEach { cmd ->
-            writer.write("$cmd\r")
-            writer.flush()
-            readUntilPrompt(reader)
-        }
+        // ATZ resets; ATSP0 may search protocols — allow longer waits than PID polls.
+        Elm327Io.sendCommand(reader, writer, "ATZ", timeoutMs = 8_000L)
+        Elm327Io.sendCommand(reader, writer, "ATE0", timeoutMs = 3_000L)
+        Elm327Io.sendCommand(reader, writer, "ATL0", timeoutMs = 3_000L)
+        Elm327Io.sendCommand(reader, writer, "ATSP0", timeoutMs = 8_000L)
     }
 
     fun queryPid(reader: BufferedReader, writer: OutputStreamWriter, pid: String): String? {
-        writer.write("$pid\r")
-        writer.flush()
-        return readUntilPrompt(reader)?.filter { it.isLetterOrDigit() }?.uppercase()
+        val raw = Elm327Io.sendCommand(reader, writer, pid, timeoutMs = 3_000L)
+        return raw?.filter { it.isLetterOrDigit() }?.uppercase()
     }
 
-    fun readUntilPrompt(reader: BufferedReader): String? {
-        val sb = StringBuilder()
-        repeat(20) {
-            if (!reader.ready()) return@repeat
-            val c = reader.read().toChar()
-            sb.append(c)
-            if (c == '>') return sb.toString()
-        }
-        return sb.toString().ifBlank { null }
-    }
+    fun readUntilPrompt(reader: BufferedReader): String? =
+        Elm327Io.readUntilPrompt(reader)
 
     fun parseRpm(response: String): Float? {
         val idx = response.indexOf("410C")

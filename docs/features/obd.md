@@ -12,7 +12,7 @@
 - `slipSource` + rear slip in sample `extrasJson`
 - Shares `ClassicBluetoothBudget` with external GPS (max 2 SPP)
 - Sprint 28: pair via system Bluetooth → select → ELM handshake validate; cold-start auto-reconnect; Forget OBD; connection status in Settings
-- After each successful OBD connect: Mode 03 stored-DTC read, then **gated rescan every ~30 s** while connected (Mode 01 PID 01 for MIL/count first; Mode 03 only when count > 0 or codes need clearing). ECUs do not push DTCs — the tester must poll. No Mode 04 clear. Codes resolve via vendored **OBDex CC0** English titles (`assets/dtc/obdex_en.gz`) — the same catalog [OBDForge](https://github.com/edwardlthompson/OBDForge) uses; **no GPL OBDForge code**. Regen: `pwsh scripts/expedition/fetch-obdex-dtc.ps1`
+- After RFCOMM + ELM init succeed: **immediate** Mode 03 on the poll loop, then **gated rescan every ~30 s** (Mode 01 PID 01 for MIL/count first; Mode 03 only when count > 0 or codes need clearing). DTC work is never on the connect-timeout critical path. ECUs do not push DTCs — the tester must poll. No Mode 04 clear. Codes resolve via vendored **OBDex CC0** English titles (`assets/dtc/obdex_en.gz`) — the same catalog [OBDForge](https://github.com/edwardlthompson/OBDForge) uses; **no GPL OBDForge code**. Regen: `pwsh scripts/expedition/fetch-obdex-dtc.ps1`
 - Android Auto **ROW** (3×1) Drive HUD: bold-red single-line footer carousel (`n/N` + code + truncated title, 5 s dwell). **COLUMN** (1×2) omits the footer. Phone Compose HUD: out of scope this slice
 
 ## Container map

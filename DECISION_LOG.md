@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-04 — OBD connect critical path
+- **Status:** Accepted
+- **Context:** Classic Bluetooth OBD stopped connecting in EG while OBDLink still worked; post-2.18.0 DTC path and a broken ELM prompt reader made RFCOMM/init fail under the connect timeout.
+- **Decision:** Wait for ELM `>` with sleep-on-empty (no 20-char ready()-only cap); keep Mode 03 off the connect timeout (first DTC tick on poll loop); try insecure SPP after secure; Settings write address only (prefs Flow owns `connect()`).
+- **Alternatives considered:** Longer single timeout wrapping Mode 03 (rejected — still races catalog/load); secure-only RFCOMM (rejected — many clones need insecure).
+- **Consequences:** Connect = RFCOMM + AT init; DTCs appear shortly after Connected; dual connect from Settings no longer tears down handshake.
+
 ### 2026-07-30 — Linear G + attitude settle gate
 - **Status:** Accepted
 - **Context:** Logcat showed parked phone `latG≈0.95` (raw accel including gravity) and “Extreme Pitch” TTS during Madgwick cold-start converge; BLE pause/resume hit Android scan-rate limits.

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.3] — OBD connect reliability (2026-08-04)
+
+### Fixed
+
+* OBD connect: wait for ELM `>` prompt (was ready()-only / 20-char cap); Mode 03 no longer inside RFCOMM timeout; insecure SPP fallback; Settings select no longer double-fires `connect()`
+
 ## [2.18.2] — Logcat hardening: linear G, BLE scan, attitude settle (2026-07-30)
 
 ### Fixed

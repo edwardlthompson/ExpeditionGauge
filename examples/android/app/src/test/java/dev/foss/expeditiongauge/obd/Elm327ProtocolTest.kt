@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.obd
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class Elm327ProtocolTest {
@@ -88,5 +89,16 @@ class Elm327ProtocolTest {
         assertNotNull(status)
         assertEquals(false, status!!.milOn)
         assertEquals(0, status.storedDtcCount)
+    }
+
+    @Test
+    fun readUntilPrompt_waitsForPromptBeyond20Chars() {
+        // Old implementation capped at 20 chars and skipped when !ready().
+        val banner = "ELM327 v1.5\r\nSEARCHING...\r\nOK\r\n>"
+        val reader = java.io.BufferedReader(java.io.StringReader(banner))
+        val out = Elm327Io.readUntilPrompt(reader, timeoutMs = 1_000L)
+        assertNotNull(out)
+        assertTrue(out!!.endsWith(">"))
+        assertTrue(out.length > 20)
     }
 }

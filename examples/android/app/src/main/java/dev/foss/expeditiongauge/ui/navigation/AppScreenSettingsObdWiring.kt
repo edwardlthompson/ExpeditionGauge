@@ -56,10 +56,10 @@ internal fun rememberAppScreenSettingsObdWiring(
             }
         },
         onDeviceSelect = { address ->
+            // Preference Flow (ExpeditionGaugeSensorPrefBindings) owns connect — avoid
+            // a second connect() that tears down the first RFCOMM mid-handshake.
             scope.launch {
                 services.settingsPreferences.setObdDeviceAddress(address)
-                services.obdManager.selectDevice(address)
-                services.obdManager.connect()
             }
         },
         onPidConfigChange = { config ->

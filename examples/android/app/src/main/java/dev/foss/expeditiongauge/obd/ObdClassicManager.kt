@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
-import java.util.UUID
 
 data class ObdSnapshot(
     val connected: Boolean = false,
@@ -40,6 +41,8 @@ class ObdClassicManager(
     private val adapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     private var socket: BluetoothSocket? = null
     private var pollJob: Job? = null
+    private var connectJob: Job? = null
+    private val connectMutex = Mutex()
     private var selectedAddress: String? = null
     private val catalog: DtcCatalog by lazy {
         runCatching { DtcCatalog.load(context) }
@@ -56,7 +59,7 @@ class ObdClassicManager(
     val phase: StateFlow<ObdConnectionPhase> = _phase.asStateFlow()
 
     private val _storedDtcs = MutableStateFlow<List<DtcEntry>>(emptyList())
-    /** Mode 03 / sim DTCs; cleared on disconnect; refreshed ~every 30s while connected. */
+    /** Mode 03 / sim DTCs; cleared on disconnect; refreshed while connected. */
     val storedDtcs: StateFlow<List<DtcEntry>> = _storedDtcs.asStateFlow()
 
     fun selectDevice(address: String) {
@@ -67,29 +70,29 @@ class ObdClassicManager(
 
     fun connect() {
         if (!classicBudget.canConnect(ClassicBluetoothBudget.Slot.OBD)) {
+            Log.w(TAG, "OBD connect denied: classic SPP budget full")
             _phase.value = ObdConnectionPhase.Failed
             return
         }
         val address = selectedAddress ?: run {
+            Log.w(TAG, "OBD connect denied: no device address")
             _phase.value = ObdConnectionPhase.Failed
             return
         }
+        connectJob?.cancel()
         disconnect(clearPhase = false)
         _phase.value = ObdConnectionPhase.Connecting
-        scope.launch(Dispatchers.IO) {
-            try {
-                withTimeout(CONNECT_TIMEOUT_MS) {
-                    val device = adapter?.getRemoteDevice(address)
-                        ?: error("No adapter/device")
-                    adapter?.cancelDiscovery()
-                    val sock = device.createRfcommSocketToServiceRecord(SPP_UUID)
-                    sock.connect()
-                    Elm327Protocol.init(sock)
+        connectJob = scope.launch(Dispatchers.IO) {
+            connectMutex.withLock {
+                try {
+                    val sock = withTimeout(RFCOMM_TIMEOUT_MS) { ObdRfcomm.open(adapter, address) }
+                    withTimeout(INIT_TIMEOUT_MS) { Elm327Protocol.init(sock) }
                     socket = sock
                     classicBudget.onConnected(ClassicBluetoothBudget.Slot.OBD)
                     _phase.value = ObdConnectionPhase.Connected
                     _snapshot.value = ObdSnapshot(connected = true)
-                    _storedDtcs.value = ObdDtcReader.readOnce(sock, catalog)
+                    // Mode 03 runs inside the poll loop (immediate first tick) so DTC
+                    // catalog/load cannot abort the RFCOMM + ELM handshake.
                     pollJob = scope.launch(Dispatchers.IO) {
                         ObdPollLoop.run(
                             sock = sock,
@@ -101,16 +104,18 @@ class ObdClassicManager(
                             onDtcs = { _storedDtcs.value = it },
                         )
                     }
+                } catch (e: Exception) {
+                    Log.w(TAG, "OBD connect/validate failed: ${e.message}")
+                    disconnect(clearPhase = false)
+                    _phase.value = ObdConnectionPhase.Failed
                 }
-            } catch (e: Exception) {
-                Log.w(TAG, "OBD connect/validate failed: ${e.message}")
-                disconnect(clearPhase = false)
-                _phase.value = ObdConnectionPhase.Failed
             }
         }
     }
 
     fun disconnect(clearPhase: Boolean = true) {
+        connectJob?.cancel()
+        connectJob = null
         pollJob?.cancel()
         pollJob = null
         try {
@@ -134,7 +139,7 @@ class ObdClassicManager(
 
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"
-        private val SPP_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
-        private const val CONNECT_TIMEOUT_MS = 15_000L
+        private const val RFCOMM_TIMEOUT_MS = 20_000L
+        private const val INIT_TIMEOUT_MS = 25_000L
     }
 }

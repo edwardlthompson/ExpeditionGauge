@@ -264,3 +264,12 @@
 | **Fix** | Prefer `TYPE_LINEAR_ACCELERATION` (+ Madgwick gravity subtract); debounce shared BLE OS scan (`BleOsScanSession`); `AttitudeSettleGate` (~1 s within 2.5°) after 1.5 s floor |
 | **Prevention** | Never publish device-frame accel as vehicle G without gravity removal; coalesce multi-client BLE starts; gate attitude TTS on settle, not wall-clock alone |
 
+### KB-029 — OBD connect fails while OBDLink works (Ship 2026-08-04)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | EG OBD status Failed / never Connected; OBDLink pairs and talks to same adapter |
+| **Cause** | `readUntilPrompt` used `ready()` + 20-char cap (missed `>`); Mode 03/catalog inside connect timeout; Settings+Flow double `connect()`; secure-only RFCOMM |
+| **Fix** | `Elm327Io` real prompt wait; Mode 03 on poll loop; insecure SPP fallback; Settings only persists address |
+| **Prevention** | Keep DTC/catalog off RFCOMM+AT init budget; never call `connect()` from both UI and prefs collector; test prompt wait beyond 20 chars |
+
