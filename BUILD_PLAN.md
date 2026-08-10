@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.3** (2026-08-04).
-- **Shipped:** through **v2.18.3** (OBD ELM prompt wait, RFCOMM fallback, no DTC on connect path). Audit 2026-07-29 archived.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.4** (2026-08-09).
+- **Shipped:** through **v2.18.4** (external GPS priority + BT socket crash hardening; OBD icon bus merge). Audit 2026-07-29 archived.
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 

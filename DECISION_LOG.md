@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-09 — External GPS priority + BT disconnect resilience
+- **Status:** Accepted
+- **Context:** Device crash log showed fatal `IOException: bt socket closed` from `ExternalNmeaGpsManager.readLoop` when Garmin GLO 2 dropped; OBD had the same uncaught socket-closed pattern. User requires external GPS over phone GNSS.
+- **Decision:** Catch socket IO in external GPS read loop and OBD poll (disconnect/Failed, optional GPS reconnect); prefer external while connected or fresh valid fix (`GpsSourcePriority`); reuse ObdRfcomm secure→insecure for GLO.
+- **Alternatives considered:** Let coroutine crash and rely on process restart (rejected); stop phone GPS entirely when external enabled even without fix (rejected — keep phone until link/fix is live).
+- **Consequences:** Socket drops no longer kill the app; HUD uses GLO when connected; phone resumes after external stale/disconnect.
+
 ### 2026-08-04 — OBD connect critical path
 - **Status:** Accepted
 - **Context:** Classic Bluetooth OBD stopped connecting in EG while OBDLink still worked; post-2.18.0 DTC path and a broken ELM prompt reader made RFCOMM/init fail under the connect timeout.

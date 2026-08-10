@@ -2,7 +2,6 @@ package dev.foss.expeditiongauge.gps
 
 import android.content.Context
 import dev.foss.expeditiongauge.drift.DriftAngleEstimator
-import dev.foss.expeditiongauge.sensors.PhoneSensorProvider
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +28,6 @@ class FusedGpsLocationProvider(
     context: Context,
     private val telemetryBus: TelemetryBus,
     private val driftEstimator: DriftAngleEstimator,
-    private val sensorProvider: PhoneSensorProvider,
     private val externalGps: ExternalNmeaGpsManager,
     private val demElevation: DemElevationLookup,
 ) {
@@ -42,7 +40,8 @@ class FusedGpsLocationProvider(
 
     fun onExternalFix(fix: NmeaFix) {
         if (!fix.valid || ExternalNmeaGpsManager.isStale(fix)) {
-            if (_state.value.source == GpsSource.EXTERNAL) {
+            // Keep EXTERNAL while the link is up; only drop to phone when external is gone.
+            if (_state.value.source == GpsSource.EXTERNAL && !externalGpsActive()) {
                 _state.value = _state.value.copy(source = GpsSource.PHONE)
             }
             return
@@ -79,10 +78,11 @@ class FusedGpsLocationProvider(
         publishPhone(snapshot)
     }
 
-    private fun externalGpsActive(): Boolean {
-        val fix = externalGps.fix.value
-        return fix.valid && !ExternalNmeaGpsManager.isStale(fix)
-    }
+    private fun externalGpsActive(): Boolean =
+        GpsSourcePriority.preferExternal(
+            externalConnected = externalGps.connected,
+            externalFix = externalGps.fix.value,
+        )
 
     private fun publishPhone(snapshot: TelemetrySnapshot) {
         val course = snapshot.velocityHeadingDeg ?: snapshot.headingDeg
@@ -105,7 +105,6 @@ class FusedGpsLocationProvider(
             )
         }
         telemetryBus.publish(merged)
-        sensorProvider.updateGpsContext(merged)
     }
 
     private fun publishExternal(gps: FusedGpsState) {
@@ -128,6 +127,5 @@ class FusedGpsLocationProvider(
             )
         }
         telemetryBus.publish(merged)
-        sensorProvider.updateGpsContext(merged)
     }
 }

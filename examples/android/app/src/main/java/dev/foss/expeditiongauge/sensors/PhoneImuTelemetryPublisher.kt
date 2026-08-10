@@ -6,7 +6,6 @@ import dev.foss.expeditiongauge.drift.DriftAngleEstimator
 import dev.foss.expeditiongauge.fusion.SensorFusionEngine
 import dev.foss.expeditiongauge.gps.GpsCourseLogic
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
-import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlin.math.abs
 
 /** Publishes fused phone (+ optional BLE) IMU into [TelemetryBus]. */
@@ -18,11 +17,6 @@ internal class PhoneImuTelemetryPublisher(
 ) {
     private var peakPitch = 0f
     private var peakRoll = 0f
-    private var lastGpsSnapshot = TelemetrySnapshot.empty()
-
-    fun updateGpsContext(snapshot: TelemetrySnapshot) {
-        lastGpsSnapshot = snapshot
-    }
 
     fun resetSessionPeaks() {
         peakPitch = 0f
@@ -56,22 +50,24 @@ internal class PhoneImuTelemetryPublisher(
             rawPitchDeg = rawPitch,
             rawRollDeg = rawRoll,
         )
-        val gpsCourse = lastGpsSnapshot.velocityHeadingDeg
-            ?: lastGpsSnapshot.headingDeg.takeIf { lastGpsSnapshot.gpsFix }
+        // Merge from live bus so OBD/TPMS flags are not wiped by a stale GPS-era copy.
+        val base = telemetryBus.snapshots.value
+        val gpsCourse = base.velocityHeadingDeg
+            ?: base.headingDeg.takeIf { base.gpsFix }
         telemetryBus.publish(
-            lastGpsSnapshot.copy(
+            base.copy(
                 timestampMs = now,
                 pitchDeg = pitch,
                 rollDeg = roll,
                 headingDeg = GpsCourseLogic.displayHeadingDeg(
-                    yaw, gpsCourse, lastGpsSnapshot.speedMps,
+                    yaw, gpsCourse, base.speedMps,
                 ),
                 latG = latG,
                 lonG = lonG,
                 driftAngleDeg = drift.driftAngleDeg,
                 bodyYawDeg = yaw,
-                velocityHeadingDeg = lastGpsSnapshot.velocityHeadingDeg
-                    ?: drift.velocityHeadingDeg.takeIf { lastGpsSnapshot.gpsFix },
+                velocityHeadingDeg = base.velocityHeadingDeg
+                    ?: drift.velocityHeadingDeg.takeIf { base.gpsFix },
                 fusionSource = fusionSource,
                 chassisTwistDeg = multiImu?.chassisTwistDeg,
                 peakAbsPitchDeg = abs(peakPitch),

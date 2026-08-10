@@ -13,7 +13,6 @@ import dev.foss.expeditiongauge.calibration.CalibrationStore
 import dev.foss.expeditiongauge.drift.DriftAngleEstimator
 import dev.foss.expeditiongauge.fusion.SensorFusionEngine
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
-import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
@@ -72,8 +71,6 @@ class PhoneSensorProvider(
         sensorManager.unregisterListener(this)
         runCatching { displayManager.unregisterDisplayListener(displayListener) }
     }
-
-    fun updateGpsContext(snapshot: TelemetrySnapshot) = publisher.updateGpsContext(snapshot)
 
     /** Activity [android.view.Display.getRotation] is authoritative when the HUD is visible. */
     fun updateDisplayRotation(rotation: Int) = fusionEngine.setDisplayRotation(rotation)

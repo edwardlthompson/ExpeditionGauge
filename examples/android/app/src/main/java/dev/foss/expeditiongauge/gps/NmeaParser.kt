@@ -11,7 +11,20 @@ data class NmeaFix(
     val fixQuality: Int = 0,
     val valid: Boolean = false,
     val timestampMs: Long = System.currentTimeMillis(),
-)
+) {
+    fun merge(other: NmeaFix): NmeaFix = copy(
+        latitude = other.latitude ?: latitude,
+        longitude = other.longitude ?: longitude,
+        altitudeM = other.altitudeM ?: altitudeM,
+        speedMps = other.speedMps ?: speedMps,
+        courseDeg = other.courseDeg ?: courseDeg,
+        hdop = other.hdop ?: hdop,
+        numSatellites = other.numSatellites ?: numSatellites,
+        fixQuality = if (other.fixQuality > 0) other.fixQuality else fixQuality,
+        valid = other.valid || valid,
+        timestampMs = other.timestampMs,
+    )
+}
 
 /**
  * Parses common NMEA sentences (GGA, RMC, VTG, GSA).
@@ -117,19 +130,6 @@ object NmeaParser {
         val decimal = degrees + minutes / 60.0
         return if (negative) -decimal else decimal
     }
-
-    private fun NmeaFix.merge(other: NmeaFix): NmeaFix = copy(
-        latitude = other.latitude ?: latitude,
-        longitude = other.longitude ?: longitude,
-        altitudeM = other.altitudeM ?: altitudeM,
-        speedMps = other.speedMps ?: speedMps,
-        courseDeg = other.courseDeg ?: courseDeg,
-        hdop = other.hdop ?: hdop,
-        numSatellites = other.numSatellites ?: numSatellites,
-        fixQuality = if (other.fixQuality > 0) other.fixQuality else fixQuality,
-        valid = other.valid || valid,
-        timestampMs = other.timestampMs,
-    )
 
     private const val KNOTS_TO_MPS = 0.514444f
 }

@@ -9,6 +9,7 @@
 - GPS uses `gpsFix`; OBD uses `obdConnected`; TPMS any non-stale assigned pressure; IMU any connected session
 - AA telemetry cube shows G/O/T/I letter badges with the same semantics
 - Mapping via pure `SensorLinkState.from(snapshot)` (unit tested)
+- IMU publish must merge from live `TelemetryBus` (not a stale GPS copy) so `obdConnected` stays true while RFCOMM is up (KB-030)
 
 ## Container map
 

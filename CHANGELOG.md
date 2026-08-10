@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.4] — External GPS priority + BT socket crash hardening (2026-08-09)
+
+### Fixed
+
+* External NMEA GPS (Garmin GLO 2): catch Bluetooth socket close in read loop (no longer fatal); secure→insecure RFCOMM; auto-reconnect; clear fix on disconnect
+* OBD poll: `IOException` / socket closed ends poll and marks Failed instead of crashing the process
+* Fused GPS prefers external while connected (or fresh valid fix); phone GNSS ignored until external drops/stales
+* AA / telemetry cube OBD link icon: IMU publish merges from live `TelemetryBus` so `obdConnected` is not wiped by a stale GPS-era snapshot
+
 ## [2.18.3] — OBD connect reliability (2026-08-04)
 
 ### Fixed

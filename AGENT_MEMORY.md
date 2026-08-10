@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.3** (OBD connect reliability). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.4** (external GPS priority + BT socket crash hardening). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -36,6 +36,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | TPMS QR wizard | 2.18.0 | ✅ FL→FR→RL→RR scan/manual + DataStore |
 | AA OBD DTC footer | 2.18.0 | ✅ Mode 03 + OBDex CC0 carousel on ROW HUD |
 | Bootstrap alignment | template 0.15.1 | ✅ FOSS Cursor surfaces + multicore validate; see `docs/BOOTSTRAP_ALIGNMENT.md` |
+| Ext GPS + BT crash harden | 2.18.4 | ✅ GLO priority; socket IO catch; OBD icon bus merge |
 
 **Template lineage:** `.template-version` **0.15.1** (aligned 2026-07-22). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 

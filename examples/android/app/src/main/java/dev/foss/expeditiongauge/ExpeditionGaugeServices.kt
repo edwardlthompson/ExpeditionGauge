@@ -121,7 +121,6 @@ class ExpeditionGaugeServices(
             context = appContext,
             telemetryBus = telemetryBus,
             driftEstimator = driftEstimator,
-            sensorProvider = phoneSensorProvider,
             externalGps = externalGpsManager,
             demElevation = DemElevationLookup(scope),
         )

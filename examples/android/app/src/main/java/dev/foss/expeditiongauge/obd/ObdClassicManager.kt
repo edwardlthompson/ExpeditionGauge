@@ -20,18 +20,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 
-data class ObdSnapshot(
-    val connected: Boolean = false,
-    val rpm: Float? = null,
-    val speedKmh: Float? = null,
-    val throttlePct: Float? = null,
-    val engineLoadPct: Float? = null,
-    val wheelSpeedKmh: Float? = null,
-    val rearLeftKmh: Float? = null,
-    val rearRightKmh: Float? = null,
-    val batteryVoltage: Float? = null,
-)
-
 @SuppressLint("MissingPermission")
 class ObdClassicManager(
     private val context: Context,
@@ -59,7 +47,7 @@ class ObdClassicManager(
     val phase: StateFlow<ObdConnectionPhase> = _phase.asStateFlow()
 
     private val _storedDtcs = MutableStateFlow<List<DtcEntry>>(emptyList())
-    /** Mode 03 / sim DTCs; cleared on disconnect; refreshed while connected. */
+    /** Mode 03 / sim DTCs; cleared on disconnect. */
     val storedDtcs: StateFlow<List<DtcEntry>> = _storedDtcs.asStateFlow()
 
     fun selectDevice(address: String) {
@@ -91,18 +79,26 @@ class ObdClassicManager(
                     classicBudget.onConnected(ClassicBluetoothBudget.Slot.OBD)
                     _phase.value = ObdConnectionPhase.Connected
                     _snapshot.value = ObdSnapshot(connected = true)
-                    // Mode 03 runs inside the poll loop (immediate first tick) so DTC
-                    // catalog/load cannot abort the RFCOMM + ELM handshake.
+                    // Mode 03 on poll loop — not on connect timeout critical path.
                     pollJob = scope.launch(Dispatchers.IO) {
-                        ObdPollLoop.run(
-                            sock = sock,
-                            pidConfig = pidConfig,
-                            catalog = catalog,
-                            isActive = { isActive },
-                            onSnapshot = { _snapshot.value = it },
-                            currentDtcs = { _storedDtcs.value },
-                            onDtcs = { _storedDtcs.value = it },
-                        )
+                        try {
+                            ObdPollLoop.run(
+                                sock = sock,
+                                pidConfig = pidConfig,
+                                catalog = catalog,
+                                isActive = { isActive },
+                                onSnapshot = { _snapshot.value = it },
+                                currentDtcs = { _storedDtcs.value },
+                                onDtcs = { _storedDtcs.value = it },
+                            )
+                        } catch (e: Exception) {
+                            Log.w(TAG, "OBD poll ended: ${e.message}")
+                        } finally {
+                            if (socket === sock) {
+                                disconnect(clearPhase = false)
+                                _phase.value = ObdConnectionPhase.Failed
+                            }
+                        }
                     }
                 } catch (e: Exception) {
                     Log.w(TAG, "OBD connect/validate failed: ${e.message}")
