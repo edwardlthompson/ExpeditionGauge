@@ -23,6 +23,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+.cursor-session-state
 .cursor-session-state.json
 .cursor/agent-progress.json
 .cursor/worktrees/
@@ -31,6 +32,7 @@ Thumbs.db
 .cursor/parallel-prompts/
 .cursor/aa-*.xml
 .cursor/aa-*.txt
+.cursor/aa-install-kit-*/
 .cursor/run-as-uid
 .cursor/run-as-uid.c
 
