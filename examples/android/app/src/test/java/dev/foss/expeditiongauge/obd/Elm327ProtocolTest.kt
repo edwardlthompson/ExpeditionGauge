@@ -67,6 +67,11 @@ class Elm327ProtocolTest {
     }
 
     @Test
+    fun parsePendingDtcs_mode07() {
+        assertEquals(listOf("P0133"), Elm327Protocol.parseServiceDtcs("47 01 33 00 00 00 00", "47"))
+    }
+
+    @Test
     fun decodeDtcBytes_families() {
         assertEquals("P0133", Elm327Protocol.decodeDtcBytes(0x01, 0x33))
         assertEquals("C0035", Elm327Protocol.decodeDtcBytes(0x40, 0x35))

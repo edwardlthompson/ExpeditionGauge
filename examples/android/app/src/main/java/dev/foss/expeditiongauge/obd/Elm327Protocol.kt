@@ -71,20 +71,29 @@ object Elm327Protocol {
         return parseStoredDtcs(raw)
     }
 
+    /** Mode 07 pending/unconfirmed DTCs (service `47`). */
+    fun requestPendingDtcs(reader: BufferedReader, writer: OutputStreamWriter): List<String> {
+        val raw = queryPid(reader, writer, "07") ?: return emptyList()
+        return parseServiceDtcs(raw, "47")
+    }
+
     /**
      * Parse Mode 03 / service `43` frames into distinct DTC codes.
      * Strips ELM line prefixes (`0:`), CAN headers, and `00 00` padding.
      */
-    fun parseStoredDtcs(raw: String): List<String> {
+    fun parseStoredDtcs(raw: String): List<String> = parseServiceDtcs(raw, "43")
+
+    fun parseServiceDtcs(raw: String, sidHex: String): List<String> {
         val upper = raw.uppercase()
         if (upper.contains("NO DATA") || upper.contains("UNABLE") || upper.contains("ERROR")) {
             return emptyList()
         }
         val hex = normalizeElmHex(raw)
         if (hex.isEmpty()) return emptyList()
-        val idx = hex.indexOf("43")
+        val sid = sidHex.uppercase()
+        val idx = indexOfEvenHex(hex, sid)
         if (idx < 0) return emptyList()
-        var i = idx + 2
+        var i = idx + sid.length
         val codes = ArrayList<String>(8)
         while (i + 4 <= hex.length) {
             val b1 = hex.substring(i, i + 2).toIntOrNull(16) ?: break
@@ -94,6 +103,16 @@ object Elm327Protocol {
             codes.add(decodeDtcBytes(b1, b2))
         }
         return codes.distinct()
+    }
+
+    /** SID match on even nibble pairs so `43` is not found inside `A43F`. */
+    internal fun indexOfEvenHex(hex: String, token: String): Int {
+        var i = 0
+        while (i + token.length <= hex.length) {
+            if (hex.regionMatches(i, token, 0, token.length)) return i
+            i += 2
+        }
+        return -1
     }
 
     /** Drop `N:` multi-frame prefixes; keep hex digits only. */

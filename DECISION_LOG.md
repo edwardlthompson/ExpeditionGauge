@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-11 — DataStore BT reconnect + pending DTCs
+- **Status:** Accepted
+- **Context:** GLO 2 would not stay connected; AA Drive HUD missed a DTC the driver could see on a scanner. Any Settings DataStore write re-emitted OBD/GPS address flows and called `connect()` (tearing down SPP). DTC path only read Mode 03 and skipped it when `0101` count was 0 (pending faults never shown).
+- **Decision:** `distinctUntilChanged` on OBD/GPS prefs collectors; connect only if not already Connected/Connecting; GLO backoff reconnect; keep OBD/GLO across Activity destroy when AA `SensorHold` > 0; always Mode 03 + Mode 07 for the AA footer.
+- **Alternatives considered:** System mock-location for GLO (rejected — steals SPP); Mode 03-only with longer 0101 gate (rejected — hides pending codes).
+- **Consequences:** Settings edits no longer drop GLO/OBD; pending DTCs appear on ROW AA footer; COLUMN still has no DTC band.
+
 ### 2026-08-09 — External GPS priority + BT disconnect resilience
 - **Status:** Accepted
 - **Context:** Device crash log showed fatal `IOException: bt socket closed` from `ExternalNmeaGpsManager.readLoop` when Garmin GLO 2 dropped; OBD had the same uncaught socket-closed pattern. User requires external GPS over phone GNSS.

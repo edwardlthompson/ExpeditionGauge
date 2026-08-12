@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.5] — GLO stay-connected + AA pending DTCs (2026-08-11)
+
+### Fixed
+
+* External GPS / OBD no longer reconnect on every DataStore write (any Settings change was tearing down GLO + ELM)
+* GLO reconnect backoff after failed RFCOMM; do not stop the NMEA loop on flaky `BluetoothSocket.isConnected`
+* Phone Activity destroy no longer drops OBD/GLO while Android Auto still holds sensors
+* AA DTC footer: read Mode 07 pending as well as Mode 03 stored (0101 count=0 no longer hides a pending code)
+
 ## [2.18.4] — External GPS priority + BT socket crash hardening (2026-08-09)
 
 ### Fixed

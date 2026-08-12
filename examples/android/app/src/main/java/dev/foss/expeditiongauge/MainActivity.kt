@@ -132,8 +132,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         networkStatusMonitor?.stop()
-        services.obdManager.disconnect()
-        services.externalGpsManager.disconnect()
+        // AA may still hold sensors after the phone activity is destroyed.
+        if (services.sensorHoldCount() == 0) {
+            services.obdManager.disconnect()
+            services.externalGpsManager.disconnect()
+        }
         super.onDestroy()
     }
 }

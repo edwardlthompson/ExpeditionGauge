@@ -262,3 +262,12 @@
 | **Cause** | `ExternalNmeaGpsManager.readLoop` and OBD `Elm327Io`/`ObdPollLoop` let Bluetooth `IOException` escape coroutines without a handler |
 | **Fix** | Catch IO in GPS read loop + OBD poll; disconnect/Failed; GPS auto-reconnect; prefer external via `GpsSourcePriority` |
 | **Prevention** | Never leave Classic BT read/write loops uncaught; treat socket close as disconnect, not crash |
+
+### KB-032 — GLO/OBD drop on Settings write + pending DTC hidden (Ship 2026-08-11)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Garmin GLO 2 will not stay connected; AA Drive HUD misses a DTC visible on a scanner |
+| **Cause** | DataStore re-emits OBD/GPS address flows on any prefs write → `connect()` tears down SPP; Mode 03 skipped when `0101` count=0 (pending Mode 07 never read); Activity `onDestroy` disconnected while AA held sensors |
+| **Fix** | `distinctUntilChanged` + connect only if not Connected/Connecting; Mode 03+07 merge; skip BT disconnect when `SensorHold` > 0 |
+| **Prevention** | Prefs collectors must not reconnect on identical keys; never gate DTC UI on stored-count alone |

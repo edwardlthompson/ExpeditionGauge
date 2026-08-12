@@ -9,22 +9,21 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 
 /**
- * Stored-DTC reads (Mode 03). ECUs do **not** push codes — the tester must poll.
- * Prefer Mode 01 PID 01 (MIL + count) so Mode 03 only runs when needed.
+ * Stored (Mode 03) + pending (Mode 07) DTC reads. ECUs do not push codes.
  */
 internal object ObdDtcReader {
     private const val TAG = "ExpeditionGauge/Obd"
 
-    /** Cadence for 0101 / Mode 03 refresh while connected (not every Mode 01 poll). */
+    /** Cadence for DTC refresh while connected (not every Mode 01 poll). */
     const val RESCAN_INTERVAL_MS = 30_000L
 
     fun readOnce(sock: BluetoothSocket, catalog: DtcCatalog): List<DtcEntry> =
         try {
             val writer = OutputStreamWriter(sock.outputStream)
             val reader = BufferedReader(InputStreamReader(sock.inputStream))
-            readStored(reader, writer, catalog)
+            refresh(reader, writer, catalog, emptyList())
         } catch (e: Exception) {
-            Log.w(TAG, "Mode 03 read failed (continuing Mode 01): ${e.message}")
+            Log.w(TAG, "DTC read failed (continuing Mode 01): ${e.message}")
             emptyList()
         }
 
@@ -42,9 +41,27 @@ internal object ObdDtcReader {
             emptyList()
         }
 
+    fun readPending(
+        reader: BufferedReader,
+        writer: OutputStreamWriter,
+        catalog: DtcCatalog,
+    ): List<DtcEntry> =
+        try {
+            val codes = Elm327Protocol.requestPendingDtcs(reader, writer)
+            Log.i(TAG, "Mode 07 pending DTCs: ${codes.size}")
+            codes.map { code ->
+                val title = catalog.describe(code)
+                val desc = if (title == DtcCatalog.UNKNOWN) "Pending" else "Pending — $title"
+                DtcEntry(code = code, description = desc)
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Mode 07 read failed: ${e.message}")
+            emptyList()
+        }
+
     /**
-     * Light refresh on the shared ELM stream: ask 0101 first; skip Mode 03 when
-     * the ECU reports zero codes and the UI already shows none.
+     * Always probe Mode 03 + Mode 07. Keep previous list if the ECU still reports
+     * a stored count but both reads came back empty (noisy ELM).
      */
     fun refresh(
         reader: BufferedReader,
@@ -54,20 +71,19 @@ internal object ObdDtcReader {
     ): List<DtcEntry> {
         val status = ObdMonitorStatus.request(reader, writer)
         val count = status?.storedDtcCount
-        if (count != null) {
-            if (count == 0) {
-                if (previous.isEmpty()) return previous
-                Log.i(TAG, "0101: 0 stored DTCs (cleared)")
-                return emptyList()
-            }
-        } else {
-            Log.d(TAG, "0101 unavailable; Mode 03 fallback")
-        }
-        val next = readStored(reader, writer, catalog)
-        if (next.isEmpty() && count != null && count > 0 && previous.isNotEmpty()) {
-            Log.w(TAG, "Mode 03 empty but 0101 count=$count; keeping previous")
+        Log.d(TAG, "0101 mil=${status?.milOn} count=$count")
+        val stored = readStored(reader, writer, catalog)
+        val pending = readPending(reader, writer, catalog)
+        val merged = mergeDistinct(stored, pending)
+        if (merged.isEmpty() && count != null && count > 0 && previous.isNotEmpty()) {
+            Log.w(TAG, "DTC reads empty but 0101 count=$count; keeping previous")
             return previous
         }
-        return next
+        return merged
+    }
+
+    internal fun mergeDistinct(stored: List<DtcEntry>, pending: List<DtcEntry>): List<DtcEntry> {
+        val seen = stored.map { it.code }.toHashSet()
+        return stored + pending.filter { it.code !in seen }
     }
 }

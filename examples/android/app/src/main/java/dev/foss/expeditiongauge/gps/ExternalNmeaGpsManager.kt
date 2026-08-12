@@ -32,6 +32,7 @@ class ExternalNmeaGpsManager(
     private var readJob: Job? = null
     private var connectJob: Job? = null
     private var selectedAddress: String? = null
+    private var reconnectAttempt = 0
 
     private val _fix = MutableStateFlow(NmeaFix())
     val fix: StateFlow<NmeaFix> = _fix.asStateFlow()
@@ -53,18 +54,21 @@ class ExternalNmeaGpsManager(
         disconnect(clearFix = false)
         connectJob = scope.launch(Dispatchers.IO) {
             try {
+                adapter?.cancelDiscovery()
                 val sock = ObdRfcomm.open(adapter, address)
                 if (!isActive) {
                     runCatching { sock.close() }
                     return@launch
                 }
                 socket = sock
+                reconnectAttempt = 0
                 _connected.value = true
                 classicBudget.onConnected(ClassicBluetoothBudget.Slot.EXTERNAL_GPS)
                 readJob = scope.launch(Dispatchers.IO) { readLoop(sock) }
             } catch (e: Exception) {
                 Log.w(TAG, "External GPS connect failed: ${e.message}")
-                disconnect()
+                disconnect(clearFix = false)
+                maybeReconnect()
             }
         }
     }
@@ -92,7 +96,7 @@ class ExternalNmeaGpsManager(
     private suspend fun readLoop(sock: BluetoothSocket) {
         try {
             val reader = BufferedReader(InputStreamReader(sock.inputStream))
-            while (scope.coroutineContext.isActive && sock.isConnected) {
+            while (scope.coroutineContext.isActive) {
                 val line = try {
                     reader.readLine()
                 } catch (_: IOException) {
@@ -118,10 +122,13 @@ class ExternalNmeaGpsManager(
         if (!FeatureFlags.externalGpsEnabled) return
         val address = selectedAddress ?: return
         scope.launch(Dispatchers.IO) {
-            delay(RECONNECT_DELAY_MS)
+            val attempt = reconnectAttempt.coerceAtMost(4)
+            val waitMs = RECONNECT_DELAY_MS * (1 shl attempt)
+            delay(waitMs.coerceAtMost(MAX_RECONNECT_DELAY_MS))
             if (!FeatureFlags.externalGpsEnabled || connected) return@launch
             if (selectedAddress != address) return@launch
-            Log.i(TAG, "External GPS reconnecting")
+            reconnectAttempt = attempt + 1
+            Log.i(TAG, "External GPS reconnecting (attempt $reconnectAttempt)")
             connect()
         }
     }
@@ -130,6 +137,7 @@ class ExternalNmeaGpsManager(
         private const val TAG = "ExpeditionGauge/ExtGps"
         const val STALE_MS = 2_000L
         private const val RECONNECT_DELAY_MS = 2_500L
+        private const val MAX_RECONNECT_DELAY_MS = 20_000L
 
         fun isStale(fix: NmeaFix): Boolean =
             System.currentTimeMillis() - fix.timestampMs > STALE_MS

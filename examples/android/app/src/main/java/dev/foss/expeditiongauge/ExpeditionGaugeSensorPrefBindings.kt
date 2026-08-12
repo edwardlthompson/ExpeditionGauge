@@ -1,17 +1,23 @@
 package dev.foss.expeditiongauge
 
+import dev.foss.expeditiongauge.obd.ObdConnectionPhase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 /** OBD / TPMS / IMU preference ↔ manager bindings for [ExpeditionGaugeServices]. */
 internal fun ExpeditionGaugeServices.bindSensorPreferenceFlows(scope: CoroutineScope) {
     scope.launch {
-        settingsPreferences.obdDeviceAddress.collect { address ->
+        settingsPreferences.obdDeviceAddress.distinctUntilChanged().collect { address ->
             if (address == null) {
                 obdManager.disconnect()
             } else {
                 obdManager.selectDevice(address)
-                obdManager.connect()
+                if (obdManager.phase.value != ObdConnectionPhase.Connected &&
+                    obdManager.phase.value != ObdConnectionPhase.Connecting
+                ) {
+                    obdManager.connect()
+                }
             }
         }
     }
@@ -71,6 +77,8 @@ fun ExpeditionGaugeServices.acquireSensors() {
 fun ExpeditionGaugeServices.releaseSensors() {
     sensorHold().release()
 }
+
+fun ExpeditionGaugeServices.sensorHoldCount(): Int = sensorHold().holdCount()
 
 /** Restart providers while a hold is active (e.g. after permission grant). */
 fun ExpeditionGaugeServices.refreshSensorsIfHeld() {

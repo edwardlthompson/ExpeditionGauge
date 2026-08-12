@@ -4,6 +4,7 @@ import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 internal fun ExpeditionGaugeServices.bindLifecycleFlows(
@@ -43,13 +44,15 @@ internal fun ExpeditionGaugeServices.bindLifecycleFlows(
             settingsPreferences.externalGpsAddress,
         ) { enabled, address ->
             enabled to address
-        }.collect { (enabled, address) ->
+        }.distinctUntilChanged().collect { (enabled, address) ->
             FeatureFlags.externalGpsEnabled = enabled
             if (!enabled) {
                 externalGpsManager.disconnect()
             } else if (address != null) {
                 externalGpsManager.selectDevice(address)
-                externalGpsManager.connect()
+                if (!externalGpsManager.connected) {
+                    externalGpsManager.connect()
+                }
             }
         }
     }

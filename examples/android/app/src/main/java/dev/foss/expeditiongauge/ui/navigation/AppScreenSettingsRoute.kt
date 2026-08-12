@@ -179,33 +179,22 @@ fun AppScreenSettingsRoute(
         onObdPidConfigChange = obd.onPidConfigChange,
         onExternalGpsSelect = { address ->
             scope.launch {
-                services.settingsPreferences.setExternalGpsEnabled(true)
                 FeatureFlags.externalGpsEnabled = true
+                services.settingsPreferences.setExternalGpsEnabled(true)
                 services.settingsPreferences.setExternalGpsAddress(address)
-                services.externalGpsManager.selectDevice(address)
-                services.externalGpsManager.connect()
             }
         },
         externalGpsEnabled = externalGpsEnabled,
         onExternalGpsEnabledChange = { enabled ->
             scope.launch {
-                services.settingsPreferences.setExternalGpsEnabled(enabled)
                 FeatureFlags.externalGpsEnabled = enabled
-                if (!enabled) {
-                    services.externalGpsManager.disconnect()
-                } else {
-                    externalGpsAddress?.let { address ->
-                        services.externalGpsManager.selectDevice(address)
-                        services.externalGpsManager.connect()
-                    }
-                }
+                services.settingsPreferences.setExternalGpsEnabled(enabled)
             }
         },
         onForgetExternalGps = {
             scope.launch {
-                services.settingsPreferences.forgetExternalGpsDevice()
                 FeatureFlags.externalGpsEnabled = false
-                services.externalGpsManager.disconnect()
+                services.settingsPreferences.forgetExternalGpsDevice()
             }
         },
         onImuManage = { onScreenChange(AppScreen.ImuManage) },
