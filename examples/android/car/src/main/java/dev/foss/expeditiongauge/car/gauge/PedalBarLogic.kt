@@ -1,6 +1,6 @@
 package dev.foss.expeditiongauge.car.gauge
 
-/** Throttle/brake bar: −1 full brake, 0 rest, +1 full throttle. */
+/** Independent throttle/brake 0–1; [position] is throttle − brake. */
 data class PedalBarState(
     val position: Float,
     val throttle01: Float,
@@ -18,15 +18,10 @@ object PedalBarLogic {
     fun from(throttlePct: Float?, lonG: Float): PedalBarState {
         val th = ((throttlePct ?: 0f) / 100f).coerceIn(0f, 1f)
         val thAdj = if (th < THROTTLE_DEAD) 0f else th
-        val brRaw = if (thAdj > 0f) 0f else (-lonG / BRAKE_FULL_G).coerceIn(0f, 1f)
+        val brRaw = (-lonG / BRAKE_FULL_G).coerceIn(0f, 1f)
         val brAdj = if (brRaw < BRAKE_DEAD) 0f else brRaw
-        val pos = when {
-            thAdj > 0f -> thAdj
-            brAdj > 0f -> -brAdj
-            else -> 0f
-        }
         return PedalBarState(
-            position = pos,
+            position = thAdj - brAdj,
             throttle01 = thAdj,
             brake01 = brAdj,
             flashThrottle = thAdj >= FLASH_AT,
@@ -34,5 +29,9 @@ object PedalBarLogic {
         )
     }
 
-    fun quantize(state: PedalBarState): Int = (state.position * 25f).toInt()
+    fun quantize(state: PedalBarState): Int {
+        val t = (state.throttle01 * 25f).toInt().coerceIn(0, 25)
+        val b = (state.brake01 * 25f).toInt().coerceIn(0, 25)
+        return (t shl 8) or b
+    }
 }

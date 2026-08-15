@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.7] — Dual pedal indicators (2026-08-15)
+
+### Changed
+
+* Pedal bar: independent brake and throttle indicators (both can show at once)
+
 ## [2.18.6] — DTC framing + pedal bar (2026-08-14)
 
 ### Fixed

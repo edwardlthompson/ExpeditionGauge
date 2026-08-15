@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.6** (DTC framing + pedal bar). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.7** (dual pedal indicators). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|

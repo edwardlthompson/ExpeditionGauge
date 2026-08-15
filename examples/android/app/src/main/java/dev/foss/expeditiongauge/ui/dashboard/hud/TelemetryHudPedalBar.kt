@@ -37,7 +37,8 @@ fun TelemetryHudPedalBar(
     modifier: Modifier = Modifier,
 ) {
     val target = PedalBarLogic.from(throttlePct, lonG)
-    val pos by animateFloatAsState(target.position, label = "pedal", animationSpec = tween(90))
+    val th by animateFloatAsState(target.throttle01, label = "throttle", animationSpec = tween(90))
+    val br by animateFloatAsState(target.brake01, label = "brake", animationSpec = tween(90))
     val flash by rememberInfiniteTransition(label = "pedalFlash").animateFloat(
         initialValue = 1f,
         targetValue = 0f,
@@ -55,33 +56,37 @@ fun TelemetryHudPedalBar(
         val r = size.height * 0.45f
         drawRoundRect(PlaybackHeatmapNeutral, cornerRadius = CornerRadius(r))
         val mid = size.width / 2f
-        val hide = (target.flashThrottle || target.flashBrake) && flash < 0.45f
-        if (!hide && pos != 0f) {
-            if (pos > 0f) {
-                val w = mid * target.throttle01
-                drawRoundRect(
-                    color = lerp(PlaybackOffsetNeutral, GaugeGreen, target.throttle01),
-                    topLeft = Offset(mid, 0f),
-                    size = Size(w, size.height),
-                    cornerRadius = CornerRadius(r),
-                )
-            } else {
-                val w = mid * target.brake01
-                drawRoundRect(
-                    color = lerp(PlaybackOffsetNeutral, GaugeRed, target.brake01),
-                    topLeft = Offset(mid - w, 0f),
-                    size = Size(w, size.height),
-                    cornerRadius = CornerRadius(r),
-                )
-            }
+        val hideTh = target.flashThrottle && flash < 0.45f
+        val hideBr = target.flashBrake && flash < 0.45f
+        if (!hideTh && th > 0f) {
+            drawRoundRect(
+                color = lerp(PlaybackOffsetNeutral, GaugeGreen, th),
+                topLeft = Offset(mid, 0f),
+                size = Size(mid * th, size.height),
+                cornerRadius = CornerRadius(r),
+            )
         }
-        val nx = mid + mid * pos
+        if (!hideBr && br > 0f) {
+            val w = mid * br
+            drawRoundRect(
+                color = lerp(PlaybackOffsetNeutral, GaugeRed, br),
+                topLeft = Offset(mid - w, 0f),
+                size = Size(w, size.height),
+                cornerRadius = CornerRadius(r),
+            )
+        }
         val nw = size.height * 0.36f
-        drawRoundRect(
-            color = GaugeScaleWhite,
-            topLeft = Offset(nx - nw / 2f, -size.height * 0.08f),
-            size = Size(nw, size.height * 1.16f),
-            cornerRadius = CornerRadius(size.height * 0.12f),
-        )
+        val nest = size.height * 0.22f
+        val nh = size.height * 1.16f
+        val ny = -size.height * 0.08f
+        val nr = CornerRadius(size.height * 0.12f)
+        if (!hideTh) {
+            val nx = mid + mid * th + nest
+            drawRoundRect(GaugeScaleWhite, Offset(nx - nw / 2f, ny), Size(nw, nh), nr)
+        }
+        if (!hideBr) {
+            val nx = mid - mid * br - nest
+            drawRoundRect(GaugeScaleWhite, Offset(nx - nw / 2f, ny), Size(nw, nh), nr)
+        }
     }
 }

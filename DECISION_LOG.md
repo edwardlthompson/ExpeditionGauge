@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-15 — Dual brake/throttle pedal indicators
+- **Status:** Accepted
+- **Context:** A driver can apply brake and throttle together; the cube bar used one needle and zeroed brake whenever throttle was open.
+- **Decision:** Independent 0–1 channels (PID 0111 + lonG); two needles and fills; per-side flash; AA cache packs both into `pedalQ`.
+- **Alternatives considered:** Keep exclusive position (rejected — hides overlap).
+- **Consequences:** Phone and AA show both pedals at once; brake still inferred from lonG.
+
 ### 2026-08-14 — CAN DTC framing + Ford HS-CAN prefer
 - **Status:** Accepted
 - **Context:** 2006 Expedition King Ranch scanner DTCs had zero overlap with EG; RPM on the cube was ~10× high. Gen2 DLC has J1850 PWM and HS-CAN; PCM generic OBD is CAN.
