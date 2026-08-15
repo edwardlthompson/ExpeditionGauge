@@ -30,6 +30,8 @@ internal data class AaHudDriveKey(
     val orientation: HudStripOrientation = HudStripOrientation.ROW,
     /** Carousel line for ROW footer; null/blank → no footer. */
     val dtcFooterLine: String? = null,
+    val pedalQ: Int = 0,
+    val pedalFlashOn: Boolean = true,
 ) {
     fun sameForReuse(other: AaHudDriveKey): Boolean =
         attitudeMode == other.attitudeMode &&
@@ -51,6 +53,8 @@ internal data class AaHudDriveKey(
             speedAlert == other.speedAlert &&
             orientation == other.orientation &&
             dtcFooterLine == other.dtcFooterLine &&
+            pedalQ == other.pedalQ &&
+            pedalFlashOn == other.pedalFlashOn &&
             abs(pitchDeg - other.pitchDeg) <= AaHudComposer.ATTITUDE_EPS_DEG &&
             abs(rollDeg - other.rollDeg) <= AaHudComposer.ATTITUDE_EPS_DEG
 }

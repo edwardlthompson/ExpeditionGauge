@@ -4,7 +4,8 @@
 
 ## Acceptance criteria
 
-- ELM327 over Bluetooth Classic SPP (`ObdClassicManager` + `Elm327Protocol` init: ATZ, ATE0, ATL0, ATSP0)
+- ELM327 over Bluetooth Classic SPP (`ObdClassicManager` + `Elm327Init`: ATZ, ATE0, ATL0, ATH0, ATS0, ATSP0, 0100 lock, ATDPN). If auto locks J1850/ISO (Ford 2004–06 dual-bus, e.g. 2006 Expedition), prefer ATSP6 HS-CAN for PCM; ATSP1 only if CAN has no 4100.
+- Mode 03/07 parse skips the ISO 15765 CAN DTC-count byte; ISO 9141 3-slot frames stay unshifted
 - Poll RPM (010C), speed (010D), throttle (0111), load (0104), voltage (0142); optional rear wheels (015A/B)
 - PID enable toggles in Settings (`ObdPidConfig`)
 - OBD speed overlays speedometer (`speedFromObd` + "OBD speed" label)

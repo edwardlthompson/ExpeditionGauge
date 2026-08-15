@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-14 — CAN DTC framing + Ford HS-CAN prefer
+- **Status:** Accepted
+- **Context:** 2006 Expedition King Ranch scanner DTCs had zero overlap with EG; RPM on the cube was ~10× high. Gen2 DLC has J1850 PWM and HS-CAN; PCM generic OBD is CAN.
+- **Decision:** Parse Mode 03/07 with CAN count-byte (ISO 3-slot fallback); ATSP0 + 0100 lock; if ATDPN is 1–5, retry ATSP6. Cube shows brake/throttle bar (0111 + lonG), not RPM.
+- **Alternatives considered:** Cycle ATSP1–9 every connect (rejected — slow, can lock the wrong bus).
+- **Consequences:** Scanner-matching stored codes when on HS-CAN; AA/phone pedal bar; RPM still recorded/alerted.
+
 ### 2026-08-11 — DataStore BT reconnect + pending DTCs
 - **Status:** Accepted
 - **Context:** GLO 2 would not stay connected; AA Drive HUD missed a DTC the driver could see on a scanner. Any Settings DataStore write re-emitted OBD/GPS address flows and called `connect()` (tearing down SPP). DTC path only read Mode 03 and skipped it when `0101` count was 0 (pending faults never shown).

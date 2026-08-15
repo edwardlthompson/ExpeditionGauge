@@ -58,7 +58,6 @@ fun TelemetryHudAttitudeRow(
 
 @Composable
 fun TelemetryHudVehicleRow(
-    rpm: Float?,
     batteryVoltage: Float?,
     slipRatio: Float?,
     activeAlerts: Set<AlertType> = emptySet(),
@@ -68,9 +67,6 @@ fun TelemetryHudVehicleRow(
     val bold = style.copy(fontWeight = FontWeight.Bold)
     data class Part(val text: String, val alert: Boolean)
     val parts = buildList {
-        rpm?.let {
-            add(Part(stringResource(R.string.playback_rpm, it), AlertType.RPM in activeAlerts))
-        }
         batteryVoltage?.let {
             add(Part(stringResource(R.string.gauge_voltage_value, it), false))
         }

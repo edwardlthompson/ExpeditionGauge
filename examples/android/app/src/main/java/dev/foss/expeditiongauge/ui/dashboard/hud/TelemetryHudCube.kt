@@ -74,8 +74,12 @@ fun TelemetryHudCube(
             )
             TelemetryHudClockRow(modifier = Modifier.fillMaxWidth())
         }
+        TelemetryHudPedalBar(
+            throttlePct = telemetry.throttlePct,
+            lonG = telemetry.lonG,
+            modifier = Modifier.fillMaxWidth(),
+        )
         TelemetryHudVehicleRow(
-            rpm = telemetry.rpm,
             batteryVoltage = telemetry.batteryVoltage,
             slipRatio = telemetry.slipRatio,
             activeAlerts = activeAlerts,

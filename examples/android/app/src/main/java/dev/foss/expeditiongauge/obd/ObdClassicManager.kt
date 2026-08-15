@@ -136,6 +136,6 @@ class ObdClassicManager(
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"
         private const val RFCOMM_TIMEOUT_MS = 20_000L
-        private const val INIT_TIMEOUT_MS = 25_000L
+        private const val INIT_TIMEOUT_MS = 40_000L
     }
 }

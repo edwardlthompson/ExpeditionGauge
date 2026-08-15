@@ -15,6 +15,7 @@ import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.car.gauge.PedalBarLogic
 import dev.foss.expeditiongauge.telemetry.SensorLinkState
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 
@@ -53,6 +54,7 @@ class AaHudComposer(appContext: Context) {
             } else {
                 null
             }
+        val pedal = PedalBarLogic.from(snapshot.throttlePct, snapshot.lonG)
         val key = AaHudDriveKey(
             pitchDeg = snapshot.pitchDeg,
             rollDeg = snapshot.rollDeg,
@@ -78,6 +80,9 @@ class AaHudComposer(appContext: Context) {
             speedAlert = AlertType.SPEED in alerts,
             orientation = orientation,
             dtcFooterLine = dtcLine,
+            pedalQ = PedalBarLogic.quantize(pedal),
+            pedalFlashOn = !pedal.flashThrottle && !pedal.flashBrake ||
+                (nowMs / 280L) % 2L == 0L,
         )
         val image = reuseOrBuild(key, snapshot)
         return DriveHudContent(image = image, rows = AaHudComposerRender.alertRows(key))

@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.6] — DTC framing + pedal bar (2026-08-14)
+
+### Fixed
+
+* OBD stored DTCs: skip ISO 15765 CAN count byte after Mode 03/07 SID; ATSP0 + 0100 lock + ATDPN; prefer HS-CAN (ATSP6) when Ford dual-bus auto-locks J1850 PWM
+* OBD RPM: even-nibble `410C` + SAE `/4`; values above 8000 treated as 10× clone scale
+
+### Changed
+
+* Telemetry cube: remove RPM readout; animated brake/throttle bar (lonG + PID 0111) on phone and AA
+
 ## [2.18.5] — GLO stay-connected + AA pending DTCs (2026-08-11)
 
 ### Fixed

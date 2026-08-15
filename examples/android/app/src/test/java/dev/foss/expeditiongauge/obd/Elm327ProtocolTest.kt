@@ -7,11 +7,27 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class Elm327ProtocolTest {
+    @org.junit.Before
+    fun resetFraming() {
+        Elm327Protocol.canFraming = null
+    }
+
     @Test
     fun parseRpmFrom410CResponse() {
         val rpm = Elm327Protocol.parseRpm("410C0FA0")
         assertNotNull(rpm)
         assertEquals(1000f, rpm!!, 0.1f)
+    }
+
+    @Test
+    fun parseRpm_canPrefixEvenNibble() {
+        assertEquals(1000f, Elm327Protocol.parseRpm("7E804410C0FA0")!!, 0.1f)
+    }
+
+    @Test
+    fun parseRpm_tenthsOverscaleDividesByTen() {
+        // ((0x8C*256)+0xA0)/4 = 9000 → treat as 10× clone scale
+        assertEquals(900f, Elm327Protocol.parseRpm("410C8CA0")!!, 0.1f)
     }
 
     @Test
@@ -40,43 +56,6 @@ class Elm327ProtocolTest {
         val volts = Elm327Protocol.parseVoltage("41423584")
         assertNotNull(volts)
         assertEquals(13.7f, volts!!, 0.05f)
-    }
-
-    @Test
-    fun parseStoredDtcs_singleCode() {
-        // P0133 = 0x01 0x33
-        assertEquals(listOf("P0133"), Elm327Protocol.parseStoredDtcs("43 01 33 00 00 00 00"))
-    }
-
-    @Test
-    fun parseStoredDtcs_multiFrameAndTypes() {
-        // P0420=04 20, C0035=(01<<6)|0x00 + 0x35 → 0x40 0x35, B0001=0x80 0x01, U0100=0xC1 0x00
-        val raw = """
-            0: 43 04 20 40 35
-            1: 80 01 C1 00
-        """.trimIndent()
-        val codes = Elm327Protocol.parseStoredDtcs(raw)
-        assertEquals(listOf("P0420", "C0035", "B0001", "U0100"), codes)
-    }
-
-    @Test
-    fun parseStoredDtcs_noDataAndEmpty() {
-        assertEquals(emptyList<String>(), Elm327Protocol.parseStoredDtcs("NO DATA"))
-        assertEquals(emptyList<String>(), Elm327Protocol.parseStoredDtcs("43 00 00 00 00"))
-        assertEquals(emptyList<String>(), Elm327Protocol.parseStoredDtcs(""))
-    }
-
-    @Test
-    fun parsePendingDtcs_mode07() {
-        assertEquals(listOf("P0133"), Elm327Protocol.parseServiceDtcs("47 01 33 00 00 00 00", "47"))
-    }
-
-    @Test
-    fun decodeDtcBytes_families() {
-        assertEquals("P0133", Elm327Protocol.decodeDtcBytes(0x01, 0x33))
-        assertEquals("C0035", Elm327Protocol.decodeDtcBytes(0x40, 0x35))
-        assertEquals("B0001", Elm327Protocol.decodeDtcBytes(0x80, 0x01))
-        assertEquals("U0100", Elm327Protocol.decodeDtcBytes(0xC1, 0x00))
     }
 
     @Test

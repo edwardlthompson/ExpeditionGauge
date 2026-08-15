@@ -27,10 +27,12 @@ internal fun DriveHudCubeDraw.drawTelemetryCube(
     fit(secondary, alt, size * 0.96f)
     coordLines.forEach { fit(secondary, it, size * 0.96f) }
 
-    val linkRowH = size * 0.16f
+    val linkRowH = size * 0.14f
+    val pedalH = size * 0.09f
     val inset = size * 0.045f
     val gap = size * 0.015f
     val linkTop = y + size - inset - linkRowH
+    val pedalTop = linkTop - gap - pedalH
     val lines = buildList {
         add(primary to speed)
         add(secondary to heading)
@@ -41,10 +43,18 @@ internal fun DriveHudCubeDraw.drawTelemetryCube(
     var cursor = y + inset
     lines.forEach { (p, text) ->
         val lineH = p.descent() - p.ascent()
-        if (cursor + lineH > linkTop - gap) return@forEach
+        if (cursor + lineH > pedalTop - gap) return@forEach
         canvas.drawText(text, cx, cursor - p.ascent(), p)
         cursor += lineH + gap
     }
+    drawPedalBar(
+        x = x + inset,
+        y = pedalTop,
+        width = size - inset * 2f,
+        height = pedalH,
+        state = PedalBarLogic.from(pedalThrottlePct, pedalLonG),
+        flashOn = pedalFlashOn,
+    )
     drawLinkRow(
         x = x,
         y = linkTop,

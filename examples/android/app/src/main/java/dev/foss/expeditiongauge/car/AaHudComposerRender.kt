@@ -52,6 +52,8 @@ internal object AaHudComposerRender {
                 speedAlert = key.speedAlert,
                 orientation = key.orientation,
                 dtcFooterLine = key.dtcFooterLine,
+                throttlePct = snapshot.throttlePct,
+                pedalFlashOn = key.pedalFlashOn,
             )
         }.onFailure { Log.e(TAG, "Drive HUD render failed", it) }.getOrNull()
 

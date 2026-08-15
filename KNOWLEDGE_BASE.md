@@ -263,6 +263,15 @@
 | **Fix** | Catch IO in GPS read loop + OBD poll; disconnect/Failed; GPS auto-reconnect; prefer external via `GpsSourcePriority` |
 | **Prevention** | Never leave Classic BT read/write loops uncaught; treat socket close as disconnect, not crash |
 
+### KB-033 — Stored DTCs match none of the scanner codes (Fix 2026-08-14)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | AA/phone DTC list has no overlap with a handheld scanner’s stored codes |
+| **Cause** | CAN Mode 03 is `43 <count> <pairs>`; parser treated count as the first DTC and shifted every code. `queryPid` also hex-filtered `SEARCHING` and used a 3 s timeout during ATSP0 search |
+| **Fix** | CAN vs ISO framing heuristic + ATDPN; 0100 lock after ATSP0; if DPN is 1–5, retry ATSP6 (2006 Expedition PCM is HS-CAN; PWM is also on the DLC) |
+| **Prevention** | Never pair bytes immediately after SID 43/47 on ISO 15765; do not cycle ATSP1–9 on every connect; Ford 2004–06: prefer CAN over first PWM lock |
+
 ### KB-032 — GLO/OBD drop on Settings write + pending DTC hidden (Ship 2026-08-11)
 
 | Field | Detail |

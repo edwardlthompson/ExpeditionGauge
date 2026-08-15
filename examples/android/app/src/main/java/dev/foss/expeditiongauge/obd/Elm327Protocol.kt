@@ -5,36 +5,45 @@ import java.io.BufferedReader
 import java.io.OutputStreamWriter
 
 object Elm327Protocol {
+    /** Set by [Elm327Init] from ATDPN; null = heuristic framing. */
+    @Volatile
+    var canFraming: Boolean? = null
+
     fun init(sock: BluetoothSocket) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(sock.inputStream.reader())
-        // ATZ resets; ATSP0 may search protocols — allow longer waits than PID polls.
-        Elm327Io.sendCommand(reader, writer, "ATZ", timeoutMs = 8_000L)
-        Elm327Io.sendCommand(reader, writer, "ATE0", timeoutMs = 3_000L)
-        Elm327Io.sendCommand(reader, writer, "ATL0", timeoutMs = 3_000L)
-        Elm327Io.sendCommand(reader, writer, "ATSP0", timeoutMs = 8_000L)
+        Elm327Init.run(reader, writer)
     }
 
     fun queryPid(reader: BufferedReader, writer: OutputStreamWriter, pid: String): String? {
-        val raw = Elm327Io.sendCommand(reader, writer, pid, timeoutMs = 3_000L)
-        return raw?.filter { it.isLetterOrDigit() }?.uppercase()
+        val raw = Elm327Io.sendCommand(reader, writer, pid, timeoutMs = 3_000L) ?: return null
+        return Elm327DtcParse.stripNoise(raw)
+            .filter { it.isDigit() || it in 'A'..'F' || it in 'a'..'f' }
+            .uppercase()
+            .ifBlank { null }
     }
 
     fun readUntilPrompt(reader: BufferedReader): String? =
         Elm327Io.readUntilPrompt(reader)
 
     fun parseRpm(response: String): Float? {
-        val idx = response.indexOf("410C")
-        if (idx < 0 || idx + 8 > response.length) return null
-        val a = response.substring(idx + 4, idx + 6).toIntOrNull(16) ?: return null
-        val b = response.substring(idx + 6, idx + 8).toIntOrNull(16) ?: return null
-        return (a * 256 + b) / 4f
+        val hex = response.filter { it.isDigit() || it in 'A'..'F' || it in 'a'..'f' }.uppercase()
+        val idx = indexOfEvenHex(hex, "410C").takeIf { it >= 0 } ?: hex.indexOf("410C")
+        if (idx < 0 || idx + 8 > hex.length) return null
+        val a = hex.substring(idx + 4, idx + 6).toIntOrNull(16) ?: return null
+        val b = hex.substring(idx + 6, idx + 8).toIntOrNull(16) ?: return null
+        // SAE J1979: ((A*256)+B)/4. Some clones emit already-scaled tenths (~10×).
+        val rpm = (a * 256 + b) / 4f
+        return when {
+            rpm <= 8_000f -> rpm
+            rpm <= 20_000f -> rpm / 10f
+            else -> null
+        }
     }
 
     /**
      * Vehicle speed (PID 010D) — one byte, km/h.
-     * Must anchor on `410D` so trailing junk / other PIDs are not treated as speed
-     * (a prior bug used [takeLast] and could surface values like 147 km/h as bogus speed).
+     * Must anchor on `410D` so trailing junk / other PIDs are not treated as speed.
      */
     fun parseVehicleSpeedKmh(response: String): Float? = parsePidDataByte(response, "410D")
 
@@ -46,14 +55,6 @@ object Elm327Protocol {
         return hex.toIntOrNull(16)?.toFloat()
     }
 
-    @Deprecated("Use parseVehicleSpeedKmh / parsePidDataByte — takeLast mis-parses noisy ELM buffers")
-    fun parseSingleByte(response: String): Float {
-        // Prefer anchored 410D when present (keeps older call sites safer).
-        parseVehicleSpeedKmh(response)?.let { return it }
-        val hex = response.takeLast(2)
-        return hex.toIntOrNull(16)?.toFloat() ?: 0f
-    }
-
     fun parseVoltage(response: String): Float? {
         val idx = response.indexOf("4142")
         if (idx < 0 || idx + 8 > response.length) return null
@@ -62,50 +63,25 @@ object Elm327Protocol {
         return (a * 256 + b) / 1000f
     }
 
-    /**
-     * One-shot Mode 03 (stored DTCs). Sends `03`, returns SAE codes (`Pxxxx`…).
-     * `NO DATA` / timeout / empty → empty list (does not throw).
-     */
     fun requestStoredDtcs(reader: BufferedReader, writer: OutputStreamWriter): List<String> {
-        val raw = queryPid(reader, writer, "03") ?: return emptyList()
+        val raw = Elm327Io.sendCommand(reader, writer, "03", timeoutMs = 12_000L) ?: return emptyList()
         return parseStoredDtcs(raw)
     }
 
-    /** Mode 07 pending/unconfirmed DTCs (service `47`). */
     fun requestPendingDtcs(reader: BufferedReader, writer: OutputStreamWriter): List<String> {
-        val raw = queryPid(reader, writer, "07") ?: return emptyList()
+        val raw = Elm327Io.sendCommand(reader, writer, "07", timeoutMs = 12_000L) ?: return emptyList()
         return parseServiceDtcs(raw, "47")
     }
 
-    /**
-     * Parse Mode 03 / service `43` frames into distinct DTC codes.
-     * Strips ELM line prefixes (`0:`), CAN headers, and `00 00` padding.
-     */
-    fun parseStoredDtcs(raw: String): List<String> = parseServiceDtcs(raw, "43")
+    fun parseStoredDtcs(raw: String, canFraming: Boolean? = this.canFraming): List<String> =
+        parseServiceDtcs(raw, "43", canFraming)
 
-    fun parseServiceDtcs(raw: String, sidHex: String): List<String> {
-        val upper = raw.uppercase()
-        if (upper.contains("NO DATA") || upper.contains("UNABLE") || upper.contains("ERROR")) {
-            return emptyList()
-        }
-        val hex = normalizeElmHex(raw)
-        if (hex.isEmpty()) return emptyList()
-        val sid = sidHex.uppercase()
-        val idx = indexOfEvenHex(hex, sid)
-        if (idx < 0) return emptyList()
-        var i = idx + sid.length
-        val codes = ArrayList<String>(8)
-        while (i + 4 <= hex.length) {
-            val b1 = hex.substring(i, i + 2).toIntOrNull(16) ?: break
-            val b2 = hex.substring(i + 2, i + 4).toIntOrNull(16) ?: break
-            i += 4
-            if (b1 == 0 && b2 == 0) continue
-            codes.add(decodeDtcBytes(b1, b2))
-        }
-        return codes.distinct()
-    }
+    fun parseServiceDtcs(
+        raw: String,
+        sidHex: String,
+        canFraming: Boolean? = this.canFraming,
+    ): List<String> = Elm327DtcParse.parseServiceDtcs(raw, sidHex, canFraming)
 
-    /** SID match on even nibble pairs so `43` is not found inside `A43F`. */
     internal fun indexOfEvenHex(hex: String, token: String): Int {
         var i = 0
         while (i + token.length <= hex.length) {
@@ -115,7 +91,6 @@ object Elm327Protocol {
         return -1
     }
 
-    /** Drop `N:` multi-frame prefixes; keep hex digits only. */
     fun normalizeElmHex(raw: String): String =
         raw.lineSequence()
             .map { line ->

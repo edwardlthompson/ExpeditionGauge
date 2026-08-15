@@ -5,9 +5,7 @@ import android.graphics.Canvas
 import dev.foss.expeditiongauge.car.HudStripOrientation
 
 /**
- * Drive HUD bitmap: [HudStripOrientation.ROW] = Attitude|Telemetry|TPMS (3×1)
- * plus a permanently reserved bold-red DTC footer band; [HudStripOrientation.COLUMN]
- * = Attitude|Telemetry (1×2), no footer.
+ * ROW = Attitude|Telemetry|TPMS + DTC footer; COLUMN = Attitude|Telemetry.
  */
 class DriveHudBitmapRenderer(
     private val cubePx: Int = DEFAULT_CUBE_PX,
@@ -53,7 +51,12 @@ class DriveHudBitmapRenderer(
         imuLinked: Boolean = false,
         speedAlert: Boolean = false,
         dtcFooterLine: String? = null,
+        throttlePct: Float? = null,
+        pedalFlashOn: Boolean = true,
     ): Bitmap {
+        cubes.pedalThrottlePct = throttlePct
+        cubes.pedalLonG = lonG ?: 0f
+        cubes.pedalFlashOn = pedalFlashOn
         val theme = DriveHudTheme.forDarkMode(darkBackground)
         canvas.drawColor(theme.background)
         val gap = (cubePx * 0.04f).toInt().coerceAtLeast(2)

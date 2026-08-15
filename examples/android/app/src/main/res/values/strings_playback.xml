@@ -27,6 +27,7 @@
     <string name="playback_lat_g">Lat G: %1$.2f</string>
     <string name="playback_rpm">RPM: %1$.0f</string>
     <string name="playback_throttle">Throttle: %1$.0f%%</string>
+    <string name="gauge_pedal_bar">Brake and throttle</string>
     <string name="playback_elevation">Elevation</string>
     <string name="playback_elevation_stats">Min %1$d %5$s · Max %2$d %5$s · ↑ %3$d %5$s · ↓ %4$d %5$s</string>
     <string name="map_download_title">Download map for this trip?</string>
