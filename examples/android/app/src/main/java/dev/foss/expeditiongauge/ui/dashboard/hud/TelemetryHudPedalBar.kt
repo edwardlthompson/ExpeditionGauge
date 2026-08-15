@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -25,6 +24,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.car.gauge.PedalBarLogic
+import dev.foss.expeditiongauge.ui.theme.GaugeGreen
+import dev.foss.expeditiongauge.ui.theme.GaugeRed
+import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
+import dev.foss.expeditiongauge.ui.theme.PlaybackHeatmapNeutral
+import dev.foss.expeditiongauge.ui.theme.PlaybackOffsetNeutral
 
 @Composable
 fun TelemetryHudPedalBar(
@@ -49,14 +53,14 @@ fun TelemetryHudPedalBar(
             .semantics { contentDescription = desc },
     ) {
         val r = size.height * 0.45f
-        drawRoundRect(Color(0xFF3A424C), cornerRadius = CornerRadius(r))
+        drawRoundRect(PlaybackHeatmapNeutral, cornerRadius = CornerRadius(r))
         val mid = size.width / 2f
         val hide = (target.flashThrottle || target.flashBrake) && flash < 0.45f
         if (!hide && pos != 0f) {
             if (pos > 0f) {
                 val w = mid * target.throttle01
                 drawRoundRect(
-                    color = lerp(Color(0xFF8A8F96), Color(0xFF14E06A), target.throttle01),
+                    color = lerp(PlaybackOffsetNeutral, GaugeGreen, target.throttle01),
                     topLeft = Offset(mid, 0f),
                     size = Size(w, size.height),
                     cornerRadius = CornerRadius(r),
@@ -64,7 +68,7 @@ fun TelemetryHudPedalBar(
             } else {
                 val w = mid * target.brake01
                 drawRoundRect(
-                    color = lerp(Color(0xFF8A8F96), Color(0xFFFF2A2A), target.brake01),
+                    color = lerp(PlaybackOffsetNeutral, GaugeRed, target.brake01),
                     topLeft = Offset(mid - w, 0f),
                     size = Size(w, size.height),
                     cornerRadius = CornerRadius(r),
@@ -74,7 +78,7 @@ fun TelemetryHudPedalBar(
         val nx = mid + mid * pos
         val nw = size.height * 0.36f
         drawRoundRect(
-            color = Color.White,
+            color = GaugeScaleWhite,
             topLeft = Offset(nx - nw / 2f, -size.height * 0.08f),
             size = Size(nw, size.height * 1.16f),
             cornerRadius = CornerRadius(size.height * 0.12f),
