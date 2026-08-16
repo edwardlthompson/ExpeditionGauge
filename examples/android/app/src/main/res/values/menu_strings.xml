@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_menu_library">Library</string>
+    <string name="dashboard_menu_library_hint">Sessions and stats</string>
+    <string name="dashboard_menu_back">Back</string>
+    <string name="dashboard_menu_submenu">Open submenu</string>
+    <string name="settings_hub_display">Display and units</string>
+    <string name="settings_hub_display_hint">Theme, brightness, presets, screenshots</string>
+    <string name="settings_hub_recording">Recording and storage</string>
+    <string name="settings_hub_recording_hint">Log rate, auto-record, storage, media</string>
+    <string name="settings_hub_alerts">Alerts and access</string>
+    <string name="settings_hub_alerts_hint">Thresholds, audio, text size</string>
+    <string name="settings_hub_hardware">Hardware</string>
+    <string name="settings_hub_hardware_hint">OBD, TPMS, IMU</string>
+    <string name="settings_hub_maps">Maps and car</string>
+    <string name="settings_hub_maps_hint">Home region, Android Auto</string>
+    <string name="settings_hub_advanced">Advanced</string>
+    <string name="settings_hub_advanced_hint">Developer, live telemetry, updates</string>
+    <string name="settings_hub_about_hint">Version and licenses</string>
+</resources>

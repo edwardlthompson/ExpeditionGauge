@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-16 — Driving-safe drawer and Settings hub
+- **Status:** Accepted
+- **Context:** The HUD hamburger listed ~15–20 mixed controls (radios, theme icon, screenshot mode) that were hard to hit while driving; Settings was one parked-time scroll.
+- **Decision:** Root drawer is Record, Preset, Library, IMU, Live, Settings (56dp rows). Preset and Library are in-drawer pages. Theme, screenshot mode, and About move to a Settings category hub. Params grouped as `SettingsUiState` / `SettingsUiActions`.
+- **Alternatives considered:** Display/Sensors nests (rejected — extra tap for presets; empty Sensors). Remove Record from the drawer (rejected — muscle memory). Restore last Settings category (rejected — unpredictable when returning from the HUD).
+- **Consequences:** v2.18.8; Sessions/Stats cost one Library tap; Record stays on HUD and drawer.
+
 ### 2026-08-15 — Dual brake/throttle pedal indicators
 - **Status:** Accepted
 - **Context:** A driver can apply brake and throttle together; the cube bar used one needle and zeroed brake whenever throttle was open.

@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.7** (2026-08-15).
-- **Shipped:** through **v2.18.7** (dual brake/throttle indicators). Audit 2026-07-29 archived.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.8** (2026-08-16).
+- **Shipped:** through **v2.18.8** (driving-safe drawer + Settings hub). Audit 2026-07-29 archived.
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 

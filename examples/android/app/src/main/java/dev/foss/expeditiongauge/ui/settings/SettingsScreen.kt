@@ -1,274 +1,47 @@
 package dev.foss.expeditiongauge.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import dev.foss.expeditiongauge.FeatureFlags
-import dev.foss.expeditiongauge.R
-import dev.foss.expeditiongauge.alerts.AlertThresholds
-import dev.foss.expeditiongauge.presets.DashboardPresetId
-import dev.foss.expeditiongauge.recording.RecordingMode
-import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
-import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
-import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
-import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
 @Composable
 fun SettingsScreen(
-    themeMode: ThemeMode,
-    updateCheckEnabled: Boolean,
-    speedUnit: SpeedUnit,
-    logIntervalMs: Long,
-    obdDevices: List<Pair<String, String>>,
-    externalGpsDevices: List<Pair<String, String>>,
-    selectedObdAddress: String?,
-    selectedExternalGpsAddress: String?,
-    onThemeModeSelect: (ThemeMode) -> Unit,
-    onUpdateCheckChange: (Boolean) -> Unit,
-    onSpeedUnitSelect: (SpeedUnit) -> Unit,
-    onLogIntervalSelect: (Long) -> Unit,
-    onObdDeviceSelect: (String) -> Unit,
-    obdConnectionStatus: String? = null,
-    onObdRetry: () -> Unit = {},
-    onForgetObd: () -> Unit = {},
-    onObdPairNew: () -> Unit = {},
-    onExternalGpsSelect: (String) -> Unit,
-    onImuManage: () -> Unit,
-    onCalibrationReset: () -> Unit,
-    onCalibrationTips: () -> Unit = {},
-    onCalibrationWizard: () -> Unit = {},
-    autoCalibrateWhenStill: Boolean = true,
-    onAutoCalibrateWhenStillChange: (Boolean) -> Unit = {},
-    developerModeEnabled: Boolean = false,
-    onDeveloperModeChange: (Boolean) -> Unit = {},
-    onDeveloperModeOpen: () -> Unit = {},
-    obdPidConfig: dev.foss.expeditiongauge.settings.ObdPidConfig = dev.foss.expeditiongauge.settings.ObdPidConfig(),
-    onObdPidConfigChange: (dev.foss.expeditiongauge.settings.ObdPidConfig) -> Unit = {},
-    externalGpsEnabled: Boolean = false,
-    onExternalGpsEnabledChange: (Boolean) -> Unit = {},
-    onForgetExternalGps: () -> Unit = {},
-    tpmsEnabled: Boolean = false,
-    onTpmsEnabledChange: (Boolean) -> Unit = {},
-    onTpmsManage: () -> Unit = {},
-    pressureUnit: dev.foss.expeditiongauge.settings.PressureUnit = dev.foss.expeditiongauge.settings.PressureUnit.PSI,
-    tempUnit: dev.foss.expeditiongauge.settings.TempUnit = dev.foss.expeditiongauge.settings.TempUnit.CELSIUS,
-    onPressureUnitSelect: (dev.foss.expeditiongauge.settings.PressureUnit) -> Unit = {},
-    onTempUnitSelect: (dev.foss.expeditiongauge.settings.TempUnit) -> Unit = {},
-    highContrastEnabled: Boolean = false,
-    largeTextEnabled: Boolean = false,
-    ttsReadoutEnabled: Boolean = false,
-    liveTelemetryEnabled: Boolean = false,
-    liveSignalWssUrl: String = dev.foss.expeditiongauge.live.LivePairingManager.DEFAULT_SIGNAL_WSS,
-    audibleTonesEnabled: Boolean = false,
-    onHighContrastChange: (Boolean) -> Unit = {},
-    onLargeTextChange: (Boolean) -> Unit = {},
-    onTtsReadoutChange: (Boolean) -> Unit = {},
-    onLiveTelemetryChange: (Boolean) -> Unit = {},
-    onLiveSignalWssUrlChange: (String) -> Unit = {},
-    onLiveReceiverOpen: () -> Unit = {},
-    onAudibleTonesChange: (Boolean) -> Unit = {},
-    homeMapRegion: dev.foss.expeditiongauge.map.HomeMapRegion? = null,
-    onUseCurrentLocationAsHomeRegion: () -> Unit = {},
-    mediaCompressionQuality: dev.foss.expeditiongauge.settings.MediaCompressionQuality =
-        dev.foss.expeditiongauge.settings.MediaCompressionQuality.BALANCED,
-    onMediaCompressionSelect: (dev.foss.expeditiongauge.settings.MediaCompressionQuality) -> Unit = {},
-    mediaStorageBytes: Long = 0L,
-    autoRecordEnabled: Boolean = false,
-    autoRecordDeviceAddresses: Set<String> = emptySet(),
-    onAutoRecordEnabledChange: (Boolean) -> Unit = {},
-    onAutoRecordDeviceToggle: (String, Boolean) -> Unit = { _, _ -> },
-    sessionStoragePercent: Int = 25,
-    sessionStorageUsedBytes: Long = 0L,
-    sessionStorageAllowedBytes: Long = 0L,
-    onSessionStoragePercentChange: (Int) -> Unit = {},
-    brightnessMode: BrightnessMode = BrightnessMode.Auto,
-    onBrightnessModeSelect: (BrightnessMode) -> Unit = {},
-    keepScreenAwake: Boolean = true,
-    onKeepScreenAwakeChange: (Boolean) -> Unit = {},
-    recordingMode: RecordingMode = RecordingMode.NORMAL,
-    onRecordingModeSelect: (RecordingMode) -> Unit = {},
-    lapTimingEnabled: Boolean = false,
-    onLapTimingEnabledChange: (Boolean) -> Unit = {},
-    onTrackSetup: () -> Unit = {},
-    attitudeGaugeMode: dev.foss.expeditiongauge.gauge.AttitudeGaugeMode =
-        dev.foss.expeditiongauge.gauge.AttitudeGaugeMode.G_FORCE,
-    onAttitudeGaugeModeSelect: (dev.foss.expeditiongauge.gauge.AttitudeGaugeMode) -> Unit = {},
-    alertThresholds: AlertThresholds = AlertThresholds(),
-    alertAudioMode: dev.foss.expeditiongauge.alerts.AlertAudioMode =
-        dev.foss.expeditiongauge.alerts.AlertAudioMode.BEEP,
-    onAlertAudioModeChange: (dev.foss.expeditiongauge.alerts.AlertAudioMode) -> Unit = {},
-    alertsMuted: Boolean = false,
-    onAlertsMutedChange: (Boolean) -> Unit = {},
-    onAlertThresholdsChange: (AlertThresholds) -> Unit = {},
-    activePresetId: DashboardPresetId = DashboardPresetId.Default,
-    onPresetSelected: (DashboardPresetId) -> Unit = {},
-    onBack: () -> Unit,
+    state: SettingsUiState,
+    actions: SettingsUiActions,
     modifier: Modifier = Modifier,
 ) {
+    var category by remember { mutableStateOf<SettingsCategory?>(null) }
     GaugeMenuSurface(modifier = modifier) {
-        GaugeBackHandler(onBack = onBack)
-        Column(
-            modifier = Modifier
-                .padding(SpacingMd)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(SpacingMd),
-        ) {
-        Text(
-            text = stringResource(R.string.settings_title),
-            style = MaterialTheme.typography.headlineSmall,
-            color = GaugeYellow,
+        GaugeBackHandler(
+            onBack = {
+                when (settingsBackTarget(category)) {
+                    SettingsBackTarget.Exit -> actions.onBack()
+                    SettingsBackTarget.Hub -> category = null
+                }
+            },
         )
-        SettingsGeneralSections(
-            themeMode = themeMode,
-            onThemeModeSelect = onThemeModeSelect,
-            brightnessMode = brightnessMode,
-            onBrightnessModeSelect = onBrightnessModeSelect,
-            keepScreenAwake = keepScreenAwake,
-            onKeepScreenAwakeChange = onKeepScreenAwakeChange,
-            speedUnit = speedUnit,
-            onSpeedUnitSelect = onSpeedUnitSelect,
-            logIntervalMs = logIntervalMs,
-            onLogIntervalSelect = onLogIntervalSelect,
-            recordingMode = recordingMode,
-            onRecordingModeSelect = onRecordingModeSelect,
-        )
-        SettingsPresetOptions(
-            activePresetId = activePresetId,
-            onPresetSelected = onPresetSelected,
-        )
-        SettingsPolishOptions(
-            lapTimingEnabled = lapTimingEnabled,
-            onLapTimingEnabledChange = onLapTimingEnabledChange,
-            onTrackSetup = onTrackSetup,
-            attitudeGaugeMode = attitudeGaugeMode,
-            onAttitudeGaugeModeSelect = onAttitudeGaugeModeSelect,
-        )
-        SettingsAccessibilityOptions(
-            thresholds = alertThresholds,
-            onThresholdsChange = onAlertThresholdsChange,
-            speedUnit = speedUnit,
-            pressureUnit = pressureUnit,
-            alertAudioMode = alertAudioMode,
-            onAlertAudioModeChange = onAlertAudioModeChange,
-            alertsMuted = alertsMuted,
-            onAlertsMutedChange = onAlertsMutedChange,
-            updateCheckEnabled = updateCheckEnabled,
-            onUpdateCheckChange = onUpdateCheckChange,
-            highContrastEnabled = highContrastEnabled,
-            onHighContrastChange = onHighContrastChange,
-            largeTextEnabled = largeTextEnabled,
-            onLargeTextChange = onLargeTextChange,
-            ttsReadoutEnabled = ttsReadoutEnabled,
-            onTtsReadoutChange = onTtsReadoutChange,
-            audibleTonesEnabled = audibleTonesEnabled,
-            onAudibleTonesChange = onAudibleTonesChange,
-        )
-        Button(onClick = onCalibrationTips, modifier = Modifier.testTag("settings_calibration_tips")) {
-            Text(stringResource(R.string.calibration_tips_open))
-        }
-        if (FeatureFlags.videoSyncEnabled) {
-            Button(onClick = onCalibrationWizard, modifier = Modifier.testTag("settings_calibration_wizard")) {
-                Text(stringResource(R.string.calibration_wizard_open))
-            }
-        }
-        SettingsSwitchRow(
-            label = stringResource(R.string.developer_mode_enable),
-            checked = developerModeEnabled,
-            onCheckedChange = onDeveloperModeChange,
-            modifier = Modifier.testTag("settings_developer_mode"),
-        )
-        if (developerModeEnabled) {
-            Button(onClick = onDeveloperModeOpen, modifier = Modifier.testTag("settings_developer_open")) {
-                Text(stringResource(R.string.developer_mode_open))
-            }
-        }
-        SettingsSwitchRow(
-            label = stringResource(R.string.settings_live_telemetry),
-            checked = liveTelemetryEnabled,
-            onCheckedChange = onLiveTelemetryChange,
-            modifier = Modifier.testTag("settings_live_telemetry"),
-        )
-        if (liveTelemetryEnabled) {
-            OutlinedTextField(
-                value = liveSignalWssUrl,
-                onValueChange = onLiveSignalWssUrlChange,
-                label = { Text(stringResource(R.string.live_signal_url_hint)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("settings_live_signal_url"),
-                singleLine = true,
+        if (category == null) {
+            SettingsHub(
+                onCategory = { category = it },
+                onAbout = actions.onAboutOpen,
+                onClose = actions.onBack,
+                modifier = Modifier.padding(SpacingMd),
             )
-            Button(onClick = onLiveReceiverOpen, modifier = Modifier.testTag("settings_live_receiver")) {
-                Text(stringResource(R.string.live_receiver_open))
-            }
-        }
-        SettingsAndroidAutoOptions()
-        SettingsMapOptions(
-            homeRegion = homeMapRegion,
-            onUseCurrentLocation = onUseCurrentLocationAsHomeRegion,
-        )
-        SettingsMediaOptions(
-            compressionQuality = mediaCompressionQuality,
-            onCompressionSelect = onMediaCompressionSelect,
-            storageBytes = mediaStorageBytes,
-        )
-        SettingsStorageOptions(
-            storagePercent = sessionStoragePercent,
-            usedBytes = sessionStorageUsedBytes,
-            allowedBytes = sessionStorageAllowedBytes,
-            onPercentChange = onSessionStoragePercentChange,
-        )
-        SettingsRecordingOptions(
-            autoRecordEnabled = autoRecordEnabled,
-            selectedAddresses = autoRecordDeviceAddresses,
-            onAutoRecordEnabledChange = onAutoRecordEnabledChange,
-            onDeviceToggle = onAutoRecordDeviceToggle,
-        )
-        SettingsHardwareOptions(
-            tpmsEnabled = tpmsEnabled,
-            onTpmsEnabledChange = onTpmsEnabledChange,
-            onTpmsManage = onTpmsManage,
-            pressureUnit = pressureUnit,
-            tempUnit = tempUnit,
-            onPressureUnitSelect = onPressureUnitSelect,
-            onTempUnitSelect = onTempUnitSelect,
-            obdDevices = obdDevices,
-            selectedObdAddress = selectedObdAddress,
-            onObdDeviceSelect = onObdDeviceSelect,
-            obdConnectionStatus = obdConnectionStatus,
-            onObdRetry = onObdRetry,
-            onForgetObd = onForgetObd,
-            onObdPairNew = onObdPairNew,
-            obdPidConfig = obdPidConfig,
-            onObdPidConfigChange = onObdPidConfigChange,
-            externalGpsEnabled = externalGpsEnabled,
-            onExternalGpsEnabledChange = onExternalGpsEnabledChange,
-            externalGpsDevices = externalGpsDevices,
-            selectedExternalGpsAddress = selectedExternalGpsAddress,
-            onExternalGpsSelect = onExternalGpsSelect,
-            onForgetExternalGps = onForgetExternalGps,
-            onImuManage = onImuManage,
-            onCalibrationReset = onCalibrationReset,
-            autoCalibrateWhenStill = autoCalibrateWhenStill,
-            onAutoCalibrateWhenStillChange = onAutoCalibrateWhenStillChange,
-        )
-        Button(onClick = onBack) {
-            Text(stringResource(R.string.settings_close))
-        }
+        } else {
+            SettingsCategoryPane(
+                category = category!!,
+                state = state,
+                actions = actions,
+                onBack = { category = null },
+                modifier = Modifier.padding(SpacingMd),
+            )
         }
     }
 }

@@ -13,7 +13,9 @@ Feature slice shipped in v2.10: G-trail, rotation-aware ball, portrait telemetry
 ## Chrome
 
 - [ ] Top bar: menu, Play→Stop (`record_play` / `record_stop`), mark event when recording
-- [ ] Drawer: sessions, recording options, stats, preset, IMU, live, settings, about, theme
+- [ ] Drawer root: Record, Preset, Library, IMU, Live (if on), Settings — large 56dp rows
+- [ ] Library submenu: Sessions, Stats, recording options (while recording)
+- [ ] Preset submenu: five full-width preset rows; theme, screenshot mode, and About live in Settings
 - [ ] No `RecordControls`, `ImuStatusStrip`, `HomeQuickStatsStrip`, or `PresetSwitcherChip` on main column
 
 ## Recording / storage

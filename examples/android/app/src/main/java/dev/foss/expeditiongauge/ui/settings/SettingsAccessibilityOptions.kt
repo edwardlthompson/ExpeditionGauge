@@ -1,11 +1,6 @@
 package dev.foss.expeditiongauge.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -14,7 +9,6 @@ import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SpeedUnit
-import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
 fun SettingsAccessibilityOptions(
@@ -26,8 +20,6 @@ fun SettingsAccessibilityOptions(
     onAlertAudioModeChange: (AlertAudioMode) -> Unit,
     alertsMuted: Boolean,
     onAlertsMutedChange: (Boolean) -> Unit,
-    updateCheckEnabled: Boolean,
-    onUpdateCheckChange: (Boolean) -> Unit,
     highContrastEnabled: Boolean,
     onHighContrastChange: (Boolean) -> Unit,
     largeTextEnabled: Boolean,
@@ -47,16 +39,6 @@ fun SettingsAccessibilityOptions(
         alertsMuted = alertsMuted,
         onAlertsMutedChange = onAlertsMutedChange,
     )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(SpacingMd),
-    ) {
-        Text(
-            text = stringResource(R.string.settings_update_check_label),
-            modifier = Modifier.weight(1f),
-        )
-        Switch(checked = updateCheckEnabled, onCheckedChange = onUpdateCheckChange)
-    }
     SettingsSwitchRow(
         label = stringResource(R.string.settings_high_contrast),
         checked = highContrastEnabled,

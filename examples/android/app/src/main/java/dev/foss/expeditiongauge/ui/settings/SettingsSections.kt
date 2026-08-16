@@ -20,7 +20,7 @@ import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun SettingsGeneralSections(
+internal fun SettingsDisplayChrome(
     themeMode: ThemeMode,
     onThemeModeSelect: (ThemeMode) -> Unit,
     brightnessMode: BrightnessMode,
@@ -29,10 +29,6 @@ internal fun SettingsGeneralSections(
     onKeepScreenAwakeChange: (Boolean) -> Unit,
     speedUnit: SpeedUnit,
     onSpeedUnitSelect: (SpeedUnit) -> Unit,
-    logIntervalMs: Long,
-    onLogIntervalSelect: (Long) -> Unit,
-    recordingMode: RecordingMode,
-    onRecordingModeSelect: (RecordingMode) -> Unit,
 ) {
     Text(text = stringResource(R.string.settings_theme_label))
     FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
@@ -97,6 +93,16 @@ internal fun SettingsGeneralSections(
             )
         }
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+internal fun SettingsRecordingRateOptions(
+    logIntervalMs: Long,
+    onLogIntervalSelect: (Long) -> Unit,
+    recordingMode: RecordingMode,
+    onRecordingModeSelect: (RecordingMode) -> Unit,
+) {
     Text(text = stringResource(R.string.settings_log_rate_label))
     FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {
         listOf(20L, 50L, 100L).forEach { rate ->

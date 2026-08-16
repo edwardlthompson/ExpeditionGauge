@@ -1,0 +1,55 @@
+package dev.foss.expeditiongauge.ui.settings
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import dev.foss.expeditiongauge.R
+
+@Composable
+internal fun SettingsAdvancedCategory(
+    state: SettingsUiState,
+    actions: SettingsUiActions,
+) {
+    SettingsSwitchRow(
+        label = stringResource(R.string.developer_mode_enable),
+        checked = state.developerModeEnabled,
+        onCheckedChange = actions.onDeveloperModeChange,
+        modifier = Modifier.testTag("settings_developer_mode"),
+    )
+    if (state.developerModeEnabled) {
+        Button(onClick = actions.onDeveloperModeOpen, modifier = Modifier.testTag("settings_developer_open")) {
+            Text(stringResource(R.string.developer_mode_open))
+        }
+    }
+    SettingsSwitchRow(
+        label = stringResource(R.string.settings_live_telemetry),
+        checked = state.liveTelemetryEnabled,
+        onCheckedChange = actions.onLiveTelemetryChange,
+        modifier = Modifier.testTag("settings_live_telemetry"),
+    )
+    if (state.liveTelemetryEnabled) {
+        OutlinedTextField(
+            value = state.liveSignalWssUrl,
+            onValueChange = actions.onLiveSignalWssUrlChange,
+            label = { Text(stringResource(R.string.live_signal_url_hint)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("settings_live_signal_url"),
+            singleLine = true,
+        )
+        Button(onClick = actions.onLiveReceiverOpen, modifier = Modifier.testTag("settings_live_receiver")) {
+            Text(stringResource(R.string.live_receiver_open))
+        }
+    }
+    SettingsSwitchRow(
+        label = stringResource(R.string.settings_update_check_label),
+        checked = state.updateCheckEnabled,
+        onCheckedChange = actions.onUpdateCheckChange,
+        modifier = Modifier.testTag("settings_update_check"),
+    )
+}

@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.8] — Driving-safe menus (2026-08-16)
+
+### Changed
+
+* HUD drawer: short root (Record, Preset, Library, IMU, Live, Settings) with 56dp rows; Preset and Library are nested pages
+* Settings is a category hub (Display, Recording, Alerts, Hardware, Maps, Advanced, About); theme and screenshot mode moved out of the drawer
+
 ## [2.18.7] — Dual pedal indicators (2026-08-15)
 
 ### Changed

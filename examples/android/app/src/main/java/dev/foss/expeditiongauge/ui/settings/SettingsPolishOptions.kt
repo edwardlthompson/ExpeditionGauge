@@ -16,29 +16,33 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SettingsPolishOptions(
+fun SettingsLapTimingOptions(
     lapTimingEnabled: Boolean,
     onLapTimingEnabledChange: (Boolean) -> Unit,
     onTrackSetup: () -> Unit,
+) {
+    if (!FeatureFlags.lapTimingEnabled) return
+    SettingsSwitchRow(
+        label = stringResource(R.string.settings_lap_timing_enable),
+        checked = lapTimingEnabled,
+        onCheckedChange = onLapTimingEnabledChange,
+        modifier = Modifier.testTag("settings_lap_timing_enable"),
+    )
+    Button(
+        onClick = onTrackSetup,
+        modifier = Modifier.fillMaxWidth().testTag("settings_track_setup"),
+    ) {
+        Text(stringResource(R.string.track_setup_open))
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SettingsPolishOptions(
     attitudeGaugeMode: AttitudeGaugeMode,
     onAttitudeGaugeModeSelect: (AttitudeGaugeMode) -> Unit,
 ) {
-    if (FeatureFlags.lapTimingEnabled) {
-        SettingsSwitchRow(
-            label = stringResource(R.string.settings_lap_timing_enable),
-            checked = lapTimingEnabled,
-            onCheckedChange = onLapTimingEnabledChange,
-            modifier = Modifier.testTag("settings_lap_timing_enable"),
-        )
-        Button(
-            onClick = onTrackSetup,
-            modifier = Modifier.fillMaxWidth().testTag("settings_track_setup"),
-        ) {
-            Text(stringResource(R.string.track_setup_open))
-        }
-    }
     if (FeatureFlags.telemetryGraphsEnabled) {
         Text(text = stringResource(R.string.settings_attitude_gauge_label))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(SpacingMd)) {

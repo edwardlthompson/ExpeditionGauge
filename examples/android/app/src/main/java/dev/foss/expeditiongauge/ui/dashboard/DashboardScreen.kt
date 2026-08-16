@@ -1,6 +1,5 @@
 package dev.foss.expeditiongauge.ui.dashboard
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +38,8 @@ import dev.foss.expeditiongauge.ui.live.LivePairingSheet
 import dev.foss.expeditiongauge.ui.recording.RecordingAdvancedSheet
 import dev.foss.expeditiongauge.ui.recording.RecordingLiveStrip
 import dev.foss.expeditiongauge.ui.settings.SettingsScreen
+import dev.foss.expeditiongauge.ui.settings.SettingsUiActions
+import dev.foss.expeditiongauge.ui.settings.SettingsUiState
 import dev.foss.expeditiongauge.ui.theme.GaugeBackground
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -119,8 +120,6 @@ fun DashboardScreen(
         }
     }
 
-    BackHandler(enabled = drawerOpen) { drawerOpen = false }
-
     if (autocalPending != null) {
         AutocalConfirmDialog(
             onAccept = viewModel::acceptAutocal,
@@ -135,8 +134,6 @@ fun DashboardScreen(
         isLive = uiState.isLive,
         liveTelemetryEnabled = liveTelemetryEnabled,
         activePresetId = preset.id,
-        themeMode = themeMode,
-        screenshotMode = screenshotMode,
         onStartRecording = viewModel::startRecording,
         onStopRecording = viewModel::stopRecording,
         onSessionsOpen = onSessionsOpen,
@@ -147,38 +144,26 @@ fun DashboardScreen(
         onStartLive = onStartLive,
         onStopLive = onStopLive,
         onSettingsOpen = onSettingsOpen,
-        onAboutOpen = onAboutOpen,
-        onThemeToggle = onThemeToggle,
-        onScreenshotModeSelected = onScreenshotModeSelected,
     ) {
         InsetAwareScaffold(
             containerColor = GaugeBackground,
         ) { innerPadding ->
             when {
                 showSettings -> SettingsScreen(
-                    themeMode = themeMode,
-                    updateCheckEnabled = updateCheckEnabled,
-                    highContrastEnabled = false,
-                    liveTelemetryEnabled = liveTelemetryEnabled,
-                    audibleTonesEnabled = false,
-                    onThemeModeSelect = onThemeModeSelect,
-                    onUpdateCheckChange = onUpdateCheckChange,
-                    onHighContrastChange = {},
-                    onLiveTelemetryChange = {},
-                    onAudibleTonesChange = {},
-                    onSpeedUnitSelect = {},
-                    onLogIntervalSelect = {},
-                    onObdDeviceSelect = {},
-                    onExternalGpsSelect = {},
-                    onImuManage = onImuManage,
-                    onCalibrationReset = {},
-                    speedUnit = dev.foss.expeditiongauge.settings.SpeedUnit.METRIC,
-                    logIntervalMs = 20L,
-                    obdDevices = emptyList(),
-                    externalGpsDevices = emptyList(),
-                    selectedObdAddress = null,
-                    selectedExternalGpsAddress = null,
-                    onBack = onSettingsClose,
+                    state = SettingsUiState(
+                        themeMode = themeMode,
+                        updateCheckEnabled = updateCheckEnabled,
+                        liveTelemetryEnabled = liveTelemetryEnabled,
+                        screenshotMode = screenshotMode,
+                    ),
+                    actions = SettingsUiActions(
+                        onBack = onSettingsClose,
+                        onThemeModeSelect = onThemeModeSelect,
+                        onUpdateCheckChange = onUpdateCheckChange,
+                        onImuManage = onImuManage,
+                        onAboutOpen = onAboutOpen,
+                        onScreenshotModeSelected = onScreenshotModeSelected,
+                    ),
                     modifier = Modifier.fillMaxSize().padding(innerPadding),
                 )
                 showAbout -> AboutScreen(
