@@ -263,6 +263,15 @@
 | **Fix** | Catch IO in GPS read loop + OBD poll; disconnect/Failed; GPS auto-reconnect; prefer external via `GpsSourcePriority` |
 | **Prevention** | Never leave Classic BT read/write loops uncaught; treat socket close as disconnect, not crash |
 
+### KB-034 — DonationsLoader label vs CI-synced donations.json (Ship 2026-08-21)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | CI `DonationsLoaderTest.loadsVenmoDonateLink` fails with `ComparisonFailure` after `/ship`; local unit tests pass |
+| **Cause** | CI writes gitignored `donations.json` via `sync-stack-config.py` with label `Donate`. `ensureVenmo` kept that row when the URL already matched, so the test expected `Donate via Venmo` |
+| **Fix** | `DonateLinks.ensureVenmo` rewrites the Venmo row label; sync/init scripts emit `Donate via Venmo` |
+| **Prevention** | Tests that assert donate copy must cover the CI-synced `Donate` label, not only the missing-file fallback |
+
 ### KB-033 — Stored DTCs match none of the scanner codes (Fix 2026-08-14)
 
 | Field | Detail |
