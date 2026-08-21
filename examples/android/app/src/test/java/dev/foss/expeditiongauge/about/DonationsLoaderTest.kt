@@ -15,11 +15,10 @@ class DonationsLoaderTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
-    fun loadsDonationsFromAssets() {
+    fun loadsVenmoDonateLink() {
         val cfg = DonationsLoader.load(context)
         assertTrue(cfg.enabled)
-        assertEquals("If this project helps you, consider supporting development.", cfg.message)
-        assertEquals(1, cfg.links.size)
-        assertEquals("[INSERT METHOD]", cfg.links[0].label)
+        assertTrue(cfg.links.any { it.url == DonateLinks.VENMO_URL })
+        assertEquals(DonateLinks.LABEL, cfg.links.first { it.url == DonateLinks.VENMO_URL }.label)
     }
 }

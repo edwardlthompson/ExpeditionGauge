@@ -4,6 +4,7 @@ data class ReleaseAsset(
     val format: String,
     val url: String,
     val sha256: String? = null,
+    val name: String = "",
 )
 
 object ReleaseAssetSelector {

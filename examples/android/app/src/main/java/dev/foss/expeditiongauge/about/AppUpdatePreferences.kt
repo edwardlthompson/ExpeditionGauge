@@ -19,10 +19,13 @@ private val CHECK_INTERVAL = stringPreferencesKey("check_interval")
 private val LAST_CHECKED = longPreferencesKey("last_checked")
 private val INSTALLED_FORMAT = stringPreferencesKey("installed_artifact_format")
 private val PENDING_RESTART = booleanPreferencesKey("pending_restart")
+private val LAST_SEEN_VERSION = stringPreferencesKey("last_seen_version")
+private val DISMISSED_VERSION = stringPreferencesKey("dismissed_version")
 
+/** Device-local only — do not copy into settings profiles or peer-sync. */
 class AppUpdatePreferences(private val context: Context) {
     val checkInterval: Flow<String> = context.appUpdateDataStore.data.map { prefs ->
-        prefs[CHECK_INTERVAL] ?: "off"
+        prefs[CHECK_INTERVAL] ?: "daily"
     }
 
     val lastChecked: Flow<Long?> = context.appUpdateDataStore.data.map { prefs ->
@@ -35,6 +38,14 @@ class AppUpdatePreferences(private val context: Context) {
 
     val pendingRestart: Flow<Boolean> = context.appUpdateDataStore.data.map { prefs ->
         prefs[PENDING_RESTART] ?: false
+    }
+
+    val lastSeenVersion: Flow<String?> = context.appUpdateDataStore.data.map { prefs ->
+        prefs[LAST_SEEN_VERSION]
+    }
+
+    val dismissedVersion: Flow<String?> = context.appUpdateDataStore.data.map { prefs ->
+        prefs[DISMISSED_VERSION]
     }
 
     suspend fun ensureInstalledFormat(): String {
@@ -57,8 +68,21 @@ class AppUpdatePreferences(private val context: Context) {
     }
 
     suspend fun setLastChecked(epochMs: Long) {
+        markChecked(epochMs)
+    }
+
+    suspend fun markChecked(now: Long, dismissedVersion: String? = null) {
         context.appUpdateDataStore.edit { prefs ->
-            prefs[LAST_CHECKED] = epochMs
+            prefs[LAST_CHECKED] = now
+            if (!dismissedVersion.isNullOrBlank()) {
+                prefs[DISMISSED_VERSION] = dismissedVersion
+            }
+        }
+    }
+
+    suspend fun markVersionSeen(version: String) {
+        context.appUpdateDataStore.edit { prefs ->
+            prefs[LAST_SEEN_VERSION] = version
         }
     }
 

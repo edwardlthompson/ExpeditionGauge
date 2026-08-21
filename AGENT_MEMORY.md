@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.8** (driving-safe menus). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.9** (donate + daily installer updates). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -39,6 +39,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Ext GPS + BT crash harden | 2.18.4 | ✅ GLO priority; socket IO catch; OBD icon bus merge |
 | GLO stay-connected + pending DTCs | 2.18.5 | ✅ DataStore reconnect guard; Mode 07 AA footer |
 | Driving-safe menus | 2.18.8 | ✅ Drawer root + Preset/Library pages; Settings hub |
+| Donations and updates | 2.18.9 | ✅ Venmo About/Settings; once-per-version donate note; daily APK filename check |
 
 **Template lineage:** `.template-version` **0.15.1** (aligned 2026-07-22). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 

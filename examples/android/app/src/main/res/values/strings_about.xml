@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_donate">Donate via Venmo</string>
+    <string name="about_not_now">Not now</string>
+    <string name="about_install">Install</string>
+    <string name="about_later">Later</string>
+    <string name="about_donate_nudge_title">Development is still going</string>
+    <string name="about_donate_nudge_message">You just got a new build. If this app helps you, you can support ongoing work on Venmo. This is optional and will not appear again until the next update.</string>
+    <string name="about_update_title">Update available</string>
+    <string name="about_update_message">ExpeditionGauge %1$s is on GitHub. Install it when you are ready.</string>
+</resources>

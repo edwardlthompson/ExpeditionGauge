@@ -35,6 +35,25 @@ class ReleaseTagFetcherTest {
     }
 
     @Test
+    fun parseLatestReleaseReadsAssetNames() {
+        val parsed = ReleaseTagFetcher.parseLatestRelease(
+            """
+            {
+              "tag_name": "v0.15.1",
+              "html_url": "https://github.com/edwardlthompson/ExpeditionGauge/releases/tag/v2.19.0",
+              "assets": [
+                {"name": "sbom.cyclonedx.json", "browser_download_url": "https://example.com/sbom"},
+                {"name": "ExpeditionGauge-2.19.0.apk", "browser_download_url": "https://example.com/a.apk"}
+              ]
+            }
+            """.trimIndent(),
+        )
+        assertEquals("v0.15.1", parsed?.tag)
+        assertEquals("ExpeditionGauge-2.19.0.apk", parsed?.assets?.last()?.name)
+        assertEquals("2.19.0", parsed?.assets?.last()?.let { ProductUpdate.parseAssetVersion(it.name) })
+    }
+
+    @Test
     fun fetchLatestReleaseReturnsNullForInvalidRepo() {
         val result = kotlinx.coroutines.runBlocking {
             ReleaseTagFetcher.fetchLatestRelease("invalid/empty-repo-404")

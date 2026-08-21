@@ -26,9 +26,9 @@ object DonationsLoader {
                     links.add(DonationLink(item.optString("label"), item.optString("url")))
                 }
             }
-            DonationsConfig(enabled, message, links)
+            DonateLinks.ensureVenmo(DonationsConfig(enabled, message, links))
         } catch (_: Exception) {
-            DonationsConfig(enabled = false, message = "", links = emptyList())
+            DonateLinks.ensureVenmo(DonationsConfig(enabled = false, message = "", links = emptyList()))
         }
     }
 }

@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.9] — Donations and updates (2026-08-21)
+
+### Added
+
+* Quiet **Donate via Venmo** link on About and the Settings hub (not on the update dialog)
+* After a version change, one optional donate note; either button records “seen this version”
+* Daily GitHub update check compares `ExpeditionGauge-X.Y.Z.apk` (or `-foss.apk`) filenames, not git tags; **Install** / **Later** (Later silences that version)
+
 ## [2.18.8] — Driving-safe menus (2026-08-16)
 
 ### Changed

@@ -25,9 +25,19 @@ class AppUpdatePreferencesTest {
     }
 
     @Test
-    fun defaultsCheckIntervalToOff() = runBlocking {
+    fun defaultsCheckIntervalToDaily() = runBlocking {
         val prefs = AppUpdatePreferences(context)
-        assertEquals("off", prefs.checkInterval.first())
+        assertEquals("daily", prefs.checkInterval.first())
+    }
+
+    @Test
+    fun lastSeenAndDismissedStayLocal() = runBlocking {
+        val prefs = AppUpdatePreferences(context)
+        prefs.markVersionSeen("2.18.8")
+        prefs.markChecked(1_000L, "2.19.0")
+        assertEquals("2.18.8", prefs.lastSeenVersion.first())
+        assertEquals("2.19.0", prefs.dismissedVersion.first())
+        assertEquals(1_000L, prefs.lastChecked.first())
     }
 
     @Test

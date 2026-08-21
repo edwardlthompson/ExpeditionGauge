@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-21 — Donations and installer update check
+- **Status:** Accepted
+- **Context:** Continuum Calendar already had a quiet Venmo link plus a once-per-version donate note and a daily GitHub installer check. ExpeditionGauge still used opt-in tag-based About updates and a placeholder donate block.
+- **Decision:** Hardcode the public Venmo URL in About and Settings. After a version change, show one optional donate note (never on the update dialog). Check GitHub once per 24 hours and compare `ExpeditionGauge-X.Y.Z.apk` filenames; Install opens the asset URL; Later silences that version. Prefs stay device-local.
+- **Alternatives considered:** Keep update checks opt-in/off by default (rejected — the Continuum method is automatic daily, silent on failure). Put donate on the HUD drawer (rejected — driving-safe menu).
+- **Consequences:** v2.18.9; Settings can still disable the daily check; first run records the version with no donate popup.
+
 ### 2026-08-16 — Driving-safe drawer and Settings hub
 - **Status:** Accepted
 - **Context:** The HUD hamburger listed ~15–20 mixed controls (radios, theme icon, screenshot mode) that were hard to hit while driving; Settings was one parked-time scroll.

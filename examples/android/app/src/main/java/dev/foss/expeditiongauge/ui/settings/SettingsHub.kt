@@ -20,14 +20,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.about.DonateLinks
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -39,6 +42,7 @@ fun SettingsHub(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val uriHandler = LocalUriHandler.current
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -99,6 +103,12 @@ fun SettingsHub(
             testTag = "settings_hub_about",
             onClick = onAbout,
         )
+        TextButton(
+            onClick = { uriHandler.openUri(DonateLinks.VENMO_URL) },
+            modifier = Modifier.testTag("settings_hub_donate"),
+        ) {
+            Text(stringResource(R.string.about_donate))
+        }
         Button(onClick = onClose, modifier = Modifier.testTag("settings_close")) {
             Text(stringResource(R.string.settings_close))
         }

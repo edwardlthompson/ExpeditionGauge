@@ -7,11 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.about.DonateLinks
 import dev.foss.expeditiongauge.about.DonationsConfig
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
@@ -50,9 +53,18 @@ fun AboutScreen(
                 Text(stringResource(R.string.about_update_apply))
             }
         }
-        if (donations.enabled && donations.links.isNotEmpty()) {
+        TextButton(
+            onClick = { uriHandler.openUri(DonateLinks.VENMO_URL) },
+            modifier = Modifier.testTag("about_donate"),
+        ) {
+            Text(stringResource(R.string.about_donate))
+        }
+        val extra = donations.links.filter {
+            it.url != DonateLinks.VENMO_URL && !DonateLinks.isPlaceholderLink(it)
+        }
+        if (donations.enabled && extra.isNotEmpty()) {
             Text(text = donations.message, color = GaugeScaleWhite)
-            donations.links.forEach { link ->
+            extra.forEach { link ->
                 Text(
                     text = link.label,
                     color = MaterialTheme.colorScheme.primary,

@@ -29,7 +29,8 @@ When enabled in Settings, recording starts when a selected bonded Bluetooth devi
 
 | Feature | Default | Data sent |
 |---------|---------|-----------|
-| App update check | Opt-in (Settings) | `last_checked`, installed artifact format, release manifest URL — no PII |
+| App update check | Daily (can turn off in Settings) | GitHub latest-release URL only — no PII. Last-check time, dismissed version, and donate-seen version stay on this device and are not peer-synced |
+| Donate reminder | Once per installed version after an update | Local “seen version” only; opening Venmo is optional |
 | Live telemetry (sender/receiver) | Off | P2P session payloads between paired devices you connect; no cloud relay |
 
 ## Data we do not collect
@@ -47,7 +48,7 @@ When enabled in Settings, recording starts when a selected bonded Bluetooth devi
 
 - **Access:** Session data is visible in-app; export via GPX or share flows where supported
 - **Deletion:** Delete individual sessions or uninstall the app
-- **Opt-out:** Live telemetry and update checks are off until you enable them
+- **Opt-out:** Live telemetry is off until you enable it. Update checks run once per 24 hours and can be turned off in Settings. Donate reminders appear at most once after each version change.
 - **Portability:** GPX and exported video files
 
 ## Contact

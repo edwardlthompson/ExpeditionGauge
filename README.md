@@ -249,7 +249,7 @@ Every time you install a new version from GitHub:
 - **Loop recording** — oldest unprotected sessions auto-deleted when storage cap is reached; protect drives in session metadata
 - **Auto-record** — optional start/stop when a bonded Bluetooth trigger device connects/disconnects (local ACL only)
 - **`allowBackup=false`** — sessions are not included in Android cloud backup
-- **Opt-in network** — update checks and live telemetry are off by default
+- **Quiet network** — update checks run at most once per 24 hours (Settings can disable); live telemetry stays off until you enable it
 
 See [`docs/PRIVACY.md`](docs/PRIVACY.md), [`SECURITY.md`](SECURITY.md), and [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md).
 

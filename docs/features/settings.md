@@ -7,7 +7,7 @@
 - ✅ User can open a Settings hub from the main navigation, then a category (Display, Recording, Alerts, Hardware, Maps, Advanced, About)
 - ✅ User can open a Settings panel/screen from the main navigation
 - ✅ Theme preference (light/dark/system) persists across restarts
-- ✅ Update-check toggle respects opt-in telemetry policy (`docs/PRIVACY.md`)
+- ✅ Update-check toggle can disable the daily GitHub release check (`docs/PRIVACY.md`)
 - ✅ Offline: settings load last persisted values; no network required for display
 - ✅ i18n: all user-visible strings under `settings.*` keys
 

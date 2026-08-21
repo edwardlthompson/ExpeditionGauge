@@ -32,7 +32,7 @@ import dev.foss.expeditiongauge.stats.SessionStatsAggregator
 import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModelFactory
-import dev.foss.expeditiongauge.ui.effects.AppUpdateEffects
+import dev.foss.expeditiongauge.ui.effects.LaunchPromptEffects
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.BrightnessPreferences
 import dev.foss.expeditiongauge.ui.theme.ExpeditionGaugeTheme
@@ -78,8 +78,7 @@ fun ExpeditionGaugeApp(
     val tourCompleted by onboardingPreferences.tourCompleted.collectAsStateWithLifecycle(initialValue = false)
     val isOnline by networkStatusMonitor.isOnline.collectAsStateWithLifecycle(initialValue = true)
     val installedFormat by appUpdatePreferences.installedFormat.collectAsStateWithLifecycle(initialValue = "apk")
-    val checkInterval by appUpdatePreferences.checkInterval.collectAsStateWithLifecycle(initialValue = "off")
-    val lastChecked by appUpdatePreferences.lastChecked.collectAsStateWithLifecycle(initialValue = null)
+    val checkInterval by appUpdatePreferences.checkInterval.collectAsStateWithLifecycle(initialValue = "daily")
     val pendingRestart by appUpdatePreferences.pendingRestart.collectAsStateWithLifecycle(initialValue = false)
     val speedUnit by services.settingsPreferences.speedUnit.collectAsStateWithLifecycle(
         initialValue = dev.foss.expeditiongauge.settings.SpeedUnit.METRIC,
@@ -157,16 +156,13 @@ fun ExpeditionGaugeApp(
         }
     }
 
-    AppUpdateEffects(
+    LaunchPromptEffects(
+        enabled = permissionsGranted && (!FeatureFlags.onboardingEnabled || tourCompleted),
         context = context,
         appVersion = appVersion,
         appUpdatePreferences = appUpdatePreferences,
         services = services,
         logInterval = logInterval,
-        checkInterval = checkInterval,
-        lastChecked = lastChecked,
-        isOnline = isOnline,
-        installedFormat = installedFormat,
         pendingRestart = pendingRestart,
         updateStatus = updateStatus,
         applyAsset = applyAsset,

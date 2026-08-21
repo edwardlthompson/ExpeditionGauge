@@ -11,6 +11,14 @@ class CheckScheduleTest {
     }
 
     @Test
+    fun dailyWaitsAFullDay() {
+        val now = ProductUpdate.MS_DAY
+        assertTrue(CheckSchedule.shouldCheck("daily", null, now))
+        assertFalse(CheckSchedule.shouldCheck("daily", 0L, ProductUpdate.MS_DAY - 1))
+        assertTrue(CheckSchedule.shouldCheck("daily", 0L, ProductUpdate.MS_DAY))
+    }
+
+    @Test
     fun weeklyRequiresSevenDays() {
         val now = 10_000_000L
         assertTrue(CheckSchedule.shouldCheck("weekly", now - 8 * 86_400_000L, now))
