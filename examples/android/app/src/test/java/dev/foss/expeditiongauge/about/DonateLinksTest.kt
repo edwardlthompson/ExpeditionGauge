@@ -20,4 +20,16 @@ class DonateLinksTest {
         assertEquals(DonateLinks.VENMO_URL, cfg.links[0].url)
         assertFalse(DonateLinks.isPlaceholderLink(cfg.links[0]))
     }
+
+    @Test
+    fun ensureVenmoNormalizesExistingVenmoLabel() {
+        val raw = DonationsConfig(
+            enabled = true,
+            message = "Thanks",
+            links = listOf(DonationLink("Donate", DonateLinks.VENMO_URL)),
+        )
+        val cfg = DonateLinks.ensureVenmo(raw)
+        assertEquals(1, cfg.links.size)
+        assertEquals(DonateLinks.LABEL, cfg.links[0].label)
+    }
 }

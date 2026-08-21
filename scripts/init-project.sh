@@ -193,7 +193,7 @@ if src_don.exists() and not dst_don.exists():
     shutil.copy(src_don, dst_don)
 if url.strip() and dst_don.exists():
     data = json.loads(dst_don.read_text(encoding="utf-8"))
-    data["links"] = [{"label": "Donate", "url": url.strip()}]
+    data["links"] = [{"label": "Donate via Venmo", "url": url.strip()}]
     dst_don.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 PY
 

@@ -12,7 +12,10 @@ object DonateLinks {
 
     fun ensureVenmo(config: DonationsConfig): DonationsConfig {
         val links = config.links.filterNot { isPlaceholderLink(it) }.toMutableList()
-        if (links.none { it.url == VENMO_URL }) {
+        val idx = links.indexOfFirst { it.url == VENMO_URL }
+        if (idx >= 0) {
+            links[idx] = DonationLink(LABEL, VENMO_URL)
+        } else {
             links.add(0, DonationLink(LABEL, VENMO_URL))
         }
         return DonationsConfig(enabled = true, message = config.message, links = links)

@@ -54,7 +54,7 @@ def sync_app_update(root: Path, repo: str) -> None:
 def sync_donations(root: Path, url: str) -> None:
     if not url.strip():
         return
-    links = [{"label": "Donate", "url": url.strip()}]
+    links = [{"label": "Donate via Venmo", "url": url.strip()}]
     payload = {
         "enabled": True,
         "message": "If this project helps you, consider supporting development.",

@@ -130,7 +130,7 @@ $DonConfig = Join-Path $Root "donations.json"
 if ((Test-Path $DonExample) -and -not (Test-Path $DonConfig)) { Copy-Item $DonExample $DonConfig }
 if ($DonationUrl -and (Test-Path $DonConfig)) {
   $don = Get-Content $DonConfig -Raw | ConvertFrom-Json
-  $don.links = @(@{ label = "Donate"; url = $DonationUrl.Trim() })
+  $don.links = @(@{ label = "Donate via Venmo"; url = $DonationUrl.Trim() })
   Write-Utf8NoBom $DonConfig ($don | ConvertTo-Json -Depth 5)
 }
 
