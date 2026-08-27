@@ -26,6 +26,8 @@ Android Auto does **not** support long-press on Surface content. **Level** is th
 | `dhu-smoke.ps1 -Tall` | Same with `examples/android/car/config/dhu-tall.ini` (**720×1280**; Windows DHU ignores 480×800); capture `dhu-vertical-2cube.png`; restores prior `headunit.ini` |
 | `capture-dhu-window.ps1` | Screenshot the DHU window only |
 
+`DeveloperHeadUnitNetworkService` is not exported. After install, keep **`adb root`** until port **5277** is listening. `adb unroot` then `am force-stop` Gearhead leaves DHU on **Waiting for phone…** (KB-036).
+
 ```powershell
 pwsh scripts/expedition/aa-refresh-host.ps1 -Apk path\to\app-debug.apk
 pwsh scripts/expedition/dhu-smoke.ps1 -RestartDhu

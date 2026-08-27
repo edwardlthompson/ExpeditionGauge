@@ -118,6 +118,8 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Agent doc drift reintroduces `.sh` | `check_cursor_integrations` gate on `.cursor/` agent surfaces |
 | Inclinometer AA alert audio routing | Red frame on AA tile; phone audio may not route — [`ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
 | Inclinometer landscape after portrait Zero | ADR-0013 `SensorAxisRemap` before Madgwick; Activity `Display.rotation` authoritative — [`.cursor/rules/inclinometer-rotation.mdc`](.cursor/rules/inclinometer-rotation.mdc) |
+| 2006 Expedition `0111` is plate, not APP | Discover `0149`/`014A`/`014B` then Ford Mode 22; logcat `throttlePid=` (KB-035) |
+| DHU “Waiting for phone…” after sideload | Keep `adb root` until HU server is up; do not unroot then force-stop AA (KB-036) |
 | JAVA_HOME unset / WSL bash (F-001) | Prefer Git Bash in `agent-run.py`; set `JAVA_HOME` to JDK 17 — [`DEV_DEVICE.md`](docs/DEV_DEVICE.md) |
 | Dependabot gradle without lockfile (F-002) | Regenerate `app/gradle.lockfile` on bump PRs; see SECURITY_TRIAGE |
 | weekly-health red on every push | Push stub job; full health on schedule/dispatch only |

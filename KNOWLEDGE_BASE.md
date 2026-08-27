@@ -289,3 +289,21 @@
 | **Cause** | DataStore re-emits OBD/GPS address flows on any prefs write → `connect()` tears down SPP; Mode 03 skipped when `0101` count=0 (pending Mode 07 never read); Activity `onDestroy` disconnected while AA held sensors |
 | **Fix** | `distinctUntilChanged` + connect only if not Connected/Connecting; Mode 03+07 merge; skip BT disconnect when `SensorHold` > 0 |
 | **Prevention** | Prefs collectors must not reconnect on identical keys; never gate DTC UI on stored-count alone |
+### KB-035 — 2006 Expedition 0111 is throttle plate, not APP (Ship 2026-08-26)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | AA/phone pedal bar tracks airflow / TAC, not the accelerator pedal on a 2006 Ford Expedition |
+| **Cause** | SAE Mode 01 PID `0111` is throttle-*plate* angle. Generic APP is `0149`/`014A`/`014B`; Ford also exposes Mode 22 `2209D4`/`220911`/`221340`. This app already maps `015A` as rear-wheel speed, so it must not be reused as relative throttle |
+| **Fix** | `ObdThrottleQuery` discovers `0149` then `014A`/`014B`, then Mode 22 with `ATSH7E0` (fallback `ATSH7DF`), else `0111`. logcat `ExpeditionGauge/Obd` prints `throttlePid=` |
+| **Prevention** | Never treat `0111` as foot pedal on 2004-06 Ford; do not poll `015A` for throttle in this codebase |
+
+### KB-036 — DHU stuck on Waiting for phone after unroot (Ship 2026-08-26)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Desktop Head Unit shows Waiting for phone after Play-spoof sideload or `am force-stop` of Android Auto |
+| **Cause** | `DeveloperHeadUnitNetworkService` is not exported; shell uid 2000 cannot start it. `adb unroot` then force-stop Gearhead kills the HU server and it cannot be restarted until `adb root` |
+| **Fix** | `adb root`, start the service (`aa-start-head-unit-server.ps1`), keep root until DHU is connected. Then open EG from the AA dock |
+| **Prevention** | Do not `adb unroot` immediately after `aa-refresh-host.ps1` if DHU still needs port 5277; see `docs/help/ANDROID_AUTO.md` DHU scripts
+
