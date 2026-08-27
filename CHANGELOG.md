@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.10] — Even HUD rows + Expedition APP throttle (2026-08-26)
+
+### Changed
+
+* AA telemetry cube uses seven even, centered rows: speed, heading, elevation, latitude, longitude, connection icons, pedal bar
+* Pedal bar is a few pixels thicker and lives in its own row so icons no longer sit on the track
+* Throttle poll prefers accelerator-pedal PIDs (`0149`/`014A`/`014B`, then Ford Mode 22) over plate angle `0111`
+
+### Fixed
+
+* Longitude (E/W) stayed visible when the pedal bar grew; each field is constrained to one row
+
 ## [2.18.9] — Donations and updates (2026-08-21)
 
 ### Added

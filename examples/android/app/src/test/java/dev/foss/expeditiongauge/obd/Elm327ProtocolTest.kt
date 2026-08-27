@@ -52,6 +52,14 @@ class Elm327ProtocolTest {
     }
 
     @Test
+    fun parsePidDataByte_throttleAndApp() {
+        assertEquals(128f, Elm327Protocol.parsePidDataByte("411180", "4111")!!, 0.01f)
+        assertEquals(200f, Elm327Protocol.parsePidDataByte("4149C8", "4149")!!, 0.01f)
+        assertEquals(80f, Elm327Protocol.parsePidDataByte("6209D450", "6209D4")!!, 0.01f)
+        assertNull(Elm327Protocol.parsePidDataByte("NO DATA", "4111"))
+    }
+
+    @Test
     fun parseVoltageFrom4142Response() {
         val volts = Elm327Protocol.parseVoltage("41423584")
         assertNotNull(volts)

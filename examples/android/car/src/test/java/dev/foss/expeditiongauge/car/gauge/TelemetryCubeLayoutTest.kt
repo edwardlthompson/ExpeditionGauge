@@ -6,58 +6,39 @@ import org.junit.Test
 
 class TelemetryCubeLayoutTest {
     @Test
-    fun fiveLinesFitAbovePedalOnTypicalCube() {
+    fun sevenEqualRowsFillTheCube() {
         val size = 280
-        val lines = 5
-        val slots = TelemetryCubeLayout.compute(size, lines)
-        val textH = TelemetryCubeLayout.textBlockH(
-            lines, slots.primarySize, slots.secondarySize, slots.gap,
+        val slots = TelemetryCubeLayout.compute(size)
+        val used = slots.inset * 2f + slots.rowH * TelemetryCubeLayout.ROW_COUNT
+        assertEquals(size.toFloat(), used, 0.6f)
+        assertEquals(7, TelemetryCubeLayout.ROW_COUNT)
+        for (i in 1 until TelemetryCubeLayout.ROW_COUNT) {
+            val prev = slots.rowTop(i - 1)
+            val next = slots.rowTop(i)
+            assertEquals(slots.rowH, next - prev, 0.05f)
+        }
+        assertTrue("text stays inside its row", slots.textSize < slots.rowH)
+        assertTrue("icons stay inside the link row", slots.iconSize < slots.rowH)
+        assertTrue("pedal stays inside the last row", slots.pedalH < slots.rowH)
+        val pedalTop = slots.rowTop(TelemetryCubeLayout.PEDAL_ROW) +
+            (slots.rowH - slots.pedalH) / 2f
+        val linkBottom = slots.rowTop(TelemetryCubeLayout.LINK_ROW) + slots.rowH
+        assertTrue("link row sits above the pedal row", linkBottom <= pedalTop + 0.5f)
+        assertTrue(
+            slots.rowTop(TelemetryCubeLayout.PEDAL_ROW) + slots.rowH <=
+                size - slots.inset + 0.5f,
         )
-        val textBottom = slots.inset + textH
-        assertTrue("lat/lon must sit above the link row", textBottom <= slots.linkY - slots.gap)
-        assertEquals(
-            size * TelemetryCubeLayout.PEDAL_H_FRAC,
-            slots.pedalH,
-            0.5f,
-        )
-        assertEquals(
-            size * TelemetryCubeLayout.PRIMARY_FRAC,
-            slots.primarySize,
-            0.5f,
-        )
-        assertEquals(
-            size * TelemetryCubeLayout.SECONDARY_FRAC,
-            slots.secondarySize,
-            0.5f,
-        )
-        assertEquals(
-            slots.secondarySize * TelemetryCubeLayout.LINK_H_OVER_SECONDARY,
-            slots.linkH,
-            0.5f,
-        )
-        assertTrue("pedal sits under the link icons", slots.linkY + slots.linkH <= slots.pedalY)
-        assertTrue(slots.pedalY + slots.pedalH <= size - slots.inset + 0.5f)
     }
 
     @Test
-    fun smallCubeStillKeepsFiveLines() {
-        val slots = TelemetryCubeLayout.compute(160, 5)
-        val textH = TelemetryCubeLayout.textBlockH(
-            5, slots.primarySize, slots.secondarySize, slots.gap,
-        )
-        assertTrue(slots.inset + textH <= slots.linkY + 1f)
-        assertTrue(slots.pedalH >= 3f)
-    }
-
-    @Test
-    fun zeroLinesStillPlacesPedalAtBottom() {
-        val size = 200
-        val slots = TelemetryCubeLayout.compute(size, 0)
+    fun smallCubeStillHasSevenRowsAndAVisiblePedal() {
+        val slots = TelemetryCubeLayout.compute(160)
         assertEquals(
-            0f,
-            TelemetryCubeLayout.textBlockH(0, slots.primarySize, slots.secondarySize, slots.gap),
+            160f,
+            slots.inset * 2f + slots.rowH * TelemetryCubeLayout.ROW_COUNT,
+            0.6f,
         )
-        assertTrue(slots.pedalY + slots.pedalH <= size - slots.inset + 0.5f)
-        assertTrue(slots.linkY + slots.linkH <= slots.pedalY + 0.5f)
+        assertTrue(slots.pedalH >= 4f)
+        assertTrue(slots.iconSize >= 8f)
     }
 }

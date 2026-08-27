@@ -17,6 +17,20 @@
 
 ## Entries
 
+### 2026-08-26 — Telemetry cube seven even rows
+- **Status:** Accepted (visual trial)
+- **Context:** Link icons sat on the pedal bar with a larger gap above them than between text lines. The cube needed even, dedicated rows.
+- **Decision:** Always 7 equal bands (speed, HDG, elev, lat, lon, links, pedal). Content is centered in each band. Pedal is a few pixels thicker and inset inside the last row. Prior look is git tag `hud-pre-seven-row` (`8e7def6`).
+- **Alternatives considered:** Keep packed text + bottom-pinned bar (checkpointed). Different row counts (rejected — 7 matches the live HUD fields).
+- **Consequences:** v2.18.10. Restore with `git checkout hud-pre-seven-row --` on the three cube layout files if the even-row look is reverted.
+
+### 2026-08-26 — Pedal bar layout + Expedition APP PIDs
+- **Status:** Accepted
+- **Context:** AA telemetry cube dropped the longitude (E/W) line when the brake/throttle bar took ~9% of the cube. Mode 01 PID `0111` on the 2006 Expedition is throttle-*plate* angle (tracks airflow / TAC), not accelerator pedal.
+- **Decision:** Shrink the cube pedal bar (~2% height, needles inside the track), put it under the link icons at the cube bottom, and scale text so speed/HDG/elev/lat/lon always draw. Phone HUD pins a 6 dp bar under the link row. Throttle poll discovers `0149`/`014A`/`014B`, then Ford Mode 22 `2209D4`/`220911`/`221340` (PCM `ATSH7E0`), else `0111`.
+- **Alternatives considered:** Overlay the bar on coords (rejected — hides E/W). Poll `0110` MAF (rejected — grams/sec, not pedal). Always Mode 22 (rejected — slower; generic APP exists on some PCMs).
+- **Consequences:** logcat `throttlePid=` shows the live channel; first OBD poll after connect may take ~1 s for discovery.
+
 ### 2026-08-21 — Donations and installer update check
 - **Status:** Accepted
 - **Context:** Continuum Calendar already had a quiet Venmo link plus a once-per-version donate note and a daily GitHub installer check. ExpeditionGauge still used opt-in tag-based About updates and a placeholder donate block.

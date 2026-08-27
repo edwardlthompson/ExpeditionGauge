@@ -5,6 +5,7 @@ data class ObdSnapshot(
     val rpm: Float? = null,
     val speedKmh: Float? = null,
     val throttlePct: Float? = null,
+    val throttlePid: String? = null,
     val engineLoadPct: Float? = null,
     val wheelSpeedKmh: Float? = null,
     val rearLeftKmh: Float? = null,

@@ -18,8 +18,8 @@ android {
         applicationId = "dev.foss.expeditiongauge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 49
-        versionName = "2.18.9"
+        versionCode = 50
+        versionName = "2.18.10"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

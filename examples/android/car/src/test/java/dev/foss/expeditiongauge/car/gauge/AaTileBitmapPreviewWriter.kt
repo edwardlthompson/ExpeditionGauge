@@ -48,14 +48,14 @@ object AaTileBitmapPreviewWriter {
             DriveHudCarIcon.renderBitmap(
                 pitchDeg = 5f,
                 rollDeg = 18f,
-                style = InclinometerStyle.HORIZON,
+                attitudeMode = AaAttitudeMode.INCLINOMETER_HORIZON,
                 pitchAlert = false,
                 rollAlert = false,
                 maxPitchThresholdDeg = null,
                 maxRollThresholdDeg = null,
                 yawDeg = 90f,
                 latG = 0.2f,
-                lonG = 0.1f,
+                lonG = -0.35f,
                 speedLabel = "62 MPH",
                 headingLabel = "HDG 090° E",
                 altLabel = "Elev. 3940 ft",
@@ -66,6 +66,7 @@ object AaTileBitmapPreviewWriter {
                 rr = "32\n69F",
                 cubePx = cube,
                 darkBackground = true,
+                throttlePct = 42f,
             ),
         )
         writePng(
@@ -73,14 +74,14 @@ object AaTileBitmapPreviewWriter {
             DriveHudCarIcon.renderBitmap(
                 pitchDeg = 5f,
                 rollDeg = 18f,
-                style = InclinometerStyle.HORIZON,
+                attitudeMode = AaAttitudeMode.INCLINOMETER_HORIZON,
                 pitchAlert = false,
                 rollAlert = false,
                 maxPitchThresholdDeg = null,
                 maxRollThresholdDeg = null,
                 yawDeg = 90f,
                 latG = 0.2f,
-                lonG = 0.1f,
+                lonG = -0.35f,
                 speedLabel = "62 MPH",
                 headingLabel = "HDG 090° E",
                 altLabel = "Elev. 3940 ft",
@@ -91,6 +92,7 @@ object AaTileBitmapPreviewWriter {
                 rr = "32\n69F",
                 cubePx = cube,
                 darkBackground = false,
+                throttlePct = 42f,
             ),
         )
     }

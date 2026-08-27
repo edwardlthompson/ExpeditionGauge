@@ -49,8 +49,8 @@ fun TelemetryHudPedalBar(
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(12.dp)
-            .padding(horizontal = 8.dp, vertical = 1.dp)
+            .height(16.dp)
+            .padding(horizontal = 8.dp, vertical = 2.dp)
             .semantics { contentDescription = desc },
     ) {
         val r = size.height * 0.45f

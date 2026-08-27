@@ -22,9 +22,14 @@ internal object ObdPollHelper {
         } else {
             previous.speedKmh
         }
-        val throttle = if (config.throttle) {
-            Elm327Protocol.queryPid(reader, writer, "0111")
-                ?.let { raw -> Elm327Protocol.parsePidDataByte(raw, "4111")?.times(100f / 255f) }
+        val throttleCh = if (config.throttle) {
+            ObdThrottleQuery.byCommand(previous.throttlePid)
+                ?: ObdThrottleQuery.discover(reader, writer)
+        } else {
+            null
+        }
+        val throttle = if (config.throttle && throttleCh != null) {
+            ObdThrottleQuery.read(reader, writer, throttleCh)
         } else {
             previous.throttlePct
         }
@@ -49,6 +54,7 @@ internal object ObdPollHelper {
             rpm = rpm,
             speedKmh = speed,
             throttlePct = throttle,
+            throttlePid = throttleCh?.command ?: previous.throttlePid,
             engineLoadPct = load,
             wheelSpeedKmh = speed,
             rearLeftKmh = rear.first,

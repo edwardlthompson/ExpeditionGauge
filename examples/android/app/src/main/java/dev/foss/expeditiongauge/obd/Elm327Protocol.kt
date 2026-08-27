@@ -15,8 +15,13 @@ object Elm327Protocol {
         Elm327Init.run(reader, writer)
     }
 
-    fun queryPid(reader: BufferedReader, writer: OutputStreamWriter, pid: String): String? {
-        val raw = Elm327Io.sendCommand(reader, writer, pid, timeoutMs = 3_000L) ?: return null
+    fun queryPid(
+        reader: BufferedReader,
+        writer: OutputStreamWriter,
+        pid: String,
+        timeoutMs: Long = 3_000L,
+    ): String? {
+        val raw = Elm327Io.sendCommand(reader, writer, pid, timeoutMs = timeoutMs) ?: return null
         return Elm327DtcParse.stripNoise(raw)
             .filter { it.isDigit() || it in 'A'..'F' || it in 'a'..'f' }
             .uppercase()
