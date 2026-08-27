@@ -17,12 +17,19 @@
 
 ## Entries
 
+### 2026-08-26 — Publish GitHub releases (no drafts)
+- **Status:** Accepted
+- **Context:** v2.18.10 shipped as a draft; several older tags were draft-only. Driver asked for normal releases going forward.
+- **Decision:** `project.config.json` `releaseDraft` is false. Published `v2.18.10` as Latest, rolled every draft’s notes into that release body, deleted the draft GitHub releases (git tags kept).
+- **Alternatives considered:** Leave historical drafts in place (rejected).
+- **Consequences:** Next `/ship` creates a published release. Notes for deleted drafts live on the v2.18.10 GitHub page and in `CHANGELOG.md`.
+
 ### 2026-08-26 — Keep seven even HUD rows
 - **Status:** Accepted
 - **Context:** Driver confirmed the 7-row AA telemetry cube (speed, HDG, elev, lat, lon, links, pedal) after DHU review. `/ship` v2.18.10.
 - **Decision:** Keep `TelemetryCubeLayout` seven even rows. Do not restore tag `hud-pre-seven-row`.
 - **Alternatives considered:** Revert to packed text + bottom-pinned bar (rejected).
-- **Consequences:** Draft GitHub release `v2.18.10`; publish remains `[HUMAN]` while `releaseDraft` is true.
+- **Consequences:** GitHub release `v2.18.10` is published Latest.
 
 ### 2026-08-26 — Telemetry cube seven even rows
 - **Status:** Superseded by Keep seven even HUD rows (same day)
