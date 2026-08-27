@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.ui.dashboard.hud
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,7 +37,6 @@ fun TelemetryHudCube(
             .fillMaxSize()
             .padding(horizontal = SpacingSm / 3, vertical = SpacingSm / 4),
         horizontalAlignment = Alignment.CenterHorizontally,
-        // Pack content toward the top so the link-icon row stays visible at the bottom.
         verticalArrangement = Arrangement.Top,
     ) {
         if (preset.showSpeed || preset.showHeading || preset.showGps) {
@@ -74,19 +74,20 @@ fun TelemetryHudCube(
             )
             TelemetryHudClockRow(modifier = Modifier.fillMaxWidth())
         }
-        TelemetryHudPedalBar(
-            throttlePct = telemetry.throttlePct,
-            lonG = telemetry.lonG,
-            modifier = Modifier.fillMaxWidth(),
-        )
         TelemetryHudVehicleRow(
             batteryVoltage = telemetry.batteryVoltage,
             slipRatio = telemetry.slipRatio,
             activeAlerts = activeAlerts,
             modifier = Modifier.fillMaxWidth(),
         )
+        Spacer(Modifier.weight(1f))
         TelemetryHudLinkRow(
             links = SensorLinkState.from(telemetry),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        TelemetryHudPedalBar(
+            throttlePct = telemetry.throttlePct,
+            lonG = telemetry.lonG,
             modifier = Modifier.fillMaxWidth(),
         )
     }

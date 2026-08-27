@@ -1,11 +1,11 @@
 package dev.foss.expeditiongauge.ui.dashboard.hud
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.foss.expeditiongauge.ui.theme.LocalTextScale
 
@@ -24,4 +24,7 @@ fun hudCubeTextStyle(): TextStyle {
 }
 
 @Composable
-fun hudCubeIconDp(): Dp = (16f * LocalTextScale.current).dp
+fun hudCubeIconDp(): Dp {
+    val sp = BASE_SP * LocalTextScale.current
+    return with(LocalDensity.current) { sp.sp.toDp() }
+}

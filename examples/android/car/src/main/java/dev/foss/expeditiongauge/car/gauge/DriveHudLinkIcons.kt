@@ -52,8 +52,8 @@ internal object DriveHudLinkIcons {
     }
 
     fun drawImu(canvas: Canvas, cx: Float, cy: Float, size: Float, paint: Paint) {
-        val r = size * 0.1f
-        val d = size * 0.22f
+        val r = size * 0.12f
+        val d = size * 0.27f
         canvas.drawCircle(cx - d, cy - d, r, paint)
         canvas.drawCircle(cx + d, cy - d, r, paint)
         canvas.drawCircle(cx - d, cy + d, r, paint)

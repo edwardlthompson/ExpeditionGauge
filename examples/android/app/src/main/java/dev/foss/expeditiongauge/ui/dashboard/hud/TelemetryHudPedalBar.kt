@@ -49,8 +49,8 @@ fun TelemetryHudPedalBar(
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(14.dp)
-            .padding(horizontal = 6.dp, vertical = 2.dp)
+            .height(12.dp)
+            .padding(horizontal = 8.dp, vertical = 1.dp)
             .semantics { contentDescription = desc },
     ) {
         val r = size.height * 0.45f
@@ -75,18 +75,16 @@ fun TelemetryHudPedalBar(
                 cornerRadius = CornerRadius(r),
             )
         }
-        val nw = size.height * 0.36f
-        val nest = size.height * 0.22f
-        val nh = size.height * 1.16f
-        val ny = -size.height * 0.08f
+        val nw = size.height * 0.42f
+        val nest = size.height * 0.18f
         val nr = CornerRadius(size.height * 0.12f)
         if (!hideTh) {
             val nx = mid + mid * th + nest
-            drawRoundRect(GaugeScaleWhite, Offset(nx - nw / 2f, ny), Size(nw, nh), nr)
+            drawRoundRect(GaugeScaleWhite, Offset(nx - nw / 2f, 0f), Size(nw, size.height), nr)
         }
         if (!hideBr) {
             val nx = mid - mid * br - nest
-            drawRoundRect(GaugeScaleWhite, Offset(nx - nw / 2f, ny), Size(nw, nh), nr)
+            drawRoundRect(GaugeScaleWhite, Offset(nx - nw / 2f, 0f), Size(nw, size.height), nr)
         }
     }
 }

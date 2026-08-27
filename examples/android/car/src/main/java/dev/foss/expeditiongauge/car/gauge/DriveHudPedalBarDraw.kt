@@ -41,8 +41,9 @@ internal fun DriveHudCubeDraw.drawPedalBar(
 }
 
 private fun DriveHudCubeDraw.drawPedalNeedle(cx: Float, y: Float, height: Float, paint: Paint) {
+    val half = (height * 0.14f).coerceAtLeast(1f)
     canvas.drawRoundRect(
-        RectF(cx - height * 0.18f, y - height * 0.08f, cx + height * 0.18f, y + height * 1.08f),
+        RectF(cx - half, y, cx + half, y + height),
         height * 0.12f,
         height * 0.12f,
         paint,

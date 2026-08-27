@@ -14,57 +14,42 @@ internal fun DriveHudCubeDraw.drawTelemetryCube(
 ) {
     drawCubeChrome(x, y, size, theme)
     val coordLines = coords.lines().filter { it.isNotBlank() }.take(2)
-    val alertColor = theme.alertText
+    val body = listOf(heading, alt) + coordLines
+    val slots = TelemetryCubeLayout.compute(size, 1 + body.size)
     val primary = paint(
-        if (speedAlert) alertColor else theme.primaryText,
-        size * 0.13f,
+        if (speedAlert) theme.alertText else theme.primaryText,
+        slots.primarySize,
         bold = true,
     )
-    // HDG / elev / lat/lon share one size; bumped to fill space above the link row.
-    val secondary = paint(theme.secondaryText, size * 0.11f, bold = true)
-    fit(primary, speed, size * 0.88f)
-    fit(secondary, heading, size * 0.96f)
-    fit(secondary, alt, size * 0.96f)
-    coordLines.forEach { fit(secondary, it, size * 0.96f) }
-
-    val linkRowH = size * 0.14f
-    val pedalH = size * 0.09f
-    val inset = size * 0.045f
-    val gap = size * 0.015f
-    val linkTop = y + size - inset - linkRowH
-    val pedalTop = linkTop - gap - pedalH
-    val lines = buildList {
-        add(primary to speed)
-        add(secondary to heading)
-        add(secondary to alt)
-        coordLines.forEach { add(secondary to it) }
-    }
+    val secondary = paint(theme.secondaryText, slots.secondarySize, bold = true)
+    fit(primary, speed, size * 0.92f)
+    body.forEach { fit(secondary, it, size * 0.96f) }
     val cx = x + size / 2f
-    var cursor = y + inset
-    lines.forEach { (p, text) ->
+    var cursor = y + slots.inset
+    val stack = listOf(primary to speed) + body.map { secondary to it }
+    stack.forEach { (p, text) ->
         val lineH = p.descent() - p.ascent()
-        if (cursor + lineH > pedalTop - gap) return@forEach
         canvas.drawText(text, cx, cursor - p.ascent(), p)
-        cursor += lineH + gap
+        cursor += lineH + slots.gap
     }
-    drawPedalBar(
-        x = x + inset,
-        y = pedalTop,
-        width = size - inset * 2f,
-        height = pedalH,
-        state = PedalBarLogic.from(pedalThrottlePct, pedalLonG),
-        flashOn = pedalFlashOn,
-    )
     drawLinkRow(
         x = x,
-        y = linkTop,
+        y = y + slots.linkY,
         width = size.toFloat(),
-        height = linkRowH,
+        height = slots.linkH,
         theme = theme,
         gpsLinked = gpsLinked,
         obdLinked = obdLinked,
         tpmsLinked = tpmsLinked,
         imuLinked = imuLinked,
+    )
+    drawPedalBar(
+        x = x + slots.inset,
+        y = y + slots.pedalY,
+        width = size - slots.inset * 2f,
+        height = slots.pedalH,
+        state = PedalBarLogic.from(pedalThrottlePct, pedalLonG),
+        flashOn = pedalFlashOn,
     )
 }
 
@@ -89,7 +74,7 @@ internal fun DriveHudCubeDraw.drawLinkRow(
         style = Paint.Style.FILL
     }
     val step = width / (icons.size + 1)
-    val iconSize = height * 0.72f
+    val iconSize = height
     icons.forEachIndexed { index, (linked, drawer) ->
         iconPaint.color = if (linked) theme.primaryText else theme.dimText
         val cx = x + step * (index + 1)
