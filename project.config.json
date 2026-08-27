@@ -5,7 +5,7 @@
     "externalGpsEnabled": false
   },
   "maintainer": "edward",
-  "releaseDraft": true,
+  "releaseDraft": false,
   "releaseRepo": "github.com/edwardlthompson/ExpeditionGauge",
   "sprints": {
     "wave1_polish": true,
