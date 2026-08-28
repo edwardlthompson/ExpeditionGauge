@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-28 — Immediate DTC scan on OBD handshake
+- **Status:** Accepted
+- **Context:** AA/phone DTC readout already worked, but codes sometimes appeared much later than the Connected handshake. Mode 03/07 lived only on the poll loop with a ~30 s fallback; a missed first tick or reconnect that did not reset `nextDtcAt` left the footer empty until a later rescan. There is no 30-minute timer.
+- **Decision:** `ObdDtcScanScheduler` treats every confirmed RFCOMM+ELM handshake (including reconnects) as due-now. The poll job runs Mode 03/07 immediately after `Connected`, still outside the connect-timeout path. The ~30 s gated rescan stays as fallback.
+- **Alternatives considered:** Put Mode 03 inside `withTimeout(INIT)` (rejected — init budget is already tight). Screen-visit trigger (rejected — user asked for scan without opening a DTC surface). Drop the 30 s path (rejected — ECU can still change codes while connected).
+- **Consequences:** First codes should show within one ELM 03/07 round-trip after Connected. Tests cover confirm → scan, reconnect → scan, and the 30 s fallback.
+
 ### 2026-08-28 — Ship v2.18.11
 - **Status:** Accepted
 - **Context:** `/ship` after PR #20 (AA HDG stuck north). Pre-release feature-gate + CI/Security/CodeQL green. Dependabot REST 403 on the cloud token; GraphQL `vulnerabilityAlerts` count was 0.

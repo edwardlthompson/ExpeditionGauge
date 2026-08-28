@@ -79,7 +79,9 @@ class ObdClassicManager(
                     classicBudget.onConnected(ClassicBluetoothBudget.Slot.OBD)
                     _phase.value = ObdConnectionPhase.Connected
                     _snapshot.value = ObdSnapshot(connected = true)
-                    // Mode 03 on poll loop — not on connect timeout critical path.
+                    // Handshake confirmed — poll loop kicks Mode 03/07 immediately
+                    // (outside RFCOMM/AT timeouts). ~30 s rescan is fallback only.
+                    Log.i(TAG, "OBD connected — scheduling immediate DTC scan")
                     pollJob = scope.launch(Dispatchers.IO) {
                         try {
                             ObdPollLoop.run(

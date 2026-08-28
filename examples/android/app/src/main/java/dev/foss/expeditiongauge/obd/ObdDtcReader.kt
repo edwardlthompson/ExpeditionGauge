@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter
 internal object ObdDtcReader {
     private const val TAG = "ExpeditionGauge/Obd"
 
-    /** Cadence for DTC refresh while connected (not every Mode 01 poll). */
+    /** Fallback cadence while connected after the connect-triggered scan. */
     const val RESCAN_INTERVAL_MS = 30_000L
 
     fun readOnce(sock: BluetoothSocket, catalog: DtcCatalog): List<DtcEntry> =
