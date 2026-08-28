@@ -42,6 +42,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Donations and updates | 2.18.9 | ✅ Venmo About/Settings; once-per-version donate note; daily APK filename check |
 | Even HUD rows + APP throttle | 2.18.10 | ✅ Seven centered cube rows; pedal in last row; 0149/Mode 22 pedal PIDs |
 | AA HDG GNSS course | 2.18.11 | ✅ Chip COG > lat/lon delta; hold last course; never default 0° |
+| OBD DTC on connect | Unreleased | ✅ Mode 03/07 on every confirmed handshake/reconnect; 30 s fallback |
 
 **Template lineage:** `.template-version` **0.15.1** (aligned 2026-07-22). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 

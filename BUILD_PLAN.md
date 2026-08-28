@@ -83,7 +83,20 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 ## Active board
 
-> **Hotfix v2.18.11** archived in COMPLETED_TASKS.md @ `/ship`.
+### Hotfix — DTC scan on OBD connect
+
+> Scan Mode 03/07 the moment RFCOMM + ELM init confirm the adapter, including reconnects. Keep ~30 s rescan as fallback.
+
+- ✅ [AGENT] H-001 `ObdDtcScanScheduler` + poll-loop pump: confirmed handshake always kicks Mode 03/07
+- ✅ [AGENT] H-002 Unit tests for connect-then-scan, reconnect, and periodic fallback
+- ✅ [AUTO] H-003 `watch-agent-gates --once --autofix`
+
+#### Critique
+
+- **Empty ECU:** a successful 0101 with count 0 still counts as a completed connect scan (footer stays blank).
+- **Timeouts:** scan stays off the RFCOMM/AT connect-timeout path; it runs on the poll job after `Connected`.
+- **Single ELM stream:** DTC and Mode 01 share one socket — no parallel reader.
+- **Reconnect:** a new `pump()` (or `onConnectionConfirmed`) resets due-now even if the 30 s window has not elapsed.
 
 ---
 

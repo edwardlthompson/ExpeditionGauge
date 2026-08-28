@@ -12,7 +12,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import kotlinx.coroutines.delay
 
-/** Mode 01 PID poll + gated Mode 03 DTC refresh on one ELM stream. */
+/** Mode 01 PID poll + connect-triggered Mode 03/07, then gated rescan. */
 internal object ObdPollLoop {
     const val POLL_INTERVAL_MS = 200L
     private const val TAG = "ExpeditionGauge/Obd"
@@ -25,27 +25,55 @@ internal object ObdPollLoop {
         onSnapshot: (ObdSnapshot) -> Unit,
         currentDtcs: () -> List<DtcEntry>,
         onDtcs: (List<DtcEntry>) -> Unit,
+        clock: () -> Long = { SystemClock.elapsedRealtime() },
+        scheduler: ObdDtcScanScheduler = ObdDtcScanScheduler(),
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
-        // Immediate first Mode 03 (after connect) so DTCs are not on the RFCOMM critical path.
-        var nextDtcAt = 0L
         var previous = ObdSnapshot(connected = true)
         try {
-            while (isActive()) {
-                val now = SystemClock.elapsedRealtime()
-                if (now >= nextDtcAt) {
-                    nextDtcAt = now + ObdDtcReader.RESCAN_INTERVAL_MS
-                    onDtcs(ObdDtcReader.refresh(reader, writer, catalog, currentDtcs()))
-                }
-                previous = ObdPollHelper.pollSnapshot(reader, writer, pidConfig, previous)
-                onSnapshot(previous)
-                delay(POLL_INTERVAL_MS)
-            }
+            pump(
+                isActive = isActive,
+                clock = clock,
+                scheduler = scheduler,
+                currentDtcs = currentDtcs,
+                onDtcs = onDtcs,
+                scanDtcs = { prev -> ObdDtcReader.refresh(reader, writer, catalog, prev) },
+                pollOnce = {
+                    previous = ObdPollHelper.pollSnapshot(reader, writer, pidConfig, previous)
+                    onSnapshot(previous)
+                },
+            )
         } catch (e: IOException) {
             // Socket closed / broken pipe — disconnect path, not a fatal crash.
             Log.w(TAG, "OBD poll socket closed: ${e.message}")
             onSnapshot(ObdSnapshot(connected = false))
+        }
+    }
+
+    /**
+     * Every [pump] start is a confirmed connection (or reconnect).
+     * Immediate Mode 03/07, then [ObdDtcReader.RESCAN_INTERVAL_MS] fallback.
+     */
+    internal suspend fun pump(
+        isActive: () -> Boolean,
+        clock: () -> Long,
+        scheduler: ObdDtcScanScheduler,
+        currentDtcs: () -> List<DtcEntry>,
+        onDtcs: (List<DtcEntry>) -> Unit,
+        scanDtcs: (List<DtcEntry>) -> List<DtcEntry>,
+        pollOnce: suspend () -> Unit,
+        delayMs: suspend (Long) -> Unit = { delay(it) },
+    ) {
+        scheduler.onConnectionConfirmed(clock())
+        while (isActive()) {
+            val now = clock()
+            if (scheduler.due(now)) {
+                onDtcs(scanDtcs(currentDtcs()))
+                scheduler.markAttempt(now)
+            }
+            pollOnce()
+            delayMs(POLL_INTERVAL_MS)
         }
     }
 }

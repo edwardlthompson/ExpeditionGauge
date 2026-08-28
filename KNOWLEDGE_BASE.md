@@ -298,6 +298,15 @@
 | **Fix** | `ObdThrottleQuery` discovers `0149` then `014A`/`014B`, then Mode 22 with `ATSH7E0` (fallback `ATSH7DF`), else `0111`. logcat `ExpeditionGauge/Obd` prints `throttlePid=` |
 | **Prevention** | Never treat `0111` as foot pedal on 2004-06 Ford; do not poll `015A` for throttle in this codebase |
 
+### KB-038 — DTC footer waits after OBD Connected (Fix 2026-08-28)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Settings shows OBD Connected but AA/phone DTC codes appear much later (sometimes tens of minutes) |
+| **Cause** | Mode 03/07 ran only on the poll loop with a ~30 s fallback. A missed first tick or reconnect that did not reset due-time left `storedDtcs` empty until a later rescan. No 30-minute timer exists |
+| **Fix** | `ObdDtcScanScheduler.onConnectionConfirmed` on every RFCOMM+ELM handshake (including reconnects); poll `pump()` scans immediately, then ~30 s |
+| **Prevention** | Do not wait for a Settings/AA screen visit to read DTCs; reconnect must call `onConnectionConfirmed` / start a new `pump()` |
+
 ### KB-037 — AA HDG stuck due north from 0° GPS sentinel (Ship 2026-08-28)
 
 | Field | Detail |
