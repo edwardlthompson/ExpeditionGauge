@@ -88,7 +88,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 |----|-------|------|--------|
 | H-001 | [AGENT] | `GpsCourseResolver` — chip COG > 8 m lat/lon > hold last; reject bogus 0° chip | ✅ |
 | H-002 | [AGENT] | Wire `PhoneGpsProvider` / `GpsHeadingMerge` / IMU publisher to nullable held course | ✅ |
-| H-003 | [AUTO] | Unit tests + `watch-agent-gates --once --autofix` | 🔲 |
+| H-003 | [AUTO] | Unit tests + `watch-agent-gates --once --autofix` | ✅ |
 
 ---
 
