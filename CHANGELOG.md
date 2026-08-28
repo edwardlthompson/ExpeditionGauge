@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.18.11] — AA heading GNSS course (2026-08-28)
+
+### Fixed
+
+* Head-unit HDG no longer sticks on due north: GNSS chip course-over-ground is preferred over lat/lon deltas; a missing bearing is held or falls back to IMU yaw instead of `0°`
+
 ## [2.18.10] — Even HUD rows + Expedition APP throttle (2026-08-26)
 
 ### Changed

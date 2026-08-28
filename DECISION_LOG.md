@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-28 — AA HDG uses GNSS chip course-over-ground
+- **Status:** Accepted
+- **Context:** Head-unit heading stuck on due north, briefly flashing the real course. `PhoneGpsProvider.resolveCourse` preferred noisy lat/lon deltas (2 Hz × 2 m floor) then fell back to `0f` when `hasBearing()` was false. IMU publish treated that 0° as GPS COG while moving, fighting chip bearing and magnetometer yaw (Madgwick init = 0°, vehicle mag distortion).
+- **Decision:** Rank sources by driving accuracy: (1) GNSS chip COG / NMEA RMC, (2) lat/lon delta only after ≥8 m on GPS_PROVIDER, (3) hold last good course. Treat chip 0° as uninitialized when motion or last COG disagrees by >25°. IMU yaw is HDG fallback only before the first valid GPS course. Network fixes never contribute course.
+- **Alternatives considered:** Always use IMU/mag in the car (rejected — steel/electronics). Prefer lat/lon over chip (rejected — 3–5 m jitter at 2 Hz). Keep 0° as “unknown” (rejected — HUD shows due north).
+- **Consequences:** v2.18.11. True due-north travel still works when chip and motion agree. β still suppressed below 2 m/s.
+
 ### 2026-08-26 — Publish GitHub releases (no drafts)
 - **Status:** Accepted
 - **Context:** v2.18.10 shipped as a draft; several older tags were draft-only. Driver asked for normal releases going forward.

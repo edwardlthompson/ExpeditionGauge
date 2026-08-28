@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 
 /**
  * Course-over-ground from successive GPS fixes (great-circle initial bearing).
- * Used to validate / replace IMU yaw for HUD heading while moving.
+ * Chip COG is preferred; lat/lon deltas are a fallback. See [GpsCourseResolver].
  */
 object GpsCourseLogic {
     /** Same floor as sideslip β — crawl speed course is unreliable. */
@@ -50,15 +50,21 @@ object GpsCourseLogic {
         speedMps >= MIN_SPEED_MPS && segmentM >= MIN_SEGMENT_M
 
     /**
-     * Prefer GPS course-over-ground when moving; otherwise keep body / IMU yaw.
+     * HUD HDG uses a real GPS course (including a held last-good COG) whenever
+     * one exists. Body / IMU yaw is only the fallback when GPS has never
+     * produced a course — not when speed drops below [MIN_SPEED_MPS].
      */
     fun displayHeadingDeg(
         bodyYawDeg: Float,
         gpsCourseDeg: Float?,
-        speedMps: Float,
+        speedMps: Float = 0f,
     ): Float {
-        val course = gpsCourseDeg ?: return normalize360(bodyYawDeg)
-        return if (speedMps >= MIN_SPEED_MPS) normalize360(course) else normalize360(bodyYawDeg)
+        val course = gpsCourseDeg?.takeIf { it.isFinite() }
+        return if (course != null && speedMps >= 0f) {
+            normalize360(course)
+        } else {
+            normalize360(bodyYawDeg)
+        }
     }
 
     fun normalize360(deg: Float): Float {

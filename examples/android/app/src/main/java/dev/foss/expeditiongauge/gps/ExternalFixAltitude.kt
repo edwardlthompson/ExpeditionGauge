@@ -4,7 +4,7 @@ package dev.foss.expeditiongauge.gps
 object ExternalFixAltitude {
     fun toState(
         fix: NmeaFix,
-        heading: Float,
+        heading: Float?,
         speed: Float,
         demElevation: DemElevationLookup,
     ): FusedGpsState {

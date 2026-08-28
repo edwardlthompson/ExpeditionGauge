@@ -6,6 +6,7 @@
 
 - `:car` module hosts `CarAppService` + **`NavigationTemplate` full-bleed Surface Drive HUD** (native 3×1 Attitude | Telemetry | TPMS) — see ADR-0010.
 - Phone `TelemetryBus` feeds head unit via in-process `CarAppBridge` (no duplicate fusion).
+  HDG on the telemetry cube is GNSS course-over-ground (chip COG), not IMU yaw.
 - `DriveHudSurfacePainter` draws the 3×1 strip onto the host Surface; Pane letterbox is fallback only.
 - Actions: Screenshot + Record/Stop + parked-only Zero; mark-event stays on phone.
 - Preview: `dhu-preview.ps1` (Desktop Head Unit CLI) and `aa-bitmap-preview.ps1` (PNG snapshots for Cursor).

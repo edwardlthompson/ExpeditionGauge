@@ -17,7 +17,7 @@ data class FusedGpsState(
     val longitude: Double? = null,
     val altitudeM: Double? = null,
     val speedMps: Float = 0f,
-    val headingDeg: Float = 0f,
+    val headingDeg: Float? = null,
     val hdop: Float? = null,
     val numSatellites: Int? = null,
     val fixQuality: Int = 0,
@@ -48,7 +48,7 @@ class FusedGpsLocationProvider(
         }
         val heading = fix.courseDeg ?: _state.value.headingDeg
         val speed = fix.speedMps ?: 0f
-        driftEstimator.onGpsSample(heading, speed)
+        if (heading != null) driftEstimator.onGpsSample(heading, speed)
         val state = ExternalFixAltitude.toState(fix, heading, speed, demElevation)
         _state.value = state
         publishExternal(state)
@@ -70,7 +70,7 @@ class FusedGpsLocationProvider(
             longitude = snapshot.longitude,
             altitudeM = snapshot.altitudeM,
             speedMps = snapshot.speedMps,
-            headingDeg = snapshot.headingDeg,
+            headingDeg = snapshot.velocityHeadingDeg,
             hdop = snapshot.hdop,
             numSatellites = snapshot.numSatellites,
             fixQuality = snapshot.fixQuality,
@@ -85,11 +85,10 @@ class FusedGpsLocationProvider(
         )
 
     private fun publishPhone(snapshot: TelemetrySnapshot) {
-        val course = snapshot.velocityHeadingDeg ?: snapshot.headingDeg
         val merged = GpsHeadingMerge.withCourse(
             current = telemetryBus.snapshots.value,
             speedMps = snapshot.speedMps,
-            gpsCourseDeg = course,
+            gpsCourseDeg = snapshot.velocityHeadingDeg,
         ) {
             copy(
                 timestampMs = snapshot.timestampMs,

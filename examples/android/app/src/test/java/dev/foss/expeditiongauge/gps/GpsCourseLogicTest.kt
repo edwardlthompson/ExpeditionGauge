@@ -37,11 +37,21 @@ class GpsCourseLogicTest {
     }
 
     @Test
-    fun displayHeading_keepsImuWhenStationary() {
+    fun displayHeading_holdsGpsWhenStationary() {
         val hdg = GpsCourseLogic.displayHeadingDeg(
             bodyYawDeg = 10f,
             gpsCourseDeg = 95f,
             speedMps = 0.5f,
+        )
+        assertEquals(95f, hdg, 0.01f)
+    }
+
+    @Test
+    fun displayHeading_usesImuWhenGpsCourseMissing() {
+        val hdg = GpsCourseLogic.displayHeadingDeg(
+            bodyYawDeg = 10f,
+            gpsCourseDeg = null,
+            speedMps = 8f,
         )
         assertEquals(10f, hdg, 0.01f)
     }

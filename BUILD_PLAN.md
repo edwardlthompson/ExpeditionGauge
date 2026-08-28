@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.10** (2026-08-26).
-- **Shipped:** through **v2.18.10** (even HUD rows + Expedition APP throttle). Audit 2026-07-29 archived.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.11** (2026-08-28).
+- **Shipped:** through **v2.18.10** (even HUD rows + Expedition APP throttle). **In flight:** v2.18.11 AA HDG GNSS course (chip COG over lat/lon; no 0° sentinel).
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
@@ -82,7 +82,13 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 ## Active board
 
-> **Audit 2026-07-29** archived in COMPLETED_TASKS.md. Sprints 28–30 / v2.18.0 archived earlier. Bootstrap alignment 0.15.1 @ `58cdca5`. Gap log: [`docs/BOOTSTRAP_ALIGNMENT.md`](docs/BOOTSTRAP_ALIGNMENT.md). F-008 AGP 9.3 validation deferred.
+> **Hotfix v2.18.11 — AA heading stuck north.** GNSS chip COG is primary; lat/lon delta is fallback; never default missing bearing to 0°.
+
+| ID | Owner | Task | Status |
+|----|-------|------|--------|
+| H-001 | [AGENT] | `GpsCourseResolver` — chip COG > 8 m lat/lon > hold last; reject bogus 0° chip | ✅ |
+| H-002 | [AGENT] | Wire `PhoneGpsProvider` / `GpsHeadingMerge` / IMU publisher to nullable held course | ✅ |
+| H-003 | [AUTO] | Unit tests + `watch-agent-gates --once --autofix` | 🔲 |
 
 ---
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,6 +24,8 @@ class PhoneGpsProvider(
     private val gnss = PhoneGnssAssist(context, locationManager, mainHandler)
     private var lastLocation: Location? = null
     private var lastGpsLocation: Location? = null
+    private var lastGoodCourse: Float? = null
+    private var courseAnchor: Location? = null
 
     fun start() {
         if (!gnss.hasLocationPermission()) return
@@ -30,12 +33,11 @@ class PhoneGpsProvider(
         gnss.register()
         try {
             requestProvider(LocationManager.GPS_PROVIDER)
-            // Network: faster coarse fix + A-GPS assist; elevation still GPS/DEM.
             requestProvider(LocationManager.NETWORK_PROVIDER)
             locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)?.let { onLocationChanged(it) }
                 ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.let { onLocationChanged(it) }
         } catch (_: SecurityException) {
-            // Permission not granted at runtime
+            return
         }
     }
 
@@ -51,7 +53,7 @@ class PhoneGpsProvider(
         if (location.provider == LocationManager.GPS_PROVIDER) lastGpsLocation = location
         val speedMps = if (location.hasSpeed()) location.speed else 0f
         val course = resolveCourse(prev, location, speedMps)
-        driftEstimator.onGpsSample(course, speedMps)
+        if (course != null) driftEstimator.onGpsSample(course, speedMps)
         val sats = gnss.satelliteCount(location)
         val (altitude, preferDem) = PhoneFixAltitude.resolve(
             location, lastGpsLocation, sats, gnss.verticalAccuracyOrNull(location), demElevation,
@@ -90,7 +92,7 @@ class PhoneGpsProvider(
     private fun publish(
         location: Location,
         speedMps: Float,
-        course: Float,
+        course: Float?,
         altitudeM: Double,
         sats: Int?,
     ) {
@@ -98,7 +100,7 @@ class PhoneGpsProvider(
             TelemetrySnapshot(
                 timestampMs = System.currentTimeMillis(),
                 speedMps = speedMps,
-                headingDeg = course,
+                headingDeg = course ?: 0f,
                 velocityHeadingDeg = course,
                 latitude = location.latitude,
                 longitude = location.longitude,
@@ -111,16 +113,37 @@ class PhoneGpsProvider(
         )
     }
 
-    private fun resolveCourse(prev: Location?, location: Location, speedMps: Float): Float {
-        if (prev != null) {
-            val segmentM = GpsCourseLogic.distanceM(
-                prev.latitude, prev.longitude, location.latitude, location.longitude,
-            )
-            val fromMove = GpsCourseLogic.bearingDeg(
-                prev.latitude, prev.longitude, location.latitude, location.longitude,
-            )
-            if (GpsCourseLogic.isReliableCourse(speedMps, segmentM)) return fromMove
+    private fun resolveCourse(prev: Location?, location: Location, speedMps: Float): Float? {
+        val gpsFix = location.provider == LocationManager.GPS_PROVIDER
+        val from = courseAnchor ?: prev
+        val resolved = GpsCourseResolver.resolveCourseDeg(
+            chipBearingDeg = if (location.hasBearing() && location.bearing.isFinite()) location.bearing else null,
+            speedMps = speedMps,
+            fromLat = from?.latitude,
+            fromLon = from?.longitude,
+            toLat = location.latitude,
+            toLon = location.longitude,
+            previousCourseDeg = lastGoodCourse,
+            chipBearingAccuracyDeg = chipAccuracyDeg(location),
+            allowPositionDelta = gpsFix,
+        )
+        if (resolved != null) lastGoodCourse = resolved
+        if (gpsFix) {
+            val anchor = courseAnchor
+            val moved = if (anchor == null) GpsCourseResolver.POSITION_COURSE_MIN_M else {
+                GpsCourseLogic.distanceM(
+                    anchor.latitude, anchor.longitude, location.latitude, location.longitude,
+                )
+            }
+            if (anchor == null || GpsCourseResolver.shouldAdvanceAnchor(moved)) courseAnchor = location
         }
-        return if (location.hasBearing()) location.bearing else 0f
+        return resolved
     }
+
+    private fun chipAccuracyDeg(location: Location): Float? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && location.hasBearingAccuracy()) {
+            location.bearingAccuracyDegrees
+        } else {
+            null
+        }
 }

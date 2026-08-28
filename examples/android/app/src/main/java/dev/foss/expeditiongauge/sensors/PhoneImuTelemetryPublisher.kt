@@ -53,7 +53,6 @@ internal class PhoneImuTelemetryPublisher(
         // Merge from live bus so OBD/TPMS flags are not wiped by a stale GPS-era copy.
         val base = telemetryBus.snapshots.value
         val gpsCourse = base.velocityHeadingDeg
-            ?: base.headingDeg.takeIf { base.gpsFix }
         telemetryBus.publish(
             base.copy(
                 timestampMs = now,
@@ -66,8 +65,7 @@ internal class PhoneImuTelemetryPublisher(
                 lonG = lonG,
                 driftAngleDeg = drift.driftAngleDeg,
                 bodyYawDeg = yaw,
-                velocityHeadingDeg = base.velocityHeadingDeg
-                    ?: drift.velocityHeadingDeg.takeIf { base.gpsFix },
+                velocityHeadingDeg = base.velocityHeadingDeg,
                 fusionSource = fusionSource,
                 chassisTwistDeg = multiImu?.chassisTwistDeg,
                 peakAbsPitchDeg = abs(peakPitch),

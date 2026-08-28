@@ -23,11 +23,13 @@ driftAngleDeg = normalize(bodyYawDeg − velocityHeadingDeg)
 
 ## Phone-only path
 
-1. `SensorFusionEngine` provides body yaw (`bodyYawDeg`).
-2. GPS course-over-ground from movement (`GpsCourseLogic` + successive fixes) updates
-   velocity heading when speed ≥ 2 m/s and segment ≥ 2 m.
-3. HUD `headingDeg` prefers GPS course while moving; falls back to body yaw when stationary.
-4. Below threshold, β updates suppressed (unreliable at crawl speed).
+1. `SensorFusionEngine` provides body yaw (`bodyYawDeg`) for attitude and β.
+2. HUD `headingDeg` is GNSS **chip course-over-ground** (`Location.bearing` / NMEA RMC)
+   while moving. Lat/lon deltas are a fallback only after ≥8 m of GPS-only travel.
+   A missing bearing is **not** written as 0° (due north); last good COG is held.
+3. Phone IMU/mag yaw is used for HDG only when no GPS course has been established
+   (vehicle steel distorts mag; Madgwick yaw initializes at 0°).
+4. Below 2 m/s, β updates suppressed (unreliable at crawl speed). GPS HDG still holds.
 
 ## UI
 
