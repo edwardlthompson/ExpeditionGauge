@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-28 — Ship v2.18.11
+- **Status:** Accepted
+- **Context:** `/ship` after PR #20 (AA HDG stuck north). Pre-release feature-gate + CI/Security/CodeQL green. Dependabot REST 403 on the cloud token; GraphQL `vulnerabilityAlerts` count was 0.
+- **Decision:** Merge the hotfix to `main`, tag `v2.18.11`, publish a normal (non-draft) GitHub release with signed APK + AA-install-kit. Template `.template-version` stays 0.15.1 (app semver is independent).
+- **Alternatives considered:** Hold ship until Dependabot REST scope works (rejected — GraphQL shows zero open alerts). Skip the APK asset (rejected — ExpeditionGauge releases must include a signed APK).
+- **Consequences:** Sideload with the AA-install-kit Play Store spoof. If this session’s debug keystore differs from prior sideloads, upgrade needs uninstall or a local re-sign.
+
 ### 2026-08-28 — AA HDG uses GNSS chip course-over-ground
 - **Status:** Accepted
 - **Context:** Head-unit heading stuck on due north, briefly flashing the real course. `PhoneGpsProvider.resolveCourse` preferred noisy lat/lon deltas (2 Hz × 2 m floor) then fell back to `0f` when `hasBearing()` was false. IMU publish treated that 0° as GPS COG while moving, fighting chip bearing and magnetometer yaw (Madgwick init = 0°, vehicle mag distortion).

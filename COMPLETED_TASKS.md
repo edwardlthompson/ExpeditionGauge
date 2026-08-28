@@ -2,6 +2,12 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Hotfix v2.18.11 — AA heading GNSS course (2026-08-28)
+
+- ✅ [AGENT] H-001 `GpsCourseResolver` — chip COG > 8 m lat/lon > hold last; reject bogus 0° chip
+- ✅ [AGENT] H-002 Wire `PhoneGpsProvider` / `GpsHeadingMerge` / IMU publisher to nullable held course
+- ✅ [AUTO] H-003 Unit tests + `watch-agent-gates --once --autofix`
+
 ## Audit 2026-07-29 — post v2.18.0 hygiene + DTC rescan
 
 - ✅ [AGENT] A-001 Fix F-003/F-004/F-007: land gated ~30s OBD DTC rescan (`ObdPollLoop`/`ObdMonitorStatus`/tests), pollJob `isActive`, CHANGELOG Unreleased

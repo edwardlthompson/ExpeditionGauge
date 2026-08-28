@@ -5,7 +5,7 @@
 ## Current state
 
 - Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.11** (2026-08-28).
-- **Shipped:** through **v2.18.10** (even HUD rows + Expedition APP throttle). **In flight:** v2.18.11 AA HDG GNSS course (chip COG over lat/lon; no 0° sentinel).
+- **Shipped:** through **v2.18.11** (AA HDG GNSS chip course-over-ground). Audit 2026-07-29 archived.
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
@@ -78,17 +78,12 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Bootstrap alignment 0.15.1 | template tooling (S0–S4 + R2 N/A) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Sprint 28–30 / v2.18.0 | Sensor links, TPMS QR, alert TTS, AA mute, OBD DTC footer | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Audit 2026-07-29 | post v2.18.0 hygiene + DTC rescan (A-001–A-005) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
+| Hotfix v2.18.11 | AA HDG GNSS course (H-001–H-003) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
 
-> **Hotfix v2.18.11 — AA heading stuck north.** GNSS chip COG is primary; lat/lon delta is fallback; never default missing bearing to 0°.
-
-| ID | Owner | Task | Status |
-|----|-------|------|--------|
-| H-001 | [AGENT] | `GpsCourseResolver` — chip COG > 8 m lat/lon > hold last; reject bogus 0° chip | ✅ |
-| H-002 | [AGENT] | Wire `PhoneGpsProvider` / `GpsHeadingMerge` / IMU publisher to nullable held course | ✅ |
-| H-003 | [AUTO] | Unit tests + `watch-agent-gates --once --autofix` | ✅ |
+> **Hotfix v2.18.11** archived in COMPLETED_TASKS.md @ `/ship`.
 
 ---
 
