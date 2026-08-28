@@ -4,8 +4,8 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.11** (2026-08-28).
-- **Shipped:** through **v2.18.11** (AA HDG GNSS chip course-over-ground). Audit 2026-07-29 archived.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.12** (2026-08-28).
+- **Shipped:** through **v2.18.12** (OBD DTC scan on connect). Audit 2026-07-29 archived.
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
@@ -79,24 +79,12 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Sprint 28–30 / v2.18.0 | Sensor links, TPMS QR, alert TTS, AA mute, OBD DTC footer | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Audit 2026-07-29 | post v2.18.0 hygiene + DTC rescan (A-001–A-005) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Hotfix v2.18.11 | AA HDG GNSS course (H-001–H-003) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
+| Hotfix v2.18.12 | OBD DTC scan on connect (H-001–H-003) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
 
-### Hotfix — DTC scan on OBD connect
-
-> Scan Mode 03/07 the moment RFCOMM + ELM init confirm the adapter, including reconnects. Keep ~30 s rescan as fallback.
-
-- ✅ [AGENT] H-001 `ObdDtcScanScheduler` + poll-loop pump: confirmed handshake always kicks Mode 03/07
-- ✅ [AGENT] H-002 Unit tests for connect-then-scan, reconnect, and periodic fallback
-- ✅ [AUTO] H-003 `watch-agent-gates --once --autofix`
-
-#### Critique
-
-- **Empty ECU:** a successful 0101 with count 0 still counts as a completed connect scan (footer stays blank).
-- **Timeouts:** scan stays off the RFCOMM/AT connect-timeout path; it runs on the poll job after `Connected`.
-- **Single ELM stream:** DTC and Mode 01 share one socket — no parallel reader.
-- **Reconnect:** a new `pump()` (or `onConnectionConfirmed`) resets due-now even if the 30 s window has not elapsed.
+> **Hotfix v2.18.12** archived in COMPLETED_TASKS.md @ `/ship`.
 
 ---
 

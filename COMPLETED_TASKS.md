@@ -2,6 +2,12 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Hotfix v2.18.12 — OBD DTC scan on connect (2026-08-28)
+
+- ✅ [AGENT] H-001 `ObdDtcScanScheduler` + poll-loop pump: confirmed handshake always kicks Mode 03/07
+- ✅ [AGENT] H-002 Unit tests for connect-then-scan, reconnect, and periodic fallback
+- ✅ [AUTO] H-003 `watch-agent-gates --once --autofix`
+
 ## Hotfix v2.18.11 — AA heading GNSS course (2026-08-28)
 
 - ✅ [AGENT] H-001 `GpsCourseResolver` — chip COG > 8 m lat/lon > hold last; reject bogus 0° chip

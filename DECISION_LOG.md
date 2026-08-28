@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-28 — Ship v2.18.12
+- **Status:** Accepted
+- **Context:** `/ship` after PR #21 (DTC footer waited on the ~30 s poll tick). Pre-release feature-gate + CI/Security/CodeQL green. Local debug keystore signs the APK so OP13/OP12 can upgrade.
+- **Decision:** Merge the hotfix to `main`, tag `v2.18.12`, publish a normal GitHub release with signed APK + AA-install-kit. Template `.template-version` stays 0.15.1.
+- **Alternatives considered:** Let the cloud agent publish the APK (rejected — VM debug cert does not match the phones). Skip the 30 s fallback (rejected — ECU codes can still change while connected).
+- **Consequences:** Sideload with Play Store spoof on OP13 and OP12. First DTCs should appear within one ELM 03/07 round-trip after Connected.
+
 ### 2026-08-28 — Immediate DTC scan on OBD handshake
 - **Status:** Accepted
 - **Context:** AA/phone DTC readout already worked, but codes sometimes appeared much later than the Connected handshake. Mode 03/07 lived only on the poll loop with a ~30 s fallback; a missed first tick or reconnect that did not reset `nextDtcAt` left the footer empty until a later rescan. There is no 30-minute timer.
