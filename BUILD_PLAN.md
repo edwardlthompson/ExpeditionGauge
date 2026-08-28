@@ -87,9 +87,9 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 > Scan Mode 03/07 the moment RFCOMM + ELM init confirm the adapter, including reconnects. Keep ~30 s rescan as fallback.
 
-- 🔲 [AGENT] H-001 `ObdDtcScanScheduler` + poll-loop pump: confirmed handshake always kicks Mode 03/07
-- 🔲 [AGENT] H-002 Unit tests for connect-then-scan, reconnect, and periodic fallback
-- 🔲 [AUTO] H-003 `watch-agent-gates --once --autofix`
+- ✅ [AGENT] H-001 `ObdDtcScanScheduler` + poll-loop pump: confirmed handshake always kicks Mode 03/07
+- ✅ [AGENT] H-002 Unit tests for connect-then-scan, reconnect, and periodic fallback
+- ✅ [AUTO] H-003 `watch-agent-gates --once --autofix`
 
 #### Critique
 
