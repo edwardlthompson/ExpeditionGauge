@@ -298,6 +298,15 @@
 | **Fix** | `ObdThrottleQuery` discovers `0149` then `014A`/`014B`, then Mode 22 with `ATSH7E0` (fallback `ATSH7DF`), else `0111`. logcat `ExpeditionGauge/Obd` prints `throttlePid=` |
 | **Prevention** | Never treat `0111` as foot pedal on 2004-06 Ford; do not poll `015A` for throttle in this codebase |
 
+### KB-037 — AA HDG stuck due north from 0° GPS sentinel (Ship 2026-08-28)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | Head-unit heading sits on due north and only briefly shows the real course |
+| **Cause** | `PhoneGpsProvider.resolveCourse` preferred 2 Hz lat/lon deltas (2 m floor = jitter) then fell back to `0f` when `hasBearing()` was false. IMU publish treated `headingDeg=0` + `gpsFix` as GPS COG while moving |
+| **Fix** | `GpsCourseResolver`: chip COG first; lat/lon only after 8 m on GPS_PROVIDER; hold last course; reject chip `0°` when motion/last COG disagrees by >25°. Never invent 0°. IMU yaw is HDG fallback only before the first valid GPS course |
+| **Prevention** | Do not use `0f` as “unknown heading”; `velocityHeadingDeg` is nullable; do not fall back to `headingDeg` when `gpsFix` is true |
+
 ### KB-036 — DHU stuck on Waiting for phone after unroot (Ship 2026-08-26)
 
 | Field | Detail |
