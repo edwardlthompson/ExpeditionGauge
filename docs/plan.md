@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 41: AAOS standalone APK (`/feature` aaos-standalone).
+Sprint 32 row 42: DHU screenshot smoke (`dhu-screenshot-ci`).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
