@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.feedback.FeedbackPrefs
+import dev.foss.expeditiongauge.ui.liveencrypt.LiveEncryptField
 
 @Composable
 internal fun SettingsAdvancedCategory(

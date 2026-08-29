@@ -80,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Settings maps can cycle MapLibre demo and OpenFreeMap Liberty/Bright styles
 * Live telemetry frames metrics as a FOSS `dc1|` Data Channel payload
 * Live receiver keeps a 6000-sample local ring for Relive
+* Optional live passphrase XOR-seals metric payloads
 
 ### Changed
 

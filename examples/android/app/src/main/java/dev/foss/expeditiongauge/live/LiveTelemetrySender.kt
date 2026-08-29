@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.live
 
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
+import dev.foss.expeditiongauge.liveencrypt.LiveEncrypt
 import dev.foss.expeditiongauge.webrtcdatachannel.WebRtcDataChannel
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.telemetry.TpmsSnapshot
@@ -49,7 +50,7 @@ class LiveTelemetrySender(
     fun onSnapshot(snapshot: TelemetrySnapshot) {
         val tpmsJson = tpmsToJson(snapshot.tpms)
         val payload = encoder.encodeIfChanged(snapshot, tpmsJson) ?: return
-        webSocketClient.sendMetric(WebRtcDataChannel.wrap(payload))
+        webSocketClient.sendMetric(WebRtcDataChannel.wrap(LiveEncrypt.apply(payload)))
     }
 
     fun stopSession() {
