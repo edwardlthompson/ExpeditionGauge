@@ -128,8 +128,7 @@ internal fun AppScreenSettingsForm(
             alertAudioMode = alertAudioMode,
             alertsMuted = alertsMuted,
             activePresetId = activePresetId,
-            screenshotMode = screenshotMode,
-            pidDiscoveryPids = obd.pidDiscoveryPids,
+            screenshotMode = screenshotMode, pidDiscoveryPids = obd.pidDiscoveryPids,
         ),
         actions = rememberSettingsUiActions(
             context = context,
@@ -230,11 +229,8 @@ private fun rememberSettingsUiActions(
         }
     },
     onLogIntervalSelect = { ms -> scope.launch { services.settingsPreferences.setLogIntervalMs(ms) } },
-    onObdDeviceSelect = obd.onDeviceSelect,
-    onObdRetry = obd.onRetry,
-    onForgetObd = obd.onForget,
-    onObdPairNew = obd.onPairNew,
-    onObdPidConfigChange = obd.onPidConfigChange,
+    onObdDeviceSelect = obd.onDeviceSelect, onObdRetry = obd.onRetry, onForgetObd = obd.onForget,
+    onObdPairNew = obd.onPairNew, onObdPidConfigChange = obd.onPidConfigChange,
     onPidDiscover = obd.onPidDiscover,
     onExternalGpsSelect = { address ->
         scope.launch {
