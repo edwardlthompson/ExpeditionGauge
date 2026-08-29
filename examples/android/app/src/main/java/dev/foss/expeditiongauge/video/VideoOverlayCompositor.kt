@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.settings.SpeedUnit
+import dev.foss.expeditiongauge.videoburninfields.VideoBurnInFields
 
 object VideoOverlayCompositor {
     fun nearestSample(samples: List<SampleEntity>, timestampMs: Long): SampleEntity? {
@@ -29,21 +30,21 @@ object VideoOverlayCompositor {
         val unit = UnitDisplay.speedUnitLabel(speedUnit)
         val beta = sample.driftAngleDeg ?: 0f
         val latG = sample.latG ?: 0f
-        return listOf(
-            "Speed %.0f $unit".format(speed),
-            "β %.1f°".format(beta),
-            "latG %.2f".format(latG),
+        return VideoBurnInFields.pick(
+            VideoBurnInFields.parse(null).ifEmpty { VideoBurnInFields.ALL.toSet() },
+            mapOf(
+                "speed" to "Speed %.0f $unit".format(speed),
+                "beta" to "β %.1f°".format(beta),
+                "latG" to "latG %.2f".format(latG),
+                "lonG" to "lonG %.2f".format(sample.lonAccel),
+                "pitch" to "pitch %.1f°".format(sample.pitchDeg),
+                "roll" to "roll %.1f°".format(sample.rollDeg),
+            ),
         )
     }
 
-    fun playbackExportLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> {
-        if (sample == null) return listOf("ExpeditionGauge")
-        val base = overlayLines(sample, speedUnit)
-        return base + listOf(
-            "pitch %.1f°".format(sample.pitchDeg),
-            "roll %.1f°".format(sample.rollDeg),
-        )
-    }
+    fun playbackExportLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> =
+        overlayLines(sample, speedUnit)
 
     fun drawPlaybackExportOverlay(
         canvas: Canvas,
