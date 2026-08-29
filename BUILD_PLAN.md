@@ -170,7 +170,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 49. ✅ [AGENT] `/feature` storage-meter — Storage usage meter
 50. ✅ [AGENT] `/feature` session-notes — Session notes
 51. ✅ [AGENT] `/feature` library-search-favorites — Library search and favorites
-52. 🔲 [AGENT] `/feature` session-split-merge — Session split / merge
+52. ✅ [AGENT] `/feature` session-split-merge — Session split / merge
 53. 🔲 [AGENT] `/feature` csv-columns — CSV column picker
 54. 🔲 [AGENT] `/feature` nmea-log-export — NMEA raw log export
 55. 🔲 [AGENT] `/feature` gpx-beta-extensions — GPX extensions for β / latG
