@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 10: Ford Mode 22 trans temp / EGT (`/feature` ford-mode22-temps).
+Sprint 32 row 11: optional MAP / AFR / boost PIDs (`/feature` optional-boost-pids).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
