@@ -7,9 +7,9 @@ import dev.foss.expeditiongauge.relivechapters.ReliveChapters
 /** Chapter list block for HTML session share. */
 object MarkEventChaptersExport {
     fun htmlSection(events: List<SessionEventEntity>): String =
-        htmlSection(ReliveChapters.fromEvents(events))
+        render(ReliveChapters.fromEvents(events))
 
-    fun htmlSection(chapters: List<ReliveChapter>): String {
+    fun render(chapters: List<ReliveChapter>): String {
         if (chapters.isEmpty()) return ""
         val rows = chapters.joinToString("") { chapter ->
             "<tr><td>${chapter.title}</td><td>${chapter.timestampMs}</td></tr>"
