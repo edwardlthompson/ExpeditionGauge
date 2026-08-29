@@ -17,6 +17,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.feedback.FeedbackPrefs
 import dev.foss.expeditiongauge.ui.liveencrypt.LiveEncryptField
 import dev.foss.expeditiongauge.ui.livemultireceiver.LiveMultiReceiverLabel
+import dev.foss.expeditiongauge.ui.privacyreportexport.PrivacyReportExportButton
 
 @Composable
 internal fun SettingsAdvancedCategory(
@@ -74,4 +75,5 @@ internal fun SettingsAdvancedCategory(
         },
         modifier = Modifier.testTag("settings_save_crashes"),
     )
+    PrivacyReportExportButton()
 }
