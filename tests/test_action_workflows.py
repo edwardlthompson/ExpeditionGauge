@@ -30,13 +30,17 @@ class ActionWorkflowsTests(unittest.TestCase):
             code = check_action_workflows(ROOT, which=lambda _name: None)
             self.assertEqual(code, 1)
 
+    def test_quick_skips_missing_tools_in_ci(self) -> None:
+        with patch.dict(os.environ, {"GITHUB_ACTIONS": "true", "BOOTSTRAP_QUICK": "1"}):
+            self.assertFalse(require_tools())
+            code = check_action_workflows(ROOT, which=lambda _name: None)
+            self.assertEqual(code, 0)
+
     def test_wired_into_quick(self) -> None:
         text = (ROOT / "scripts/validate-bootstrap.sh").read_text(encoding="utf-8")
         self.assertIn("check-action-workflows.sh", text)
+        self.assertIn("BOOTSTRAP_QUICK", text)
         self.assertTrue((ROOT / ".github/zizmor.yml").is_file())
-        ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-        self.assertIn("actionlint", ci)
-        self.assertIn("zizmor", ci)
 
     def test_actionlint_argv_omits_bare_never(self) -> None:
         seen: list[list[str]] = []

@@ -13,7 +13,11 @@ DOCKERFILE = Path(".devcontainer") / "Dockerfile"
 
 def require_tools() -> bool:
     raw = os.environ.get("REQUIRE_HADOLINT", "").strip().lower()
-    return raw in {"1", "true", "yes"} or in_ci()
+    if raw in {"1", "true", "yes"}:
+        return True
+    if os.environ.get("BOOTSTRAP_QUICK", "").strip().lower() in {"1", "true", "yes"}:
+        return False
+    return in_ci()
 
 
 def check_hadolint(root: Path, *, which=shutil.which) -> int:

@@ -11,6 +11,9 @@ for arg in "$@"; do
     --quick) QUICK=true ;;
   esac
 done
+if [ "$QUICK" = true ]; then
+  export BOOTSTRAP_QUICK=1
+fi
 
 REQUIRED=(
   README.md

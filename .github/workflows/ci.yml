@@ -188,11 +188,7 @@ jobs:
       - name: Check Sprint 0 artifacts exist
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          # Child playbook --quick: optional linters skip if missing (do not inherit template CI).
-          env -u CI -u GITHUB_ACTIONS -u REQUIRE_ACTION_LINT -u REQUIRE_HADOLINT \
-            -u REQUIRE_SHELLCHECK -u REQUIRE_SEMGREP \
-            bash scripts/validate-bootstrap.sh --quick
+        run: bash scripts/validate-bootstrap.sh --quick
 
   web:
     name: Web - Lint, Test, Build
