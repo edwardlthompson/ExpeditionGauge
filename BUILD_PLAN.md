@@ -135,7 +135,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 20. ✅ [AGENT] `/feature` colorblind-hud — Color-blind HUD palettes
 21. ✅ [AGENT] `/feature` night-hud-palette — Night-only HUD palette
 22. ✅ [AGENT] `/feature` ambient-autodim — Ambient lux auto-dim refine
-23. 🔲 [AGENT] `/feature` parked-idle-dim — Parked idle dim / burn-in guard
+23. ✅ [AGENT] `/feature` parked-idle-dim — Parked idle dim / burn-in guard
 24. 🔲 [AGENT] `/feature` keep-awake-moving — Keep-awake only while moving
 25. 🔲 [AGENT] `/feature` haptic-alerts — Haptic over-limit alerts
 26. 🔲 [AGENT] `/feature` alert-snooze — Per-threshold alert snooze
