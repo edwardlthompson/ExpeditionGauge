@@ -17,6 +17,7 @@ import dev.foss.expeditiongauge.onboarding.OnboardingPreferences
 import dev.foss.expeditiongauge.permissions.PermissionsHelper
 import dev.foss.expeditiongauge.settings.DrivingModePreferences
 import dev.foss.expeditiongauge.stats.SessionStatsAggregator
+import dev.foss.expeditiongauge.appshortcuts.AppShortcuts
 import dev.foss.expeditiongauge.display.WindowRefresh
 import dev.foss.expeditiongauge.ui.navigation.ExpeditionGaugeApp
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModelFactory
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppShortcuts.remember(intent.action)
         enableEdgeToEdge()
         permissionsGranted = PermissionsHelper.hasAll(this)
         val app = application as ExpeditionGaugeApplication

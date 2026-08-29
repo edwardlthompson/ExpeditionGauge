@@ -36,6 +36,7 @@ import dev.foss.expeditiongauge.multiecu.MultiEcuHeaders
 import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltage
 import dev.foss.expeditiongauge.obdtrip.ObdTrip
 import dev.foss.expeditiongauge.vinlast6.VinLast6
+import dev.foss.expeditiongauge.ui.appshortcuts.AppShortcutEffect
 import dev.foss.expeditiongauge.ui.dashboard.DashboardScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
@@ -131,6 +132,7 @@ fun AppScreenDashboardRoute(
     val tempsVoltage by services.obdManager.tempsVoltage.collectAsStateWithLifecycle()
     val ecuHeaders by services.obdManager.ecuHeaders.collectAsStateWithLifecycle()
     MetricTtsReadout(enabled = ttsReadoutEnabled && FeatureFlags.accessibilityPackEnabled, snapshot = telemetry)
+    AppShortcutEffect(onLibrary = { onScreenChange(AppScreen.Sessions) })
     DashboardScreen(
         viewModel = dashboardViewModel,
         themeMode = themeMode,

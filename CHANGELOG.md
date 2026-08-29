@@ -111,6 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * About What’s new lists privacy export, settings backup, and F-Droid listing after a version bump
 * Onboarding adds offline map cache and privacy-backup tips for v2.18+
 * Settings hub can search categories (privacy → Advanced, OBD → Hardware)
+* Launcher shortcuts open Record (dashboard) and Library (sessions)
 
 ### Changed
 

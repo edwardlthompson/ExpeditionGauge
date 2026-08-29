@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="record"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_record">
+        <intent
+            android:action="dev.foss.expeditiongauge.action.RECORD"
+            android:targetPackage="dev.foss.expeditiongauge"
+            android:targetClass="dev.foss.expeditiongauge.MainActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="library"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_library">
+        <intent
+            android:action="dev.foss.expeditiongauge.action.LIBRARY"
+            android:targetPackage="dev.foss.expeditiongauge"
+            android:targetClass="dev.foss.expeditiongauge.MainActivity" />
+    </shortcut>
+</shortcuts>
