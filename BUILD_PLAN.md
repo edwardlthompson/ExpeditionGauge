@@ -236,7 +236,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 100. ✅ [AGENT] `/feature` privacy-report-export — Settings privacy-report export
 101. ✅ [AGENT] `/feature` settings-json-backup — Settings JSON backup/restore
 102. ✅ [AGENT] `/feature` settings-qr-transfer — Settings transfer via local QR
-103. 🔲 [AGENT] `/feature` encrypted-session-zip — Encrypted session ZIP
+103. ✅ [AGENT] `/feature` encrypted-session-zip — Encrypted session ZIP
 104. 🔲 [AGENT] `/feature` share-to-files — Default share to Files (not social)
 105. 🔲 [AGENT] `/feature` fdroid-reproducible — F-Droid metadata + reproducible publish
 106. 🔲 [AGENT] `/feature` fdroid-antifeatures — F-Droid Anti-Features + Fastlane polish
