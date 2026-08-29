@@ -46,11 +46,7 @@ object VideoOverlayCompositor {
     fun playbackExportLines(sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC): List<String> =
         overlayLines(sample, speedUnit)
 
-    fun drawPlaybackExportOverlay(
-        canvas: Canvas,
-        sample: SampleEntity?,
-        speedUnit: SpeedUnit = SpeedUnit.METRIC,
-    ) {
+    fun drawLines(canvas: Canvas, lines: List<String>) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
             textSize = (canvas.width.coerceAtLeast(1) / 24f).coerceIn(24f, 64f)
@@ -58,10 +54,18 @@ object VideoOverlayCompositor {
             setShadowLayer(4f, 2f, 2f, Color.BLACK)
         }
         var y = paint.textSize * 1.5f
-        playbackExportLines(sample, speedUnit).forEach { line ->
+        lines.forEach { line ->
             canvas.drawText(line, 24f, y, paint)
             y += paint.textSize * 1.2f
         }
+    }
+
+    fun drawPlaybackExportOverlay(
+        canvas: Canvas,
+        sample: SampleEntity?,
+        speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    ) {
+        drawLines(canvas, playbackExportLines(sample, speedUnit))
     }
 
     fun drawOverlay(canvas: Canvas, sample: SampleEntity?, speedUnit: SpeedUnit = SpeedUnit.METRIC) {

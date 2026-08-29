@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.media.MediaMetadataRetriever
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.ghostvideooverlay.GhostVideoOverlay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -17,6 +18,7 @@ class VideoBurnInExporter(private val context: Context) {
         samples: List<SampleEntity>,
         videoOffsetMs: Long,
         outputFile: File,
+        ghostSamples: List<SampleEntity> = emptyList(),
     ): Result<File> = withContext(Dispatchers.Default) {
         runCatching {
             val retriever = MediaMetadataRetriever()
@@ -35,9 +37,13 @@ class VideoBurnInExporter(private val context: Context) {
                     val frame = retriever.getFrameAtTime(t, MediaMetadataRetriever.OPTION_CLOSEST)
                     if (frame != null) {
                         val sessionMs = (t / 1000L) - videoOffsetMs
-                        val sample = VideoOverlayCompositor.nearestSample(samples, sessionMs)
                         val composed = frame.copy(android.graphics.Bitmap.Config.ARGB_8888, true)
-                        VideoOverlayCompositor.drawOverlay(Canvas(composed), sample)
+                        val lines = GhostVideoOverlay.linesForTimestamp(
+                            samples,
+                            ghostSamples,
+                            sessionMs,
+                        )
+                        VideoOverlayCompositor.drawLines(Canvas(composed), lines)
                         frames.add(composed)
                         frame.recycle()
                     }

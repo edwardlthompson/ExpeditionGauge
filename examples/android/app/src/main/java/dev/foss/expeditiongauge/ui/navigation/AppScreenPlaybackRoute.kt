@@ -110,6 +110,7 @@ fun AppScreenPlaybackRoute(
                     samples = playbackState.samples,
                     videoOffsetMs = videoOffsetMs,
                     outputFile = output,
+                    ghostSamples = playbackState.ghostSamples,
                 ).onSuccess { file ->
                     shareExportFile(context, file, "video/mp4")
                 }

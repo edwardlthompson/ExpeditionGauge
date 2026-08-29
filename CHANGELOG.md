@@ -71,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Session compare shows GPS polyline point counts for both sessions
 * Ghost laps can be imported from GPX track points or lat,lon,ts lines
 * Relive compares ghost laps by sector and shows net sector delta
+* Dashcam burn-in export pairs lap and ghost telemetry on each frame
 
 ### Changed
 
