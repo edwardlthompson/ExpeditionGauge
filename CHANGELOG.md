@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Color-blind HUD palettes (deuteranopia / protanopia / tritanopia)
 * Night HUD amber palette when brightness is Night
 * Auto brightness follows the ambient light sensor when lux is available
+* Parked/idle HUD dim (speed under 0.5 m/s or unknown) caps window brightness at 0.12
 
 ### Changed
 
