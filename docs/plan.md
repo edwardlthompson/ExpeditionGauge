@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 101: Settings JSON backup/restore (`/feature` settings-json-backup). Rows 99–100 are complete.
+Sprint 32 row 102: Settings transfer via local QR (`/feature` settings-qr-transfer). Rows 99–101 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
