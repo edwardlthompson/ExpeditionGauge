@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 79: FOSS WebRTC Data Channel (`/feature` webrtc-datachannel).
+Sprint 32 row 80: Live receiver local record (`/feature` live-receiver-record).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
