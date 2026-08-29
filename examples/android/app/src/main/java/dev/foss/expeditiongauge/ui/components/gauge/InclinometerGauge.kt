@@ -30,6 +30,7 @@ import dev.foss.expeditiongauge.car.gauge.InclinometerCarIcon
 import dev.foss.expeditiongauge.car.gauge.InclinometerStyle
 import dev.foss.expeditiongauge.gauge.GaugeDisplayRotation
 import dev.foss.expeditiongauge.gauge.GaugeLogic
+import dev.foss.expeditiongauge.offroadhold.OffroadHoldBars
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -54,6 +55,9 @@ fun InclinometerGauge(
     latG: Float? = null,
     lonG: Float? = null,
     gaugeSizeDp: Dp = 180.dp,
+    showHoldBars: Boolean = false,
+    peakPitchDeg: Float = 0f,
+    peakRollDeg: Float = 0f,
 ) {
     var showSheet by remember { mutableStateOf(false) }
     val alertActive = pitchAlertActive || rollAlertActive
@@ -65,7 +69,24 @@ fun InclinometerGauge(
             displayRotation = displayRotation,
         )
     }
+    val (peakDisplayPitch, peakDisplayRoll) = remember(
+        peakPitchDeg,
+        peakRollDeg,
+        isPortraitLayout,
+        displayRotation,
+    ) {
+        GaugeDisplayRotation.mapFusionToInclinometerAxes(
+            pitchDeg = peakPitchDeg,
+            rollDeg = peakRollDeg,
+            isPortraitLayout = isPortraitLayout,
+            displayRotation = displayRotation,
+        )
+    }
+    val barPitch = if (showHoldBars) OffroadHoldBars.held(displayPitch, peakDisplayPitch) else displayPitch
+    val barRoll = if (showHoldBars) OffroadHoldBars.held(displayRoll, peakDisplayRoll) else displayRoll
     val bitmap = remember(
+        barPitch,
+        barRoll,
         displayPitch,
         displayRoll,
         pitchDeg,
@@ -81,8 +102,8 @@ fun InclinometerGauge(
         gaugeSizeDp,
     ) {
         InclinometerCarIcon.renderBitmap(
-            pitchDeg = displayPitch,
-            rollDeg = displayRoll,
+            pitchDeg = barPitch,
+            rollDeg = barRoll,
             style = style,
             pitchAlert = pitchAlertActive,
             rollAlert = rollAlertActive,
@@ -144,6 +165,10 @@ fun InclinometerGauge(
                 text = buildString {
                     appendLine("P ${GaugeLogic.formatSignedDegrees(displayPitch)}")
                     appendLine("R ${GaugeLogic.formatSignedDegrees(displayRoll)}")
+                    if (showHoldBars) {
+                        appendLine(stringResource(R.string.gauge_peak_pitch, GaugeLogic.formatWholeDegrees(peakDisplayPitch)))
+                        appendLine(stringResource(R.string.gauge_peak_roll, GaugeLogic.formatWholeDegrees(peakDisplayRoll)))
+                    }
                     yawDeg?.let { appendLine("Y ${GaugeLogic.formatSignedDegrees(it)}") }
                     if (latG != null || lonG != null) {
                         append("G lat ${"%.1f".format(latG ?: 0f)} lon ${"%.1f".format(lonG ?: 0f)}")

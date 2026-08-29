@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.offroadhold.OffroadHoldBars
+import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.gauge.isInclinometerStyle
 import dev.foss.expeditiongauge.gauge.toInclinometerStyle
 import dev.foss.expeditiongauge.settings.SpeedUnit
@@ -35,6 +37,10 @@ fun HudCubeLayout(
     val isPortraitLayout = !props.layoutSpec.isLandscape
     val useMetric = props.speedUnit == SpeedUnit.METRIC
     val hideGpsExtras = props.crawlingMode && props.recording
+    val holdBars = OffroadHoldBars.active(
+        crawling = props.crawlingMode,
+        offroadPreset = preset.id == DashboardPresetId.Offroad,
+    )
 
     val gMeterTile: @Composable () -> Unit = {
         if (preset.showAttitude) {
@@ -58,6 +64,9 @@ fun HudCubeLayout(
                         latG = telemetry.latG,
                         lonG = telemetry.lonG,
                         gaugeSizeDp = props.layoutSpec.attitudeGaugeSizeDp.dp,
+                        showHoldBars = holdBars,
+                        peakPitchDeg = telemetry.peakPitchDeg,
+                        peakRollDeg = telemetry.peakRollDeg,
                         modifier = Modifier.fillMaxSize(),
                     )
                     props.attitudeGaugeMode == AttitudeGaugeMode.COMPASS_BALL -> CompassBallGauge(
@@ -77,7 +86,7 @@ fun HudCubeLayout(
                         mode = props.attitudeGaugeMode,
                         onCalibrate = props.onCalibrate,
                         onToggleDisplay = props.onToggleAttitudeDisplay,
-                        showPeakHold = props.recording,
+                        showPeakHold = props.recording || holdBars,
                         peakPitchDeg = telemetry.peakPitchDeg,
                         peakRollDeg = telemetry.peakRollDeg,
                         peakAbsPitchDeg = telemetry.peakAbsPitchDeg,

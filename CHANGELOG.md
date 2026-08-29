@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Wet/rain tire alert profile tightens TPMS pressure, temp, and loss limits
 * Local alert history keeps the last 50 edges (Settings → Alerts) even when not recording
 * Live traction circle: G-force HUD maps latG/lonG onto a 1.5 G circle with a live trail
+* Offroad/crawl inclinometer bars hold at session peak pitch and roll
 
 ### Changed
 
