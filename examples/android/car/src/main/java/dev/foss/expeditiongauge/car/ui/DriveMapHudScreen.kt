@@ -10,6 +10,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import dev.foss.expeditiongauge.car.CarAppBridgeRegistry
 import dev.foss.expeditiongauge.car.HudStripOrientation
+import dev.foss.expeditiongauge.car.aaparkeddtc.AaParkedDtc
 import dev.foss.expeditiongauge.car.aacanvas.AaCustomCanvas
 import dev.foss.expeditiongauge.car.surface.DriveHudSurfaceCallback
 import dev.foss.expeditiongauge.car.surface.DriveHudSurfacePainter
@@ -22,9 +23,11 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
 
     private val painter = DriveHudSurfacePainter()
     private val hudPush = DriveMapHudPush(carContext, painter)
-    private val surfaceCallback = DriveHudSurfaceCallback(painter) {
-        CarAppBridgeRegistry.bridge?.cycleAttitudeDisplay()
-    }
+    private val surfaceCallback = DriveHudSurfaceCallback(
+        painter,
+        onAttitudeTap = { CarAppBridgeRegistry.bridge?.cycleAttitudeDisplay() },
+        onDtcFooterTap = { openParkedDtc() },
+    )
     @Volatile private var surfaceLive = false
     @Volatile private var surfaceState = AaCustomCanvas.SurfaceState.PENDING
     @Volatile private var lastChromeRecording: Boolean? = null
@@ -77,6 +80,13 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
 
     fun refreshDisplaySpec() {
         hudPush.refreshDisplaySpec()
+    }
+
+    private fun openParkedDtc() {
+        val bridge = CarAppBridgeRegistry.bridge ?: return
+        val rows = bridge.parkedDtcRows()
+        if (!AaParkedDtc.canOpen(bridge.isVehicleParked(), rows.size)) return
+        screenManager.push(AaParkedDtcScreen(carContext))
     }
 
     fun snapshotSurfaceFrame() = painter.snapshotFrame()

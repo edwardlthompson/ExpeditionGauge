@@ -50,6 +50,10 @@ interface CarAppBridge {
     /** Keep IMU/GPS/BLE alive while the car session is connected. */
     fun onCarSessionStarted()
     fun onCarSessionStopped()
+    /** True when speed is unknown or under the parked threshold. */
+    fun isVehicleParked(): Boolean = false
+    /** Stored DTC rows for the parked detail pane (empty while moving). */
+    fun parkedDtcRows(): List<DriveHudRow> = emptyList()
 }
 
 object CarAppBridgeRegistry {

@@ -8,6 +8,7 @@ import androidx.car.app.SurfaceContainer
 class DriveHudSurfaceCallback(
     private val painter: DriveHudSurfacePainter,
     private val onAttitudeTap: (() -> Unit)? = null,
+    private val onDtcFooterTap: (() -> Unit)? = null,
 ) : SurfaceCallback {
     override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
         painter.onSurfaceAvailable(surfaceContainer)
@@ -32,7 +33,9 @@ class DriveHudSurfaceCallback(
     override fun onScale(focusX: Float, focusY: Float, scaleFactor: Float) = Unit
 
     override fun onClick(x: Float, y: Float) {
-        if (painter.isAttitudeCubeTap(x, y)) {
+        if (painter.isDtcFooterTap(x, y)) {
+            onDtcFooterTap?.invoke()
+        } else if (painter.isAttitudeCubeTap(x, y)) {
             onAttitudeTap?.invoke()
         }
     }

@@ -44,4 +44,21 @@ internal object DriveHudSurfaceGeometry {
             }
         }
     }
+
+    fun isDtcFooterTap(
+        x: Float,
+        y: Float,
+        bounds: Rect,
+        orientation: HudStripOrientation,
+        strip: Bitmap?,
+    ): Boolean {
+        if (orientation != HudStripOrientation.ROW) return false
+        if (bounds.width() <= 0 || bounds.height() <= 0) return false
+        if (strip == null || strip.width <= 0 || strip.height <= 0) return false
+        val dst = fitRect(strip.width, strip.height, bounds)
+        if (x < dst.left || x > dst.right || y < dst.top || y > dst.bottom) return false
+        val cubeSrcH = minOf(strip.height, strip.width / 3)
+        val cubeDstH = (dst.height() * cubeSrcH) / strip.height
+        return y >= dst.top + cubeDstH
+    }
 }

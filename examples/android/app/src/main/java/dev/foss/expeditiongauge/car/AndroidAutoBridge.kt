@@ -14,7 +14,9 @@ import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.car.aaparkeddtc.AaParkedDtc
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
+import dev.foss.expeditiongauge.parkedidle.ParkedIdleDim
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 
@@ -71,13 +73,10 @@ class AndroidAutoBridge(
     }
 
     override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
-
     override fun hudTiles(displaySpec: AaDisplaySpec): CarHudTiles =
         hudCompose.hudTiles(snapshot, speedUnit, pressureUnit, tempUnit)
-
     override fun driveHud(displaySpec: AaDisplaySpec): DriveHudContent =
         composeHud(displaySpec, null)
-
     override fun driveHudBitmap(
         displaySpec: AaDisplaySpec,
         cubePxOverride: Int?,
@@ -103,13 +102,13 @@ class AndroidAutoBridge(
         snapshot.toCarMetrics(speedUnit == SpeedUnit.METRIC)
 
     override fun isRecording(): Boolean = recording
+    override fun isVehicleParked(): Boolean = ParkedIdleDim.parked(snapshot.speedMps)
+    override fun parkedDtcRows(): List<DriveHudRow> =
+        AaParkedDtc.rows(storedDtcs.map { it.code to it.description })
 
     override fun startRecording(): Boolean = mutators.startRecording(recording)
-
     override fun stopRecording(): Boolean = mutators.stopRecording(recording)
-
     override fun markEvent(): Boolean = mutators.markEvent()
-
     override fun zeroAttitude(): Boolean = mutators.zeroAttitude(
         fusionSource = snapshot.fusionSource,
         pitchDeg = snapshot.pitchDeg,
@@ -118,7 +117,6 @@ class AndroidAutoBridge(
     )
 
     override fun cycleAttitudeDisplay(): Boolean = mutators.cycleAttitudeDisplay()
-
     override fun captureAaScreenshot(): Boolean =
         AndroidAutoBridgeActions.captureScreenshot(
             hudCompose.snapshotBitmap(), appContext, toastHandler,

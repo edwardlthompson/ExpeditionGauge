@@ -38,6 +38,8 @@ class DriveHudSurfacePainterHitTest {
         assertTrue(painter.isAttitudeCubeTap(100f, 100f))
         // Bottom of fitted strip is footer (cube band = 280/320 of dest height)
         assertFalse(painter.isAttitudeCubeTap(100f, 310f))
+        assertTrue(painter.isDtcFooterTap(100f, 310f))
+        assertFalse(painter.isDtcFooterTap(100f, 100f))
     }
 
     @Test
