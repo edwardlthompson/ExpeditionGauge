@@ -1,5 +1,7 @@
 package dev.foss.expeditiongauge.obd
 
+import dev.foss.expeditiongauge.fordmode22.FordMode22Catalog
+import dev.foss.expeditiongauge.fordmode22.FordMode22Kind
 import java.io.BufferedReader
 import java.io.OutputStreamWriter
 
@@ -23,11 +25,9 @@ internal object ObdThrottleQuery {
         ObdThrottleChannel("014A", "414A", 100f / 255f, false),
         ObdThrottleChannel("014B", "414B", 100f / 255f, false),
     )
-    private val appFord = listOf(
-        ObdThrottleChannel("2209D4", "6209D4", 0.5f, true),
-        ObdThrottleChannel("220911", "620911", 100f / 255f, true),
-        ObdThrottleChannel("221340", "621340", 100f / 255f, true),
-    )
+    private val appFord = FordMode22Catalog.byKind(FordMode22Kind.THROTTLE).map { pid ->
+        ObdThrottleChannel(pid.command, pid.header, pid.scale, true)
+    }
     private val known = (appGeneric + appFord + plate).associateBy { it.command }
 
     fun byCommand(command: String?): ObdThrottleChannel? =

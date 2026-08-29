@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.piddiscovery.PidDiscovery
+import dev.foss.expeditiongauge.ui.fordmode22.FordMode22CatalogDialog
 import dev.foss.expeditiongauge.ui.piddiscovery.PidDiscoveryDialog
 
 @Composable
@@ -32,6 +33,7 @@ internal fun SettingsHardwareCategory(
         }
     }
     var showDiscover by remember { mutableStateOf(false) }
+    var showFord22 by remember { mutableStateOf(false) }
     Button(
         onClick = {
             actions.onPidDiscover()
@@ -53,6 +55,15 @@ internal fun SettingsHardwareCategory(
             },
             onDismiss = { showDiscover = false },
         )
+    }
+    Button(
+        onClick = { showFord22 = true },
+        modifier = Modifier.testTag("ford_mode22_action"),
+    ) {
+        Text(stringResource(R.string.ford_mode22_action))
+    }
+    if (showFord22) {
+        FordMode22CatalogDialog(onDismiss = { showFord22 = false })
     }
     SettingsHardwareOptions(
         tpmsEnabled = state.tpmsEnabled,
