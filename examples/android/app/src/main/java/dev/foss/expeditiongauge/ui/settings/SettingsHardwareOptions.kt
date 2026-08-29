@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.settings.ObdPidConfig
+import dev.foss.expeditiongauge.ui.nmealogexport.NmeaLogShareButton
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -175,6 +176,7 @@ fun SettingsHardwareOptions(
                 Text(stringResource(R.string.settings_external_gps_forget))
             }
         }
+        NmeaLogShareButton()
     }
     Button(
         onClick = onImuManage,

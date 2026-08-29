@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
 import dev.foss.expeditiongauge.FeatureFlags
+import dev.foss.expeditiongauge.nmealogexport.NmeaLogExport
 import dev.foss.expeditiongauge.obd.ClassicBluetoothBudget
 import dev.foss.expeditiongauge.obd.ObdRfcomm
 import kotlinx.coroutines.CoroutineScope
@@ -102,6 +103,7 @@ class ExternalNmeaGpsManager(
                 } catch (_: IOException) {
                     break
                 } ?: break
+                NmeaLogExport.retain(line)
                 val parsed = NmeaParser.parseLine(line) ?: continue
                 _fix.value = _fix.value.merge(parsed.copy(timestampMs = System.currentTimeMillis()))
                 if (parsed.valid) {
