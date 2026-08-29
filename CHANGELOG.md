@@ -96,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Per-vehicle OBD PID maps default to RPM, speed, and coolant
 * External GPS baud snaps to a FOSS-safe list and rate stays 1–20 Hz
 * First locales ship Spanish, German, and French About/Live/Maps/feedback strings
+* i18n layout stress flags translations longer than compact HUD rows
 
 ### Changed
 
