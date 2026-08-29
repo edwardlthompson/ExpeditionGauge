@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import dev.foss.expeditiongauge.talkbackfeedback.TalkBackFeedback
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonateLinks
 import dev.foss.expeditiongauge.about.DonationsConfig
@@ -87,11 +90,15 @@ fun AboutScreen(
         }
         TextButton(
             onClick = { feedbackKind = "bug" },
-            modifier = Modifier.testTag("about_report_bug"),
+            modifier = Modifier
+                .testTag("about_report_bug")
+                .semantics { contentDescription = TalkBackFeedback.description("bug") },
         ) { Text(stringResource(R.string.feedback_report_bug)) }
         TextButton(
             onClick = { feedbackKind = "feature" },
-            modifier = Modifier.testTag("about_request_feature"),
+            modifier = Modifier
+                .testTag("about_request_feature")
+                .semantics { contentDescription = TalkBackFeedback.description("feature") },
         ) { Text(stringResource(R.string.feedback_request_feature)) }
         Button(onClick = onBack) {
             Text(stringResource(R.string.about_close))
