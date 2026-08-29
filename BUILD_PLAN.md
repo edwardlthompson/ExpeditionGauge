@@ -187,7 +187,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 66. ✅ [AGENT] `/feature` lon-g-heatmap — Brake / accel (lonG) heatmap
 67. ✅ [AGENT] `/feature` cornering-histogram — Cornering G histogram
 68. ✅ [AGENT] `/feature` drift-run-ranking — Drift score / run ranking in library
-69. 🔲 [AGENT] `/feature` session-map-compare — Two-session map compare
+69. ✅ [AGENT] `/feature` session-map-compare — Two-session map compare
 70. 🔲 [AGENT] `/feature` gpx-ghost-import — GPX/FIT import for ghost
 71. 🔲 [AGENT] `/feature` ghost-sector-compare — Compare ghost by sector
 72. 🔲 [AGENT] `/feature` ghost-video-overlay — Lap vs ghost video overlay export

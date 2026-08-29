@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 69: two-session map compare (`/feature` session-map-compare).
+Sprint 32 row 70: GPX/FIT import for ghost (`/feature` gpx-ghost-import).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
