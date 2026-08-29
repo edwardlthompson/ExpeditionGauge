@@ -6,6 +6,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import dev.foss.expeditiongauge.data.db.dao.RecordingSessionDao
+import dev.foss.expeditiongauge.settings.DualDashcamStore
 
 interface VideoSyncEngine {
     val isSupported: Boolean
@@ -51,6 +52,10 @@ class DefaultVideoSyncEngine(
     override suspend fun importVideo(uri: String): Result<Unit> = runCatching {
         val id = sessionId ?: error("No session bound")
         val session = sessionDao.getById(id) ?: error("Session $id not found")
+        if (!session.videoUri.isNullOrBlank() && session.videoUri != uri) {
+            DualDashcamStore(context).add(id, uri)
+            return@runCatching
+        }
         sessionDao.update(session.copy(videoUri = uri, videoOffsetMs = offsetMs))
         this.uri = uri
         loadIntoPlayer(uri)

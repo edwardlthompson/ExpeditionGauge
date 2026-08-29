@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * HTML session share includes a Chapters table from mark events
 * Mark events can store a local voice-note URI in the payload
 * Relive shows a horizontal photo-story strip from media attachments
+* A second dashcam import is stored as an extra clip with a time offset
 
 ### Changed
 
