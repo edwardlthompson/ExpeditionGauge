@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 55: GPX extensions for β / latG (`/feature` gpx-beta-extensions).
+Sprint 32 row 56: sector times CSV export (`/feature` sector-times-csv).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
