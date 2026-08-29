@@ -6,7 +6,9 @@ import android.util.Log
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.data.db.dao.AlertEventDao
 import dev.foss.expeditiongauge.data.db.entities.AlertEventEntity
+import dev.foss.expeditiongauge.alertsnooze.AlertSnooze
 import dev.foss.expeditiongauge.hapticalerts.HapticOverLimit
+import dev.foss.expeditiongauge.settings.AlertSnoozeStore
 import dev.foss.expeditiongauge.settings.HapticAlertsStore
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
@@ -33,8 +35,11 @@ class AlertService(
     private val startedAtElapsedMs = SystemClock.elapsedRealtime()
     private val attitudeSettleGate = AttitudeSettleGate()
     private val hapticStore = HapticAlertsStore(context)
+    private val snoozeStore = AlertSnoozeStore(context)
     @Volatile
     private var hapticEnabled = true
+    @Volatile
+    private var snoozeUntil = emptyMap<AlertType, Long>()
 
     init {
         scope.launch {
@@ -42,6 +47,9 @@ class AlertService(
         }
         scope.launch {
             hapticStore.enabled.collect { hapticEnabled = it }
+        }
+        scope.launch {
+            snoozeStore.untilByType.collect { snoozeUntil = it }
         }
     }
 
@@ -91,13 +99,15 @@ class AlertService(
             )
             val key = "${event.type}:${event.tireCorner?.key.orEmpty()}"
             val isEdge = key !in previouslyActiveKeys
-            feedback.onAlert(
-                event.type,
-                playTone = playAudio && audioMode == AlertAudioMode.BEEP,
-                haptic = HapticOverLimit.shouldVibrate(hapticEnabled, overLimit = true),
-            )
-            if (playAudio && audioMode == AlertAudioMode.TTS) {
-                tts.speak(AlertPhrases.phrase(context, event))
+            if (!AlertSnooze.suppressed(snoozeUntil[event.type], nowMs)) {
+                feedback.onAlert(
+                    event.type,
+                    playTone = playAudio && audioMode == AlertAudioMode.BEEP,
+                    haptic = HapticOverLimit.shouldVibrate(hapticEnabled, overLimit = true),
+                )
+                if (playAudio && audioMode == AlertAudioMode.TTS) {
+                    tts.speak(AlertPhrases.phrase(context, event))
+                }
             }
             if (recording && sessionId != null && isEdge) {
                 alertEventDao.insert(

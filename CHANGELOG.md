@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Parked/idle HUD dim (speed under 0.5 m/s or unknown) caps window brightness at 0.12
 * Keep-awake holds the screen only while moving (speed ≥ 0.5 m/s); parked or unknown speed allows timeout
 * Haptic over-limit alerts repeat on each feedback tick (Settings toggle, default on)
+* Per-threshold alert snooze (5 minutes) skips audio/haptic for that type
 
 ### Changed
 
