@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alerts_haptic_toggle">Haptic over-limit alerts</string>
+</resources>

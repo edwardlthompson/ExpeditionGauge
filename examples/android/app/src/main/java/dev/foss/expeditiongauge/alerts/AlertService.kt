@@ -6,6 +6,8 @@ import android.util.Log
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.data.db.dao.AlertEventDao
 import dev.foss.expeditiongauge.data.db.entities.AlertEventEntity
+import dev.foss.expeditiongauge.hapticalerts.HapticOverLimit
+import dev.foss.expeditiongauge.settings.HapticAlertsStore
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,10 +32,16 @@ class AlertService(
     private var previouslyActiveKeys = emptySet<String>()
     private val startedAtElapsedMs = SystemClock.elapsedRealtime()
     private val attitudeSettleGate = AttitudeSettleGate()
+    private val hapticStore = HapticAlertsStore(context)
+    @Volatile
+    private var hapticEnabled = true
 
     init {
         scope.launch {
             thresholdsPreferences.thresholds.collect { engine.updateThresholds(it) }
+        }
+        scope.launch {
+            hapticStore.enabled.collect { hapticEnabled = it }
         }
     }
 
@@ -83,7 +91,11 @@ class AlertService(
             )
             val key = "${event.type}:${event.tireCorner?.key.orEmpty()}"
             val isEdge = key !in previouslyActiveKeys
-            feedback.onAlert(event.type, playTone = playAudio && audioMode == AlertAudioMode.BEEP, haptic = isEdge)
+            feedback.onAlert(
+                event.type,
+                playTone = playAudio && audioMode == AlertAudioMode.BEEP,
+                haptic = HapticOverLimit.shouldVibrate(hapticEnabled, overLimit = true),
+            )
             if (playAudio && audioMode == AlertAudioMode.TTS) {
                 tts.speak(AlertPhrases.phrase(context, event))
             }

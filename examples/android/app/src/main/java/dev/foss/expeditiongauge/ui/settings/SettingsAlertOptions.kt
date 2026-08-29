@@ -19,6 +19,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.ui.hapticalerts.HapticAlertsField
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -63,6 +64,7 @@ fun SettingsAlertOptions(
             onCheckedChange = onAlertsMutedChange,
             modifier = Modifier.testTag("settings_alerts_muted"),
         )
+        HapticAlertsField()
         AlertField(R.string.alerts_max_lat_g, thresholds.maxLatG, "settings_alerts_lat_g") {
             onThresholdsChange(thresholds.copy(maxLatG = it))
         }
