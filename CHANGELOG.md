@@ -100,6 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * About bug and feature buttons have TalkBack content descriptions
 * HUD screenshots drop MediaStore GPS keys and flag JPEG EXIF GPS IFD before insert
 * Settings Advanced can share a sanitized privacy report
+* Settings can backup a pipe-encoded snapshot that omits adapter addresses
 
 ### Changed
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_json_backup">Backup settings</string>
+    <string name="settings_qr_transfer">Settings QR</string>
+</resources>
