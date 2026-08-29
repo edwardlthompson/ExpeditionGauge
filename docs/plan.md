@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 27: per-preset alert thresholds (`/feature` preset-alert-thresholds).
+Sprint 32 row 28: wet/rain tire alert profile (`/feature` wet-tire-alerts).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
