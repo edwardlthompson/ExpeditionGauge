@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 84: Mag hard-iron wizard (`/feature` mag-hardiron).
+Sprint 32 row 85: Compass calibration reminder after mag spike (`/feature` compass-cal-reminder).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
