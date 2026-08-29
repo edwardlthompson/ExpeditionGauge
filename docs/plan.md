@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 91: TPMS temperature compensation (`/feature` tpms-temp-comp).
+Sprint 32 row 92: Trailer / 5th-wheel TPMS profile (`/feature` trailer-tpms).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

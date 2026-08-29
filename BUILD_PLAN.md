@@ -218,7 +218,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 88. ✅ [AGENT] `/feature` ble-battery — BLE device battery icons
 89. ✅ [AGENT] `/feature` ble-permission-rationale — BLE scan permission rationale polish
 90. ✅ [AGENT] `/feature` spare-tpms — Spare / 5th TPMS
-91. 🔲 [AGENT] `/feature` tpms-temp-comp — TPMS temperature compensation
+91. ✅ [AGENT] `/feature` tpms-temp-comp — TPMS temperature compensation
 92. 🔲 [AGENT] `/feature` trailer-tpms — Trailer / 5th-wheel TPMS profile
 93. 🔲 [AGENT] `/feature` gnss-dead-reckon — GNSS-drop dead reckoning
 94. 🔲 [AGENT] `/feature` vehicle-pid-maps — Per-vehicle PID maps
