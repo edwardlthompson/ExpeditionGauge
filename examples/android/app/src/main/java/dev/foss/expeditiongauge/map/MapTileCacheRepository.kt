@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dev.foss.expeditiongauge.offlinetilecache.OfflineTileCache
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -27,12 +28,11 @@ class MapTileCacheRepository(private val context: Context) {
 
     suspend fun markCached(bounds: MapRegionBounds) {
         context.mapCacheDataStore.edit { prefs ->
-            val keys = prefs[cachedKeys].orEmpty().toMutableSet()
-            keys.add(bounds.cacheKey())
-            prefs[cachedKeys] = keys
-            val serialized = prefs[cachedBounds].orEmpty().toMutableSet()
-            serialized.add(serialize(bounds))
-            prefs[cachedBounds] = serialized
+            prefs[cachedKeys] = OfflineTileCache.evictOldest(
+                prefs[cachedKeys].orEmpty() + bounds.cacheKey(),
+            ).toSet()
+            val serialized = OfflineTileCache.evictOldest(prefs[cachedBounds].orEmpty() + serialize(bounds))
+            prefs[cachedBounds] = serialized.toSet()
         }
     }
 

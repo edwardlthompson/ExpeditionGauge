@@ -9,6 +9,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.map.HomeMapRegion
+import dev.foss.expeditiongauge.offlinetilecache.OfflineTileCache
+import dev.foss.expeditiongauge.ui.offlinetilecache.OfflineTileCacheLabel
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 
 @Composable
@@ -44,4 +46,5 @@ fun SettingsMapOptions(
     ) {
         Text(stringResource(R.string.settings_maps_use_location))
     }
+    OfflineTileCacheLabel(cachedCount = 0)
 }

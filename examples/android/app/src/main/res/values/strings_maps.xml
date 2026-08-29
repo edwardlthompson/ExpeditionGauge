@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="offline_tile_cache_usage">Offline tiles %1$s</string>
+    <string name="osm_speed_limit_overlay">OSM speed limits</string>
+    <string name="terrain_toggle">Hillshade / terrain</string>
+    <string name="foss_map_style">Map style</string>
+</resources>
