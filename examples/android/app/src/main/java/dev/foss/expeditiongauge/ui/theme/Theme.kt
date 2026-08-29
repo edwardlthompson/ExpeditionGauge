@@ -33,7 +33,8 @@ fun ExpeditionGaugeTheme(
         ThemeMode.Light -> false
         ThemeMode.Dark -> true
     }
-    val nightHudEnabled by remember { NightHudStore(LocalView.current.context) }.enabled
+    val view = LocalView.current
+    val nightHudEnabled by remember { NightHudStore(view.context) }.enabled
         .collectAsStateWithLifecycle(true)
     val colorScheme = when {
         highContrastEnabled -> HighContrastExpeditionGaugeColors
@@ -45,7 +46,6 @@ fun ExpeditionGaugeTheme(
         else -> if (darkTheme) DarkExpeditionGaugeColors else LightExpeditionGaugeColors
     }
 
-    val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
