@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 49: storage usage meter (`/feature` storage-meter).
+Sprint 32 row 50: session notes (`/feature` session-notes).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
