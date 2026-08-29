@@ -2,6 +2,157 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 32 — Product backlog (`/allideas`) (2026-08-29)
+
+##### OBD / diagnostics
+
+- ✅ [AGENT] `/feature` phone-hud-dtc — Phone HUD DTC carousel (AA already shows codes)
+- ✅ [AGENT] `/feature` dtc-full-title — Phone HUD DTC tap for full OBDex title
+- ✅ [AGENT] `/feature` dtc-clear — Parked Mode 04 clear DTCs with confirm
+- ✅ [AGENT] `/feature` freeze-frame — Mode 02 freeze frame
+- ✅ [AGENT] `/feature` im-readiness — I/M readiness monitors
+- ✅ [AGENT] `/feature` obd-trip-since-clear — OBD trip-since-clear monitors
+- ✅ [AGENT] `/feature` vin-last6 — Mode 09 VIN last-6 only
+- ✅ [AGENT] `/feature` pid-discovery — OBD PID discovery wizard
+- ✅ [AGENT] `/feature` ford-mode22-catalog — Ford Mode 22 PID catalog expand
+- ✅ [AGENT] `/feature` ford-mode22-temps — Ford Mode 22 trans temp / EGT PIDs
+- ✅ [AGENT] `/feature` optional-boost-pids — Optional MAP / AFR / boost PIDs
+- ✅ [AGENT] `/feature` obd-shift-light — OBD RPM shift-light / redline threshold
+- ✅ [AGENT] `/feature` obd-temps-voltage — Coolant / oil / voltage cluster (parked/idle)
+- ✅ [AGENT] `/feature` gear-estimate — Gear estimate from RPM + speed
+- ✅ [AGENT] `/feature` wifi-elm327 — Wi-Fi ELM327 (FOSS TCP, no Play)
+- ✅ [AGENT] `/feature` multi-ecu-headers — Multi-ECU OBD headers
+- ✅ [AGENT] `/feature` developer-pid-sniffer — Developer PID sniffer (opt-in)
+- ✅ [AGENT] `/feature` obd-reconnect-soak — OBD reconnect soak test
+
+##### Driving HUD
+
+- ✅ [AGENT] `/feature` hud-tile-layout — User-configurable HUD tile layout
+- ✅ [AGENT] `/feature` colorblind-hud — Color-blind HUD palettes
+- ✅ [AGENT] `/feature` night-hud-palette — Night-only HUD palette
+- ✅ [AGENT] `/feature` ambient-autodim — Ambient lux auto-dim refine
+- ✅ [AGENT] `/feature` parked-idle-dim — Parked idle dim / burn-in guard
+- ✅ [AGENT] `/feature` keep-awake-moving — Keep-awake only while moving
+- ✅ [AGENT] `/feature` haptic-alerts — Haptic over-limit alerts
+- ✅ [AGENT] `/feature` alert-snooze — Per-threshold alert snooze
+- ✅ [AGENT] `/feature` preset-alert-thresholds — Per-preset alert thresholds
+- ✅ [AGENT] `/feature` wet-tire-alerts — Wet/rain tire alert profile
+- ✅ [AGENT] `/feature` alert-history-log — Local alert history log
+- ✅ [AGENT] `/feature` traction-circle — Live traction circle (latG/lonG)
+- ✅ [AGENT] `/feature` offroad-hold-bars — Offroad hold-to-peak pitch/roll bars
+- ✅ [AGENT] `/feature` crawl-hud-declutter — Crawl-mode HUD declutter
+
+##### Android Auto
+
+- ✅ [AGENT] `/feature` aa-custom-canvas — Custom Canvas AA Drive HUD
+- ✅ [AGENT] `/feature` aa-night-mode — AA night mode from car UI
+- ✅ [AGENT] `/feature` aa-a11y-type — AA larger type / TalkBack
+- ✅ [AGENT] `/feature` aa-high-contrast — AA high-contrast tokens
+- ✅ [AGENT] `/feature` aa-inclinometer-audio — AA inclinometer alert audio route
+- ✅ [AGENT] `/feature` aa-parked-dtc — AA parked DTC detail pane
+- ✅ [AGENT] `/feature` aa-parked-voice — AA parked-only voice Record/Stop
+- ✅ [AGENT] `/feature` aa-parked-library — AA parked session library
+- ✅ [AGENT] `/feature` aaos-standalone — AAOS standalone APK
+
+##### Record / Relive
+
+- ✅ [AGENT] `/feature` recording-preroll — Recording pre-roll buffer
+- ✅ [AGENT] `/feature` live-record-graphs — Real-time recording graphs
+- ✅ [AGENT] `/feature` battery-saver-record — Battery-saver recording profile
+- ✅ [AGENT] `/feature` thermal-record-ui — Thermal recording throttle UI
+- ✅ [AGENT] `/feature` thermal-log-interval — Log interval auto by thermal
+- ✅ [AGENT] `/feature` storage-autodelete — Storage budget + auto-delete
+- ✅ [AGENT] `/feature` storage-meter — Storage usage meter
+- ✅ [AGENT] `/feature` session-notes — Session notes
+- ✅ [AGENT] `/feature` library-search-favorites — Library search and favorites
+- ✅ [AGENT] `/feature` session-split-merge — Session split / merge
+- ✅ [AGENT] `/feature` csv-columns — CSV column picker
+- ✅ [AGENT] `/feature` nmea-log-export — NMEA raw log export
+- ✅ [AGENT] `/feature` gpx-beta-extensions — GPX extensions for β / latG
+- ✅ [AGENT] `/feature` sector-times-csv — Sector times CSV export
+- ✅ [AGENT] `/feature` playback-speed — Variable playback speed
+- ✅ [AGENT] `/feature` playback-gamepad — Keyboard / gamepad scrub
+- ✅ [AGENT] `/feature` playback-bookmarks — Playback bookmarks from mark events
+- ✅ [AGENT] `/feature` relive-chapters — Relive chapter markers from mark events
+- ✅ [AGENT] `/feature` mark-event-chapters-export — Mark-event chapter list in HTML share
+- ✅ [AGENT] `/feature` mark-event-voice — Local voice note on mark event
+- ✅ [AGENT] `/feature` photo-story-timeline — Relive photo story timeline
+- ✅ [AGENT] `/feature` dual-dashcam — Multi-file dashcam import
+- ✅ [AGENT] `/feature` video-burnin-fields — Video burn-in extra fields
+- ✅ [AGENT] `/feature` lon-g-heatmap — Brake / accel (lonG) heatmap
+- ✅ [AGENT] `/feature` cornering-histogram — Cornering G histogram
+- ✅ [AGENT] `/feature` drift-run-ranking — Drift score / run ranking in library
+- ✅ [AGENT] `/feature` session-map-compare — Two-session map compare
+- ✅ [AGENT] `/feature` gpx-ghost-import — GPX/FIT import for ghost
+- ✅ [AGENT] `/feature` ghost-sector-compare — Compare ghost by sector
+- ✅ [AGENT] `/feature` ghost-video-overlay — Lap vs ghost video overlay export
+- ✅ [AGENT] `/feature` track-autodetect — Auto-detect track from GPS
+
+##### Maps / offline
+
+- ✅ [AGENT] `/feature` offline-tile-cache — Offline tile cache completion
+- ✅ [AGENT] `/feature` osm-speed-limit — Offline OSM speed-limit overlay
+- ✅ [AGENT] `/feature` offline-geocoder — Offline geocoder for session titles
+- ✅ [AGENT] `/feature` terrain-toggle — Hillshade / terrain Settings toggle
+- ✅ [AGENT] `/feature` foss-map-styles — Additional FOSS map styles
+
+##### Live telemetry
+
+- ✅ [AGENT] `/feature` webrtc-datachannel — FOSS WebRTC Data Channel (ADR-0006)
+- ✅ [AGENT] `/feature` live-receiver-record — Live receiver local record
+- ✅ [AGENT] `/feature` live-encrypt — Optional live payload encrypt
+- ✅ [AGENT] `/feature` live-multi-receiver — Multi-receiver pit room
+- ✅ [AGENT] `/feature` phone-imu-live — Second-phone IMU via live
+
+##### Sensors / calibration
+
+- ✅ [AGENT] `/feature` mag-hardiron — Mag hard-iron wizard
+- ✅ [AGENT] `/feature` compass-cal-reminder — Compass calibration reminder after mag spike
+- ✅ [AGENT] `/feature` parked-autocal-dwell — Longer parked autocal dwell
+- ✅ [AGENT] `/feature` inclinometer-zero-profile — Inclinometer zero persist per vehicle
+- ✅ [AGENT] `/feature` ble-battery — BLE device battery icons
+- ✅ [AGENT] `/feature` ble-permission-rationale — BLE scan permission rationale polish
+- ✅ [AGENT] `/feature` spare-tpms — Spare / 5th TPMS
+- ✅ [AGENT] `/feature` tpms-temp-comp — TPMS temperature compensation
+- ✅ [AGENT] `/feature` trailer-tpms — Trailer / 5th-wheel TPMS profile
+- ✅ [AGENT] `/feature` gnss-dead-reckon — GNSS-drop dead reckoning
+- ✅ [AGENT] `/feature` vehicle-pid-maps — Per-vehicle PID maps
+- ✅ [AGENT] `/feature` external-gps-rate — External GPS baud / update-rate settings
+
+##### Accessibility / i18n
+
+- ✅ [AGENT] `/feature` locales-es-de-fr — First locales (es / de / fr)
+- ✅ [AGENT] `/feature` i18n-layout-stress — Translation layout stress
+- ✅ [AGENT] `/feature` talkback-feedback — TalkBack on feedback / About
+
+##### Privacy / distribution
+
+- ✅ [AGENT] `/feature` screenshot-exif-strip — Screenshot EXIF/GPS strip
+- ✅ [AGENT] `/feature` privacy-report-export — Settings privacy-report export
+- ✅ [AGENT] `/feature` settings-json-backup — Settings JSON backup/restore
+- ✅ [AGENT] `/feature` settings-qr-transfer — Settings transfer via local QR
+- ✅ [AGENT] `/feature` encrypted-session-zip — Encrypted session ZIP
+- ✅ [AGENT] `/feature` share-to-files — Default share to Files (not social)
+- ✅ [AGENT] `/feature` fdroid-reproducible — F-Droid metadata + reproducible publish
+- ✅ [AGENT] `/feature` fdroid-antifeatures — F-Droid Anti-Features + Fastlane polish
+- ✅ [AGENT] `/feature` fastlane-next-changelog — Fastlane changelog for next versionCode
+- ✅ [AGENT] `/feature` about-oss-notices — License / OSS notice completeness in About
+
+##### Product chrome
+
+- ✅ [AGENT] `/feature` in-app-whats-new — In-app What’s new after version bump
+- ✅ [AGENT] `/feature` onboarding-v218 — Onboarding refresh for v2.18+ features
+- ✅ [AGENT] `/feature` settings-search — Settings search
+- ✅ [AGENT] `/feature` app-shortcuts — App shortcuts (Record / Library)
+- ✅ [AGENT] `/feature` last-session-widget — Last-session home widget
+- ✅ [AGENT] `/feature` predictive-back — Predictive back on remaining routes
+- ✅ [AGENT] `/feature` saf-folder-picker — SAF folder picker polish
+- ✅ [AGENT] `/feature` compose-preferred-framerate — Compose preferredFrameRate scroll vote
+
+##### Device / quality gates
+
+- ✅ [AGENT] `/feature` agp-kotlin-bump — AGP/Kotlin bump validation (KB-026)
+
 ## Sprint 31 — Golden Path catch-up (template v1.0.0) (2026-08-29)
 
 - ✅ [AGENT] `/feature` about/donations-updates — add `docs/features/donations-updates.md`; port remaining donate/update-prompt patterns into existing `about/` (do not copy examples/ over the app)

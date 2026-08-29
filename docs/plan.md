@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 rows 99–120 (Privacy / chrome / quality) are complete except backlogged ADB 109/118/119. Next open AGENT work is after row 120 on the remaining Sprint 32 board.
+Sprint 32 AGENT/AUTO rows are archived in `COMPLETED_TASKS.md`. Next open board work is leftover `[ADB]` smokes in `HUMAN_BACKLOG.md` (42, 109, 118, 119).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
