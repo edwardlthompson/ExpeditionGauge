@@ -232,7 +232,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 
 ##### Privacy / distribution
 
-99. 🔲 [AGENT] `/feature` screenshot-exif-strip — Screenshot EXIF/GPS strip
+99. ✅ [AGENT] `/feature` screenshot-exif-strip — Screenshot EXIF/GPS strip
 100. 🔲 [AGENT] `/feature` privacy-report-export — Settings privacy-report export
 101. 🔲 [AGENT] `/feature` settings-json-backup — Settings JSON backup/restore
 102. 🔲 [AGENT] `/feature` settings-qr-transfer — Settings transfer via local QR

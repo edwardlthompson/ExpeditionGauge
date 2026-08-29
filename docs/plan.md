@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 99: Screenshot EXIF/GPS strip (`/feature` screenshot-exif-strip). `/build 74-98` is complete.
+Sprint 32 row 100: Settings privacy-report export (`/feature` privacy-report-export). Row 99 screenshot-exif-strip is complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
