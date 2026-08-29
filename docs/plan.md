@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 77: Hillshade / terrain Settings toggle (`/feature` terrain-toggle).
+Sprint 32 row 78: Additional FOSS map styles (`/feature` foss-map-styles).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
