@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 70: GPX/FIT import for ghost (`/feature` gpx-ghost-import).
+Sprint 32 row 71: Compare ghost by sector (`/feature` ghost-sector-compare).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
