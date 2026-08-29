@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 44: real-time recording graphs (`/feature` live-record-graphs).
+Sprint 32 row 45: battery-saver recording profile (`/feature` battery-saver-record).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
