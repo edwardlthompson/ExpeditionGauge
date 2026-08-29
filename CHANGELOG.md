@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Offroad/crawl inclinometer bars hold at session peak pitch and roll
 * Crawl-mode HUD hides heading, altitude, and GPS extras so the cube stays readable
 * Android Auto Drive HUD uses the NavigationTemplate canvas unless surface attach fails
+* Android Auto HUD night palette follows the car UI dark/night setting
 
 ### Changed
 
