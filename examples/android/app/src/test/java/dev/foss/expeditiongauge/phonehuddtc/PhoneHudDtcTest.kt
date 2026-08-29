@@ -23,4 +23,12 @@ class PhoneHudDtcTest {
         assertEquals(expected, PhoneHudDtc.line(entries, DtcCarousel.DWELL_MS))
         assertTrue(PhoneHudDtc.line(entries, 0L)!!.contains("P0420"))
     }
+
+    @Test
+    fun fullTitleKeepsUntruncatedDescription() {
+        val long = "A".repeat(80)
+        val entry = DtcEntry("P0420", long)
+        assertEquals("P0420 $long", PhoneHudDtc.fullTitle(entry))
+        assertEquals(entry, PhoneHudDtc.current(listOf(entry), 0L))
+    }
 }
