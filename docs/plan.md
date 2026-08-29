@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 109: Crash-review ADB smoke (`crash-review-smoke`). Rows 99–108 are complete.
+Sprint 32 row 110: In-app What’s new (`/feature` in-app-whats-new). Rows 99–108 are complete; row 109 crash-review-smoke is backlogged.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

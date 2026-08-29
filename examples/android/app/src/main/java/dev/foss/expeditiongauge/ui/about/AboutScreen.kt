@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import dev.foss.expeditiongauge.talkbackfeedback.TalkBackFeedback
 import dev.foss.expeditiongauge.aboutossnotices.OssNotices
+import dev.foss.expeditiongauge.ui.inappwhatsnew.WhatsNewButton
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonateLinks
 import dev.foss.expeditiongauge.about.DonationsConfig
