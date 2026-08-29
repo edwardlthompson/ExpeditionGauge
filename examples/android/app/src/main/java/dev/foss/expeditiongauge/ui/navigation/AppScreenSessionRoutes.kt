@@ -79,6 +79,8 @@ fun AppScreenSessionRoutes(
                 context = context,
                 onSaved = { onScreenChange(AppScreen.Sessions) },
                 onBack = { onScreenChange(AppScreen.Sessions) },
+                database = services.database,
+                deleteService = services.sessionDeleteService,
                 onDeleteSession = if (FeatureFlags.mediaAttachmentsEnabled) {
                     {
                         scope.launch {

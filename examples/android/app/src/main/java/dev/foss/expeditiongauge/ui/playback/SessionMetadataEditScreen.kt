@@ -35,7 +35,10 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.recording.SessionMetadata
 import dev.foss.expeditiongauge.recording.SessionMetadataRepository
+import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
+import dev.foss.expeditiongauge.media.SessionDeleteService
 import dev.foss.expeditiongauge.recording.SessionPhotoCapture
+import dev.foss.expeditiongauge.ui.sessionsplitmerge.SessionSplitMergeButtons
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 import kotlinx.coroutines.launch
@@ -48,6 +51,8 @@ fun SessionMetadataEditScreen(
     onSaved: () -> Unit,
     onBack: () -> Unit,
     onDeleteSession: (() -> Unit)? = null,
+    database: ExpeditionGaugeDatabase? = null,
+    deleteService: SessionDeleteService? = null,
     modifier: Modifier = Modifier,
 ) {
     var notes by remember { mutableStateOf("") }
@@ -190,6 +195,14 @@ fun SessionMetadataEditScreen(
         }
         photoUri?.let {
             Text(text = stringResource(R.string.session_metadata_photo_attached), style = MaterialTheme.typography.bodySmall)
+        }
+        if (database != null && deleteService != null) {
+            SessionSplitMergeButtons(
+                sessionId = sessionId,
+                database = database,
+                deleteService = deleteService,
+                onDone = onBack,
+            )
         }
         onDeleteSession?.let { delete ->
             Button(
