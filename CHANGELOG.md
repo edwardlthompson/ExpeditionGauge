@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Live telemetry frames metrics as a FOSS `dc1|` Data Channel payload
 * Live receiver keeps a 6000-sample local ring for Relive
 * Optional live passphrase XOR-seals metric payloads
+* Live pit room accepts up to eight receivers
 
 ### Changed
 

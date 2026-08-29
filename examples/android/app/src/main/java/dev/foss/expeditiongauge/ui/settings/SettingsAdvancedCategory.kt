@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.feedback.FeedbackPrefs
 import dev.foss.expeditiongauge.ui.liveencrypt.LiveEncryptField
+import dev.foss.expeditiongauge.ui.livemultireceiver.LiveMultiReceiverLabel
 
 @Composable
 internal fun SettingsAdvancedCategory(
@@ -52,6 +53,8 @@ internal fun SettingsAdvancedCategory(
         Button(onClick = actions.onLiveReceiverOpen, modifier = Modifier.testTag("settings_live_receiver")) {
             Text(stringResource(R.string.live_receiver_open))
         }
+        LiveEncryptField()
+        LiveMultiReceiverLabel(count = 0)
     }
     SettingsSwitchRow(
         label = stringResource(R.string.settings_update_check_label),
