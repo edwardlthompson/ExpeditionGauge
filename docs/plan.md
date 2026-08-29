@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 37: AA inclinometer alert audio route (`/feature` aa-inclinometer-audio).
+Sprint 32 row 38: AA parked DTC detail pane (`/feature` aa-parked-dtc).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
