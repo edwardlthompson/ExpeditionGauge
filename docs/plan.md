@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 89: BLE scan permission rationale polish (`/feature` ble-permission-rationale).
+Sprint 32 row 90: Spare / 5th TPMS (`/feature` spare-tpms).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
