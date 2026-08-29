@@ -22,4 +22,13 @@ class DtcClearTest {
         assertFalse(DtcClear.parseAck(null))
         assertFalse(DtcClear.parseAck(""))
     }
+
+    @Test
+    fun latchConsumesOnce() {
+        val latch = DtcClearLatch()
+        assertFalse(latch.consume())
+        latch.request()
+        assertTrue(latch.consume())
+        assertFalse(latch.consume())
+    }
 }

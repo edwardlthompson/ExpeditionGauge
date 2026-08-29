@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
+import dev.foss.expeditiongauge.dtcclear.DtcClearLatch
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
@@ -49,6 +50,7 @@ class ObdClassicManager(
     private val _storedDtcs = MutableStateFlow<List<DtcEntry>>(emptyList())
     /** Mode 03 / sim DTCs; cleared on disconnect. */
     val storedDtcs: StateFlow<List<DtcEntry>> = _storedDtcs.asStateFlow()
+    private val clearLatch = DtcClearLatch()
 
     fun selectDevice(address: String) {
         selectedAddress = address
@@ -92,7 +94,7 @@ class ObdClassicManager(
                                 onSnapshot = { _snapshot.value = it },
                                 currentDtcs = { _storedDtcs.value },
                                 onDtcs = { _storedDtcs.value = it },
-                                consumeClear = { consumeClearRequest() },
+                                consumeClear = { clearLatch.consume() },
                             )
                         } catch (e: Exception) {
                             Log.w(TAG, "OBD poll ended: ${e.message}")
@@ -135,19 +137,7 @@ class ObdClassicManager(
 
     fun simulateStoredDtcs(codes: List<String>) = ObdDtcSim.apply(codes, catalog, _storedDtcs)
     fun clearSimulatedDtcs() = ObdDtcSim.clear(_storedDtcs)
-
-    @Volatile
-    private var clearRequested = false
-
-    fun requestClearDtcs() {
-        clearRequested = true
-    }
-
-    internal fun consumeClearRequest(): Boolean {
-        if (!clearRequested) return false
-        clearRequested = false
-        return true
-    }
+    fun requestClearDtcs() = clearLatch.request()
 
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"
