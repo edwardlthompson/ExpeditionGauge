@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 117: Compose preferredFrameRate (`/feature` compose-preferred-framerate). Rows 99–108 and 110–116 are complete.
+Sprint 32 row 118: Emulator HUD smoke (`emulator-hud-smoke`). Rows 99–108 and 110–117 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
