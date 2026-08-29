@@ -10,5 +10,9 @@ return {
     LrToolkitIdentifier = "com.example.fossplugin",
     LrPluginName = "FOSS Plugin Stub",
     LrPluginInfoUrl = "https://github.com/example/foss-lightroom-plugin",
+    LrExportServiceProvider = {
+        title = "FOSS Export Stub",
+        file = "ExportServiceProvider.lua",
+    },
     VERSION = { major = 0, minor = 1, revision = 0, build = 0 },
 }

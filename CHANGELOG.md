@@ -129,6 +129,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 * Gitleaks allowlists sanitizer unit-test fixtures (`ghp_` / AWS example keys) so Security Scan can pass
+* Track `examples/android/justfile` so TEMPLATE_INDEX and upgrade simulation pass
+* Lightroom stub registers `LrExportServiceProvider` and includes `ExportServiceProvider.lua` so the multi-stack feature gate can run
+* Child CI Validate Bootstrap uses `--quick` (same as the child playbook; full linters stay maintainer-only)
 
 ## [2.18.12] — OBD DTC scan on connect (2026-08-28)
 

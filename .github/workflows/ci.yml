@@ -188,7 +188,7 @@ jobs:
       - name: Check Sprint 0 artifacts exist
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash scripts/validate-bootstrap.sh
+        run: bash scripts/validate-bootstrap.sh --quick
 
   web:
     name: Web - Lint, Test, Build
