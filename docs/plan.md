@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 71: Compare ghost by sector (`/feature` ghost-sector-compare).
+Sprint 32 row 72: Lap vs ghost video overlay export (`/feature` ghost-video-overlay).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
