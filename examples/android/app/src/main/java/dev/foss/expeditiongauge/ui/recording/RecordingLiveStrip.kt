@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.ui.recording
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -23,24 +24,34 @@ import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
+import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
 
 @Composable
-fun RecordingLiveStrip(modifier: Modifier = Modifier) {
-    Box(
+fun RecordingLiveStrip(
+    snapshot: TelemetrySnapshot = TelemetrySnapshot.empty(),
+    modifier: Modifier = Modifier,
+) {
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .background(GaugeRed)
-            .testTag("recording_live_strip")
-            .padding(vertical = SpacingSm),
-        contentAlignment = Alignment.Center,
+            .testTag("recording_live_strip"),
     ) {
-        Text(
-            text = stringResource(R.string.recording_live_ready),
-            color = Color.White,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = SpacingSm),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = stringResource(R.string.recording_live_ready),
+                color = Color.White,
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+        RecordingLiveGraphStrip(snapshot = snapshot)
     }
 }
 

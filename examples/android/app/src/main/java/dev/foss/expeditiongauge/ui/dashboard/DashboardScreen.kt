@@ -190,7 +190,7 @@ fun DashboardScreen(
                 ) {
                     Column(Modifier.fillMaxSize()) {
                         if (uiState.recording) {
-                            RecordingLiveStrip()
+                            RecordingLiveStrip(snapshot = uiState.telemetry)
                             if (uiState.recordingMode == dev.foss.expeditiongauge.recording.RecordingMode.CRAWLING) {
                                 Text(
                                     text = stringResource(R.string.recording_mode_crawl),

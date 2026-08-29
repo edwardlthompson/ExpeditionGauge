@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Parked Android Auto Drive HUD: tap the telemetry cube to open the session library
 * Optional AAOS sideload APK (`-PaaosStandalone=true`) uses applicationId `.aaos` and requires `type.automotive`
 * Record prepends a 5-second live telemetry pre-roll so the session includes the lead-in
+* Live recording HUD draws a 30 s speed/latG sparkline while Record is running
 
 ### Changed
 
