@@ -6,6 +6,7 @@ import dev.foss.expeditiongauge.fordmode22.FordMode22TempsHold
 import dev.foss.expeditiongauge.imreadiness.ImReadinessHold
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
+import dev.foss.expeditiongauge.multiecu.MultiEcuHold
 import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltageHold
 import dev.foss.expeditiongauge.obdtrip.ObdTripHold
 import dev.foss.expeditiongauge.piddiscovery.PidDiscoveryHold
@@ -25,6 +26,7 @@ internal class ObdHudState {
     val fordTemps = FordMode22TempsHold()
     val boost = BoostPidsHold()
     val temps = ObdTempsVoltageHold()
+    val ecus = MultiEcuHold()
 
     fun setDtcs(value: List<DtcEntry>) {
         _dtcs.value = value
@@ -44,5 +46,6 @@ internal class ObdHudState {
         fordTemps.set(null)
         boost.set(null)
         temps.set(null)
+        ecus.set(null)
     }
 }

@@ -48,6 +48,7 @@ class ObdClassicManager(
     val fordTemps = hud.fordTemps.temps
     val boostPids = hud.boost.snap
     val tempsVoltage = hud.temps.snap
+    val ecuHeaders = hud.ecus.ids
 
     fun selectDevice(address: String) {
         selectedAddress = address

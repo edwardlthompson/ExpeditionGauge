@@ -46,6 +46,7 @@ internal object ObdPollLoop {
         onFordTemps: (FordMode22Temps?) -> Unit = {},
         onBoost: (BoostPidSnapshot?) -> Unit = {},
         onTemps: (ObdTempsVoltageSnapshot?) -> Unit = {},
+        onEcus: (List<String>?) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(output)
         val reader = BufferedReader(InputStreamReader(input))
@@ -64,6 +65,7 @@ internal object ObdPollLoop {
                     onFordTemps(Elm327FordMode22.requestTemps(reader, writer))
                     onBoost(Elm327BoostPids.request(reader, writer))
                     onTemps(Elm327TempsVoltage.request(reader, writer))
+                    onEcus(Elm327MultiEcu.request(reader, writer))
                     if (currentVin() == null) {
                         onVin(Elm327Vin.requestLast6(reader, writer) ?: "")
                     }

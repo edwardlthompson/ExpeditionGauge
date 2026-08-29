@@ -14,6 +14,7 @@ import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.piddiscovery.PidDiscovery
 import dev.foss.expeditiongauge.ui.fordmode22.FordMode22CatalogDialog
+import dev.foss.expeditiongauge.ui.multiecu.MultiEcuHeadersDialog
 import dev.foss.expeditiongauge.ui.piddiscovery.PidDiscoveryDialog
 import dev.foss.expeditiongauge.ui.wifielm.WifiElm327Field
 
@@ -35,6 +36,7 @@ internal fun SettingsHardwareCategory(
     }
     var showDiscover by remember { mutableStateOf(false) }
     var showFord22 by remember { mutableStateOf(false) }
+    var showEcus by remember { mutableStateOf(false) }
     Button(
         onClick = {
             actions.onPidDiscover()
@@ -65,6 +67,15 @@ internal fun SettingsHardwareCategory(
     }
     if (showFord22) {
         FordMode22CatalogDialog(onDismiss = { showFord22 = false })
+    }
+    Button(
+        onClick = { showEcus = true },
+        modifier = Modifier.testTag("multi_ecu_action"),
+    ) {
+        Text(stringResource(R.string.multi_ecu_action))
+    }
+    if (showEcus) {
+        MultiEcuHeadersDialog(onDismiss = { showEcus = false })
     }
     WifiElm327Field(
         selectedEndpoint = state.selectedObdAddress,
