@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Ghost laps can be imported from GPX track points or lat,lon,ts lines
 * Relive compares ghost laps by sector and shows net sector delta
 * Dashcam burn-in export pairs lap and ghost telemetry on each frame
+* Track setup can auto-detect a start/finish gate from a closed GPS loop
 
 ### Changed
 

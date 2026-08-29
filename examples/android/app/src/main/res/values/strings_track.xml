@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="track_setup_autodetect">Auto-detect from last session</string>
+    <string name="track_setup_autodetect_failed">No closed GPS loop found</string>
+</resources>

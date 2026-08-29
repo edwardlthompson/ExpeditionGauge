@@ -35,6 +35,7 @@ import dev.foss.expeditiongauge.ui.settings.TpmsManagementScreen
 import dev.foss.expeditiongauge.ui.settings.tpms.TpmsPairingWizardScreen
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
+import dev.foss.expeditiongauge.trackautodetect.TrackAutodetect
 import dev.foss.expeditiongauge.ui.timing.TrackSetupScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -228,6 +229,7 @@ fun AppScreenRouter(
             telemetryBus = services.telemetryBus,
             settingsPreferences = services.settingsPreferences,
             onBack = { onScreenChange(AppScreen.Settings) },
+            sampleLoader = TrackAutodetect.loader(services.database),
         )
         AppScreen.CalibrationTips -> CalibrationTipsScreen(
             onBack = { onScreenChange(AppScreen.Settings) },
