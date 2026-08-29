@@ -199,7 +199,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 75. ✅ [AGENT] `/feature` osm-speed-limit — Offline OSM speed-limit overlay
 76. ✅ [AGENT] `/feature` offline-geocoder — Offline geocoder for session titles
 77. ✅ [AGENT] `/feature` terrain-toggle — Hillshade / terrain Settings toggle
-78. 🔲 [AGENT] `/feature` foss-map-styles — Additional FOSS map styles
+78. ✅ [AGENT] `/feature` foss-map-styles — Additional FOSS map styles
 
 ##### Live telemetry
 

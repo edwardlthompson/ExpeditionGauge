@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 78: Additional FOSS map styles (`/feature` foss-map-styles).
+Sprint 32 row 79: FOSS WebRTC Data Channel (`/feature` webrtc-datachannel).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
