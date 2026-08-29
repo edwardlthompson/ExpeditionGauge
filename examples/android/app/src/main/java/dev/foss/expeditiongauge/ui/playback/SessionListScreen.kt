@@ -31,6 +31,7 @@ import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.sessionfavorites.SessionFavorites
 import dev.foss.expeditiongauge.settings.SessionFavoritesStore
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
+import dev.foss.expeditiongauge.ui.sectortimescsv.SectorTimesShareButton
 import dev.foss.expeditiongauge.ui.sessionfavorites.SessionFavoriteToggle
 import dev.foss.expeditiongauge.ui.stats.RichSessionCard
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
@@ -107,6 +108,7 @@ fun SessionListScreen(
             items(ordered, key = { it.id }) { session ->
                 val summary = summaryById[session.id]
                 SessionFavoriteToggle(sessionId = session.id)
+                SectorTimesShareButton(sessionId = session.id, database = database)
                 if (summary != null) {
                     val compareTarget = sessions.firstOrNull { it.id != session.id }?.id
                     RichSessionCard(
