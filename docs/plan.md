@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 96: First locales es / de / fr (`/feature` locales-es-de-fr).
+Sprint 32 row 97: Translation layout stress (`/feature` i18n-layout-stress).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

@@ -226,7 +226,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 
 ##### Accessibility / i18n
 
-96. 🔲 [AGENT] `/feature` locales-es-de-fr — First locales (es / de / fr)
+96. ✅ [AGENT] `/feature` locales-es-de-fr — First locales (es / de / fr)
 97. 🔲 [AGENT] `/feature` i18n-layout-stress — Translation layout stress
 98. 🔲 [AGENT] `/feature` talkback-feedback — TalkBack on feedback / About
 
