@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 9: Ford Mode 22 PID catalog (`/feature` ford-mode22-catalog).
+Sprint 32 row 10: Ford Mode 22 trans temp / EGT (`/feature` ford-mode22-temps).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
