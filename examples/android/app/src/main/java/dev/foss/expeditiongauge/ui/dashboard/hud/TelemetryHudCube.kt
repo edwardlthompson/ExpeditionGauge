@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.presets.DashboardPreset
+import dev.foss.expeditiongauge.shiftlight.ShiftLight
 import dev.foss.expeditiongauge.ui.phonehuddtc.PhoneHudDtcFooter
+import dev.foss.expeditiongauge.ui.shiftlight.ShiftLightLamp
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.SensorLinkState
@@ -96,6 +98,10 @@ fun TelemetryHudCube(
             canClear = canClearDtcs,
             onClear = onClearDtcs,
             statusLines = statusLines,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        ShiftLightLamp(
+            active = ShiftLight.active(telemetry.rpm) || AlertType.RPM in activeAlerts,
             modifier = Modifier.fillMaxWidth(),
         )
         TelemetryHudPedalBar(
