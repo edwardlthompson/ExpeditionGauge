@@ -4,6 +4,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import dev.foss.expeditiongauge.playbackgamepad.PlaybackGamepadMap
 
 enum class PlaybackInputAction {
     SeekBack,
@@ -23,7 +24,7 @@ object PlaybackInputHandler {
             Key.Spacebar, Key.MediaPlayPause -> PlaybackInputAction.TogglePlayPause
             Key.LeftBracket -> PlaybackInputAction.SpeedDown
             Key.RightBracket -> PlaybackInputAction.SpeedUp
-            else -> PlaybackInputAction.None
+            else -> PlaybackGamepadMap.fromKey(keyEvent.key)
         }
     }
 
