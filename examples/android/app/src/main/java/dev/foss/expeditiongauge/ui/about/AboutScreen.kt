@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import dev.foss.expeditiongauge.talkbackfeedback.TalkBackFeedback
+import dev.foss.expeditiongauge.aboutossnotices.OssNotices
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonateLinks
 import dev.foss.expeditiongauge.about.DonationsConfig
@@ -62,6 +63,10 @@ fun AboutScreen(
             color = GaugeYellow,
         )
         Text(text = stringResource(R.string.about_version, version), color = GaugeScaleWhite)
+        Text(
+            text = stringResource(R.string.about_oss_notices, OssNotices.summary()),
+            color = GaugeScaleWhite,
+        )
         Text(text = stringResource(R.string.about_format, installedFormat), color = GaugeScaleWhite)
         Text(text = updateStatus, color = GaugeScaleWhite)
         if (canApplyUpdate) {

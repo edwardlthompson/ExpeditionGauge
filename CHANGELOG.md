@@ -107,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * F-Droid listing includes MIT license, source URL, and SOURCE_DATE_EPOCH publish notes
 * F-Droid Anti-Features listing is None (no Tracking, Ads, or NonFreeNet)
 * Fastlane/F-Droid changelog 53 is staged for the next versionCode
+* About lists MIT · MapLibre · AndroidX open-source notices
 
 ### Changed
 
