@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 86: Longer parked autocal dwell (`/feature` parked-autocal-dwell).
+Sprint 32 row 87: Inclinometer zero persist per vehicle (`/feature` inclinometer-zero-profile).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
