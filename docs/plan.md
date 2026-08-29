@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 53: CSV column picker (`/feature` csv-columns).
+Sprint 32 row 54: NMEA raw log export (`/feature` nmea-log-export).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
