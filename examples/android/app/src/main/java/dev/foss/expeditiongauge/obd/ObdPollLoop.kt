@@ -6,6 +6,7 @@ import android.util.Log
 import dev.foss.expeditiongauge.freezeframe.FreezeFrame
 import dev.foss.expeditiongauge.imreadiness.ImReadiness
 import dev.foss.expeditiongauge.imreadiness.ImReadinessReport
+import dev.foss.expeditiongauge.obdtrip.ObdTripSinceClear
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
@@ -32,6 +33,7 @@ internal object ObdPollLoop {
         scheduler: ObdDtcScanScheduler = ObdDtcScanScheduler(),
         consumeClear: () -> Boolean = { false },
         onIm: (ImReadinessReport?) -> Unit = {},
+        onTrip: (ObdTripSinceClear?) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -46,6 +48,7 @@ internal object ObdPollLoop {
                 scanDtcs = { prev ->
                     val codes = ObdDtcReader.refresh(reader, writer, catalog, prev)
                     onIm(ImReadiness.parse(Elm327Protocol.queryPid(reader, writer, "0101")))
+                    onTrip(Elm327ObdTrip.request(reader, writer))
                     if (codes.isEmpty()) codes
                     else FreezeFrame.attach(codes, Elm327FreezeFrame.request(reader, writer))
                 },

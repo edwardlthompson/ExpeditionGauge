@@ -106,7 +106,7 @@ fun HudCubeLayout(
             storedDtcs = props.storedDtcs,
             canClearDtcs = props.canClearDtcs,
             onClearDtcs = props.onClearDtcs,
-            imLine = props.imLine,
+            statusLines = props.statusLines,
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -143,7 +143,7 @@ fun HudCubeLayout(
             storedDtcs = props.storedDtcs,
             canClearDtcs = props.canClearDtcs,
             onClearDtcs = props.onClearDtcs,
-            imLine = props.imLine,
+            statusLines = props.statusLines,
             modifier = Modifier.fillMaxSize(),
         )
     }

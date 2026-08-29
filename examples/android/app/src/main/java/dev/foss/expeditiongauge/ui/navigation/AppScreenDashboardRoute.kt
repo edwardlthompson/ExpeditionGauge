@@ -29,6 +29,7 @@ import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.stats.SessionAggregateStats
 import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.imreadiness.ImReadiness
+import dev.foss.expeditiongauge.obdtrip.ObdTrip
 import dev.foss.expeditiongauge.ui.dashboard.DashboardScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
@@ -117,6 +118,7 @@ fun AppScreenDashboardRoute(
 
     val storedDtcs by services.obdManager.storedDtcs.collectAsStateWithLifecycle()
     val imReport by services.obdManager.imReadiness.collectAsStateWithLifecycle()
+    val tripSinceClear by services.obdManager.tripSinceClear.collectAsStateWithLifecycle()
     MetricTtsReadout(enabled = ttsReadoutEnabled && FeatureFlags.accessibilityPackEnabled, snapshot = telemetry)
     DashboardScreen(
         viewModel = dashboardViewModel,
@@ -200,6 +202,6 @@ fun AppScreenDashboardRoute(
         },
         storedDtcs = storedDtcs,
         onClearDtcs = { services.obdManager.requestClearDtcs() },
-        imReadiness = ImReadiness.line(imReport),
+        statusLines = listOfNotNull(ImReadiness.line(imReport), ObdTrip.line(tripSinceClear)),
     )
 }

@@ -1,0 +1,33 @@
+package dev.foss.expeditiongauge.obd
+
+import dev.foss.expeditiongauge.dtcclear.DtcClearLatch
+import dev.foss.expeditiongauge.imreadiness.ImReadinessHold
+import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
+import dev.foss.expeditiongauge.obd.dtc.DtcEntry
+import dev.foss.expeditiongauge.obdtrip.ObdTripHold
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+internal class ObdHudState {
+    private val _dtcs = MutableStateFlow<List<DtcEntry>>(emptyList())
+    val dtcs: StateFlow<List<DtcEntry>> = _dtcs.asStateFlow()
+    val clear = DtcClearLatch()
+    val im = ImReadinessHold()
+    val trip = ObdTripHold()
+
+    fun setDtcs(value: List<DtcEntry>) {
+        _dtcs.value = value
+    }
+
+    fun simulate(codes: List<String>, catalog: DtcCatalog) =
+        ObdDtcSim.apply(codes, catalog, _dtcs)
+
+    fun clearSim() = ObdDtcSim.clear(_dtcs)
+
+    fun reset() {
+        _dtcs.value = emptyList()
+        im.set(null)
+        trip.set(null)
+    }
+}

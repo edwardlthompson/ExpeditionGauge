@@ -35,7 +35,7 @@ fun TelemetryHudCube(
     storedDtcs: List<DtcEntry> = emptyList(),
     canClearDtcs: Boolean = false,
     onClearDtcs: () -> Unit = {},
-    imLine: String? = null,
+    statusLines: List<String> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -95,7 +95,7 @@ fun TelemetryHudCube(
             entries = storedDtcs,
             canClear = canClearDtcs,
             onClear = onClearDtcs,
-            imLine = imLine,
+            statusLines = statusLines,
             modifier = Modifier.fillMaxWidth(),
         )
         TelemetryHudPedalBar(
@@ -123,7 +123,7 @@ fun CombinedTelemetryTpmsCube(
     storedDtcs: List<DtcEntry> = emptyList(),
     canClearDtcs: Boolean = false,
     onClearDtcs: () -> Unit = {},
-    imLine: String? = null,
+    statusLines: List<String> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -137,7 +137,7 @@ fun CombinedTelemetryTpmsCube(
             storedDtcs = storedDtcs,
             canClearDtcs = canClearDtcs,
             onClearDtcs = onClearDtcs,
-            imLine = imLine,
+            statusLines = statusLines,
             modifier = Modifier.weight(1f),
         )
         if (showTpms) {

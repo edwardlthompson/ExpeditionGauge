@@ -5,10 +5,7 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
-import dev.foss.expeditiongauge.dtcclear.DtcClearLatch
-import dev.foss.expeditiongauge.imreadiness.ImReadinessHold
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
-import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +36,7 @@ class ObdClassicManager(
             .onFailure { Log.w(TAG, "DTC catalog load failed: ${it.message}") }
             .getOrElse { DtcCatalog.of(emptyMap()) }
     }
+    private val hud = ObdHudState()
 
     var pidConfig: ObdPidConfig = ObdPidConfig()
 
@@ -48,12 +46,9 @@ class ObdClassicManager(
     private val _phase = MutableStateFlow(ObdConnectionPhase.Idle)
     val phase: StateFlow<ObdConnectionPhase> = _phase.asStateFlow()
 
-    private val _storedDtcs = MutableStateFlow<List<DtcEntry>>(emptyList())
-    /** Mode 03 / sim DTCs; cleared on disconnect. */
-    val storedDtcs: StateFlow<List<DtcEntry>> = _storedDtcs.asStateFlow()
-    private val clearLatch = DtcClearLatch()
-    private val imHold = ImReadinessHold()
-    val imReadiness = imHold.report
+    val storedDtcs = hud.dtcs
+    val imReadiness = hud.im.report
+    val tripSinceClear = hud.trip.trip
 
     fun selectDevice(address: String) {
         selectedAddress = address
@@ -93,10 +88,11 @@ class ObdClassicManager(
                                 catalog = catalog,
                                 isActive = { isActive },
                                 onSnapshot = { _snapshot.value = it },
-                                currentDtcs = { _storedDtcs.value },
-                                onDtcs = { _storedDtcs.value = it },
-                                consumeClear = { clearLatch.consume() },
-                                onIm = { imHold.set(it) },
+                                currentDtcs = { hud.dtcs.value },
+                                onDtcs = { hud.setDtcs(it) },
+                                consumeClear = { hud.clear.consume() },
+                                onIm = { hud.im.set(it) },
+                                onTrip = { hud.trip.set(it) },
                             )
                         } catch (e: Exception) {
                             Log.w(TAG, "OBD poll ended: ${e.message}")
@@ -128,8 +124,7 @@ class ObdClassicManager(
         socket = null
         classicBudget.onDisconnected(ClassicBluetoothBudget.Slot.OBD)
         _snapshot.value = ObdSnapshot()
-        _storedDtcs.value = emptyList()
-        imHold.set(null)
+        hud.reset()
         if (clearPhase) _phase.value = ObdConnectionPhase.Idle
     }
 
@@ -138,9 +133,9 @@ class ObdClassicManager(
     fun suggestedObdDevices(): List<Pair<String, String>> =
         ObdDeviceDirectory.suggestedObdDevices(adapter)
 
-    fun simulateStoredDtcs(codes: List<String>) = ObdDtcSim.apply(codes, catalog, _storedDtcs)
-    fun clearSimulatedDtcs() = ObdDtcSim.clear(_storedDtcs)
-    fun requestClearDtcs() = clearLatch.request()
+    fun simulateStoredDtcs(codes: List<String>) = hud.simulate(codes, catalog)
+    fun clearSimulatedDtcs() = hud.clearSim()
+    fun requestClearDtcs() = hud.clear.request()
 
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"
