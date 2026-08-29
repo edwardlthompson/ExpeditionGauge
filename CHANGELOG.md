@@ -91,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * BLE scan rationale says pairing-only and that nothing is uploaded
 * TPMS can include a fifth SPARE corner
 * TPMS pressure can be compensated to 20 °C
+* Trailer TPMS adds T1/T2 axle corners beside the truck
 
 ### Changed
 
