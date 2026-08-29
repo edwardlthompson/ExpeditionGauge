@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 21: night-only HUD palette (`/feature` night-hud-palette).
+Sprint 32 row 22: ambient lux auto-dim (`/feature` ambient-autodim).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
