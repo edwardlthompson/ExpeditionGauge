@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.calibration
 
+import dev.foss.expeditiongauge.maghardiron.MagHardIron
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -17,6 +18,7 @@ class MagStabilityGate(
     fun onSample(mx: Float, my: Float, mz: Float) {
         if (samples.size >= windowSize) samples.removeFirst()
         samples.addLast(Triple(mx, my, mz))
+        MagHardIron.remember(mx, my, mz)
     }
 
     fun isStable(): Boolean {
