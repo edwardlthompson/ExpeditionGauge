@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.CarAppBridgeRegistry
 import dev.foss.expeditiongauge.car.HudStripOrientation
+import dev.foss.expeditiongauge.car.aacanvas.AaCustomCanvas
 import dev.foss.expeditiongauge.car.surface.DriveHudSurfaceCallback
 import dev.foss.expeditiongauge.car.surface.DriveHudSurfacePainter
 
@@ -26,6 +27,7 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
         CarAppBridgeRegistry.bridge?.cycleAttitudeDisplay()
     }
     @Volatile private var surfaceLive = false
+    @Volatile private var surfaceState = AaCustomCanvas.SurfaceState.PENDING
     @Volatile private var lastChromeRecording: Boolean? = null
     @Volatile private var lastChromeMuted: Boolean? = null
     @Volatile private var lastStripOrientation: HudStripOrientation? = null
@@ -51,11 +53,14 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
                     carContext.getCarService(AppManager::class.java)
                         .setSurfaceCallback(surfaceCallback)
                     surfaceLive = true
+                    surfaceState = AaCustomCanvas.SurfaceState.LIVE
                 }.onFailure {
                     Log.w(TAG, "setSurfaceCallback failed", it)
                     surfaceLive = false
+                    surfaceState = AaCustomCanvas.SurfaceState.FAILED
                 }
                 pushHudToPainter()
+                if (AaCustomCanvas.kind(surfaceState) == AaCustomCanvas.Kind.PANE) invalidate()
             }
 
             override fun onDestroy(owner: LifecycleOwner) {
@@ -63,6 +68,7 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
                     carContext.getCarService(AppManager::class.java).setSurfaceCallback(null)
                 }
                 surfaceLive = false
+                surfaceState = AaCustomCanvas.SurfaceState.PENDING
                 painter.onLayoutChanged = null
                 val b = CarAppBridgeRegistry.bridge
                 b?.onCarSessionStopped()
@@ -79,9 +85,12 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
     fun snapshotSurfaceFrame() = painter.snapshotFrame()
 
     override fun onGetTemplate(): Template {
+        val bridge = CarAppBridgeRegistry.bridge
+            ?: return DrivePaneTemplates.waitingTemplate("Open ExpeditionGauge on phone")
+        if (AaCustomCanvas.kind(surfaceState) == AaCustomCanvas.Kind.PANE) {
+            return paneFallbackTemplate()
+        }
         return try {
-            val bridge = CarAppBridgeRegistry.bridge
-                ?: return DrivePaneTemplates.waitingTemplate("Open ExpeditionGauge on phone")
             pushHudToPainter()
             DriveMapHudTemplates.navigation(
                 carContext, bridge, painter.stripOrientation(),
