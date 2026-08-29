@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.encryptedsessionzip.EncryptedSessionZip
 import java.io.File
 
 object ShareExportLauncher {
