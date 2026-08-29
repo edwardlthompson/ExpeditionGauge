@@ -25,6 +25,7 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.playback.HeatmapMetric
 import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.playback.RouteHeatmapLayer
+import dev.foss.expeditiongauge.ui.corneringhistogram.CorneringHistogramPanel
 import dev.foss.expeditiongauge.ui.photostory.PhotoStoryStrip
 import dev.foss.expeditiongauge.ui.playbackbookmarks.PlaybackBookmarkList
 import dev.foss.expeditiongauge.ui.relivechapters.ReliveChapterList
@@ -89,6 +90,9 @@ internal fun PlaybackBottomSection(
                 markers = state.markers,
                 onJump = { engine.seekToIndex(it) },
             )
+        }
+        if (state.samples.isNotEmpty()) {
+            CorneringHistogramPanel(samples = state.samples)
         }
         Slider(
             value = state.progress,

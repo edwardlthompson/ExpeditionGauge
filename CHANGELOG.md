@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * A second dashcam import is stored as an extra clip with a time offset
 * Video burn-in fields are selectable (speed, β, latG, lonG, pitch, roll)
 * Relive heatmap can color the route by brake/accel lonG
+* Relive shows the peak 0.25 G cornering-histogram bin
 
 ### Changed
 
