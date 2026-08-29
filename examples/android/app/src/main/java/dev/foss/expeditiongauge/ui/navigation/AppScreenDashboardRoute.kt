@@ -31,6 +31,7 @@ import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.imreadiness.ImReadiness
 import dev.foss.expeditiongauge.boostpids.BoostPids
 import dev.foss.expeditiongauge.fordmode22.FordMode22TempLine
+import dev.foss.expeditiongauge.gearestimate.GearEstimate
 import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltage
 import dev.foss.expeditiongauge.obdtrip.ObdTrip
 import dev.foss.expeditiongauge.vinlast6.VinLast6
@@ -217,6 +218,7 @@ fun AppScreenDashboardRoute(
             FordMode22TempLine.line(fordTemps),
             BoostPids.line(boostPids),
             ObdTempsVoltage.line(tempsVoltage, ObdTempsVoltage.parked(telemetry.speedMps)),
+            GearEstimate.line(telemetry.rpm, telemetry.speedMps),
         ),
     )
 }

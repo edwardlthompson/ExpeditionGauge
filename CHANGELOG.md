@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Phone HUD DTC carousel (same 5 s `n/N` line as Android Auto ROW); tap opens the full OBDex title
 * OBD RPM shift-light on the phone HUD (default 5500 RPM, or Settings max RPM)
 * Parked/idle coolant, oil, and battery cluster on the phone HUD
+* Gear estimate on the phone HUD from OBD RPM and speed
 
 ### Changed
 
