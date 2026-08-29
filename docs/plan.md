@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 24: keep-awake only while moving (`/feature` keep-awake-moving).
+Sprint 32 row 25: haptic over-limit alerts (`/feature` haptic-alerts).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
