@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 92: Trailer / 5th-wheel TPMS profile (`/feature` trailer-tpms).
+Sprint 32 row 93: GNSS-drop dead reckoning (`/feature` gnss-dead-reckon).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
