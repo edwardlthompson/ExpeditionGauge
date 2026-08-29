@@ -42,6 +42,11 @@ fun PermissionsRationaleScreen(
             text = stringResource(R.string.permissions_camera_stub),
             style = MaterialTheme.typography.bodySmall,
         )
+        Text(
+            text = stringResource(R.string.ble_permission_rationale),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.testTag("ble_permission_rationale"),
+        )
         Button(
             onClick = onRequestPermissions,
             modifier = Modifier

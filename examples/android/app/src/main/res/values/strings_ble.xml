@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ble_permission_rationale">Nearby devices are scanned only to pair IMU, TPMS, OBD, and external GPS. Nothing is uploaded.</string>
+</resources>

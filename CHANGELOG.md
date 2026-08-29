@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Parked autocal waits 5 s of stillness instead of 2.5 s
 * Inclinometer zero can be stored per vehicle id
 * BLE accessory battery icons use low / warn / ok bands
+* BLE scan rationale says pairing-only and that nothing is uploaded
 
 ### Changed
 
