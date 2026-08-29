@@ -8,7 +8,6 @@ import androidx.car.app.Screen
 import androidx.car.app.model.Template
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.CarAppBridgeRegistry
 import dev.foss.expeditiongauge.car.HudStripOrientation
 import dev.foss.expeditiongauge.car.aacanvas.AaCustomCanvas
@@ -16,13 +15,13 @@ import dev.foss.expeditiongauge.car.surface.DriveHudSurfaceCallback
 import dev.foss.expeditiongauge.car.surface.DriveHudSurfacePainter
 
 /**
- * Primary AA screen: full-bleed [NavigationTemplate] Surface painted with a native
+ * Primary AA screen: full-bleed NavigationTemplate Surface painted with a native
  * Drive HUD (3×1 wide or 1×2 tall). Tap attitude cube to cycle modes (requires PAN).
  */
 class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
 
-    private var lockedDisplaySpec: AaDisplaySpec? = null
     private val painter = DriveHudSurfacePainter()
+    private val hudPush = DriveMapHudPush(carContext, painter)
     private val surfaceCallback = DriveHudSurfaceCallback(painter) {
         CarAppBridgeRegistry.bridge?.cycleAttitudeDisplay()
     }
@@ -30,14 +29,12 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
     @Volatile private var surfaceState = AaCustomCanvas.SurfaceState.PENDING
     @Volatile private var lastChromeRecording: Boolean? = null
     @Volatile private var lastChromeMuted: Boolean? = null
-    @Volatile private var lastStripOrientation: HudStripOrientation? = null
-    @Volatile private var loggedCubePx: Int = -1
 
     init {
         painter.onLayoutChanged = {
-            val prevOrientation = lastStripOrientation
-            pushHudToPainter()
-            if (lastStripOrientation != prevOrientation) invalidate()
+            val prevOrientation = hudPush.lastStripOrientation
+            hudPush.push(surfaceLive)
+            if (hudPush.lastStripOrientation != prevOrientation) invalidate()
         }
         val bridge = CarAppBridgeRegistry.bridge
         bridge?.setInvalidationListener { onBridgeInvalidate() }
@@ -59,7 +56,7 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
                     surfaceLive = false
                     surfaceState = AaCustomCanvas.SurfaceState.FAILED
                 }
-                pushHudToPainter()
+                hudPush.push(surfaceLive)
                 if (AaCustomCanvas.kind(surfaceState) == AaCustomCanvas.Kind.PANE) invalidate()
             }
 
@@ -79,7 +76,7 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
     }
 
     fun refreshDisplaySpec() {
-        lockedDisplaySpec = DrivePaneTemplates.readDisplaySpec(carContext)
+        hudPush.refreshDisplaySpec()
     }
 
     fun snapshotSurfaceFrame() = painter.snapshotFrame()
@@ -91,7 +88,7 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
             return paneFallbackTemplate()
         }
         return try {
-            pushHudToPainter()
+            hudPush.push(surfaceLive)
             DriveMapHudTemplates.navigation(
                 carContext, bridge, painter.stripOrientation(),
             ) { invalidate() }
@@ -105,12 +102,12 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
         val bridge = CarAppBridgeRegistry.bridge
             ?: return DrivePaneTemplates.waitingTemplate("Open ExpeditionGauge on phone")
         return DriveMapHudTemplates.paneFallback(
-            carContext, bridge, resolveSpec(),
+            carContext, bridge, hudPush.resolveSpec(),
         ) { invalidate() }
     }
 
     private fun onBridgeInvalidate() {
-        pushHudToPainter()
+        hudPush.push(surfaceLive)
         val bridge = CarAppBridgeRegistry.bridge ?: return
         val recording = bridge.isRecording()
         val muted = bridge.isAlertsMuted()
@@ -126,29 +123,6 @@ class DriveMapHudScreen(carContext: CarContext) : Screen(carContext) {
             invalidate()
         }
     }
-
-    private fun pushHudToPainter() {
-        val bridge = CarAppBridgeRegistry.bridge ?: return
-        val spec = resolveSpec()
-        val orientation = painter.stripOrientation()
-        lastStripOrientation = orientation
-        val cubePx = painter.targetCubePx()
-        if (cubePx != loggedCubePx) {
-            loggedCubePx = cubePx
-            Log.d(TAG, "Surface HUD cubePx=$cubePx orientation=$orientation")
-        }
-        val bmp = bridge.driveHudBitmap(
-            displaySpec = spec,
-            cubePxOverride = cubePx,
-            orientation = orientation,
-        )
-        painter.setHudBitmap(bmp, spec.isDarkMode)
-        if (surfaceLive) painter.requestDraw(force = true)
-    }
-
-    private fun resolveSpec(): AaDisplaySpec =
-        lockedDisplaySpec
-            ?: DrivePaneTemplates.readDisplaySpec(carContext).also { lockedDisplaySpec = it }
 
     companion object {
         private const val TAG = "DriveMapHudScreen"
