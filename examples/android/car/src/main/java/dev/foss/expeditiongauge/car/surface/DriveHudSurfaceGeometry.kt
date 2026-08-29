@@ -61,4 +61,32 @@ internal object DriveHudSurfaceGeometry {
         val cubeDstH = (dst.height() * cubeSrcH) / strip.height
         return y >= dst.top + cubeDstH
     }
+
+    fun isTelemetryCubeTap(
+        x: Float,
+        y: Float,
+        bounds: Rect,
+        orientation: HudStripOrientation,
+        strip: Bitmap?,
+    ): Boolean {
+        if (bounds.width() <= 0 || bounds.height() <= 0) return false
+        if (x < bounds.left || x > bounds.right) return false
+        if (y < bounds.top || y > bounds.bottom) return false
+        return when (orientation) {
+            HudStripOrientation.COLUMN -> y >= bounds.top + bounds.height() / 2f
+            HudStripOrientation.ROW -> {
+                if (strip != null && strip.width > 0 && strip.height > 0) {
+                    val dst = fitRect(strip.width, strip.height, bounds)
+                    val cubeSrcH = minOf(strip.height, strip.width / 3)
+                    val cubeDstH = (dst.height() * cubeSrcH) / strip.height
+                    if (y >= dst.top + cubeDstH) return false
+                    val third = dst.width() / 3f
+                    x >= dst.left + third && x < dst.left + third * 2f
+                } else {
+                    val third = bounds.width() / 3f
+                    x >= bounds.left + third && x < bounds.left + third * 2f
+                }
+            }
+        }
+    }
 }

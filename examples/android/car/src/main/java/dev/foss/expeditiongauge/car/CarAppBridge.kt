@@ -65,6 +65,8 @@ interface CarAppBridge {
     fun isVehicleParked(): Boolean = false
     /** Stored DTC rows for the parked detail pane (empty while moving). */
     fun parkedDtcRows(): List<DriveHudRow> = emptyList()
+    /** Recorded session rows for the parked library pane. */
+    fun parkedLibraryRows(): List<DriveHudRow> = emptyList()
 }
 
 object CarAppBridgeRegistry {

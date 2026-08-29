@@ -9,6 +9,7 @@ class DriveHudSurfaceCallback(
     private val painter: DriveHudSurfacePainter,
     private val onAttitudeTap: (() -> Unit)? = null,
     private val onDtcFooterTap: (() -> Unit)? = null,
+    private val onTelemetryTap: (() -> Unit)? = null,
 ) : SurfaceCallback {
     override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
         painter.onSurfaceAvailable(surfaceContainer)
@@ -37,6 +38,8 @@ class DriveHudSurfaceCallback(
             onDtcFooterTap?.invoke()
         } else if (painter.isAttitudeCubeTap(x, y)) {
             onAttitudeTap?.invoke()
+        } else if (painter.isTelemetryCubeTap(x, y)) {
+            onTelemetryTap?.invoke()
         }
     }
 }

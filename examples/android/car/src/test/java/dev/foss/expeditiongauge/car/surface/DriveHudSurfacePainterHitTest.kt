@@ -24,6 +24,7 @@ class DriveHudSurfacePainterHitTest {
         assertTrue(painter.isAttitudeCubeTap(100f, 150f))
         assertTrue(painter.isAttitudeCubeTap(299f, 10f))
         assertFalse(painter.isAttitudeCubeTap(300f, 150f))
+        assertTrue(painter.isTelemetryCubeTap(450f, 150f))
         assertFalse(painter.isAttitudeCubeTap(800f, 150f))
         assertFalse(painter.isAttitudeCubeTap(100f, 400f))
     }

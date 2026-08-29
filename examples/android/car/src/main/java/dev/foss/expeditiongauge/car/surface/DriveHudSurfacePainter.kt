@@ -50,6 +50,11 @@ class DriveHudSurfacePainter {
             x, y, visible, stableOrientation, hudBitmap.get(),
         )
 
+    fun isTelemetryCubeTap(x: Float, y: Float): Boolean =
+        DriveHudSurfaceGeometry.isTelemetryCubeTap(
+            x, y, visible, stableOrientation, hudBitmap.get(),
+        )
+
     fun onSurfaceAvailable(container: SurfaceContainer) {
         surface = container.surface
         surfaceW = container.width

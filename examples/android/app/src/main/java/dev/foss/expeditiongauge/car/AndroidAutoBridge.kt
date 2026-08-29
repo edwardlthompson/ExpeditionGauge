@@ -39,6 +39,7 @@ class AndroidAutoBridge(
     @Volatile private var alertsMuted: Boolean = false
     @Volatile private var highContrast: Boolean = false
     @Volatile private var storedDtcs: List<DtcEntry> = emptyList()
+    @Volatile private var libraryRows: List<DriveHudRow> = emptyList()
     @Volatile private var invalidationListener: (() -> Unit)? = null
     @Volatile private var toastHandler: ((String) -> Unit)? = null
     private val invalidation = AaScreenInvalidation()
@@ -55,6 +56,10 @@ class AndroidAutoBridge(
         scope = scope, storedDtcsFlow = services.obdManager.storedDtcs,
         onDtcs = { storedDtcs = it }, invalidateForce = { maybeInvalidate(force = true) },
     )
+    private val library = AndroidAutoBridgeSessions(
+        scope, services.database.recordingSessionDao().observeAll(),
+        onRows = { libraryRows = it }, invalidateForce = { maybeInvalidate(force = true) },
+    )
 
     init {
         AndroidAutoBridgeCollectors.start(services, settings, scope) { state, mode, isRecording ->
@@ -68,8 +73,7 @@ class AndroidAutoBridge(
             recording = isRecording
             maybeInvalidate()
         }
-        mute.startCollect()
-        dtc.startCollect()
+        mute.startCollect(); dtc.startCollect(); library.startCollect()
     }
 
     override fun isAndroidAutoEnabled(): Boolean = FeatureFlags.androidAutoCapable
@@ -102,11 +106,11 @@ class AndroidAutoBridge(
         snapshot.toCarMetrics(speedUnit == SpeedUnit.METRIC)
 
     override fun isRecording(): Boolean = recording
-    override fun speakParkedVoice(phrase: String) =
-        hudCompose.speakParked(phrase, isVehicleParked())
+    override fun speakParkedVoice(phrase: String) = hudCompose.speakParked(phrase, isVehicleParked())
     override fun isVehicleParked(): Boolean = ParkedIdleDim.parked(snapshot.speedMps)
     override fun parkedDtcRows(): List<DriveHudRow> =
         AaParkedDtc.rows(storedDtcs.map { it.code to it.description })
+    override fun parkedLibraryRows(): List<DriveHudRow> = libraryRows
 
     override fun startRecording(): Boolean = mutators.startRecording(recording)
     override fun stopRecording(): Boolean = mutators.stopRecording(recording)
@@ -126,12 +130,8 @@ class AndroidAutoBridge(
 
     override fun isAlertsMuted(): Boolean = alertsMuted
     override fun setAlertsMuted(muted: Boolean): Boolean = mute.setAlertsMuted(muted)
-    override fun setInvalidationListener(listener: (() -> Unit)?) {
-        invalidationListener = listener
-    }
-    override fun setToastHandler(handler: ((String) -> Unit)?) {
-        toastHandler = handler
-    }
+    override fun setInvalidationListener(listener: (() -> Unit)?) { invalidationListener = listener }
+    override fun setToastHandler(handler: ((String) -> Unit)?) { toastHandler = handler }
     override fun onCarSessionStarted() {
         CarAppBridgeRegistry.sessionLive = true; services.acquireSensors()
     }
@@ -144,7 +144,4 @@ class AndroidAutoBridge(
         invalidation.maybeInvalidate(snapshot.pitchDeg, snapshot.rollDeg, force, listener)
     }
 
-    companion object {
-        const val AA_INVALIDATE_MIN_INTERVAL_MS = AaScreenInvalidation.AA_INVALIDATE_MIN_INTERVAL_MS
-    }
 }
