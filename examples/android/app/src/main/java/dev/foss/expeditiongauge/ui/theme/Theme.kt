@@ -14,7 +14,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.colorblind.ColorblindHudMode
+import dev.foss.expeditiongauge.nighthud.NightHudPalette
 import dev.foss.expeditiongauge.settings.ColorblindHudStore
+import dev.foss.expeditiongauge.settings.NightHudStore
 
 @Composable
 fun ExpeditionGaugeTheme(
@@ -31,8 +33,12 @@ fun ExpeditionGaugeTheme(
         ThemeMode.Light -> false
         ThemeMode.Dark -> true
     }
+    val nightHudEnabled by remember { NightHudStore(LocalView.current.context) }.enabled
+        .collectAsStateWithLifecycle(true)
     val colorScheme = when {
         highContrastEnabled -> HighContrastExpeditionGaugeColors
+        NightHudPalette.active(brightnessMode == BrightnessMode.Night, nightHudEnabled) ->
+            NightHudExpeditionGaugeColors
         brightnessMode == BrightnessMode.Day -> DayExpeditionGaugeColors
         brightnessMode == BrightnessMode.Night -> DarkExpeditionGaugeColors
         brightnessMode == BrightnessMode.Auto -> if (darkTheme) DarkExpeditionGaugeColors else LightExpeditionGaugeColors

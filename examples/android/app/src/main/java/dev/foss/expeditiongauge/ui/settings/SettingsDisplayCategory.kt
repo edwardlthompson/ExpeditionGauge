@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.ui.settings
 
 import androidx.compose.runtime.Composable
+import dev.foss.expeditiongauge.ui.nighthud.NightHudField
 
 @Composable
 internal fun SettingsDisplayCategory(
@@ -17,6 +18,7 @@ internal fun SettingsDisplayCategory(
         speedUnit = state.speedUnit,
         onSpeedUnitSelect = actions.onSpeedUnitSelect,
     )
+    NightHudField()
     SettingsPresetOptions(
         activePresetId = state.activePresetId,
         onPresetSelected = actions.onPresetSelected,

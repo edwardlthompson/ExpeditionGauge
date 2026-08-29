@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * OBD reconnect soak: eight reconnects each scan immediately
 * User-configurable HUD tile order (Attitude / Telemetry / TPMS)
 * Color-blind HUD palettes (deuteranopia / protanopia / tritanopia)
+* Night HUD amber palette when brightness is Night
 
 ### Changed
 
