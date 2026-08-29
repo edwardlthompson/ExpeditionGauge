@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 115: Predictive back (`/feature` predictive-back). Rows 99–108 and 110–114 are complete.
+Sprint 32 row 116: SAF folder picker (`/feature` saf-folder-picker). Rows 99–108 and 110–115 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
