@@ -8,16 +8,15 @@ import dev.foss.expeditiongauge.data.db.dao.AlertEventDao
 import dev.foss.expeditiongauge.data.db.entities.AlertEventEntity
 import dev.foss.expeditiongauge.alertsnooze.AlertSnooze
 import dev.foss.expeditiongauge.hapticalerts.HapticOverLimit
-import dev.foss.expeditiongauge.presetalerts.PresetAlertThresholds
 import dev.foss.expeditiongauge.settings.AlertSnoozeStore
 import dev.foss.expeditiongauge.settings.HapticAlertsStore
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
+import dev.foss.expeditiongauge.settings.WetTireStore
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class AlertService(
@@ -40,6 +39,7 @@ class AlertService(
     private val attitudeSettleGate = AttitudeSettleGate()
     private val hapticStore = HapticAlertsStore(context)
     private val snoozeStore = AlertSnoozeStore(context)
+    private val wetStore = WetTireStore(context)
     @Volatile
     private var hapticEnabled = true
     @Volatile
@@ -47,12 +47,8 @@ class AlertService(
 
     init {
         scope.launch {
-            combine(
-                thresholdsPreferences.thresholds,
-                profileRepository.activeProfile,
-            ) { global, profile ->
-                PresetAlertThresholds.resolve(profile.presetId, global)
-            }.collect { engine.updateThresholds(it) }
+            resolvedAlertThresholds(thresholdsPreferences, profileRepository, wetStore)
+                .collect { engine.updateThresholds(it) }
         }
         scope.launch {
             hapticStore.enabled.collect { hapticEnabled = it }

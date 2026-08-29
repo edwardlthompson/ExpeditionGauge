@@ -22,6 +22,7 @@ import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.ui.alertsnooze.AlertSnoozeField
 import dev.foss.expeditiongauge.ui.hapticalerts.HapticAlertsField
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
+import dev.foss.expeditiongauge.ui.wettire.WetTireField
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -66,6 +67,7 @@ fun SettingsAlertOptions(
             modifier = Modifier.testTag("settings_alerts_muted"),
         )
         HapticAlertsField()
+        WetTireField()
         AlertSnoozeField()
         Text(
             text = stringResource(R.string.alerts_preset_hint),
