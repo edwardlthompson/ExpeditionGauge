@@ -80,4 +80,6 @@ private fun stepText(step: OnboardingStep): String = when (step) {
     OnboardingStep.FirstRecording -> stringResource(R.string.onboarding_record)
     OnboardingStep.LiveSessionTip -> stringResource(R.string.onboarding_live)
     OnboardingStep.PlaybackReview -> stringResource(R.string.onboarding_playback)
+    OnboardingStep.OfflineMaps -> stringResource(R.string.onboarding_offline_maps)
+    OnboardingStep.PrivacyBackup -> stringResource(R.string.onboarding_privacy_backup)
 }

@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 110: In-app What’s new (`/feature` in-app-whats-new). Rows 99–108 are complete; row 109 crash-review-smoke is backlogged.
+Sprint 32 row 111: Onboarding refresh for v2.18+ (`/feature` onboarding-v218). Rows 99–108 and 110 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

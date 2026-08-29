@@ -33,4 +33,6 @@ enum class OnboardingStep {
     FirstRecording,
     LiveSessionTip,
     PlaybackReview,
+    OfflineMaps,
+    PrivacyBackup,
 }

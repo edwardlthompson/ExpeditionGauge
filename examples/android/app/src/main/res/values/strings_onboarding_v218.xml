@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_offline_maps">Cache map tiles before you leave signal</string>
+    <string name="onboarding_privacy_backup">Export a privacy report and back up settings on-device</string>
+</resources>
