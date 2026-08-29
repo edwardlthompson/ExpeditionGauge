@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 34: AA night mode from car UI (`/feature` aa-night-mode).
+Sprint 32 row 35: AA larger type / TalkBack (`/feature` aa-a11y-type).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
