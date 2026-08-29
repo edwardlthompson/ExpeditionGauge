@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 97: Translation layout stress (`/feature` i18n-layout-stress).
+Sprint 32 row 98: TalkBack on feedback / About (`/feature` talkback-feedback).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
