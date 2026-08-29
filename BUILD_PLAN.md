@@ -155,7 +155,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 37. ✅ [AGENT] `/feature` aa-inclinometer-audio — AA inclinometer alert audio route
 38. ✅ [AGENT] `/feature` aa-parked-dtc — AA parked DTC detail pane
 39. ✅ [AGENT] `/feature` aa-parked-voice — AA parked-only voice Record/Stop
-40. 🔲 [AGENT] `/feature` aa-parked-library — AA parked session library
+40. ✅ [AGENT] `/feature` aa-parked-library — AA parked session library
 41. 🔲 [AGENT] `/feature` aaos-standalone — AAOS standalone APK
 42. 🔲 [ADB] dhu-screenshot-ci — DHU screenshot smoke when head-unit CLI is present
 
