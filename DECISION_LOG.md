@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-29 — Sprint 32 Record / Relive rows 44–73
+- **Status:** Accepted
+- **Context:** Autonomous `/build 44-73` on the template-upgrade branch. Rows 44–69 were already gated; 70–73 remained.
+- **Decision:** Keep new prefs/hooks in dedicated containers (`gpxghostimport`, `ghostsectorcompare`, `ghostvideooverlay`, `trackautodetect`). Do not grow `SettingsPreferences`, `RecordingWriter`, `strings.xml` (300), or Relive `PlaybackScreen`. Ghost burn-in pairs nearest lap/ghost lines; track autodetect closes a GPS loop (≥200 m travel, ≤25 m return) into `TrackLineBuilder` GeoJSON. Named sector compare wraps existing `GhostLapComparer`.
+- **Alternatives considered:** Dual-session Room ghost import (rejected — GPX/FIT text parse is enough). Grow `VideoOverlayCompositor` with ghost fields (rejected — circular draw vs pair; `GhostVideoOverlay` owns pairing). Live-only autodetect without last-session samples (rejected — Track setup should use the latest recording).
+- **Consequences:** `watch-agent-gates --scope auto` passed after 71–73. Sprint 32 Maps/offline starts at row 74. `dhu-screenshot-ci` stays in `HUMAN_BACKLOG.md`.
+
 ### 2026-08-29 — Sprint 31 Golden Path catch-up
 - **Status:** Accepted
 - **Context:** `/build` after template `/upgrade` to v1.0.0. Seven Sequential `/feature` rows were open; product About/Settings already existed.

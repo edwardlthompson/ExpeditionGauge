@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 73: Auto-detect track from GPS (`/feature` track-autodetect).
+Sprint 32 row 74: Offline tile cache completion (`/feature` offline-tile-cache). `/build 44-73` is complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
