@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 22: ambient lux auto-dim (`/feature` ambient-autodim).
+Sprint 32 row 23: parked idle dim (`/feature` parked-idle-dim).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
