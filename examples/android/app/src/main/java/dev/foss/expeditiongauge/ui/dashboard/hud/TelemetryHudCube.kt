@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.crawlhud.CrawlHudDeclutter
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.shiftlight.ShiftLight
@@ -53,15 +54,15 @@ fun TelemetryHudCube(
                 headingDeg = telemetry.headingDeg,
                 useMetric = useMetric,
                 showSpeed = preset.showSpeed,
-                showHeading = preset.showHeading,
+                showHeading = CrawlHudDeclutter.showHeading(hideGpsExtras, preset.showHeading),
                 altitudeM = telemetry.altitudeM,
-                showAltitude = preset.showGps,
+                showAltitude = CrawlHudDeclutter.showAltitude(hideGpsExtras, preset.showGps),
                 uniformCube = true,
                 speedOverLimit = AlertType.SPEED in activeAlerts,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        if (preset.showGps) {
+        if (preset.showGps && !hideGpsExtras) {
             GpsReadoutPanel(
                 latitude = telemetry.latitude,
                 longitude = telemetry.longitude,

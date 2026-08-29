@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
+import dev.foss.expeditiongauge.crawlhud.CrawlHudDeclutter
 import dev.foss.expeditiongauge.offroadhold.OffroadHoldBars
 import dev.foss.expeditiongauge.presets.DashboardPresetId
 import dev.foss.expeditiongauge.gauge.isInclinometerStyle
@@ -36,7 +37,7 @@ fun HudCubeLayout(
     val telemetry = props.telemetry
     val isPortraitLayout = !props.layoutSpec.isLandscape
     val useMetric = props.speedUnit == SpeedUnit.METRIC
-    val hideGpsExtras = props.crawlingMode && props.recording
+    val hideGpsExtras = CrawlHudDeclutter.hideGpsExtras(props.crawlingMode)
     val holdBars = OffroadHoldBars.active(
         crawling = props.crawlingMode,
         offroadPreset = preset.id == DashboardPresetId.Offroad,
