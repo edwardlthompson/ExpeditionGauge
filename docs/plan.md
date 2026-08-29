@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 120: AGP/Kotlin bump validation (`/feature` agp-kotlin-bump). Rows 99–108 and 110–117 are complete; ADB 109/118/119 are backlogged.
+Sprint 32 rows 99–120 (Privacy / chrome / quality) are complete except backlogged ADB 109/118/119. Next open AGENT work is after row 120 on the remaining Sprint 32 board.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

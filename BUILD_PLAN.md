@@ -259,7 +259,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 
 118. 🔲 [ADB] emulator-hud-smoke — Instrumented emulator HUD smoke
 119. 🔲 [ADB] inclinometer-landscape-pack — Inclinometer landscape ADB pack (ADR-0013)
-120. 🔲 [AGENT] `/feature` agp-kotlin-bump — AGP/Kotlin bump validation (KB-026)
+120. ✅ [AGENT] `/feature` agp-kotlin-bump — AGP/Kotlin bump validation (KB-026)
 
 ---
 

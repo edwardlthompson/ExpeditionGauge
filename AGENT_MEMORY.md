@@ -46,6 +46,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Golden Path catch-up | template 1.0.0 | ✅ Sprint 31: crash review, feedback, GitHub issue URLs, sanitizer, high-refresh |
 | Sprint 32 Record/Relive | template 1.0.0 | ✅ `/build 44-73`: live graphs through GPS track autodetect |
 | Sprint 32 Maps–i18n | template 1.0.0 | ✅ `/build 74-98`: offline tiles through TalkBack About |
+| Sprint 32 Privacy–quality | template 1.0.0 | ✅ `/build` 99–120: EXIF strip through AGP pin; ADB 109/118/119 backlogged |
 
 **Template lineage:** `.template-version` **1.0.0** (aligned 2026-08-29). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 

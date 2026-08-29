@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-29 — Sprint 32 Privacy / chrome / quality rows 99–120
+- **Status:** Accepted
+- **Context:** Autonomous `/build` scoped to Privacy / distribution, Product chrome, and Device / quality gates on the template-upgrade branch.
+- **Decision:** Keep each row a named container plus tests. Screenshot EXIF strip is MediaStore key drop + JPEG GPS IFD detect. Settings backup is pipe-encoded (no `org.json`). QR frames `egset|v1|`. Session ZIP listing uses XOR like live encrypt. Share prefers DocumentsUI. F-Droid listing gets license/source/epoch/AntiFeatures/changelog 53. AGP/Kotlin stays 9.2.1 / 2.4.0 (KB-026), no bump. Do not grow `SettingsPreferences`, `strings.xml` (300), `ExpeditionGaugeApp` (298), or `AppScreenSettingsForm`.
+- **Alternatives considered:** Bumping AGP 9.3 / Kotlin 2.4.10 (rejected — KB-026). Growing About/Settings hub past thin wiring (rejected — dedicated buttons). Using `org.json` for settings backup (rejected — Robolectric).
+- **Consequences:** `watch-agent-gates --scope auto` passed after each AGENT row 99–108 and 110–117 and 120. ADB 109/118/119 backlogged in `HUMAN_BACKLOG.md` (no authorized device). Row 109/118/119 stay 🔲.
+
 ### 2026-08-29 — Sprint 32 Maps / live / sensors / i18n rows 74–98
 - **Status:** Accepted
 - **Context:** Autonomous `/build 74-98` on the template-upgrade branch after Record/Relive 44–73.
