@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Relive playback speed stays clamped between 0.25× and 4×
 * Gamepad A/L1/R1 and +/- keys scrub and speed Relive
 * Relive shows a jump list of mark-event bookmarks
+* Relive lists numbered chapters from mark events (or the mark tag)
 
 ### Changed
 
