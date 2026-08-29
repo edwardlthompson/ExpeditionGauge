@@ -32,10 +32,12 @@ Script catalog: [`scripts/expedition/`](scripts/expedition/) · toggles: `projec
 
 ## Sprint 0 — Template Customization + Plan Materialization
 
+<!-- parallel_exception: archived -->
 > Archived @ 2026-06-30 → [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
 
 ## Sprint 1 — Foundation + ADR
 
+<!-- parallel_exception: archived -->
 > Archived @ 2026-06-30 → [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
 
 ---

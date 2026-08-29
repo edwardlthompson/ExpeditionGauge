@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: ExpeditionGauge
+message: If you use this software, please cite it using these metadata.
+type: software
+authors:
+  - name: Edward L. Thompson
+repository-code: https://github.com/edwardlthompson/ExpeditionGauge
+url: https://github.com/edwardlthompson/ExpeditionGauge
+abstract: >-
+  Offline-first FOSS automotive HUD with recording, playback, and Android Auto.
+keywords:
+  - foss
+  - android
+  - hud
+  - expeditiongauge
+  - cursor
+license: MIT
+version: 1.0.0
+date-released: 2026-08-28

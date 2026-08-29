@@ -47,3 +47,5 @@ pwsh scripts/expedition/bootstrap.ps1 -Init
 pwsh scripts/expedition/sync-project-config.ps1
 pwsh scripts/expedition/sprint-signoff.ps1 -Sprint 0
 ```
+
+Template catch-up terms: [**Sacred**](help/GLOSSARY.md), [**Canon**](help/GLOSSARY.md), [**AGENT**](help/GLOSSARY.md), [**HUMAN**](help/GLOSSARY.md), [**ADB**](help/GLOSSARY.md), [**AUTO**](help/GLOSSARY.md).

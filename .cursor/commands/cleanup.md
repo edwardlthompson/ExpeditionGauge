@@ -18,7 +18,6 @@ Prepend a new dated section at the top of @COMPLETED_TASKS.md (immediately after
 ## {Sprint or feature name} ({YYYY-MM-DD})
 
 - ✅ [OWNER] Original description
-
 ```
 
 Copy every ✅ row from the finished block verbatim (keep owner labels and descriptions).
@@ -40,11 +39,18 @@ Remove the archived ✅ rows from the active board.
 
 **Playbook templates** (Child Repo Sprint 0/1/2+ boilerplate): leave 🔲 template rows in place — only archive rows that were actually executed.
 
-## Step 4 — Verify
+## Step 4 — Stale parallel lock
+
+```bash
+python3 scripts/agent-run.py gc-parallel-lock
+python3 scripts/agent-run.py gc-worktrees -- --apply
+
+```
+
+## Step 5 — Verify
 
 ```bash
 python3 scripts/check-file-encoding.py BUILD_PLAN.md COMPLETED_TASKS.md
-
 ```
 
 Active board should contain no ✅ rows except backlogged `[HUMAN]`/`[ADB]` items explicitly left open (see `HUMAN_BACKLOG.md`).

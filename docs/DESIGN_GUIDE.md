@@ -14,6 +14,7 @@
 ```bash
 # Edit design-tokens/design-tokens.json, then:
 python3 scripts/sync-design-tokens.py
+
 ```
 
 Generated outputs (do not hand-edit):
@@ -25,7 +26,6 @@ Generated outputs (do not hand-edit):
 | `examples/android/.../ui/theme/Color.kt` | Android |
 | `examples/android/.../ui/theme/Type.kt` | Android |
 | `examples/android/.../ui/theme/Dimens.kt` | Android |
-
 ## Theme modes (system / light / dark)
 
 Both UI stacks support three modes. Default is **system** (follow OS preference).
@@ -35,7 +35,6 @@ Both UI stacks support three modes. Default is **system** (follow OS preference)
 | System | `isSystemInDarkTheme()` | `data-theme="system"` + `prefers-color-scheme` |
 | Light | `LightGoldenPathColors` | `data-theme="light"` |
 | Dark | `DarkGoldenPathColors` | `data-theme="dark"` |
-
 - **Android:** `ThemeToggle` in top app bar; persisted via DataStore (`ThemePreferences`).
 - **Web:** `ThemeToggle` button; persisted in `localStorage` key `gp-theme`; updates `<meta name="theme-color">`.
 
@@ -50,6 +49,15 @@ Accessibility: toggle labels come from i18n keys (`theme.toggle.label`, `theme.m
 - Alignment: `Alignment.Start` / `End`, not `Left` / `Right`.
 - Buttons: `Modifier.widthIn(min = 48.dp)` minimum touch target; avoid fixed widths for labels.
 
+### Android system bars (edge-to-edge)
+
+- Call `enableEdgeToEdge()` in `MainActivity`; keep status and navigation bar colors **transparent** via `ApplySystemBarStyle`.
+- Use `GoldenPathScaffold` (not raw `Scaffold`) — sets `contentWindowInsets = WindowInsets.safeDrawing` and an inset-aware `SnackbarHost`.
+- Bottom-fixed actions and snackbars: `Modifier.bottomInsetPadding()` from `ui/insets/` (includes 48dp fallback when 3-button nav reports zero inset).
+- Wrap the app in `NavigationModeProvider`; verify detected mode on About (`about.debug_navigation_mode` string).
+- **Do not use `Toast`** for in-app feedback — it ignores Compose insets and renders under the nav bar. Use `SnackbarHost` on the scaffold.
+- Automated verification: `bash scripts/verify-android-insets.sh` (adb sets 3-button/gesture, runs `NavBarInsetUiTest`).
+
 Allowed FOSS dependencies: `androidx.compose.material3`, `androidx.compose.material:material-icons-extended`, `androidx.datastore`. **Never** add `com.google.android.gms` or Firebase.
 
 ## Web (CSS variables)
@@ -58,6 +66,7 @@ Allowed FOSS dependencies: `androidx.compose.material3`, `androidx.compose.mater
 - Use `var(--gp-color-*)`, `var(--gp-space-*)`, `var(--gp-text-*)`.
 - Layout: `margin-inline`, `padding-block`, `text-align: start` for RTL safety.
 - Respect `prefers-reduced-motion: reduce` (see `style.css`).
+- Contrast: `python3 scripts/agent-run.py check-token-contrast` (WCAG 2.2 AA on token pairs).
 - Initialize theme with `initTheme()` before first paint when possible.
 
 ## Localization
@@ -81,6 +90,7 @@ Keep keys aligned across stacks:
 ```
 app.title, app.greeting, app.status.online, app.status.offline
 theme.toggle.label, theme.mode.system, theme.mode.light, theme.mode.dark
+
 ```
 
 ### Layout rules for long strings / RTL
@@ -92,15 +102,28 @@ theme.toggle.label, theme.mode.system, theme.mode.light, theme.mode.dark
 ## Agent checklist (before UI PR)
 
 - 🔲 Tokens changed only in `design-tokens/design-tokens.json` with sync run
-- 🔲 No `#RRGGBB` literals in UI source (except generated files)
+- 🔲 Branding assets updated under `branding/assets/` when the mark changes; sync run
+- 🔲 No `#RRGGBB` literals in UI source (except generated files and `branding/assets/*.svg`)
 - 🔲 No string literals in composables or `main.ts` markup
 - 🔲 Theme toggle still cycles system → light → dark
 - 🔲 `scripts/check-design-cohesion.sh` passes
 
+## Branding pack
+
+Product identity (logos, pitch copy, official color sheet) lives under [`branding/`](../branding/). See [`branding/BRANDING.md`](../branding/BRANDING.md).
+
+| Edit | Then run |
+|------|----------|
+| Colors / type / spacing in `design-tokens/design-tokens.json` | `python3 scripts/sync-design-tokens.py` |
+| Logos / favicon / heroes in `branding/assets/` | `python3 scripts/sync-design-tokens.py` |
+| Name, tagline, pitch in `branding/product.json` | `python3 scripts/generate-project-readme.py` |
+Sync also writes `branding/official-colors.css`, copies web public icons, and emits Android `ic_brand_mark.xml`.
+
+**README modes:** `"mode": "template"` (upstream default) writes only `branding/generated/README.preview.md`. Child repos set `"mode": "product"` so the generator overwrites root `README.md` with a pitch-quality README. Never set product mode on the template itself.
+
 ## Extending the system
 
 Add new semantic colors to `design-tokens.json` under `color`, re-run sync, then reference via `MaterialTheme` or CSS vars. For new components, copy patterns from `GoldenPathScreen` (Android) or `main.ts` + `style.css` (web) — do not introduce one-off styles.
-
 
 ## About screen
 
@@ -110,12 +133,12 @@ Cross-stack in-app About (not GitHub repo About):
 |------------|---------|
 | `about.title`, `about.close`, `about.open` | Navigation |
 | `about.version`, `about.format` | Installed metadata |
-| `about.update.interval.*` | Check interval selector (`off`, `daily`, `weekly`, `monthly`, `on_session`) |
+| `about.update.install`, `about.update.later`, `about.update.message` | Installer prompt (never includes donate) |
 | `about.update.current`, `about.update.available`, `about.update.no_compatible`, `about.update.restarting` | Status copy |
+| `about.donate`, `about.donate.nudge.*`, `about.not_now` | Quiet Venmo donate + once-per-version note |
 | `about.donations.*` | Optional donation encouragement |
+**Update rules:** compare installer filenames (`{Prefix}-X.Y.Z-x64-setup.exe` / `{prefix}-X.Y.Z-foss.apk`), not git tags; daily GitHub check; Later silences that version. PWA `applyPwaUpdate()` stays About-only.
 
-**Update rules:** persist `installed_artifact_format` on first run; `selectReleaseAsset()` exact match only; seamless apply + single restart with `pending_restart` guard.
+**Platform parity:** Launch prompts are donate-or-update, never both. Web `localStorage` (`gp.update.*`); Android SharedPreferences `gp_updates` excluded from Auto Backup.
 
-**Platform parity:** Web applies updates via `applyUpdate.ts` and shows `about.update.restarting` during the restart guard. Android persists `pending_restart` in DataStore and surfaces `about_update_restarting` in `GoldenPathApp` (UI stub only — no in-app APK apply in the exemplar).
-
-**Donations:** public Venmo link is always available from About / Settings (never on the update dialog). Extra `donations.json` links stay optional.
+**Donations:** external Venmo (or `donations.json`) links only; hide block when disabled or empty. Never put donate on the update dialog.

@@ -1,0 +1,18 @@
+# Implementation Plan
+
+> Active work lives in `BUILD_PLAN.md`. This stub satisfies bootstrap SDD presence.
+> Status: 🔲 open · ✅ done · ❌ blocked.
+
+## Milestone — Template catch-up (v1.0.0)
+
+| Task | Owner | Tests / fallback |
+|------|-------|------------------|
+| ✅ Canon/Mixed template machinery | AGENT | `validate-bootstrap.sh --quick` |
+| 🔲 Golden Path catalog rows | HUMAN | Say numbers after `/upgrade` report |
+
+## Next feature
+
+1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
+2. Lock the public API (Sequential)
+3. Add unit tests with the implementation
+4. Run `python3 scripts/agent-run.py watch-agent-gates --once --autofix`

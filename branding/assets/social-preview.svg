@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-label="ExpeditionGauge social preview">
+  <rect width="1280" height="640" fill="#000000"/>
+  <rect x="72" y="72" width="1136" height="496" rx="24" fill="#0A0A0A"/>
+  <rect x="120" y="200" width="160" height="160" rx="32" fill="#e94560"/>
+  <text x="320" y="280" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="700" fill="#FFFFFF">ExpeditionGauge</text>
+  <text x="320" y="360" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="#FFFFFF">Offline-first automotive HUD with recording and playback</text>
+  <text x="320" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#e94560">MIT · FOSS · Android Auto</text>
+</svg>

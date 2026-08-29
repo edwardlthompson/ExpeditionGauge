@@ -9,7 +9,7 @@ cd "$ROOT"
 ADB="${ADB:-adb}"
 ANDROID="$ROOT/examples/android"
 SCREENCAP=false
-TEST_CLASS="dev.foss.expeditiongauge.NavBarInsetUiTest"
+TEST_CLASS="dev.foss.goldenpath.NavBarInsetUiTest"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -51,12 +51,6 @@ run_insets_test() {
   local label="$2"
   echo "=== navigation_mode=$mode ($label) ==="
   "$ADB" shell settings put secure navigation_mode "$mode"
-  local test_src="$ANDROID/app/src/androidTest/java/dev/foss/expeditiongauge"
-  if [ ! -d "$test_src" ]; then
-    echo "SKIP instrumented insets (no androidTest tree); running unit tests"
-    (cd "$ANDROID" && chmod +x gradlew && ./gradlew :app:testDebugUnitTest --no-daemon)
-    return
-  fi
   (cd "$ANDROID" && chmod +x gradlew && ./gradlew connectedDebugAndroidTest \
     -Pandroid.testInstrumentationRunnerArguments.class="$TEST_CLASS" --no-daemon)
   if [ "$SCREENCAP" = true ]; then

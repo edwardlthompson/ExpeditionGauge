@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* Catch up template machinery to agent-project-bootstrap v1.0.0 (`/upgrade`, current Golden Path gates)
+
 ## [2.18.12] — OBD DTC scan on connect (2026-08-28)
 
 ### Fixed

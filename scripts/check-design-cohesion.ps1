@@ -14,26 +14,40 @@ if (-not (Test-Path "design-tokens/design-tokens.json")) {
     Fail "missing design-tokens/design-tokens.json"
 }
 
+$brandFiles = @(
+    "branding/BRANDING.md",
+    "branding/product.json",
+    "branding/product.schema.json",
+    "branding/voice.md",
+    "branding/assets/logo-mark.svg",
+    "branding/official-colors.css",
+    "branding/generated/README.preview.md",
+    "branding/templates/README.product.md"
+)
+foreach ($brandFile in $brandFiles) {
+    if (-not (Test-Path $brandFile)) {
+        Fail "missing $brandFile (run scripts/sync-design-tokens.py and scripts/generate-project-readme.py)"
+    }
+}
+
 $hexPattern = '#[0-9A-Fa-f]{6}\b'
 $contentPattern = 'content\s*:\s*[''"][^''"]{2,}'
 
-if (Test-Path "examples/web/src") {
-    Get-ChildItem -Path "examples/web/src" -Recurse -Include *.css,*.ts -File |
-        Where-Object { $_.Name -ne "design-tokens.css" } |
-        ForEach-Object {
-            if (Select-String -Path $_.FullName -Pattern $hexPattern -Quiet) {
-                Fail "hardcoded hex in $($_.FullName)"
-            }
+Get-ChildItem -Path "examples/web/src" -Recurse -Include *.css,*.ts -File |
+    Where-Object { $_.Name -ne "design-tokens.css" } |
+    ForEach-Object {
+        if (Select-String -Path $_.FullName -Pattern $hexPattern -Quiet) {
+            Fail "hardcoded hex in $($_.FullName)"
         }
+    }
 
-    Get-ChildItem -Path "examples/web/src" -Recurse -Filter *.css -File |
-        Where-Object { $_.Name -ne "design-tokens.css" } |
-        ForEach-Object {
-            if (Select-String -Path $_.FullName -Pattern $contentPattern -Quiet) {
-                Fail "user-facing content property in $($_.FullName) (use locales/*.json)"
-            }
+Get-ChildItem -Path "examples/web/src" -Recurse -Filter *.css -File |
+    Where-Object { $_.Name -ne "design-tokens.css" } |
+    ForEach-Object {
+        if (Select-String -Path $_.FullName -Pattern $contentPattern -Quiet) {
+            Fail "user-facing content property in $($_.FullName) (use locales/*.json)"
         }
-}
+    }
 
 $mainTs = "examples/web/src/main.ts"
 if (Test-Path $mainTs) {
@@ -81,15 +95,21 @@ if (Test-Path "examples/android/app/src/main/java") {
         }
 }
 
-$required = @()
+$required = @("branding/official-colors.css")
 if (Test-Path "examples/web") {
     $required += @(
         "examples/web/src/design-tokens.css",
-        "examples/web/src/theme-meta.json"
+        "examples/web/src/theme-meta.json",
+        "examples/web/public/icon.svg",
+        "examples/web/public/favicon.svg",
+        "examples/web/public/logo.svg"
     )
 }
 if (Test-Path "examples/android") {
-    $required += "examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/theme/Color.kt"
+    $required += @(
+        "examples/android/app/src/main/java/dev/foss/goldenpath/ui/theme/Color.kt",
+        "examples/android/app/src/main/res/drawable/ic_brand_mark.xml"
+    )
 }
 foreach ($path in $required) {
     if (-not (Test-Path $path)) {

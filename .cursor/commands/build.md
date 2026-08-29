@@ -1,8 +1,8 @@
-# Autonomous sprint build — ExpeditionGauge hybrid
+# Autonomous sprint build (end-to-end, automate HUMAN/ADB first)
 
 Execute the BUILD_PLAN **without asking the user questions, presenting options, or waiting for approval.** Pick the single best path internally (### Critique + ### Parallelization in your reasoning only), then implement it.
 
-**Goal:** Complete as much of the active sprint as possible in one run. Run all `[AGENT]`/`[AUTO]` and Parallel work first, then attempt `[HUMAN]`/`[ADB]` rows via automation. Chain sprints until all actionable rows are done, 3-strike failure, or environment block.
+**Goal:** Complete as much of BUILD_PLAN as possible in one run. Run all `[AGENT]`/`[AUTO]` and Parallel work first, then attempt the grouped **Human & device (after automation)** section. Chain sprints until all actionable rows are done, 3-strike failure, or environment block.
 
 ## Rules
 
@@ -12,21 +12,17 @@ Execute the BUILD_PLAN **without asking the user questions, presenting options, 
 - **Never stop** after a single feature row if the active sprint still has open work.
 - **Do stop** only when: (a) 3-strike gate failure, (b) environment block (exit 2) after autofix, or (c) all actionable rows complete (`all_sprints_agent_auto_complete`).
 - On gate failure: run @.cursor/commands/fix.md autonomously (up to 3 strikes) — do not suggest `/fix` and wait.
-- **Parallel inline fallback:** if Task/CLI dispatch unavailable, execute every parallel scope in this session (never defer to a second `/build`).
 
 ## Step 0 — Load sprint state
 
+Use `--lane auto` (not `child`): on this template it selects Ongoing Maintenance; on child repos it still walks the Child Repo Playbook.
+
 ```bash
-python3 scripts/agent-run.py build-sprint-status --json --lane child
+python3 scripts/agent-run.py build-sprint-status --json --lane auto
 
 ```
 
-Optional Windows discovery:
-
-```powershell
-pwsh scripts/expedition/resume-agent.ps1 -NoDispatchParallel
-
-```
+`auto` uses the child playbook on product repos and the Template Maintainer board on this template. Pass `--lane child` only when you mean Sprint 0+.
 
 Write `.cursor-session-state.json` fields: `active_sprint`, `build_plan_lane`, `autonomous_mode: true`.
 
@@ -39,7 +35,7 @@ Repeat until `sprint_agent_auto_complete`:
 ### 1a. Read status
 
 ```bash
-python3 scripts/agent-run.py build-sprint-status --json --lane child
+python3 scripts/agent-run.py build-sprint-status --json --lane auto
 
 ```
 
@@ -49,31 +45,26 @@ python3 scripts/agent-run.py build-sprint-status --json --lane child
 
 | `next_row.action` | Action |
 |-------------------|--------|
-| `automate_human` / `automate_adb` | Run `python3 scripts/agent-run.py attempt-build-plan-row --owner "<owner>" --task "<task>" --sprint "<sprint>" --json`. On exit 0: mark row ✅. On exit 1: `python3 scripts/agent-run.py build-backlog add ...` and **continue** (row stays open). |
-| `execute` | Implement the task; gate after each AGENT step; mark ✅ |
-| `parallel_dispatch` | Run @.cursor/commands/scope.md fully, then `python3 scripts/agent-run.py agent-progress set-parallel-sprint-done --sprint "<sprint>"` |
-| AUTO rows | `python3 scripts/agent-run.py attempt-build-plan-row` (Expedition: `check-v2-*-gate.sh`, `sprint-signoff.ps1`) or run scripts inline; mark ✅ on exit 0 |
-**Expedition ADB:** automation routes to `pwsh scripts/expedition/adb-smoke.ps1 -Sprint <id> -Scenario <name>` when task contains a backtick scenario id.
-
-**Expedition release:** when AUTO row names `create-release.ps1` and `ensure-gh-auth.ps1` exits 0, run release; skip push without `/ship`.
-
+| `automate_human` / `automate_adb` | Run `python3 scripts/agent-run.py attempt-build-plan-row --owner "<owner>" --task "<task>" --sprint "<sprint>" --json`. On exit 0: replace 🔲 → ✅ for that row in BUILD_PLAN.md. On exit 1: `python3 scripts/agent-run.py build-backlog add --owner "<owner>" --task "<task>" --sprint "<sprint>" --reason "<reason from JSON>"` and **continue** (row stays open). |
+| `execute` | Implement the task; for post-Parallel step 3 skip if `parallel_steps_completed` includes `tests`; for step 4 skip if includes `view`; gate; mark ✅ |
+| `parallel_dispatch` | Run @.cursor/commands/scope.md fully, then `python3 scripts/agent-run.py agent-progress set-parallel-sprint-done --sprint "<sprint title>"` |
+| AUTO rows | Run listed scripts/commands to completion; mark ✅ on exit 0 |
 ### 1c. Gate autofix (every AGENT step)
 
 ```bash
-python3 scripts/agent-run.py watch-agent-gates --once --autofix
+python3 scripts/agent-run.py watch-agent-gates --once --autofix --scope auto
 
 ```
 
-On Windows when bash reports `JAVA_HOME not set`:
+`--scope auto` gates only dirty stacks (git vs `HEAD`: `examples/{stack}/`, or preamble-only for docs/changelog/commands). Shared `scripts/` / `schemas/` / `modules/` still run the full multi-stack gate. Print the `gate scope:` line. Override with `--scope full` or `FEATURE_GATE_SCOPE=full`.
 
-```powershell
-Push-Location examples/android; ./gradlew.bat :app:testDebugUnitTest --quiet; Pop-Location
+Exit 1 → fix in scope and re-run (3-strike max). Exit 2 after 3 strikes → halt with evidence; do not ask user.
 
-```
-
-Exit 1 → fix in scope and re-run (3-strike max). Exit 2 after 3 strikes → halt with evidence.
+Skip gates for successful `automate_human`/`automate_adb` no-op/informational steps unless the automation script ran product smoke or init.
 
 ### 1d. Loop
+
+**Gate lock:** do not execute another `next_row` until step 1c `watch-agent-gates` exited 0. Never skip 1c to chain a second feature.
 
 Re-run `build-sprint-status.sh --json` and continue 1a.
 
@@ -82,18 +73,18 @@ Re-run `build-sprint-status.sh --json` and continue 1a.
 When `sprint_agent_auto_complete` for current sprint:
 
 1. @.cursor/commands/gates.md — full local validation
-2. @.cursor/commands/cleanup.md — archive ✅ rows to COMPLETED_TASKS.md
-3. Print summary: sprint name, rows completed, backlogged items (`HUMAN_BACKLOG.md`)
+2. @.cursor/commands/cleanup.md — archive ✅ rows (including auto-completed HUMAN/ADB); backlog items stay open on board
+3. Print brief summary: sprint name, rows completed, rows automated, rows backlogged (`HUMAN_BACKLOG.md`), and pointer to grouped **Human & device (after automation)** section for manual follow-up
 
 ## Step 3 — Chain to next sprint
 
-Re-run `python3 scripts/agent-run.py build-sprint-status --json`.
+Re-run `python3 scripts/agent-run.py build-sprint-status --json --lane auto`.
 
 - If `next_row` exists → **go to Step 1** immediately (no user pause).
-- If `all_sprints_agent_auto_complete` → print final summary.
+- If `all_sprints_agent_auto_complete` → print final summary: all actionable BUILD_PLAN work complete; list `backlogged_human_adb` and `HUMAN_BACKLOG.md` path.
 
 ## Progress logging
 
-Log one line per completed row (owner + task + automated|implemented). User sees sprint summaries only at wrap-up and final exit.
+Log one line per completed row (owner + task + automated|implemented). Do not dump full plans between rows. User sees sprint summaries only at wrap-up and final exit.
 
 Begin now. Do not ask the user anything until the loop exits.

@@ -21,7 +21,10 @@ examples/android/local.properties
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/extensions.json
 *.swp
 .cursor-session-state
 .cursor-session-state.json
@@ -90,3 +93,22 @@ examples/android/captures/
 # Ephemeral agent outputs (examples tracked)
 CODE_REVIEW.md
 RELEASE_NOTES.md
+.cursor/last-feature-gate.json
+.cursor/mcp.json
+.cursor/mcp-audit.log
+.cursor/environment.json
+.cursor/sandbox.json
+CURSOR_RADAR_REPORT.md
+CURSOR_RADAR_BACKLOG.md
+CURSOR_RADAR_SUGGESTIONS.md
+.cursor/gates-status.md
+.cursor/upd-status.md
+.cursor/encoding-strict
+# Cursor plugin pack output (see scripts/pack-cursor-plugin.sh)
+dist/cursor-plugin/
+openvex.json
+# Optional Nix (flake.nix wraps scripts/ only)
+result
+.direnv/
+scratchpad.md
+.cursor/handoff-*.md

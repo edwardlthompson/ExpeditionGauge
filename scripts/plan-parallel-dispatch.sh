@@ -6,7 +6,6 @@ BUILD_PLAN="$ROOT/BUILD_PLAN.md"
 JSON=false
 SUGGEST=false
 REQUIRE_SEQ=false
-WRITE_LOCK=false
 STACK=""
 FEATURE=""
 DRAFT=""
@@ -15,7 +14,6 @@ while [ $# -gt 0 ]; do
     --json) JSON=true ;;
     --suggest) SUGGEST=true ;;
     --require-sequential-clear) REQUIRE_SEQ=true ;;
-    --write-lock) WRITE_LOCK=true ;;
     --stack) shift; STACK="${1:-}" ;;
     --stack=*) STACK="${1#*=}" ;;
     --feature) shift; FEATURE="${1:-}" ;;
@@ -37,7 +35,6 @@ ARGS=(--build-plan "$BUILD_PLAN" manifest)
 [ "$JSON" = true ] && ARGS+=(--json)
 [ "$SUGGEST" = true ] && ARGS+=(--suggest)
 [ "$REQUIRE_SEQ" = true ] && ARGS+=(--require-sequential-clear)
-[ "$WRITE_LOCK" = true ] && ARGS+=(--write-lock)
 [ -n "$STACK" ] && ARGS+=(--stack "$STACK")
 [ -n "$FEATURE" ] && ARGS+=(--feature "$FEATURE")
 python3 "$ROOT/scripts/lib/parallel_scope_cli.py" "${ARGS[@]}"

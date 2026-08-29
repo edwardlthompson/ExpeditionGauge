@@ -22,6 +22,7 @@ FOSS_ENABLED = [
     "feature_radar",
     "plugin_pack",
     "cli_example",
+    "codex_review_example",
     "mcp_foss_example",
 ]
 
@@ -58,7 +59,7 @@ def read_json(path: Path) -> dict:
 
 def write_json(path: Path, data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def set_rule_always_apply(path: Path, enabled: bool) -> None:
@@ -92,18 +93,22 @@ def patch_initialization_distribution(root: Path, tier: str) -> None:
 
 
 def generate_help(root: Path, tier: str) -> None:
+    cmd_n = len(list((root / ".cursor" / "commands").glob("*.md")))
+    skill_n = len([p for p in (root / ".cursor" / "skills").iterdir() if p.is_dir()])
+    agent_n = len(list((root / ".cursor" / "agents").glob("*.md")))
     foss_rows = [
         ("Rules (`.mdc`)", "`.cursor/rules/`", "both"),
-        ("Slash commands (26)", "`.cursor/commands/`", "both"),
+        (f"Slash commands ({cmd_n})", "`.cursor/commands/`", "both"),
         ("Hooks", "`.cursor/hooks.json`", "both"),
-        ("Skills (7)", "`.cursor/skills/`", "both"),
-        ("Subagents (3)", "`.cursor/agents/`", "both"),
+        (f"Skills ({skill_n})", "`.cursor/skills/`", "both"),
+        (f"Subagents ({agent_n})", "`.cursor/agents/`", "both"),
         ("Worktrees", "`.cursor/worktrees.json`", "both"),
         ("Auto-review permissions", "`.cursor/permissions.json`", "both"),
         ("Sandbox (optional)", "`.cursor/sandbox.json.example`", "both"),
         ("Plugin pack", "`.cursor-plugin/plugin.json` + `scripts/pack-cursor-plugin.*`", "both"),
         ("CLI (opt-in)", "`.github/workflow-examples/cursor-agent.yml`", "both"),
-        ("GitHub MCP (optional)", "`.cursor/mcp.foss.example`", "foss"),
+        ("Codex review (opt-in)", "`.github/workflow-examples/codex-review.yml`", "both"),
+        ("GitHub + depsonar MCP (optional)", "`.cursor/mcp.foss.example`", "foss"),
         ("Feature radar", "`scripts/cursor-feature-radar.sh`", "both"),
     ]
     commercial_rows = [
@@ -146,7 +151,9 @@ def generate_help(root: Path, tier: str) -> None:
             ]
         )
     lines.extend(["", "Full matrix: [CURSOR_INTEGRATIONS.md](../CURSOR_INTEGRATIONS.md).", ""])
-    (root / "docs/help/CURSOR_FEATURES.md").write_text("\n".join(lines), encoding="utf-8")
+    (root / "docs/help/CURSOR_FEATURES.md").write_text(
+        "\n".join(lines), encoding="utf-8", newline="\n"
+    )
 
 
 def sync(root: Path, tier: str, copy_commercial: bool, patch_init: bool = False) -> None:
@@ -163,13 +170,19 @@ def sync(root: Path, tier: str, copy_commercial: bool, patch_init: bool = False)
         hidden = []
 
     stack_sel = read_json(cursor_dir / "stack-selection.json")
+    unchanged = (
+        stack_sel.get("distribution_tier") == tier
+        and stack_sel.get("cursor_features_enabled") == enabled
+        and stack_sel.get("cursor_features_hidden") == hidden
+    )
     stack_sel["distribution_tier"] = tier
     stack_sel.setdefault("stack", stack_sel.get("stack", "multi"))
     stack_sel["cursor_features_enabled"] = enabled
     stack_sel["cursor_features_hidden"] = hidden
-    stack_sel["cursor_features_synced_at"] = (
-        datetime.now(timezone.utc).replace(microsecond=0).isoformat()
-    )
+    if not unchanged or not stack_sel.get("cursor_features_synced_at"):
+        stack_sel["cursor_features_synced_at"] = (
+            datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+        )
     write_json(cursor_dir / "stack-selection.json", stack_sel)
 
     manifest = {

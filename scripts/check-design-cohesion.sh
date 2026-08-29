@@ -16,6 +16,22 @@ if [ ! -f design-tokens/design-tokens.json ]; then
   fail "missing design-tokens/design-tokens.json"
 fi
 
+# Branding kit required
+for brand_file in \
+  branding/BRANDING.md \
+  branding/product.json \
+  branding/product.schema.json \
+  branding/voice.md \
+  branding/assets/logo-mark.svg \
+  branding/official-colors.css \
+  branding/generated/README.preview.md \
+  branding/templates/README.product.md
+do
+  if [ ! -f "$brand_file" ]; then
+    fail "missing $brand_file (run scripts/sync-design-tokens.py and scripts/generate-project-readme.py)"
+  fi
+done
+
 # Hex literals in web UI (allow generated design-tokens.css only)
 if [ -d examples/web/src ]; then
   while IFS= read -r -d '' file; do
@@ -96,12 +112,26 @@ if [ -d examples/web/src ]; then
 fi
 
 # Generated outputs should exist when tokens present and stack is active
-REQUIRED_OUTPUTS=()
+REQUIRED_OUTPUTS=(branding/official-colors.css)
 if [ -d examples/web ]; then
-  REQUIRED_OUTPUTS+=(examples/web/src/design-tokens.css examples/web/src/theme-meta.json)
+  REQUIRED_OUTPUTS+=(
+    examples/web/src/design-tokens.css
+    examples/web/src/theme-meta.json
+    examples/web/public/icon.svg
+    examples/web/public/favicon.svg
+    examples/web/public/logo.svg
+  )
 fi
-if [ -d examples/android ]; then
-  REQUIRED_OUTPUTS+=(examples/android/app/src/main/java/dev/foss/expeditiongauge/ui/theme/Color.kt)
+if [ -f examples/android/app/src/main/java/dev/foss/goldenpath/ui/theme/Color.kt ]; then
+  REQUIRED_OUTPUTS+=(
+    examples/android/app/src/main/java/dev/foss/goldenpath/ui/theme/Color.kt
+    examples/android/app/src/main/res/drawable/ic_brand_mark.xml
+  )
+elif [ -d examples/android ]; then
+  # Child product under examples/android — do not require template goldenpath paths.
+  if ! find examples/android -path '*/ui/theme/Color.kt' | grep -q .; then
+    fail "missing Android Color.kt theme tokens"
+  fi
 fi
 for out in "${REQUIRED_OUTPUTS[@]}"; do
   if [ ! -f "$out" ]; then

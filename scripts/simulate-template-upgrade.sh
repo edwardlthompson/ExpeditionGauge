@@ -7,23 +7,27 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
-# Native Windows git cannot clone file:///c/Users/... (MSYS). Prefer cygpath -m.
-CLONE_SRC="$ROOT"
-if command -v cygpath >/dev/null 2>&1; then
-  CLONE_SRC="$(cygpath -m "$ROOT")"
-elif [[ "$ROOT" =~ ^/([a-zA-Z])/(.*)$ ]]; then
-  drive="$(echo "${BASH_REMATCH[1]}" | tr '[:lower:]' '[:upper:]')"
-  CLONE_SRC="${drive}:/${BASH_REMATCH[2]}"
+# Python 3.14+ pyrepl on Windows can hang during pwsh init (KB-014).
+export PYTHON_BASIC_REPL="${PYTHON_BASIC_REPL:-1}"
+export PYTHONUNBUFFERED="${PYTHONUNBUFFERED:-1}"
+export PYTHONIOENCODING="${PYTHONIOENCODING:-utf-8}"
+# git clone never copies hooks; child --quick still skips the local hook gate.
+export BOOTSTRAP_UPGRADE_SIM=1
+# Child init validates workflow refs; CI must pass github.token as GH_TOKEN.
+if [ -n "${GITHUB_TOKEN:-}" ] && [ -z "${GH_TOKEN:-}" ]; then
+  export GH_TOKEN="$GITHUB_TOKEN"
 fi
+
+child_quick() {
+  # Laptop-like --quick: optional linters skip if missing (do not inherit template CI).
+  env -u CI -u GITHUB_ACTIONS -u REQUIRE_ACTION_LINT -u REQUIRE_HADOLINT \
+    -u REQUIRE_SHELLCHECK -u REQUIRE_SEMGREP \
+    bash scripts/validate-bootstrap.sh --quick
+}
 
 echo "==> Simulating template upgrade in $WORKDIR"
 
-# Git for Windows writes to the Windows path; MSYS /tmp destinations can "succeed" with no files.
-CLONE_DEST="$WORKDIR/child"
-if command -v cygpath >/dev/null 2>&1; then
-  CLONE_DEST="$(cygpath -m "$WORKDIR")/child"
-fi
-git clone --quiet "file://$CLONE_SRC" "$CLONE_DEST"
+git clone --quiet "file://$ROOT" "$WORKDIR/child"
 cd "$WORKDIR/child"
 
 AREAS=(
@@ -46,7 +50,7 @@ for path in "${AREAS[@]}"; do
   fi
 done
 
-bash scripts/validate-bootstrap.sh --quick
+child_quick
 bash scripts/validate-template-index.sh
 
 echo "==> Non-interactive init smoke (web stack, no prune)"
@@ -55,9 +59,69 @@ bash scripts/init-project.sh \
   --stack web \
   --project-name "Upgrade Sim" \
   --purpose "Cherry-pick validation" \
-  --no-prune
+  --no-prune \
+  --license MIT
 
-bash scripts/validate-bootstrap.sh --quick
+for path in \
+  bootstrap.config.json \
+  PROJECT_CHECKLIST.md \
+  CLAUDE.md \
+  GEMINI.md \
+  CONVENTIONS.md \
+  .clinerules \
+  .github/copilot-instructions.md \
+  .cursor/rules/main.mdc \
+  .windsurf/rules/agents-pointer.md \
+  .continue/rules/agents.md \
+  docs/spec.md \
+  docs/plan.md \
+  docs/BEST_PRACTICES.md \
+  docs/FIRST_30_DAYS.md \
+  docs/help/TOUR.md \
+  docs/AGENT_PORTABILITY.md \
+  SUPPORT.md \
+  CITATION.cff \
+  env.schema.json \
+  .devcontainer/Dockerfile \
+  .agent/memory/decisions.md \
+  .agent/memory/pitfalls.md \
+  scripts/verify.sh
+do
+  if [ ! -e "$path" ]; then
+    echo "FAIL: missing after init: $path"
+    exit 1
+  fi
+done
+python3 -c "import json; json.load(open('bootstrap.config.json', encoding='utf-8'))"
+if ! grep -q 'Upgrade Sim' AGENTS.md; then
+  echo "FAIL: AGENTS.md was not stamped with project name"
+  exit 1
+fi
+
+SACRED_MARK="upgrade-sim-sacred-agents-md"
+printf '\n<!-- %s -->\n' "$SACRED_MARK" >> AGENTS.md
+for path in "${AREAS[@]}"; do
+  case "$path" in
+    AGENTS.md|docs/spec.md|docs/plan.md|docs/INITIALIZATION_PROMPT.md)
+      echo "FAIL: Sacred path $path must not be in upgrade AREAS"
+      exit 1
+      ;;
+  esac
+  if [ -f "$ROOT/$path" ]; then
+    mkdir -p "$(dirname "$path")"
+    cp "$ROOT/$path" "$path"
+  fi
+done
+if ! grep -q "$SACRED_MARK" AGENTS.md; then
+  echo "FAIL: Sacred AGENTS.md was overwritten during upgrade cherry-pick"
+  exit 1
+fi
+if ! grep -q 'Upgrade Sim' AGENTS.md; then
+  echo "FAIL: stamped project name lost from AGENTS.md"
+  exit 1
+fi
+
+child_quick
 
 echo "==> Non-interactive init smoke with --prune --prune-optional"
 git clone --quiet "file://$ROOT" "$WORKDIR/child-prune"
@@ -83,17 +147,18 @@ for path in examples/python examples/android examples/node modules/python module
     exit 1
   fi
 done
-bash scripts/validate-bootstrap.sh --quick
+child_quick
 echo "Prune-optional smoke passed"
 
 echo "==> Non-interactive init smoke (PowerShell)"
 if ! command -v pwsh >/dev/null 2>&1; then
-  echo "SKIP PowerShell init smoke (pwsh not in PATH)"
+  echo "SKIP PowerShell init smoke (pwsh not on PATH)"
 else
   git clone --quiet "file://$ROOT" "$WORKDIR/child-ps"
   cd "$WORKDIR/child-ps"
 
-  pwsh -NoProfile -File scripts/init-project.ps1 \
+  PYTHON_BASIC_REPL=1 PYTHONUNBUFFERED=1 PYTHONIOENCODING=utf-8 \
+    pwsh -NoProfile -File scripts/init-project.ps1 \
     -NonInteractive \
     -Stack web \
     -ProjectName "Upgrade Sim PS" \
@@ -101,7 +166,7 @@ else
     -Prune \
     -PruneOptional
 
-  bash scripts/validate-bootstrap.sh --quick
+  child_quick
   echo "PowerShell init smoke passed"
 fi
 

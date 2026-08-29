@@ -37,17 +37,67 @@ REQUIRED=(
   THIRD_PARTY_LICENSES.md
   .env.example
   design-tokens/design-tokens.json
+  branding/BRANDING.md
+  branding/product.json
+  branding/assets/logo-mark.svg
+  branding/official-colors.css
+  branding/generated/README.preview.md
   docs/help/BATCH_COMMANDS.md
+  docs/help/batch-commands-print.html
+  docs/help/UPGRADE.md
   docs/BATCH_COMMANDS.md
   .cursor/rules/batch-commands.mdc
   CODE_REVIEW.md.example
   RELEASE_NOTES.md.example
+  scratchpad.md.example
+  docs/features/_handoff.md
+  schemas/features/feature-spec.schema.json
+  schemas/features/feature-spec.contract.json
+  docs/spec.md
+  docs/plan.md
+  docs/BEST_PRACTICES.md
+  docs/FIRST_30_DAYS.md
+  docs/first-30-days.json
+  docs/WINGET.md
+  docs/AGENT_PORTABILITY.md
+  docs/help/TOUR.md
+  docs/help/IDEAS.md
+  docs/help/ALLIDEAS.md
+  docs/help/GLOSSARY.md
+  docs/help/COACH.md
+  docs/help/DEBUG.md
+  docs/help/ADR.md
+  scripts/check-doc-links.sh
+  bootstrap.config.json.example
+  PROJECT_CHECKLIST.md
+  CLAUDE.md
+  GEMINI.md
+  CONVENTIONS.md
+  .clinerules
+  .github/copilot-instructions.md
+  .cursor/rules/main.mdc
+  .windsurf/rules/agents-pointer.md
+  .continue/rules/agents.md
+  templates/licenses/Apache-2.0.txt
+  env.schema.json
+  .devcontainer/Dockerfile
+  .devcontainer/devcontainer.json
+  .agent/memory/decisions.md
+  .agent/memory/pitfalls.md
+  .agent/skills/README.md
+  scripts/verify.sh
+  scripts/check-agent-adapters.sh
+  SUPPORT.md
+  CITATION.cff
+  .vscode/tasks.json
+  .vscode/extensions.json
 )
 
 BATCH_COMMANDS=(
   audit cleanup debug gates triage dependabot push prerelease regress
   feature fix init prune ci docs upgrade setup plan restore compact scope
-  bootstrap verify build ship maintain
+  bootstrap verify build ship maintain coach tour ideas allideas
+  codex-review update-deps best-of-n emulator
 )
 
 for cmd in "${BATCH_COMMANDS[@]}"; do
@@ -110,7 +160,46 @@ if ! python3 scripts/lib/run_checks_parallel.py \
   check-cursor-hooks.sh \
   check-build-plan-parallel.sh \
   check-template-version-sync.sh \
-  validate-template-index.sh
+  validate-template-index.sh \
+  check-bootstrap-engine.sh \
+  check-agent-adapters.sh \
+  check-env.sh \
+  check-doc-links.sh \
+  check-pre-commit-hooks.sh \
+  check-workflow-action-ref-format.sh \
+  check-feature-specs.sh \
+  check-i18n-parity.sh \
+  check-token-contrast.sh \
+  check-glossary-links.sh \
+  check-action-workflows.sh \
+  check-shellcheck.sh \
+  check-psscriptanalyzer.sh \
+  check-hadolint.sh \
+  check-md-yaml-lint.sh \
+  check-reuse.sh \
+  check-openvex.sh \
+  check-package-attestation-docs.sh \
+  check-github-settings-yml.sh \
+  check-merge-queue-docs.sh \
+  check-pages-analytics.sh \
+  check-readme-badges.sh \
+  check-playwright-cache.sh \
+  check-android-cmdline-tools.sh \
+  check-nix-flake.sh \
+  check-auto-review.sh \
+  check-gitleaks-baseline.sh \
+  check-semgrep.sh \
+  check-mcp-allowlist.sh \
+  check-crash-payload-allowlist.sh \
+  check-first-30-days.sh \
+  check-contributing-agent.sh \
+  check-template-upgrade-form.sh \
+  check-ideas-discussion.sh \
+  check-adr-command.sh \
+  check-readme-mermaid.sh \
+  check-social-preview.sh \
+  check-fdroid-screenshots.sh \
+  check-winget-runbook.sh
 then
   ERRORS=$((ERRORS + 1))
 fi
@@ -133,7 +222,7 @@ if [ "$ERRORS" -gt 0 ]; then
 fi
 
 if [ "$QUICK" = true ]; then
-  echo "Bootstrap validation passed (--quick: skipped validate-workflow-actions)"
+  echo "Bootstrap validation passed (--quick: skipped GitHub API action resolve; format check ran)"
 else
   echo "Bootstrap validation passed"
 fi

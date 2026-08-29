@@ -2,9 +2,11 @@
 
 Child repos do not auto-sync with the upstream template. Use this guide when the update checker notifies you of a new release.
 
+In Cursor, type `/upgrade`. On a **child** the agent compares this project to the template and writes a plan. It does not apply changes until you name item numbers. Other IDEs: [`docs/help/UPGRADE.md`](help/UPGRADE.md). On **this** template repo, `/upgrade` still runs the upgrade simulation.
+
 ## Step 1: Read the Notification
 
-Run `scripts/check-template-updates.sh` or check the devcontainer postStart output.
+Run `scripts/check-template-updates.sh` or check the devcontainer postStart output. The agent entry is `/upgrade` (also runs `check-template-gaps`).
 
 ## Step 2: Review CHANGELOG
 
@@ -12,51 +14,42 @@ Read the upstream release notes at `github.com/edwardlthompson/agent-project-boo
 
 ## Step 3: Cherry-Pick by Area
 
-| Changed area | Strategy | Owner |
-|-------------|----------|-------|
-| `.github/workflows/` | Cherry-pick or manual merge | AGENT + HUMAN review |
-| `.cursor/rules/` | Copy new/changed `.mdc` files | AGENT |
-| `docs/CURSOR_MODES.md` | Copy; canonical Cursor mode router | AGENT |
-| `.cursor/rules/cursor-modes.mdc` | Copy with other rules | AGENT |
-| `.cursor/commands/` | Copy all slash command files | AGENT |
-| `.cursor/rules/batch-commands.mdc` | Copy with other rules | AGENT |
-| `docs/help/BATCH_COMMANDS.md` | Copy human cheat sheet | AGENT |
-| `docs/BATCH_COMMANDS.md` | Copy agent registry | AGENT |
-| `CODE_REVIEW.md.example` | Copy audit template | AGENT |
-| `RELEASE_NOTES.md.example` | Copy release draft template | AGENT |
-| `scripts/check-batch-commands.sh` | Copy with validate-bootstrap | AGENT |
-| `docs/INITIALIZATION_PROMPT.md` | Manual review; do not blind overwrite | HUMAN |
-| `scripts/` | Copy updated scripts | AGENT |
-| `scripts/check-file-encoding.sh` | Copy + add CI/pre-commit gate | AGENT |
-| `scripts/validate-bootstrap.sh` | Copy expanded validation | AGENT |
-| `scripts/check-changelog-unreleased.sh` | Copy with validate-bootstrap | AGENT |
-| `scripts/check-license-compliance.sh` | Copy strict license gate | AGENT |
-| `.github/workflows/dependency-review.yml` | Cherry-pick workflow | AGENT + HUMAN review |
-| `.cursor/rules/destructive-ops.mdc` | Copy new rule file | AGENT |
-| `.env.example` | Merge new vars; never overwrite local `.env` | AGENT |
-| `LICENSE` | Verify MIT still applies | HUMAN |
-| `examples/` | Reference only unless adopting new stack | HUMAN decision |
-| `TEMPLATE_INDEX.json` | Run validate script after merge | AGENT |
-| `.cursor/hooks/` + `hooks.json` | Copy FOSS hooks; review `shell-denylist.txt` for child scripts | AGENT |
-| `.cursor/skills/` | Copy parallel-scope, validate-bootstrap, watch-gates-autofix | AGENT |
-| `.cursor/agents/` | Copy explorer, gate-fixer, verifier subagents | AGENT |
-| `scripts/build-sprint-status.sh` + `scripts/lib/build_sprint.py` | Copy; patch playbook marker for child BUILD_PLAN sections | AGENT |
-| `scripts/lib/human_task_automation.py` | Copy; extend with child ADB/AUTO delegates | AGENT |
-| `HUMAN_BACKLOG.md.example` | Copy; never overwrite live `HUMAN_BACKLOG.md` | AGENT |
-| `scripts/expedition/*` | Child-only — do not overwrite from template | HUMAN |
-| `examples/android/` (product app) | Child-only — reference GoldenPath patterns only | HUMAN |
-| `.cursor/rules/local-compute.mdc` | Copy (0.15 local-first compute) | AGENT |
-| `.cursor/permissions.json` | Copy; keep dual-layer with destructive-ops | AGENT |
-| `.cursor/worktrees.json` + `setup-worktree-*.{sh,ps1}` | Copy as a set | AGENT |
-| `.cursor/skills/*` (7 skills) | Copy new/changed SKILL.md | AGENT |
-| `scripts/lib/run_checks_parallel.py` | Copy; wire via `validate-bootstrap.sh` | AGENT |
-| `docs/CURSOR_CLI.md` | Copy | AGENT |
-| `.cursor-plugin/` + `scripts/pack-cursor-plugin.*` | Copy FOSS plugin pack | AGENT |
-| `.github/workflows/release-please-automerge.yml` | Skip on ExpeditionGauge — RP gated to template repo; Android ships via Gradle | HUMAN (closed N/A) |
-| `docs/BOOTSTRAP_ALIGNMENT.md` | Child gap/risk log for this upgrade | AGENT |
+**Re-run policy:** **Canon** — overwrite with upstream. **Mixed** — merge (child may have local lines). **Sacred** — never blind-overwrite.
 
-See also: [`docs/BOOTSTRAP_ALIGNMENT.md`](BOOTSTRAP_ALIGNMENT.md).
-
+| Changed area | Strategy | Owner | Re-run policy |
+|-------------|----------|-------|---------------|
+| `.github/workflows/` | Cherry-pick or manual merge | AGENT + HUMAN review | Mixed |
+| `.gitignore` | Merge new ignore rules | AGENT | Mixed |
+| `.cursor/rules/` | Copy new/changed `.mdc` files | AGENT | Canon |
+| `docs/CURSOR_MODES.md` | Copy; canonical Cursor mode router | AGENT | Canon |
+| `.cursor/rules/cursor-modes.mdc` | Copy with other rules | AGENT | Canon |
+| `.cursor/commands/` | Copy all slash command files | AGENT | Canon |
+| `.cursor/rules/batch-commands.mdc` | Copy with other rules | AGENT | Canon |
+| `docs/help/BATCH_COMMANDS.md` | Copy human cheat sheet | AGENT | Canon |
+| `docs/BATCH_COMMANDS.md` | Copy agent registry | AGENT | Canon |
+| `CODE_REVIEW.md.example` | Copy audit template | AGENT | Canon |
+| `RELEASE_NOTES.md.example` | Copy release draft template | AGENT | Canon |
+| `scratchpad.md.example` | Copy working-memory stub | AGENT | Canon |
+| `docs/features/_handoff.md` | Copy parallel handoff stub | AGENT | Canon |
+| `scripts/check-batch-commands.sh` | Copy with validate-bootstrap | AGENT | Canon |
+| `docs/INITIALIZATION_PROMPT.md` | Manual review; do not blind overwrite | HUMAN | Sacred |
+| Child `AGENTS.md` (after init) | Never blind-overwrite | HUMAN | Sacred |
+| `docs/spec.md`, `docs/plan.md` | Merge product text; keep section headings | HUMAN | Sacred |
+| `CLAUDE.md`, `GEMINI.md`, `CONVENTIONS.md`, `.clinerules`, `.github/copilot-instructions.md`, `.cursor/rules/main.mdc`, `.windsurf/rules/`, `.continue/rules/` | Re-run `bootstrap-lifecycle.sh --sync-adapters` after AGENTS.md merge | AGENT | Canon |
+| `bootstrap.config.json` | Merge keys; keep child values | AGENT | Mixed |
+| `PROJECT_CHECKLIST.md` | Keep child progress; add new rows from upstream | HUMAN | Mixed |
+| `scripts/` | Copy updated template scripts | AGENT | Canon |
+| `scripts/check-file-encoding.sh` | Copy + add CI/pre-commit gate | AGENT | Canon |
+| `scripts/validate-bootstrap.sh` | Copy expanded validation | AGENT | Canon |
+| `scripts/check-changelog-unreleased.sh` | Copy with validate-bootstrap | AGENT | Canon |
+| `scripts/check-license-compliance.sh` | Copy strict license gate | AGENT | Canon |
+| `.github/workflows/dependency-review.yml` | Cherry-pick workflow | AGENT + HUMAN review | Mixed |
+| `.cursor/rules/destructive-ops.mdc` | Copy new rule file | AGENT | Canon |
+| `.env.example` | Merge new vars; never overwrite local `.env` | AGENT | Mixed |
+| Live `.env`, `scratchpad.md`, `CODE_REVIEW.md` | Never overwrite | HUMAN | Sacred |
+| `LICENSE` | Verify MIT still applies | HUMAN | Sacred |
+| `examples/` | Reference only unless adopting new stack | HUMAN decision | Sacred |
+| `TEMPLATE_INDEX.json` | Merge then run validate script | AGENT | Mixed |
 ## Version Compatibility
 
 | Upgrade | Notes |

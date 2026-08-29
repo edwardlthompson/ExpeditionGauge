@@ -5,8 +5,18 @@
 </p>
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
+![Template](https://img.shields.io/badge/template-1.0.0-0969da?style=flat-square)
+![FOSS](https://img.shields.io/badge/FOSS-no_tracking-656d76?style=flat-square)
+[![CI](https://img.shields.io/github/actions/workflow/status/edwardlthompson/ExpeditionGauge/ci.yml?style=flat-square&label=CI)](https://github.com/edwardlthompson/ExpeditionGauge/actions/workflows/ci.yml)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
 ![Version](https://img.shields.io/badge/version-2.17.0-0969da?style=flat-square)
+![AGENT](https://img.shields.io/badge/AGENT-Cursor_Agent-2ea043?style=flat-square)
+![HUMAN](https://img.shields.io/badge/HUMAN-Human_Developer-0969da?style=flat-square)
+![ADB](https://img.shields.io/badge/ADB-Android_Device-bf8700?style=flat-square)
+![AUTO](https://img.shields.io/badge/AUTO-CI_Scripts-656d76?style=flat-square)
+![web](https://img.shields.io/badge/web-stack-646cff?style=flat-square)
+![python](https://img.shields.io/badge/python-stack-3776AB?style=flat-square)
+![android](https://img.shields.io/badge/android-stack-3DDC84?style=flat-square)
 
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 

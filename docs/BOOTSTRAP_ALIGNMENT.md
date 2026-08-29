@@ -1,11 +1,11 @@
 # Bootstrap Alignment - ExpeditionGauge vs agent-project-bootstrap
 
-> Living gap analysis and migration notes for aligning this child repo with upstream template **v0.15.1**.
+> Living gap analysis and migration notes for aligning this child repo with upstream template **v1.0.0** (catch-up from 0.15.1).
 > Local baseline at start of this pass: **0.11.1**. Do not treat as greenfield bootstrap.
 
 **Upstream:** https://github.com/edwardlthompson/agent-project-bootstrap
 **Stack:** Android FOSS (`project.config.json` -> `stack: android`)
-**Product:** `examples/android/` ù `dev.foss.expeditiongauge`
+**Product:** `examples/android/`  -  `dev.foss.expeditiongauge`
 
 ## Already matches (0.11.1 baseline)
 
@@ -40,7 +40,7 @@
 
 | Item | Decision |
 |------|----------|
-| `release-please-automerge.yml` | **N/A** ù RP disabled for this child; Android release path |
+| `release-please-automerge.yml` | **N/A**  -  RP disabled for this child; Android release path |
 | Commercial tier | Skip |
 | FOSS 0.15 Cursor surfaces | Adopt |
 | CI workflows | Surgical / allowlist only |
@@ -88,7 +88,7 @@ Compared shared workflows against upstream v0.15.1. **No workflow files were rep
 | `stale.yml` | Same | None |
 | `weekly-health-check.yml` | Differs (child push stub) | Skip |
 | `verify-plan.yml` | Child-only | Keep |
-| `release-please-automerge.yml` | Upstream-only | Skip ù N/A on child (R2 closed) |
+| `release-please-automerge.yml` | Upstream-only | Skip  -  N/A on child (R2 closed) |
 
 Explicit skips:
 
@@ -106,13 +106,13 @@ Explicit skips:
 - Added FOSS `.cursor-plugin/` + `scripts/pack-cursor-plugin.*`, `docs/CURSOR_CLI.md`, `docs/BOOTSTRAP_ALIGNMENT.md`
 - Updated `AGENTS.md`, `docs/CURSOR_INTEGRATIONS.md`, `docs/START_HERE.md`, `docs/UPGRADING_FROM_TEMPLATE.md`, README agent section
 - Merged `scripts/lib/check_cursor_integrations.py` (7 skills + permissions/worktrees; kept quiet-shell agent surface check)
-- Surgical CI: documented skips only ù no workflow file replacements; automerge deferred
+- Surgical CI: documented skips only  -  no workflow file replacements; automerge deferred
 - Bumped `.template-version` / manifest / `TEMPLATE_INDEX` / `.template-sync-sha` to **0.15.1**
 - Gates green: encoding, hooks smoke, `validate-bootstrap --quick`, hygiene, cursor-integrations, watch-agent-gates
 
 ### Residual `[HUMAN]` / manual
 
-1. ~~Evaluate Release Please automerge~~ ó closed **N/A** (RP template-only; ship via Gradle + `create-release.ps1`)
+1. ~~Evaluate Release Please automerge~~  -  closed **N/A** (RP template-only; ship via Gradle + `create-release.ps1`)
 2. Optional: purge gitignored root `*.apk` / `*.idsig` via `purge-ephemeral`
 3. Optional: full `validate-bootstrap` (non-quick) with `BOOTSTRAP_CHECK_JOBS=2`
 

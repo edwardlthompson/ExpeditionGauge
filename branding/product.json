@@ -1,0 +1,39 @@
+{
+  "mode": "product",
+  "name": "ExpeditionGauge",
+  "short_name": "ExpeditionGauge",
+  "tagline": "Offline-first automotive HUD with recording and playback",
+  "pitch": "ExpeditionGauge is a FOSS Compose HUD for off-road and track driving: gauges, GPS/IMU fusion, BLE sensors, session recording, and playback.",
+  "features": [
+    "Compose HUD gauges with GPS/IMU fusion and BLE sensors",
+    "Session recording and playback with export",
+    "Android Auto Drive HUD (FOSS, no Play Services)",
+    "OBD-II Classic readout including immediate DTC scan on connect",
+    "Offline-first MIT FOSS with Dependabot, CodeQL, and gitleaks defaults"
+  ],
+  "quick_start": [
+    "Clone the repo and open it in Cursor. Follow `docs/START_HERE.md`. First-time walk: `docs/help/TOUR.md` (Cursor: `/tour`).",
+    "Build the Android app from `examples/android/` (package `dev.foss.expeditiongauge`).",
+    "Use `/upgrade` to catch up template machinery; never run `init-project.sh` on this child."
+  ],
+  "install": "Android SDK / JDK 21. See `modules/android/MODULE.md` and `examples/android/README.md`.",
+  "usage": "Use `/build` for the next BUILD_PLAN `[AGENT]` row and `/verify` before merge. Device work uses `scripts/expedition/*.ps1`.",
+  "urls": {
+    "docs": "docs/START_HERE.md",
+    "contributing": "CONTRIBUTING.md",
+    "security": "SECURITY.md",
+    "license": "LICENSE",
+    "design": "docs/DESIGN_GUIDE.md",
+    "branding": "branding/BRANDING.md",
+    "github_repo": "edwardlthompson/ExpeditionGauge"
+  },
+  "badge": {
+    "primary": "e94560",
+    "secondary": "4A5F82",
+    "license": "2ea043",
+    "foss": "656d76"
+  },
+  "stacks": [
+    "android"
+  ]
+}

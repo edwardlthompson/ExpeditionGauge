@@ -1,33 +1,56 @@
 #!/usr/bin/env bash
 # Pre-release gate: CI green, zero Critical/High Dependabot alerts, template version present.
-# Usage: scripts/pre-release-gate.sh
+# Usage: scripts/pre-release-gate.sh [--local]
+#   --local  Skip GitHub CI wait, Dependabot API, Scorecard, branch protection.
+#            Runs local audit-deps instead. Default (no flag) is the full GitHub gate.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+LOCAL=false
+for arg in "$@"; do
+  case "$arg" in
+    --local) LOCAL=true ;;
+    -h|--help)
+      echo "Usage: scripts/pre-release-gate.sh [--local]"
+      echo "  --local  Skip GitHub CI wait, Dependabot API, Scorecard, branch protection."
+      echo "           Runs local audit-deps instead. Default (no flag) is the full GitHub gate."
+      exit 0
+      ;;
+  esac
+done
+
 ERRORS=0
 VERSION=""
 
-echo "=== Pre-release gate ==="
+if [ "$LOCAL" = true ]; then
+  echo "=== Pre-release gate (local) ==="
+else
+  echo "=== Pre-release gate ==="
+fi
 
-# Child repos set project.config.json "stack" (e.g. android). Template maintainers use multi.
-STACK="$(python3 -c "import json; print(json.load(open('project.config.json',encoding='utf-8')).get('stack','multi'))" 2>/dev/null || echo multi)"
-STACK="${STACK:-multi}"
-echo "Feature gate stack=${STACK}"
-
-if ! bash scripts/feature-gate.sh --stack "$STACK" --strict --json; then
+if ! bash scripts/feature-gate.sh --stack multi --strict --json; then
   echo "FAIL: feature-gate.sh"
   ERRORS=$((ERRORS + 1))
 else
   echo "OK   feature-gate.sh passed"
 fi
 
-if ! bash scripts/check-security-triage.sh --wait-ci 300 --strict; then
-  echo "FAIL: security-triage.sh --strict"
-  ERRORS=$((ERRORS + 1))
+if [ "$LOCAL" = true ]; then
+  if ! python3 scripts/agent-run.py update-deps -- --audit; then
+    echo "FAIL: local audit-deps"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo "OK   local audit-deps passed"
+  fi
 else
-  echo "OK   security-triage.sh --strict passed"
+  if ! bash scripts/check-security-triage.sh --wait-ci 300 --strict; then
+    echo "FAIL: security-triage.sh --strict"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo "OK   security-triage.sh --strict passed"
+  fi
 fi
 
 if [ ! -f .template-version ]; then
@@ -63,6 +86,19 @@ if ! bash scripts/check-license-compliance.sh; then
   ERRORS=$((ERRORS + 1))
 else
   echo "OK   check-license-compliance.sh passed"
+fi
+
+if [ "$LOCAL" = true ]; then
+  echo "SKIP verify-branch-protection.sh (--local)"
+elif command -v gh >/dev/null 2>&1; then
+  if ! bash scripts/verify-branch-protection.sh; then
+    echo "FAIL: verify-branch-protection.sh (Windows upgrade-sim must be required)"
+    ERRORS=$((ERRORS + 1))
+  else
+    echo "OK   verify-branch-protection.sh passed"
+  fi
+else
+  echo "SKIP verify-branch-protection.sh (gh not on PATH)"
 fi
 
 echo ""

@@ -7,23 +7,16 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PROGRESS="$ROOT/.cursor/agent-progress.json"
 mkdir -p "$ROOT/.cursor"
 
-if command -v python3 >/dev/null 2>&1; then PY=python3
-elif command -v python >/dev/null 2>&1; then PY=python
-else PY=python3; fi
+# shellcheck source=lib/resolve-python.sh
+. "$(cd "$(dirname "$0")" && pwd)/lib/resolve-python.sh"
 
 $PY - "$ROOT" "$PROGRESS" "$@" << 'PY'
 import json, re, sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-def resolve_repo_root(raw: str) -> Path:
-    s = str(raw).strip().replace("\\", "/")
-    if len(s) >= 3 and s[0] == "/" and s[2] == "/" and s[1].isalpha():
-        s = f"{s[1].upper()}:{s[2:]}"
-    return Path(s).expanduser().resolve()
-
-root = resolve_repo_root(sys.argv[1])
-progress_path = root / ".cursor" / "agent-progress.json"
+root = Path(sys.argv[1])
+progress_path = Path(sys.argv[2])
 args = sys.argv[3:]
 
 def load():

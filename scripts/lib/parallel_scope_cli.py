@@ -54,7 +54,6 @@ def cmd_manifest(args: argparse.Namespace) -> int:
         feature=args.feature,
         require_sequential_clear=args.require_sequential_clear,
         suggest=args.suggest,
-        write_lock=args.write_lock,
     )
     if args.json:
         print(json.dumps(manifest, indent=2))
@@ -100,7 +99,6 @@ def main() -> int:
     mf.add_argument("--require-sequential-clear", action="store_true")
     mf.add_argument("--stack", default=None)
     mf.add_argument("--feature", default=None)
-    mf.add_argument("--write-lock", action="store_true")
 
     args = parser.parse_args()
     build_plan = Path(args.build_plan)

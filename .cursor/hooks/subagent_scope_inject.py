@@ -9,11 +9,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 
 
-def main() -> int:
+def main() -> None:
+    lock = ROOT / ".cursor/parallel-scope-lock.json"
+    if not lock.is_file():
+        return
     try:
-        lock = ROOT / ".cursor/parallel-scope-lock.json"
-        if not lock.is_file():
-            return 0
         data = json.loads(lock.read_text(encoding="utf-8"))
         agents = data.get("agents") or []
         scopes = [f"{a.get('id', '?')}: {a.get('scope', '')}" for a in agents[:8]]
@@ -25,8 +25,7 @@ def main() -> int:
             print(json.dumps({"user_message": msg}))
     except Exception:
         pass
-    return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

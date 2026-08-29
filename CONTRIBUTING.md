@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for contributing to **agent-project-bootstrap** — a Cursor agent-oriented FOSS project template.
+Thank you for contributing to **ExpeditionGauge** — a FOSS Android HUD (package `dev.foss.expeditiongauge`).
 
 ## Who contributes what
 
@@ -10,6 +10,11 @@ Thank you for contributing to **agent-project-bootstrap** — a Cursor agent-ori
 | `HUMAN` | Human developer | Approvals, credentials, product decisions |
 | `ADB` | Human (Android) | Device testing, F-Droid submission |
 | `AUTO` | CI/scripts | GitHub Actions, Dependabot, pre-commit |
+
+## For coding agents
+
+Read [`AGENTS.md`](AGENTS.md) and [`docs/START_HERE.md`](docs/START_HERE.md) before editing. Run `/build` for the next Sequential row, then `python3 scripts/agent-run.py watch-agent-gates --once --autofix`. Do not `git push` unless a human approved it or the user invoked `/push` or `/ship`. Use Conventional Commits. Do not halt on `[HUMAN]` or `[ADB]` labels — automate first, then backlog.
+
 
 ## Getting started
 
