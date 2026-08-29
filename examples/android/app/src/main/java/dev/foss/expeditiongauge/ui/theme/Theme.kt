@@ -15,6 +15,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.colorblind.ColorblindHudMode
 import dev.foss.expeditiongauge.nighthud.NightHudPalette
+import dev.foss.expeditiongauge.ui.ambient.rememberAmbientLux
 import dev.foss.expeditiongauge.settings.ColorblindHudStore
 import dev.foss.expeditiongauge.settings.NightHudStore
 
@@ -34,6 +35,7 @@ fun ExpeditionGaugeTheme(
         ThemeMode.Dark -> true
     }
     val view = LocalView.current
+    val ambientLux = rememberAmbientLux()
     val nightHudEnabled by remember { NightHudStore(view.context) }.enabled
         .collectAsStateWithLifecycle(true)
     val colorScheme = when {
@@ -53,7 +55,7 @@ fun ExpeditionGaugeTheme(
             window.navigationBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
             val attrs = window.attributes
-            attrs.screenBrightness = screenBrightnessFor(brightnessMode)
+            attrs.screenBrightness = screenBrightnessFor(brightnessMode, ambientLux)
             window.attributes = attrs
             if (shouldKeepScreenAwake(keepScreenAwake)) {
                 window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

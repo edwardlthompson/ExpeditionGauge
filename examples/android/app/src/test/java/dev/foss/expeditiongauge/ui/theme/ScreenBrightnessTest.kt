@@ -22,4 +22,9 @@ class ScreenBrightnessTest {
             screenBrightnessFor(BrightnessMode.Auto),
         )
     }
+
+    @Test
+    fun autoModeUsesLuxCurveWhenPresent() {
+        assertEquals(0.18f, screenBrightnessFor(BrightnessMode.Auto, 0f), 0.001f)
+    }
 }
