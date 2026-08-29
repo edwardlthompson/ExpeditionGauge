@@ -89,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Inclinometer zero can be stored per vehicle id
 * BLE accessory battery icons use low / warn / ok bands
 * BLE scan rationale says pairing-only and that nothing is uploaded
+* TPMS can include a fifth SPARE corner
 
 ### Changed
 
