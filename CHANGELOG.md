@@ -115,6 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Home widget shows the last session name and opens the library
 * Predictive back works on feedback, permissions, compare, session edit, and playback
 * Settings can pick a persistable SAF export folder
+* Scroll surfaces vote a 120 Hz preferredFrameRate on API 35+
 
 ### Changed
 
