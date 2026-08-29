@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 81: Optional live payload encrypt (`/feature` live-encrypt).
+Sprint 32 row 82: Multi-receiver pit room (`/feature` live-multi-receiver).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
