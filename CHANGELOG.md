@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Session edit can split a recording at the sample midpoint into two sessions
 * CSV export columns are selectable in Settings → Recording
 * External GPS keeps a 2000-line NMEA buffer that Settings can share
+* GPX export writes namespaced `eg:latG`, `eg:lonG`, and `eg:betaDeg` extensions
 
 ### Changed
 

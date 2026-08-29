@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.export
 
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.gpxbeta.GpxBetaExtensions
 import dev.foss.expeditiongauge.recording.SessionMetadata
 import org.json.JSONArray
 import org.json.JSONObject
@@ -87,8 +88,7 @@ internal object ExportFormatters {
         val points = samples.filter { it.latitude != null && it.longitude != null }.joinToString("\n") { s ->
             val extensions = buildString {
                 append("        <extensions>\n")
-                s.driftAngleDeg?.let { append("          <driftAngleDeg>$it</driftAngleDeg>\n") }
-                s.latG?.let { append("          <latG>$it</latG>\n") }
+                append(GpxBetaExtensions.tags(s.latG, s.lonAccel, s.driftAngleDeg))
                 s.slipRatio?.let { append("          <slipRatio>$it</slipRatio>\n") }
                 s.rpm?.let { append("          <rpm>$it</rpm>\n") }
                 s.throttle?.let { append("          <throttlePct>$it</throttlePct>\n") }
@@ -109,7 +109,7 @@ internal object ExportFormatters {
 $extensions      </trkpt>"""
         }
         return """<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="ExpeditionGauge">
+<gpx version="1.1" creator="ExpeditionGauge" ${GpxBetaExtensions.xmlnsAttr()}>
   <trk>
     <name>${session.name}</name>
     <trkseg>
