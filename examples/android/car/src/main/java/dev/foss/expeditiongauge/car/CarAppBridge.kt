@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.car
 
 import android.graphics.Bitmap
+import dev.foss.expeditiongauge.car.aaparkedvoice.AaParkedVoice
 
 /** In-process bridge from phone app to car UI (same APK). */
 interface CarAppBridge {
@@ -24,6 +25,16 @@ interface CarAppBridge {
     fun startRecording(): Boolean
     /** Returns true if the request was accepted (or already stopped). Never throws. */
     fun stopRecording(): Boolean
+    /** Record/Stop plus parked-only spoken confirmation. */
+    fun toggleRecord(): Boolean {
+        val start = !isRecording()
+        val ok = if (start) startRecording() else stopRecording()
+        if (ok && AaParkedVoice.canAnnounce(isVehicleParked())) {
+            speakParkedVoice(AaParkedVoice.phrase(start))
+        }
+        return ok
+    }
+    fun speakParkedVoice(phrase: String) = Unit
     fun markEvent(): Boolean
     /**
      * Returns false immediately if Zero is unavailable (e.g. non-phone fusion).

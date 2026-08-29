@@ -35,7 +35,7 @@ internal object DriveMapHudChrome {
                     .setIcon(resourceIcon(carContext, recordRes))
                     .setFlags(Action.FLAG_IS_PERSISTENT)
                     .setOnClickListener {
-                        if (bridge.isRecording()) bridge.stopRecording() else bridge.startRecording()
+                        bridge.toggleRecord()
                         onChromeChange()
                     }
                     .build(),
@@ -72,7 +72,7 @@ internal object DriveMapHudChrome {
                     .setTitle(TelemetryGridActions.recordTitle(bridge.isRecording()))
                     .setIcon(resourceIcon(carContext, recordRes))
                     .setOnClickListener {
-                        if (bridge.isRecording()) bridge.stopRecording() else bridge.startRecording()
+                        bridge.toggleRecord()
                         onRecordToggle()
                     }
                     .build(),

@@ -3,6 +3,8 @@ package dev.foss.expeditiongauge.car
 import android.graphics.Bitmap
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.alerts.AlertThresholds
+import dev.foss.expeditiongauge.alerts.AlertTts
+import dev.foss.expeditiongauge.car.aaparkedvoice.AaParkedVoice
 import dev.foss.expeditiongauge.alerts.AlertType
 import dev.foss.expeditiongauge.gauge.AttitudeGaugeMode
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
@@ -47,6 +49,7 @@ internal class AndroidAutoBridgeHudCompose(
     appContext: android.content.Context,
 ) {
     private val hudComposer = AaHudComposer(appContext)
+    private val parkedVoiceTts = AlertTts(appContext)
 
     fun composeHud(
         snapshot: TelemetrySnapshot,
@@ -69,6 +72,10 @@ internal class AndroidAutoBridgeHudCompose(
     )
 
     fun snapshotBitmap(): Bitmap? = hudComposer.snapshotBitmap()
+
+    fun speakParked(phrase: String, parked: Boolean) {
+        if (AaParkedVoice.canAnnounce(parked)) parkedVoiceTts.speak(phrase)
+    }
 
     fun hudTiles(
         snapshot: TelemetrySnapshot,

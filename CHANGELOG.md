@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Android Auto HUD high-contrast tokens follow the phone toggle or system high-contrast setting
 * Android Auto pitch/roll alert beeps use the navigation-guidance audio route while Drive is open
 * Parked Android Auto Drive HUD: tap the DTC footer to open stored-code titles
+* Parked Android Auto Record/Stop speaks “Recording” / “Stopped” on the car nav route
 
 ### Changed
 

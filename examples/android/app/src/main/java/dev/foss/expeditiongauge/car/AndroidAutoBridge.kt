@@ -102,6 +102,8 @@ class AndroidAutoBridge(
         snapshot.toCarMetrics(speedUnit == SpeedUnit.METRIC)
 
     override fun isRecording(): Boolean = recording
+    override fun speakParkedVoice(phrase: String) =
+        hudCompose.speakParked(phrase, isVehicleParked())
     override fun isVehicleParked(): Boolean = ParkedIdleDim.parked(snapshot.speedMps)
     override fun parkedDtcRows(): List<DriveHudRow> =
         AaParkedDtc.rows(storedDtcs.map { it.code to it.description })

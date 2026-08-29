@@ -72,7 +72,7 @@ class TelemetryGridScreen(carContext: CarContext) : Screen(carContext) {
                     recordIcon = resourceIcon(recordRes),
                     zeroIcon = zeroIcon,
                     onRecordToggle = {
-                        if (bridge.isRecording()) bridge.stopRecording() else bridge.startRecording()
+                        bridge.toggleRecord()
                         invalidate()
                     },
                     onZero = {

@@ -102,7 +102,7 @@ class DrivePaneScreen(carContext: CarContext) : Screen(carContext) {
             .setTitle(TelemetryGridActions.recordTitle(bridge.isRecording()))
             .setIcon(resourceIcon(recordRes))
             .setOnClickListener {
-                if (bridge.isRecording()) bridge.stopRecording() else bridge.startRecording()
+                bridge.toggleRecord()
                 invalidate()
             }
             .build()
