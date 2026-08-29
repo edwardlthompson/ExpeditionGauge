@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothSocket
 import android.os.SystemClock
 import android.util.Log
 import dev.foss.expeditiongauge.freezeframe.FreezeFrame
+import dev.foss.expeditiongauge.imreadiness.ImReadiness
+import dev.foss.expeditiongauge.imreadiness.ImReadinessReport
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
@@ -29,6 +31,7 @@ internal object ObdPollLoop {
         clock: () -> Long = { SystemClock.elapsedRealtime() },
         scheduler: ObdDtcScanScheduler = ObdDtcScanScheduler(),
         consumeClear: () -> Boolean = { false },
+        onIm: (ImReadinessReport?) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -42,6 +45,7 @@ internal object ObdPollLoop {
                 onDtcs = onDtcs,
                 scanDtcs = { prev ->
                     val codes = ObdDtcReader.refresh(reader, writer, catalog, prev)
+                    onIm(ImReadiness.parse(Elm327Protocol.queryPid(reader, writer, "0101")))
                     if (codes.isEmpty()) codes
                     else FreezeFrame.attach(codes, Elm327FreezeFrame.request(reader, writer))
                 },

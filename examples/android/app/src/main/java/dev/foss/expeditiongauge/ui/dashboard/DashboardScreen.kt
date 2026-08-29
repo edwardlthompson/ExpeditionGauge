@@ -98,6 +98,7 @@ fun DashboardScreen(
     onScreenshotModeSelected: (dev.foss.expeditiongauge.settings.HudScreenshotMode) -> Unit = {},
     storedDtcs: List<dev.foss.expeditiongauge.obd.dtc.DtcEntry> = emptyList(),
     onClearDtcs: () -> Unit = {},
+    imReadiness: String? = null,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
@@ -264,6 +265,7 @@ fun DashboardScreen(
                                 uiState.recording,
                             ),
                             onClearDtcs = onClearDtcs,
+                            imLine = imReadiness,
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                         )
                     }

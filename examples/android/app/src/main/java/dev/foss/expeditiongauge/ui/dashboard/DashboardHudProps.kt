@@ -43,4 +43,5 @@ data class DashboardHudProps(
     val storedDtcs: List<DtcEntry> = emptyList(),
     val canClearDtcs: Boolean = false,
     val onClearDtcs: () -> Unit = {},
+    val imLine: String? = null,
 )

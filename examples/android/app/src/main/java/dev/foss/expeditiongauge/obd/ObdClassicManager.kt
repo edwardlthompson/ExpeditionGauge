@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.util.Log
 import dev.foss.expeditiongauge.dtcclear.DtcClearLatch
+import dev.foss.expeditiongauge.imreadiness.ImReadinessHold
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
@@ -51,6 +52,8 @@ class ObdClassicManager(
     /** Mode 03 / sim DTCs; cleared on disconnect. */
     val storedDtcs: StateFlow<List<DtcEntry>> = _storedDtcs.asStateFlow()
     private val clearLatch = DtcClearLatch()
+    private val imHold = ImReadinessHold()
+    val imReadiness = imHold.report
 
     fun selectDevice(address: String) {
         selectedAddress = address
@@ -81,8 +84,6 @@ class ObdClassicManager(
                     classicBudget.onConnected(ClassicBluetoothBudget.Slot.OBD)
                     _phase.value = ObdConnectionPhase.Connected
                     _snapshot.value = ObdSnapshot(connected = true)
-                    // Handshake confirmed — poll loop kicks Mode 03/07 immediately
-                    // (outside RFCOMM/AT timeouts). ~30 s rescan is fallback only.
                     Log.i(TAG, "OBD connected — scheduling immediate DTC scan")
                     pollJob = scope.launch(Dispatchers.IO) {
                         try {
@@ -95,6 +96,7 @@ class ObdClassicManager(
                                 currentDtcs = { _storedDtcs.value },
                                 onDtcs = { _storedDtcs.value = it },
                                 consumeClear = { clearLatch.consume() },
+                                onIm = { imHold.set(it) },
                             )
                         } catch (e: Exception) {
                             Log.w(TAG, "OBD poll ended: ${e.message}")
@@ -127,6 +129,7 @@ class ObdClassicManager(
         classicBudget.onDisconnected(ClassicBluetoothBudget.Slot.OBD)
         _snapshot.value = ObdSnapshot()
         _storedDtcs.value = emptyList()
+        imHold.set(null)
         if (clearPhase) _phase.value = ObdConnectionPhase.Idle
     }
 

@@ -58,6 +58,7 @@ fun DashboardHudLayout(
     storedDtcs: List<DtcEntry> = emptyList(),
     canClearDtcs: Boolean = false,
     onClearDtcs: () -> Unit = {},
+    imLine: String? = null,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -97,6 +98,7 @@ fun DashboardHudLayout(
             storedDtcs = storedDtcs,
             canClearDtcs = canClearDtcs,
             onClearDtcs = onClearDtcs,
+            imLine = imLine,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

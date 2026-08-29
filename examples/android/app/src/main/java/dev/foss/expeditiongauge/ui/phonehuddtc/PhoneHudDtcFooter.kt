@@ -33,6 +33,7 @@ fun PhoneHudDtcFooter(
     modifier: Modifier = Modifier,
     canClear: Boolean = false,
     onClear: () -> Unit = {},
+    imLine: String? = null,
 ) {
     var nowMs by remember { mutableLongStateOf(0L) }
     var detail by remember { mutableStateOf<DtcEntry?>(null) }
@@ -44,7 +45,12 @@ fun PhoneHudDtcFooter(
             delay(250)
         }
     }
-    val line = PhoneHudDtc.line(entries, nowMs) ?: return
+    val line = PhoneHudDtc.line(entries, nowMs)
+    if (line == null) {
+        if (imLine == null) return
+        PhoneHudImLine(imLine, modifier)
+        return
+    }
     val spoken = stringResource(R.string.phone_hud_dtc_cd, line)
     Text(
         text = line,
@@ -58,6 +64,7 @@ fun PhoneHudDtcFooter(
             .clickable { detail = PhoneHudDtc.current(entries, nowMs) }
             .semantics { contentDescription = spoken },
     )
+    imLine?.let { PhoneHudImLine(it) }
     val shown = detail ?: return
     AlertDialog(
         onDismissRequest = { detail = null },
@@ -74,6 +81,7 @@ fun PhoneHudDtcFooter(
                         modifier = Modifier.testTag("freeze_frame"),
                     )
                 }
+                imLine?.let { PhoneHudImLine(it) }
             }
         },
         confirmButton = {
