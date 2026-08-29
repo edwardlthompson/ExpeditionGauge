@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Relive shows the peak 0.25 G cornering-histogram bin
 * Library ranks sessions by drift score after starred favorites
 * Session compare shows GPS polyline point counts for both sessions
+* Ghost laps can be imported from GPX track points or lat,lon,ts lines
 
 ### Changed
 
