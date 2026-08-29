@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Developer PID sniffer (blocks Mode 04 / VIN; redacts `4902`)
 * OBD reconnect soak: eight reconnects each scan immediately
 * User-configurable HUD tile order (Attitude / Telemetry / TPMS)
+* Color-blind HUD palettes (deuteranopia / protanopia / tritanopia)
 
 ### Changed
 

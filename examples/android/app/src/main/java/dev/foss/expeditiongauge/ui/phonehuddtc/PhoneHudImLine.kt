@@ -14,7 +14,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.gearestimate.GearEstimate
 import dev.foss.expeditiongauge.multiecu.MultiEcuHeaders
 import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltage
-import dev.foss.expeditiongauge.ui.theme.GaugeYellow
+import dev.foss.expeditiongauge.ui.theme.LocalColorblindHud
 
 @Composable
 fun PhoneHudStatusLines(lines: List<String>, modifier: Modifier = Modifier) {
@@ -40,7 +40,11 @@ fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
     val spoken = stringResource(spokenRes, line)
     Text(
         text = line,
-        color = if (line.contains("not ready")) GaugeYellow else MaterialTheme.colorScheme.onSurface,
+        color = if (line.contains("not ready")) {
+            LocalColorblindHud.current.alertYellow
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        },
         style = MaterialTheme.typography.bodySmall,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,

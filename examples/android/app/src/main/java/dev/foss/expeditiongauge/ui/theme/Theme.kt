@@ -7,9 +7,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.foss.expeditiongauge.colorblind.ColorblindHudMode
+import dev.foss.expeditiongauge.settings.ColorblindHudStore
 
 @Composable
 fun ExpeditionGaugeTheme(
@@ -52,7 +57,12 @@ fun ExpeditionGaugeTheme(
         }
     }
 
-    CompositionLocalProvider(LocalTextScale provides textScale) {
+    val colorblindMode by remember { ColorblindHudStore(view.context) }.mode
+        .collectAsStateWithLifecycle(ColorblindHudMode.NONE)
+    CompositionLocalProvider(
+        LocalTextScale provides textScale,
+        LocalColorblindHud provides ColorblindHudColors.from(colorblindMode),
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = scaledTypography(textScale),

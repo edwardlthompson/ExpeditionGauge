@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.ui.colorblind.ColorblindHudField
 import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.settings.PressureUnit
@@ -44,6 +45,7 @@ fun SettingsAccessibilityOptions(
         checked = highContrastEnabled,
         onCheckedChange = onHighContrastChange,
     )
+    ColorblindHudField()
     SettingsSwitchRow(
         label = stringResource(R.string.settings_large_text),
         checked = largeTextEnabled,
