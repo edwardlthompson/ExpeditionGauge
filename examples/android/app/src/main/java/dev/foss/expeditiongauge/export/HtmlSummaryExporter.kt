@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.export
 
 import dev.foss.expeditiongauge.data.db.entities.SessionEventEntity
+import dev.foss.expeditiongauge.markeventchapters.MarkEventChaptersExport
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import org.json.JSONObject
 
@@ -13,6 +14,7 @@ object HtmlSummaryExporter {
             val height = (value.coerceIn(0f, 2f) / 2f * 100).toInt().coerceIn(4, 100)
             """<div class="bar" style="height:${height}%"></div>"""
         }
+        val chaptersHtml = MarkEventChaptersExport.htmlSection(markedEvents)
         val eventRows = markedEvents.joinToString("") { event ->
             val payload = runCatching { JSONObject(event.payloadJson.orEmpty()) }.getOrNull()
             val beta = payload?.optDouble("betaDeg")?.let { "%.1f°".format(it) } ?: "—"
@@ -58,6 +60,7 @@ object HtmlSummaryExporter {
                   $eventRows
                 </table>
               </div>
+              $chaptersHtml
               <p>Generated locally by ExpeditionGauge — no cloud upload.</p>
             </body>
             </html>

@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Gamepad A/L1/R1 and +/- keys scrub and speed Relive
 * Relive shows a jump list of mark-event bookmarks
 * Relive lists numbered chapters from mark events (or the mark tag)
+* HTML session share includes a Chapters table from mark events
 
 ### Changed
 
