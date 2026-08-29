@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 16: multi-ECU OBD headers (`/feature` multi-ecu-headers).
+Sprint 32 row 17: developer PID sniffer (`/feature` developer-pid-sniffer).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

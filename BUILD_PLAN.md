@@ -125,7 +125,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 13. ✅ [AGENT] `/feature` obd-temps-voltage — Coolant / oil / voltage cluster (parked/idle)
 14. ✅ [AGENT] `/feature` gear-estimate — Gear estimate from RPM + speed
 15. ✅ [AGENT] `/feature` wifi-elm327 — Wi-Fi ELM327 (FOSS TCP, no Play)
-16. 🔲 [AGENT] `/feature` multi-ecu-headers — Multi-ECU OBD headers
+16. ✅ [AGENT] `/feature` multi-ecu-headers — Multi-ECU OBD headers
 17. 🔲 [AGENT] `/feature` developer-pid-sniffer — Developer PID sniffer (opt-in)
 18. 🔲 [AGENT] `/feature` obd-reconnect-soak — OBD reconnect soak test
 
