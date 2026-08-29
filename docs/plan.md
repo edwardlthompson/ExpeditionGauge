@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 93: GNSS-drop dead reckoning (`/feature` gnss-dead-reckon).
+Sprint 32 row 94: Per-vehicle PID maps (`/feature` vehicle-pid-maps).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
