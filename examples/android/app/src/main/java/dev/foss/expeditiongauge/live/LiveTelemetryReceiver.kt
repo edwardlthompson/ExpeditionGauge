@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import dev.foss.expeditiongauge.livereceiverrecord.LiveReceiverRecord
 import dev.foss.expeditiongauge.webrtcdatachannel.WebRtcDataChannel
 import org.json.JSONObject
 
@@ -40,7 +41,7 @@ class LiveTelemetryReceiver(
     fun onMetricReceived(json: String) {
         val raw = WebRtcDataChannel.unwrap(json) ?: return
         val obj = runCatching { JSONObject(raw) }.getOrNull() ?: return
-        _latestSample.value = LiveSampleDto(
+        val dto = LiveSampleDto(
             timestampMs = obj.optLong("t"),
             speedMps = obj.optDouble("speed").toFloat(),
             latG = obj.optDouble("latG").toFloat(),
@@ -50,6 +51,8 @@ class LiveTelemetryReceiver(
             headingDeg = obj.optDouble("hdg").toFloat(),
             tpmsJson = obj.optJSONObject("tpms")?.toString(),
         )
+        _latestSample.value = dto
+        LiveReceiverRecord.remember(dto)
     }
 
     fun disconnect() {
@@ -58,5 +61,6 @@ class LiveTelemetryReceiver(
         webSocketClient.disconnect()
         _state.value = LiveReceiverState.Idle
         _latestSample.value = null
+        LiveReceiverRecord.clear()
     }
 }
