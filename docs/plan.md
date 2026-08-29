@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 83: Second-phone IMU via live (`/feature` phone-imu-live).
+Sprint 32 row 84: Mag hard-iron wizard (`/feature` mag-hardiron).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

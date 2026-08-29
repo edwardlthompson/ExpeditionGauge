@@ -207,7 +207,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 80. ✅ [AGENT] `/feature` live-receiver-record — Live receiver local record
 81. ✅ [AGENT] `/feature` live-encrypt — Optional live payload encrypt
 82. ✅ [AGENT] `/feature` live-multi-receiver — Multi-receiver pit room
-83. 🔲 [AGENT] `/feature` phone-imu-live — Second-phone IMU via live
+83. ✅ [AGENT] `/feature` phone-imu-live — Second-phone IMU via live
 
 ##### Sensors / calibration
 
