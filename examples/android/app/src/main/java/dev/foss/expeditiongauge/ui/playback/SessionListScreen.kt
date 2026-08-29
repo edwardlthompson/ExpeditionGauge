@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -27,7 +28,10 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.recording.ActivityType
+import dev.foss.expeditiongauge.sessionfavorites.SessionFavorites
+import dev.foss.expeditiongauge.settings.SessionFavoritesStore
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
+import dev.foss.expeditiongauge.ui.sessionfavorites.SessionFavoriteToggle
 import dev.foss.expeditiongauge.ui.stats.RichSessionCard
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
@@ -60,6 +64,11 @@ fun SessionListScreen(
         }
     }
     val sessions by sessionsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
+    val favoriteStore = remember { SessionFavoritesStore(LocalContext.current) }
+    val favoriteIds by favoriteStore.favoriteIds.collectAsStateWithLifecycle(emptySet())
+    val ordered = remember(sessions, favoriteIds) {
+        SessionFavorites.favoritesFirst(sessions, favoriteIds) { it.id }
+    }
     val summaryById = remember(statsSummaries) { statsSummaries.associateBy { it.sessionId } }
 
     GaugeMenuSurface(modifier = modifier) {
@@ -94,8 +103,9 @@ fun SessionListScreen(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(SpacingMd),
         ) {
-            items(sessions, key = { it.id }) { session ->
+            items(ordered, key = { it.id }) { session ->
                 val summary = summaryById[session.id]
+                SessionFavoriteToggle(sessionId = session.id)
                 if (summary != null) {
                     val compareTarget = sessions.firstOrNull { it.id != session.id }?.id
                     RichSessionCard(

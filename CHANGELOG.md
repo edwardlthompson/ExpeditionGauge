@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Storage auto-delete prunes oldest unprotected sessions when used bytes meet the cap
 * Settings storage section shows a used/allowed percent bar
 * Session notes trim on save and match library search case-insensitively
+* Library sessions can be starred; favorites sort to the top
 
 ### Changed
 
