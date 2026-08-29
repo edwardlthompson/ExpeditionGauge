@@ -22,7 +22,7 @@ class GearEstimateTest {
         assertNull(GearEstimate.estimate(600f, 10f))
         assertNull(GearEstimate.estimate(2_000f, 0f))
         assertNull(GearEstimate.line(2_000f, 0f))
-        val line = GearEstimate.line(2_000f, 60f / 3.6f)
+        val line = GearEstimate.line(2_000f, 58f / 3.6f)
         assertEquals("Gear 4", line)
         assertTrue(GearEstimate.matches(line!!))
     }

@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 15: Wi-Fi ELM327 FOSS TCP (`/feature` wifi-elm327).
+Sprint 32 row 16: multi-ECU OBD headers (`/feature` multi-ecu-headers).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
