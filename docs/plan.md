@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 66: brake / accel (lonG) heatmap (`/feature` lon-g-heatmap).
+Sprint 32 row 67: cornering G histogram (`/feature` cornering-histogram).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
