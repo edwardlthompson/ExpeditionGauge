@@ -25,6 +25,7 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.playback.HeatmapMetric
 import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.playback.RouteHeatmapLayer
+import dev.foss.expeditiongauge.ui.photostory.PhotoStoryStrip
 import dev.foss.expeditiongauge.ui.playbackbookmarks.PlaybackBookmarkList
 import dev.foss.expeditiongauge.ui.relivechapters.ReliveChapterList
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -81,6 +82,10 @@ internal fun PlaybackBottomSection(
                 onJump = { engine.seekToIndex(it) },
             )
             ReliveChapterList(
+                markers = state.markers,
+                onJump = { engine.seekToIndex(it) },
+            )
+            PhotoStoryStrip(
                 markers = state.markers,
                 onJump = { engine.seekToIndex(it) },
             )
