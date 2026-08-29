@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Catch up template machinery to agent-project-bootstrap v1.0.0 (`/upgrade`, current Golden Path gates)
+* BUILD_PLAN Sprint 32 boards the `/allideas` product backlog (120 Sequential rows)
 * Crash log persist is now opt-in (`Save crash details for me to review`, default off)
 
 ## [2.18.12] — OBD DTC scan on connect (2026-08-28)
