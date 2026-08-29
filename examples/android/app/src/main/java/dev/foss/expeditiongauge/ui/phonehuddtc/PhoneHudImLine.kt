@@ -26,6 +26,7 @@ fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
     val spokenRes = when {
         line.startsWith("I/M") -> R.string.im_readiness_cd
         line.startsWith("VIN") -> R.string.vin_last6_cd
+        line.startsWith("TFT") || line.startsWith("EGT") -> R.string.ford_mode22_temps_cd
         else -> R.string.obd_trip_cd
     }
     val spoken = stringResource(spokenRes, line)
@@ -40,6 +41,7 @@ fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
                 when {
                     line.startsWith("I/M") -> "im_readiness"
                     line.startsWith("VIN") -> "vin_last6"
+                    line.startsWith("TFT") || line.startsWith("EGT") -> "ford_mode22_temps"
                     else -> "obd_trip_since_clear"
                 },
             )

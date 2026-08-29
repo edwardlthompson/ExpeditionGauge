@@ -4,4 +4,5 @@
     <string name="ford_mode22_title">Ford Mode 22 catalog</string>
     <string name="ford_mode22_close">Close</string>
     <string name="ford_mode22_cd">Ford Mode 22 catalog</string>
+    <string name="ford_mode22_temps_cd">Ford temps: %1$s</string>
 </resources>

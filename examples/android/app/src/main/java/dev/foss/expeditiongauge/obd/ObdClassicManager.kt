@@ -50,6 +50,7 @@ class ObdClassicManager(
     val tripSinceClear = hud.trip.trip
     val vinLast6 = hud.vin.last6
     val pidDiscovery = hud.discovery.pids
+    val fordTemps = hud.fordTemps.temps
 
     fun selectDevice(address: String) {
         selectedAddress = address

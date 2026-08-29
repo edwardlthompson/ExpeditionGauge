@@ -6,6 +6,7 @@ import android.util.Log
 import dev.foss.expeditiongauge.freezeframe.FreezeFrame
 import dev.foss.expeditiongauge.imreadiness.ImReadiness
 import dev.foss.expeditiongauge.imreadiness.ImReadinessReport
+import dev.foss.expeditiongauge.fordmode22.FordMode22Temps
 import dev.foss.expeditiongauge.obdtrip.ObdTripSinceClear
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
@@ -38,6 +39,7 @@ internal object ObdPollLoop {
         currentVin: () -> String? = { null },
         consumeDiscover: () -> Boolean = { false },
         onDiscover: (Set<Int>) -> Unit = {},
+        onFordTemps: (FordMode22Temps?) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -53,6 +55,7 @@ internal object ObdPollLoop {
                     val codes = ObdDtcReader.refresh(reader, writer, catalog, prev)
                     onIm(ImReadiness.parse(Elm327Protocol.queryPid(reader, writer, "0101")))
                     onTrip(Elm327ObdTrip.request(reader, writer))
+                    onFordTemps(Elm327FordMode22.requestTemps(reader, writer))
                     if (currentVin() == null) {
                         onVin(Elm327Vin.requestLast6(reader, writer) ?: "")
                     }
