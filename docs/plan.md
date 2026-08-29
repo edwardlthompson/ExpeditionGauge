@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 88: BLE device battery icons (`/feature` ble-battery).
+Sprint 32 row 89: BLE scan permission rationale polish (`/feature` ble-permission-rationale).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
