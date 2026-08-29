@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wifi_elm327_host">Wi-Fi ELM327 host (LAN only)</string>
+    <string name="wifi_elm327_connect">Connect Wi-Fi ELM327</string>
+</resources>

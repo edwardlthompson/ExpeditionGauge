@@ -2,6 +2,8 @@ package dev.foss.expeditiongauge.obd
 
 import android.bluetooth.BluetoothSocket
 import java.io.BufferedReader
+import java.io.InputStream
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 
 object Elm327Protocol {
@@ -9,9 +11,11 @@ object Elm327Protocol {
     @Volatile
     var canFraming: Boolean? = null
 
-    fun init(sock: BluetoothSocket) {
-        val writer = OutputStreamWriter(sock.outputStream)
-        val reader = BufferedReader(sock.inputStream.reader())
+    fun init(sock: BluetoothSocket) = init(sock.inputStream, sock.outputStream)
+
+    fun init(input: InputStream, output: OutputStream) {
+        val writer = OutputStreamWriter(output)
+        val reader = BufferedReader(input.reader())
         Elm327Init.run(reader, writer)
     }
 

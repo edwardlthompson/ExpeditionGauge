@@ -15,6 +15,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.piddiscovery.PidDiscovery
 import dev.foss.expeditiongauge.ui.fordmode22.FordMode22CatalogDialog
 import dev.foss.expeditiongauge.ui.piddiscovery.PidDiscoveryDialog
+import dev.foss.expeditiongauge.ui.wifielm.WifiElm327Field
 
 @Composable
 internal fun SettingsHardwareCategory(
@@ -65,6 +66,10 @@ internal fun SettingsHardwareCategory(
     if (showFord22) {
         FordMode22CatalogDialog(onDismiss = { showFord22 = false })
     }
+    WifiElm327Field(
+        selectedEndpoint = state.selectedObdAddress,
+        onConnect = actions.onObdDeviceSelect,
+    )
     SettingsHardwareOptions(
         tpmsEnabled = state.tpmsEnabled,
         onTpmsEnabledChange = actions.onTpmsEnabledChange,

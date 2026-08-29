@@ -1,6 +1,5 @@
 package dev.foss.expeditiongauge.obd
 
-import android.bluetooth.BluetoothSocket
 import dev.foss.expeditiongauge.settings.ObdPidConfig
 import java.io.BufferedReader
 import java.io.OutputStreamWriter

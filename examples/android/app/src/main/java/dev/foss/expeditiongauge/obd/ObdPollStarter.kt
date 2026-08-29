@@ -1,6 +1,5 @@
 package dev.foss.expeditiongauge.obd
 
-import android.bluetooth.BluetoothSocket
 import android.util.Log
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.settings.ObdPidConfig
@@ -15,7 +14,7 @@ internal object ObdPollStarter {
 
     fun launch(
         scope: CoroutineScope,
-        sock: BluetoothSocket,
+        link: ObdLink,
         pidConfig: ObdPidConfig,
         catalog: DtcCatalog,
         hud: ObdHudState,
@@ -24,7 +23,8 @@ internal object ObdPollStarter {
     ): Job = scope.launch(Dispatchers.IO) {
         try {
             ObdPollLoop.run(
-                sock = sock,
+                input = link.input,
+                output = link.output,
                 pidConfig = pidConfig,
                 catalog = catalog,
                 isActive = { isActive },

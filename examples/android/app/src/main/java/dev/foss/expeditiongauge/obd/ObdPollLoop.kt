@@ -1,6 +1,5 @@
 package dev.foss.expeditiongauge.obd
 
-import android.bluetooth.BluetoothSocket
 import android.os.SystemClock
 import android.util.Log
 import dev.foss.expeditiongauge.freezeframe.FreezeFrame
@@ -15,7 +14,9 @@ import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
 import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 import kotlinx.coroutines.delay
 
@@ -25,7 +26,8 @@ internal object ObdPollLoop {
     private const val TAG = "ExpeditionGauge/Obd"
 
     suspend fun run(
-        sock: BluetoothSocket,
+        input: InputStream,
+        output: OutputStream,
         pidConfig: ObdPidConfig,
         catalog: DtcCatalog,
         isActive: () -> Boolean,
@@ -45,8 +47,8 @@ internal object ObdPollLoop {
         onBoost: (BoostPidSnapshot?) -> Unit = {},
         onTemps: (ObdTempsVoltageSnapshot?) -> Unit = {},
     ) {
-        val writer = OutputStreamWriter(sock.outputStream)
-        val reader = BufferedReader(InputStreamReader(sock.inputStream))
+        val writer = OutputStreamWriter(output)
+        val reader = BufferedReader(InputStreamReader(input))
         var previous = ObdSnapshot(connected = true)
         try {
             pump(
