@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-29 — Sprint 32 Maps / live / sensors / i18n rows 74–98
+- **Status:** Accepted
+- **Context:** Autonomous `/build 74-98` on the template-upgrade branch after Record/Relive 44–73.
+- **Decision:** Keep each row a named container plus tests. Offline tiles FIFO-cap at 8. Map styles stay FOSS (OpenFreeMap + MapLibre demo). Live uses `dc1|` framing and optional XOR seal, not a proprietary WebRTC SDK. New prefs stay in dedicated stores. Do not grow `SettingsPreferences`, `strings.xml` (300), or `AutocalibrationController` (150). First locales are `values-es|de|fr` overlays, not a full strings dump.
+- **Alternatives considered:** Google WebRTC SDK (rejected — FOSS). Growing `SettingsPreferences` for terrain/style (rejected — dedicated stores). Overwriting `strings_live.xml` (reverted after a gate miss).
+- **Consequences:** `watch-agent-gates --scope auto` passed after each 74–98 row. Next AGENT row is 99 screenshot-exif-strip. `dhu-screenshot-ci` stays in `HUMAN_BACKLOG.md`.
+
 ### 2026-08-29 — Sprint 32 Record / Relive rows 44–73
 - **Status:** Accepted
 - **Context:** Autonomous `/build 44-73` on the template-upgrade branch. Rows 44–69 were already gated; 70–73 remained.

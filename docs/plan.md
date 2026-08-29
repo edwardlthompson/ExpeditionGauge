@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 98: TalkBack on feedback / About (`/feature` talkback-feedback).
+Sprint 32 row 99: Screenshot EXIF/GPS strip (`/feature` screenshot-exif-strip). `/build 74-98` is complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
