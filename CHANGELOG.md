@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Recording log interval auto-slows when the phone reports thermal warning or critical
 * Storage auto-delete prunes oldest unprotected sessions when used bytes meet the cap
 * Settings storage section shows a used/allowed percent bar
+* Session notes trim on save and match library search case-insensitively
 
 ### Changed
 

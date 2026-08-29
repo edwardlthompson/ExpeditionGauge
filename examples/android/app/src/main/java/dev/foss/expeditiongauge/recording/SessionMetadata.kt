@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.recording
 
 import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
+import dev.foss.expeditiongauge.sessionnotes.SessionNotes
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -17,7 +18,7 @@ data class SessionMetadata(
 ) {
     fun toEntityPatch(): (RecordingSessionEntity) -> RecordingSessionEntity = { entity ->
         entity.copy(
-            notes = notes,
+            notes = SessionNotes.normalize(notes),
             driverName = driverName,
             conditions = conditions,
             vehicleConfigJson = vehicleConfigToJson(vehicleConfig),
@@ -30,7 +31,7 @@ data class SessionMetadata(
 
     fun applyTo(entity: RecordingSessionEntity): RecordingSessionEntity =
         entity.copy(
-            notes = notes,
+            notes = SessionNotes.normalize(notes),
             driverName = driverName,
             conditions = conditions,
             vehicleConfigJson = vehicleConfigToJson(vehicleConfig),
