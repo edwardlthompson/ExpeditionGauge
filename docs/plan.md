@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 56: sector times CSV export (`/feature` sector-times-csv).
+Sprint 32 row 57: variable playback speed (`/feature` playback-speed).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

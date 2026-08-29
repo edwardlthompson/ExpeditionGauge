@@ -174,7 +174,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 53. ✅ [AGENT] `/feature` csv-columns — CSV column picker
 54. ✅ [AGENT] `/feature` nmea-log-export — NMEA raw log export
 55. ✅ [AGENT] `/feature` gpx-beta-extensions — GPX extensions for β / latG
-56. 🔲 [AGENT] `/feature` sector-times-csv — Sector times CSV export
+56. ✅ [AGENT] `/feature` sector-times-csv — Sector times CSV export
 57. 🔲 [AGENT] `/feature` playback-speed — Variable playback speed
 58. 🔲 [AGENT] `/feature` playback-gamepad — Keyboard / gamepad scrub
 59. 🔲 [AGENT] `/feature` playback-bookmarks — Playback bookmarks from mark events
