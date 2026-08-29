@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.display.highRefreshScroll
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.feedback.FeedbackPreview
 import dev.foss.expeditiongauge.githubfeedback.IssueFormUrl
 import dev.foss.expeditiongauge.privacyreport.FingerprintCrash
@@ -39,6 +40,7 @@ fun FeedbackScreen(
     var description by remember { mutableStateOf(initialDescription) }
     val preview = FeedbackPreview.text(kind, description, stack)
     val canSubmit = FeedbackPreview.canSubmit(description, stack)
+    GaugeBackHandler(onBack = onDismiss)
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(titleFor(kind))) },

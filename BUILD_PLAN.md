@@ -250,7 +250,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 111. ✅ [AGENT] `/feature` onboarding-v218 — Onboarding refresh for v2.18+ features
 112. ✅ [AGENT] `/feature` settings-search — Settings search
 113. ✅ [AGENT] `/feature` app-shortcuts — App shortcuts (Record / Library)
-114. 🔲 [AGENT] `/feature` last-session-widget — Last-session home widget
+114. ✅ [AGENT] `/feature` last-session-widget — Last-session home widget
 115. 🔲 [AGENT] `/feature` predictive-back — Predictive back on remaining routes
 116. 🔲 [AGENT] `/feature` saf-folder-picker — SAF folder picker polish
 117. 🔲 [AGENT] `/feature` compose-preferred-framerate — Compose preferredFrameRate scroll vote

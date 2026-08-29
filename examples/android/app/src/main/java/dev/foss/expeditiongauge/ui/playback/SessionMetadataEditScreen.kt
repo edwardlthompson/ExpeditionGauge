@@ -38,6 +38,7 @@ import dev.foss.expeditiongauge.recording.SessionMetadataRepository
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.media.SessionDeleteService
 import dev.foss.expeditiongauge.recording.SessionPhotoCapture
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.sessionsplitmerge.SessionSplitMergeButtons
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -76,6 +77,7 @@ fun SessionMetadataEditScreen(
         }
     }
 
+    GaugeBackHandler(onBack = onBack)
     val takePicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             photoUri = SessionPhotoCapture.localUri(context, sessionId)

@@ -29,6 +29,7 @@ import dev.foss.expeditiongauge.ui.corneringhistogram.CorneringHistogramPanel
 import dev.foss.expeditiongauge.ui.photostory.PhotoStoryStrip
 import dev.foss.expeditiongauge.ui.playbackbookmarks.PlaybackBookmarkList
 import dev.foss.expeditiongauge.ui.relivechapters.ReliveChapterList
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
@@ -44,6 +45,7 @@ internal fun PlaybackBottomSection(
     onBack: () -> Unit,
     onMediaMarkerTap: ((dev.foss.expeditiongauge.playback.ScrubberMarker) -> Unit)? = null,
 ) {
+    GaugeBackHandler(onBack = onBack)
     Column(
         modifier = Modifier.navigationBarBottomPadding(),
         verticalArrangement = Arrangement.spacedBy(SpacingMd),

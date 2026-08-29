@@ -113,6 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Settings hub can search categories (privacy → Advanced, OBD → Hardware)
 * Launcher shortcuts open Record (dashboard) and Library (sessions)
 * Home widget shows the last session name and opens the library
+* Predictive back works on feedback, permissions, compare, session edit, and playback
 
 ### Changed
 

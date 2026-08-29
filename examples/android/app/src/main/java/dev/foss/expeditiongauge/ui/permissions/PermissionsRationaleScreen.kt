@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
@@ -22,6 +23,7 @@ fun PermissionsRationaleScreen(
     onRequestPermissions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    GaugeBackHandler(onBack = onRequestPermissions)
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.sessionmapcompare.SessionMapCompare
 import dev.foss.expeditiongauge.stats.SessionComparison
+import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -24,6 +25,7 @@ fun SessionComparisonScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    GaugeBackHandler(onBack = onBack)
     Column(
         modifier = modifier
             .fillMaxSize()
