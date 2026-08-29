@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 18: OBD reconnect soak test (`/feature` obd-reconnect-soak).
+Sprint 32 row 19: user-configurable HUD tile layout (`/feature` hud-tile-layout).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
