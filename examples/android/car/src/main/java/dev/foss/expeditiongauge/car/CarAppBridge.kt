@@ -55,4 +55,8 @@ interface CarAppBridge {
 object CarAppBridgeRegistry {
     @Volatile
     var bridge: CarAppBridge? = null
+
+    /** True while an AA Screen is started (inclinometer alerts use the car nav route). */
+    @Volatile
+    var sessionLive: Boolean = false
 }

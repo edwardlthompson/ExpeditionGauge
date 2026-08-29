@@ -132,8 +132,12 @@ class AndroidAutoBridge(
     override fun setToastHandler(handler: ((String) -> Unit)?) {
         toastHandler = handler
     }
-    override fun onCarSessionStarted() = services.acquireSensors()
-    override fun onCarSessionStopped() = services.releaseSensors()
+    override fun onCarSessionStarted() {
+        CarAppBridgeRegistry.sessionLive = true; services.acquireSensors()
+    }
+    override fun onCarSessionStopped() {
+        CarAppBridgeRegistry.sessionLive = false; services.releaseSensors()
+    }
 
     private fun maybeInvalidate(force: Boolean = false) {
         val listener = invalidationListener ?: return

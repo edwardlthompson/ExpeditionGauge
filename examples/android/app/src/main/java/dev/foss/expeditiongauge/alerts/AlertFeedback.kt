@@ -3,6 +3,8 @@ package dev.foss.expeditiongauge.alerts
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
+import dev.foss.expeditiongauge.car.CarAppBridgeRegistry
+import dev.foss.expeditiongauge.car.aainclineaudio.AaInclinometerAudio
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -24,12 +26,20 @@ class AlertFeedback(context: Context) {
     }
 
     private val focus = AlertAudioFocus(context.applicationContext, AlertAudioFocus.MEDIA)
+    private val navFocus = AlertAudioFocus(context.applicationContext, AlertAudioFocus.NAV_GUIDANCE)
     private val mainHandler = Handler(Looper.getMainLooper())
     private val toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 80)
 
     fun onAlert(type: AlertType, playTone: Boolean = true, haptic: Boolean = true) {
         if (haptic) vibrate(type)
         if (!playTone) return
+        if (AaInclinometerAudio.useNavRoute(CarAppBridgeRegistry.sessionLive, type)) {
+            navFocus.request()
+            AaInclinometerAudio.playBeep(type)
+            mainHandler.removeCallbacks(abandonNavFocusRunnable)
+            mainHandler.postDelayed(abandonNavFocusRunnable, (AaInclinometerAudio.TONE_MS + 50).toLong())
+            return
+        }
         focus.request()
         val tone = when (type) {
             AlertType.LAT_G, AlertType.DRIFT_ANGLE -> ToneGenerator.TONE_PROP_BEEP
@@ -44,6 +54,7 @@ class AlertFeedback(context: Context) {
     }
 
     private val abandonFocusRunnable = Runnable { focus.abandon() }
+    private val abandonNavFocusRunnable = Runnable { navFocus.abandon() }
 
     private fun vibrate(type: AlertType) {
         val duration = when (type) {
@@ -65,7 +76,9 @@ class AlertFeedback(context: Context) {
 
     fun release() {
         mainHandler.removeCallbacks(abandonFocusRunnable)
+        mainHandler.removeCallbacks(abandonNavFocusRunnable)
         focus.abandon()
+        navFocus.abandon()
         toneGenerator.release()
     }
 
