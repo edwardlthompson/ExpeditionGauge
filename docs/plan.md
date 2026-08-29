@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 82: Multi-receiver pit room (`/feature` live-multi-receiver).
+Sprint 32 row 83: Second-phone IMU via live (`/feature` phone-imu-live).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
