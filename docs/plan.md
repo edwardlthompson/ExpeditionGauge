@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 33: custom Canvas AA Drive HUD (`/feature` aa-custom-canvas).
+Sprint 32 row 34: AA night mode from car UI (`/feature` aa-night-mode).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
