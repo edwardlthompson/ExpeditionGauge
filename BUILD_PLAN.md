@@ -190,7 +190,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 69. ✅ [AGENT] `/feature` session-map-compare — Two-session map compare
 70. ✅ [AGENT] `/feature` gpx-ghost-import — GPX/FIT import for ghost
 71. ✅ [AGENT] `/feature` ghost-sector-compare — Compare ghost by sector
-72. 🔲 [AGENT] `/feature` ghost-video-overlay — Lap vs ghost video overlay export
+72. ✅ [AGENT] `/feature` ghost-video-overlay — Lap vs ghost video overlay export
 73. 🔲 [AGENT] `/feature` track-autodetect — Auto-detect track from GPS
 
 ##### Maps / offline

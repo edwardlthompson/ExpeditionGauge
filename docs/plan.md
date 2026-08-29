@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 72: Lap vs ghost video overlay export (`/feature` ghost-video-overlay).
+Sprint 32 row 73: Auto-detect track from GPS (`/feature` track-autodetect).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
