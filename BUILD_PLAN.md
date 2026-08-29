@@ -238,7 +238,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 102. ✅ [AGENT] `/feature` settings-qr-transfer — Settings transfer via local QR
 103. ✅ [AGENT] `/feature` encrypted-session-zip — Encrypted session ZIP
 104. ✅ [AGENT] `/feature` share-to-files — Default share to Files (not social)
-105. 🔲 [AGENT] `/feature` fdroid-reproducible — F-Droid metadata + reproducible publish
+105. ✅ [AGENT] `/feature` fdroid-reproducible — F-Droid metadata + reproducible publish
 106. 🔲 [AGENT] `/feature` fdroid-antifeatures — F-Droid Anti-Features + Fastlane polish
 107. 🔲 [AGENT] `/feature` fastlane-next-changelog — Fastlane changelog for next versionCode
 108. 🔲 [AGENT] `/feature` about-oss-notices — License / OSS notice completeness in About

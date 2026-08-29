@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 105: F-Droid metadata + reproducible publish (`/feature` fdroid-reproducible). Rows 99–104 are complete.
+Sprint 32 row 106: F-Droid Anti-Features + Fastlane polish (`/feature` fdroid-antifeatures). Rows 99–105 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
