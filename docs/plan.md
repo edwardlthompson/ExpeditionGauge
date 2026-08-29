@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 36: AA high-contrast tokens (`/feature` aa-high-contrast).
+Sprint 32 row 37: AA inclinometer alert audio route (`/feature` aa-inclinometer-audio).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
