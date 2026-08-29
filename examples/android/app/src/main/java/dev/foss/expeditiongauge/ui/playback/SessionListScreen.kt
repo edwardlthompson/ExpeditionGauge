@@ -28,7 +28,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.recording.ActivityType
-import dev.foss.expeditiongauge.sessionfavorites.SessionFavorites
+import dev.foss.expeditiongauge.driftrunranking.DriftRunRanking
 import dev.foss.expeditiongauge.settings.SessionFavoritesStore
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import dev.foss.expeditiongauge.ui.sectortimescsv.SectorTimesShareButton
@@ -68,10 +68,18 @@ fun SessionListScreen(
     val context = LocalContext.current
     val favoriteStore = remember { SessionFavoritesStore(context) }
     val favoriteIds by favoriteStore.favoriteIds.collectAsStateWithLifecycle(emptySet())
-    val ordered = remember(sessions, favoriteIds) {
-        SessionFavorites.favoritesFirst(sessions, favoriteIds) { it.id }
-    }
     val summaryById = remember(statsSummaries) { statsSummaries.associateBy { it.sessionId } }
+    val ordered = remember(sessions, favoriteIds, statsSummaries) {
+        DriftRunRanking.rank(
+            items = sessions,
+            favoriteIds = favoriteIds,
+            idOf = { it.id },
+            scoreOf = { session ->
+                val summary = summaryById[session.id]
+                DriftRunRanking.score(summary?.maxBetaDeg, summary?.slipEventCount ?: 0)
+            },
+        )
+    }
 
     GaugeMenuSurface(modifier = modifier) {
         GaugeBackHandler(onBack = onBack)
