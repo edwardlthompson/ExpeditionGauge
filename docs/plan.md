@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 38: AA parked DTC detail pane (`/feature` aa-parked-dtc).
+Sprint 32 row 39: AA parked-only voice Record/Stop (`/feature` aa-parked-voice).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
