@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 74: Offline tile cache completion (`/feature` offline-tile-cache). `/build 44-73` is complete.
+Sprint 32 row 75: Offline OSM speed-limit overlay (`/feature` osm-speed-limit).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
