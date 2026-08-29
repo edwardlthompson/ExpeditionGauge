@@ -35,6 +35,7 @@ import dev.foss.expeditiongauge.recording.SessionEventRecorder
 import dev.foss.expeditiongauge.recording.SessionMetadataRepository
 import dev.foss.expeditiongauge.recording.createRecordingServices
 import dev.foss.expeditiongauge.timing.LapTimingService
+import dev.foss.expeditiongauge.settings.CsvColumnStore
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
 import dev.foss.expeditiongauge.sensors.PhoneSensorProvider
@@ -42,6 +43,7 @@ import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetryOrchestrator
 import dev.foss.expeditiongauge.thermal.ThermalMonitor
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 
 class ExpeditionGaugeServices(
     private val appContext: Context,
@@ -82,7 +84,7 @@ class ExpeditionGaugeServices(
     val sessionStorageBudget get() = recordingBundle.sessionStorageBudget
     val recordingWriter get() = recordingBundle.recordingWriter
     val autoRecordMonitor get() = recordingBundle.autoRecordMonitor
-    val exportService = ExportService(database)
+    val exportService = ExportService(database) { CsvColumnStore(appContext).columns.first() }
     val enhancedExportService = EnhancedExportService(database, exportService, appContext)
     val videoSyncEngine: VideoSyncEngine = if (FeatureFlags.videoSyncEnabled) {
         DefaultVideoSyncEngine(appContext, database.recordingSessionDao())

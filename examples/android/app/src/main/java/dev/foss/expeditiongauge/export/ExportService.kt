@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.export
 
+import dev.foss.expeditiongauge.csvcolumns.CsvColumnPicker
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import java.io.File
 import java.text.SimpleDateFormat
@@ -8,7 +9,10 @@ import java.util.Locale
 
 enum class ExportFormat { CSV, JSON, GPX }
 
-class ExportService(private val database: ExpeditionGaugeDatabase) {
+class ExportService(
+    private val database: ExpeditionGaugeDatabase,
+    private val csvColumns: suspend () -> Set<String> = { CsvColumnPicker.ALL.toSet() },
+) {
     private val sessionDao = database.recordingSessionDao()
     private val sampleDao = database.sampleDao()
 
@@ -21,7 +25,10 @@ class ExportService(private val database: ExpeditionGaugeDatabase) {
         val file = File(outputDir, "session_${sessionId}_$stamp.${format.name.lowercase()}")
         file.writeText(
             when (format) {
-                ExportFormat.CSV -> ExportFormatters.toCsv(session, samples)
+                ExportFormat.CSV -> CsvColumnPicker.filterCsv(
+                    ExportFormatters.toCsv(session, samples),
+                    csvColumns(),
+                )
                 ExportFormat.JSON -> ExportFormatters.toJson(session, samples)
                 ExportFormat.GPX -> ExportFormatters.toGpx(session, samples)
             },

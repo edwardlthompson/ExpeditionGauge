@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Session notes trim on save and match library search case-insensitively
 * Library sessions can be starred; favorites sort to the top
 * Session edit can split a recording at the sample midpoint into two sessions
+* CSV export columns are selectable in Settings → Recording
 
 ### Changed
 

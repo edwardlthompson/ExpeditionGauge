@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.ui.settings
 
 import androidx.compose.runtime.Composable
 import dev.foss.expeditiongauge.ui.batterysaverrecord.BatterySaverRecordField
+import dev.foss.expeditiongauge.ui.csvcolumns.CsvColumnPickerField
 
 @Composable
 internal fun SettingsRecordingCategory(
@@ -9,6 +10,7 @@ internal fun SettingsRecordingCategory(
     actions: SettingsUiActions,
 ) {
     BatterySaverRecordField()
+    CsvColumnPickerField()
     SettingsRecordingRateOptions(
         logIntervalMs = state.logIntervalMs,
         onLogIntervalSelect = actions.onLogIntervalSelect,
