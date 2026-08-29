@@ -1,5 +1,6 @@
 package dev.foss.expeditiongauge.calibration
 
+import dev.foss.expeditiongauge.parkedautocaldwell.ParkedAutocalDwell
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -8,7 +9,7 @@ class StationaryStillDetector(
     private val gravityMs2: Float = 9.81f,
     private val accelTolMs2: Float = 0.15f * 9.81f,
     private val maxGyroRadPerSec: Float = 0.05f,
-    private val holdMs: Long = 2_500L,
+    private val holdMs: Long = ParkedAutocalDwell.MOVING_MS,
 ) {
     private var stillSinceMs: Long? = null
 
