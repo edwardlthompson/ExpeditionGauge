@@ -13,8 +13,8 @@ object PidSniffer {
     fun sanitize(command: String, raw: String?): String {
         val cmd = normalize(command) ?: return "blocked"
         if (raw.isNullOrBlank()) return "NO DATA"
-        val upper = raw.uppercase()
-        if (upper.contains("4902") || cmd.startsWith("09")) return "VIN redacted"
+        val compact = raw.uppercase().filter { it.isLetterOrDigit() }
+        if (compact.contains("4902") || cmd.startsWith("09")) return "VIN redacted"
         return raw.replace('\r', ' ').replace('\n', ' ').trim().take(MAX_RAW)
     }
 }
