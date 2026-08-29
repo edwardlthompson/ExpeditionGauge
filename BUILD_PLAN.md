@@ -161,7 +161,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 
 ##### Record / Relive
 
-43. 🔲 [AGENT] `/feature` recording-preroll — Recording pre-roll buffer
+43. ✅ [AGENT] `/feature` recording-preroll — Recording pre-roll buffer
 44. 🔲 [AGENT] `/feature` live-record-graphs — Real-time recording graphs
 45. 🔲 [AGENT] `/feature` battery-saver-record — Battery-saver recording profile
 46. 🔲 [AGENT] `/feature` thermal-record-ui — Thermal recording throttle UI

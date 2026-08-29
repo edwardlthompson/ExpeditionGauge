@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 42: DHU screenshot smoke (`dhu-screenshot-ci`).
+Sprint 32 row 44: real-time recording graphs (`/feature` live-record-graphs).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
