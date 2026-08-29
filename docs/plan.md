@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 29: local alert history log (`/feature` alert-history-log).
+Sprint 32 row 30: live traction circle (`/feature` traction-circle).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
