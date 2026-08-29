@@ -6,8 +6,10 @@ import android.util.Log
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.data.db.dao.AlertEventDao
 import dev.foss.expeditiongauge.data.db.entities.AlertEventEntity
+import dev.foss.expeditiongauge.alerthistory.AlertHistoryEntry
 import dev.foss.expeditiongauge.alertsnooze.AlertSnooze
 import dev.foss.expeditiongauge.hapticalerts.HapticOverLimit
+import dev.foss.expeditiongauge.settings.AlertHistoryStore
 import dev.foss.expeditiongauge.settings.AlertSnoozeStore
 import dev.foss.expeditiongauge.settings.HapticAlertsStore
 import dev.foss.expeditiongauge.settings.SettingsProfileRepository
@@ -40,6 +42,7 @@ class AlertService(
     private val hapticStore = HapticAlertsStore(context)
     private val snoozeStore = AlertSnoozeStore(context)
     private val wetStore = WetTireStore(context)
+    private val historyStore = AlertHistoryStore(context)
     @Volatile
     private var hapticEnabled = true
     @Volatile
@@ -114,16 +117,21 @@ class AlertService(
                     tts.speak(AlertPhrases.phrase(context, event))
                 }
             }
-            if (recording && sessionId != null && isEdge) {
-                alertEventDao.insert(
-                    AlertEventEntity(
-                        sessionId = sessionId,
-                        timestampMs = event.timestampMs,
-                        alertType = event.type.name,
-                        value = event.value,
-                        threshold = event.threshold,
-                    ),
+            if (isEdge) {
+                historyStore.append(
+                    AlertHistoryEntry(event.type.name, event.value, event.threshold, event.timestampMs),
                 )
+                if (recording && sessionId != null) {
+                    alertEventDao.insert(
+                        AlertEventEntity(
+                            sessionId = sessionId,
+                            timestampMs = event.timestampMs,
+                            alertType = event.type.name,
+                            value = event.value,
+                            threshold = event.threshold,
+                        ),
+                    )
+                }
             }
         }
         previouslyActiveKeys = active.map { "${it.type}:${it.tireCorner?.key.orEmpty()}" }.toSet()

@@ -19,6 +19,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.alerts.AlertAudioMode
 import dev.foss.expeditiongauge.alerts.AlertThresholds
 import dev.foss.expeditiongauge.gauge.UnitDisplay
+import dev.foss.expeditiongauge.ui.alerthistory.AlertHistoryField
 import dev.foss.expeditiongauge.ui.alertsnooze.AlertSnoozeField
 import dev.foss.expeditiongauge.ui.hapticalerts.HapticAlertsField
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -129,6 +130,7 @@ fun SettingsAlertOptions(
         ) {
             onThresholdsChange(thresholds.copy(rapidPressureLossKpaPerMin = it))
         }
+        AlertHistoryField()
     }
 }
 

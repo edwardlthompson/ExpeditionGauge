@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Per-threshold alert snooze (5 minutes) skips audio/haptic for that type
 * Empty alert limits inherit Track / Drift / Offroad HUD-preset defaults
 * Wet/rain tire alert profile tightens TPMS pressure, temp, and loss limits
+* Local alert history keeps the last 50 edges (Settings → Alerts) even when not recording
 
 ### Changed
 
