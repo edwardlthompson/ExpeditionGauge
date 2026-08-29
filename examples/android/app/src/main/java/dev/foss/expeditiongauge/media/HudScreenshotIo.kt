@@ -12,6 +12,7 @@ import android.os.Looper
 import android.provider.MediaStore
 import android.view.PixelCopy
 import android.view.Window
+import dev.foss.expeditiongauge.screenshotexifstrip.ScreenshotExifStrip
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -72,6 +73,7 @@ internal object HudScreenshotIo {
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
         }
+        ScreenshotExifStrip.stripLocation(values)
         val resolver = context.contentResolver
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) ?: return false
         return try {

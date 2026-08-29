@@ -98,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * First locales ship Spanish, German, and French About/Live/Maps/feedback strings
 * i18n layout stress flags translations longer than compact HUD rows
 * About bug and feature buttons have TalkBack content descriptions
+* HUD screenshots drop MediaStore GPS keys and flag JPEG EXIF GPS IFD before insert
 
 ### Changed
 
