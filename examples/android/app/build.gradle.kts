@@ -21,6 +21,13 @@ android {
         versionCode = 52
         versionName = "2.18.12"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val aaosStandalone = project.hasProperty("aaosStandalone")
+        manifestPlaceholders["automotiveRequired"] = if (aaosStandalone) "true" else "false"
+        buildConfigField("boolean", "AAOS_STANDALONE", aaosStandalone.toString())
+        if (aaosStandalone) {
+            applicationIdSuffix = ".aaos"
+            versionNameSuffix = "-aaos"
+        }
     }
 
     buildTypes {

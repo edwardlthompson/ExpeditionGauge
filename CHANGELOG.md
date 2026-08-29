@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Parked Android Auto Drive HUD: tap the DTC footer to open stored-code titles
 * Parked Android Auto Record/Stop speaks “Recording” / “Stopped” on the car nav route
 * Parked Android Auto Drive HUD: tap the telemetry cube to open the session library
+* Optional AAOS sideload APK (`-PaaosStandalone=true`) uses applicationId `.aaos` and requires `type.automotive`
 
 ### Changed
 

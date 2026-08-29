@@ -52,7 +52,8 @@ Treat like **B**: the Pi (or SBC) acts as an Android Auto head unit. Install and
 **More sideload-friendly OEMs (community reports):** Polestar 2/3/4, Volvo EX30 / EX90 / XC40 Recharge (same Google-built-in family). GM / Honda / others vary and are often locked down.
 
 1. Enable developer options on the car if available; allow install from the file manager / AnExplorer / USB.
-2. Sideload the same ARM64 APK.
+2. Sideload the same ARM64 APK, or build a distinct AAOS package:
+   `bash scripts/expedition/assemble-aaos-standalone.sh` (applicationId `.aaos`, automotive required).
 3. Grant location / Bluetooth while **parked**; enable Keep screen awake.
 4. Prefer external BLE/NMEA sensors if built-in phone-style IMU is missing.
 
