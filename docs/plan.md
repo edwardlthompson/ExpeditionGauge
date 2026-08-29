@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 19: user-configurable HUD tile layout (`/feature` hud-tile-layout).
+Sprint 32 row 20: color-blind HUD palettes (`/feature` colorblind-hud).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
