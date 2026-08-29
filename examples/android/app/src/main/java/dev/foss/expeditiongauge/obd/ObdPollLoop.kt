@@ -34,6 +34,8 @@ internal object ObdPollLoop {
         consumeClear: () -> Boolean = { false },
         onIm: (ImReadinessReport?) -> Unit = {},
         onTrip: (ObdTripSinceClear?) -> Unit = {},
+        onVin: (String?) -> Unit = {},
+        currentVin: () -> String? = { null },
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -49,6 +51,9 @@ internal object ObdPollLoop {
                     val codes = ObdDtcReader.refresh(reader, writer, catalog, prev)
                     onIm(ImReadiness.parse(Elm327Protocol.queryPid(reader, writer, "0101")))
                     onTrip(Elm327ObdTrip.request(reader, writer))
+                    if (currentVin() == null) {
+                        onVin(Elm327Vin.requestLast6(reader, writer) ?: "")
+                    }
                     if (codes.isEmpty()) codes
                     else FreezeFrame.attach(codes, Elm327FreezeFrame.request(reader, writer))
                 },

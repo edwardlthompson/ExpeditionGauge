@@ -23,11 +23,12 @@ fun PhoneHudStatusLines(lines: List<String>, modifier: Modifier = Modifier) {
 
 @Composable
 fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
-    val im = line.startsWith("I/M")
-    val spoken = stringResource(
-        if (im) R.string.im_readiness_cd else R.string.obd_trip_cd,
-        line,
-    )
+    val spokenRes = when {
+        line.startsWith("I/M") -> R.string.im_readiness_cd
+        line.startsWith("VIN") -> R.string.vin_last6_cd
+        else -> R.string.obd_trip_cd
+    }
+    val spoken = stringResource(spokenRes, line)
     Text(
         text = line,
         color = if (line.contains("not ready")) GaugeYellow else MaterialTheme.colorScheme.onSurface,
@@ -35,7 +36,13 @@ fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
-            .testTag(if (im) "im_readiness" else "obd_trip_since_clear")
+            .testTag(
+                when {
+                    line.startsWith("I/M") -> "im_readiness"
+                    line.startsWith("VIN") -> "vin_last6"
+                    else -> "obd_trip_since_clear"
+                },
+            )
             .semantics { contentDescription = spoken },
     )
 }

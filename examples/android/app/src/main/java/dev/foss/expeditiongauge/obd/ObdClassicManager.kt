@@ -49,6 +49,7 @@ class ObdClassicManager(
     val storedDtcs = hud.dtcs
     val imReadiness = hud.im.report
     val tripSinceClear = hud.trip.trip
+    val vinLast6 = hud.vin.last6
 
     fun selectDevice(address: String) {
         selectedAddress = address
@@ -93,6 +94,8 @@ class ObdClassicManager(
                                 consumeClear = { hud.clear.consume() },
                                 onIm = { hud.im.set(it) },
                                 onTrip = { hud.trip.set(it) },
+                                onVin = { hud.vin.set(it) },
+                                currentVin = { hud.vin.last6.value },
                             )
                         } catch (e: Exception) {
                             Log.w(TAG, "OBD poll ended: ${e.message}")
