@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 20: color-blind HUD palettes (`/feature` colorblind-hud).
+Sprint 32 row 21: night-only HUD palette (`/feature` night-hud-palette).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

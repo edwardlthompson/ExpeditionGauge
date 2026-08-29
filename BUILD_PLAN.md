@@ -132,7 +132,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 ##### Driving HUD
 
 19. ✅ [AGENT] `/feature` hud-tile-layout — User-configurable HUD tile layout
-20. 🔲 [AGENT] `/feature` colorblind-hud — Color-blind HUD palettes
+20. ✅ [AGENT] `/feature` colorblind-hud — Color-blind HUD palettes
 21. 🔲 [AGENT] `/feature` night-hud-palette — Night-only HUD palette
 22. 🔲 [AGENT] `/feature` ambient-autodim — Ambient lux auto-dim refine
 23. 🔲 [AGENT] `/feature` parked-idle-dim — Parked idle dim / burn-in guard
