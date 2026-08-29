@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 102: Settings transfer via local QR (`/feature` settings-qr-transfer). Rows 99–101 are complete.
+Sprint 32 row 103: Encrypted session ZIP (`/feature` encrypted-session-zip). Rows 99–102 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
