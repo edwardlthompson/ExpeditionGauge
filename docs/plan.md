@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 57: variable playback speed (`/feature` playback-speed).
+Sprint 32 row 58: keyboard / gamepad scrub (`/feature` playback-gamepad).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
