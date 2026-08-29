@@ -14,6 +14,7 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.ghost.GhostLapComparer
 import dev.foss.expeditiongauge.ghost.GhostLapOverlay
 import dev.foss.expeditiongauge.ghost.SectorDeltaRow
+import dev.foss.expeditiongauge.ghostsectorcompare.GhostSectorCompare
 import dev.foss.expeditiongauge.timing.LapTimingSummary
 import dev.foss.expeditiongauge.timing.PredictiveTimingEngine
 import dev.foss.expeditiongauge.data.db.entities.LapEntity
@@ -48,7 +49,7 @@ fun GhostLapComparePanel(
     val sectorRows = primaryLap?.let { primary ->
         val primarySplits = summary.splitsByLap[primary.id].orEmpty()
         val ghostSplits = summary.splitsByLap[ghostLap.id].orEmpty()
-        GhostLapComparer.sectorDeltas(primarySplits, ghostSplits)
+        GhostSectorCompare.rows(primarySplits, ghostSplits)
     }.orEmpty()
 
     Column(
@@ -80,6 +81,16 @@ fun GhostLapComparePanel(
                 text = stringResource(R.string.ghost_lap_sector_compare),
                 color = GaugeYellow,
                 style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                text = stringResource(
+                    R.string.ghost_sector_net,
+                    overlay.formatDelta(GhostSectorCompare.netDeltaMs(sectorRows)),
+                    GhostSectorCompare.fastestSectorCount(sectorRows),
+                ),
+                color = GaugeScaleWhite,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.testTag("ghost_sector_net"),
             )
             sectorRows.forEach { row ->
                 SectorDeltaRowText(row = row, formatter = formatter)

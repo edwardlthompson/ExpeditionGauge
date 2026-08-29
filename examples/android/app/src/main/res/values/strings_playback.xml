@@ -52,6 +52,7 @@
     <string name="ghost_lap_title">Ghost lap %1$d</string>
     <string name="ghost_lap_delta">Delta: %1$s</string>
     <string name="ghost_lap_sector_compare">Sector compare</string>
+    <string name="ghost_sector_net">Net %1$s · %2$d sectors faster</string>
     <string name="ghost_lap_sector_row">S%1$d  %2$s vs %3$s  Δ%4$s</string>
     <string name="comparison_ghost_map">Ghost compare on map</string>
 </resources>
