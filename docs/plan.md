@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 67: cornering G histogram (`/feature` cornering-histogram).
+Sprint 32 row 68: drift score / run ranking in library (`/feature` drift-run-ranking).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
