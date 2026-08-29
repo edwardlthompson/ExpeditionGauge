@@ -55,13 +55,14 @@ internal object AaHudComposerRender {
                 throttlePct = snapshot.throttlePct,
                 pedalFlashOn = key.pedalFlashOn,
                 textScale = key.textScale,
+                highContrast = key.highContrast,
             )
         }.onFailure { Log.e(TAG, "Drive HUD render failed", it) }.getOrNull()
 
     fun toPaneIcon(bmp: Bitmap?, key: AaHudDriveKey, fallback: CarIcon): CarIcon {
         val paneBmp = bmp?.let {
             if (key.orientation == HudStripOrientation.ROW) {
-                DriveHudLetterbox.toSquare(it, key.dark)
+                DriveHudLetterbox.toSquare(it, key.dark, key.highContrast)
             } else {
                 it
             }

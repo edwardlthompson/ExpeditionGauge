@@ -12,6 +12,7 @@ import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.CarHudTile
 import dev.foss.expeditiongauge.car.GridItemImagePolicy
 import dev.foss.expeditiongauge.car.aaa11y.AaA11yType
+import dev.foss.expeditiongauge.car.aahighcontrast.AaHighContrast
 import dev.foss.expeditiongauge.car.aanight.AaNightMode
 
 internal object TelemetryGridTemplates {
@@ -29,6 +30,7 @@ internal object TelemetryGridTemplates {
             maxGridItems = limit,
             isDarkMode = AaNightMode.fromCarUi(cfg.uiMode, carContext.isDarkMode),
             fontScale = cfg.fontScale,
+            highContrast = AaHighContrast.fromCarUi(carContext),
         )
     }
 

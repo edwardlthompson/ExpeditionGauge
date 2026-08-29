@@ -40,6 +40,7 @@ internal class DriveMapHudPush(
                 orientation = orientation,
             ),
             spec.isDarkMode,
+            spec.isHighContrast,
         )
         if (surfaceLive) painter.requestDraw(force = true)
     }

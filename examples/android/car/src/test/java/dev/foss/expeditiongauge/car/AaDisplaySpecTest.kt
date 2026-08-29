@@ -53,6 +53,7 @@ class AaDisplaySpecTest {
         assertEquals(1f, AaDisplaySpec.from(800, 400, 2f).textScale, 0.01f)
         assertEquals(1.3f, AaDisplaySpec.from(800, 400, 2f, fontScale = 1.3f).textScale, 0.01f)
         assertEquals(1.5f, AaDisplaySpec.from(800, 400, 2f, fontScale = 2f).textScale, 0.01f)
+        assertEquals(true, AaDisplaySpec.from(800, 400, 2f, highContrast = true).isHighContrast)
     }
 
     @Test

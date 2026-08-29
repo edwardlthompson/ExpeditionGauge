@@ -33,6 +33,7 @@ internal data class AaHudDriveKey(
     val pedalQ: Int = 0,
     val pedalFlashOn: Boolean = true,
     val textScale: Float = 1f,
+    val highContrast: Boolean = false,
 ) {
     fun sameForReuse(other: AaHudDriveKey): Boolean =
         attitudeMode == other.attitudeMode &&
@@ -57,6 +58,7 @@ internal data class AaHudDriveKey(
             pedalQ == other.pedalQ &&
             pedalFlashOn == other.pedalFlashOn &&
             textScale == other.textScale &&
+            highContrast == other.highContrast &&
             abs(pitchDeg - other.pitchDeg) <= AaHudComposer.ATTITUDE_EPS_DEG &&
             abs(rollDeg - other.rollDeg) <= AaHudComposer.ATTITUDE_EPS_DEG
 }

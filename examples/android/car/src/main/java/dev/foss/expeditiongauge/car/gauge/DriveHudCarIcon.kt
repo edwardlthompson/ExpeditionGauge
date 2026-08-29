@@ -14,6 +14,7 @@ object DriveHudCarIcon {
         val orientation: HudStripOrientation,
         val footerPx: Int,
         val textScaleQ: Int,
+        val highContrast: Boolean,
     )
 
     private val pool = ConcurrentHashMap<PoolKey, DriveHudBitmapRenderer>()
@@ -87,6 +88,7 @@ object DriveHudCarIcon {
         throttlePct: Float? = null,
         pedalFlashOn: Boolean = true,
         textScale: Float = 1f,
+        highContrast: Boolean = false,
     ): Bitmap {
         val clamped = cubePx.coerceIn(AaDisplaySpec.MIN_CUBE_PX, AaDisplaySpec.MAX_SURFACE_CUBE_PX)
         // ROW always reserves the DTC band (empty when no codes); COLUMN never has a footer.
@@ -96,10 +98,10 @@ object DriveHudCarIcon {
             } else {
                 0
             }
-        val key = PoolKey(clamped, orientation, footerPx, (textScale * 100).toInt())
+        val key = PoolKey(clamped, orientation, footerPx, (textScale * 100).toInt(), highContrast)
         pool.keys.filter { it.orientation == orientation && it != key }.forEach { pool.remove(it) }
         val rendered = pool.getOrPut(key) {
-            DriveHudBitmapRenderer(clamped, orientation, footerPx, textScale)
+            DriveHudBitmapRenderer(clamped, orientation, footerPx, textScale, highContrast)
         }.render(
             pitchDeg = pitchDeg, rollDeg = rollDeg, attitudeMode = attitudeMode,
             pitchAlert = pitchAlert, rollAlert = rollAlert,

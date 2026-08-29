@@ -17,6 +17,7 @@ data class AaDisplaySpec(
     val isDarkMode: Boolean,
     val isUltraWide: Boolean,
     val textScale: Float = 1f,
+    val isHighContrast: Boolean = false,
 ) {
     /** Edge length of one HUD cube (px). Pane image is 3×1 cubes. */
     val cubeSizePx: Int
@@ -104,6 +105,7 @@ data class AaDisplaySpec(
             maxGridItems: Int = DEFAULT_GRID_LIMIT,
             isDarkMode: Boolean = true,
             fontScale: Float = 1f,
+            highContrast: Boolean = false,
         ): AaDisplaySpec {
             val w = widthDp.coerceAtLeast(1)
             val h = heightDp.coerceAtLeast(1)
@@ -118,6 +120,7 @@ data class AaDisplaySpec(
                 isDarkMode = isDarkMode,
                 isUltraWide = isUltraWide,
                 textScale = AaA11yType.scale(fontScale),
+                isHighContrast = highContrast,
             )
         }
     }

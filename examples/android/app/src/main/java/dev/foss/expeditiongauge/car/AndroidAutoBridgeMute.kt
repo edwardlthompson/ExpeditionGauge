@@ -18,11 +18,17 @@ internal class AndroidAutoBridgeMute(
     private val accessibility: AccessibilityPreferences,
     private val scope: CoroutineScope,
     private val onMutedChanged: (Boolean) -> Unit,
+    private val onHighContrastChanged: (Boolean) -> Unit = {},
 ) {
     fun startCollect() {
         scope.launch {
             accessibility.alertsMuted.collect { muted ->
                 onMutedChanged(muted)
+            }
+        }
+        scope.launch {
+            accessibility.highContrastEnabled.collect { enabled ->
+                onHighContrastChanged(enabled)
             }
         }
     }

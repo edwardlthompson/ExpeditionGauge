@@ -84,6 +84,7 @@ class AaHudComposer(appContext: Context) {
             pedalFlashOn = !pedal.flashThrottle && !pedal.flashBrake ||
                 (nowMs / 280L) % 2L == 0L,
             textScale = displaySpec.textScale,
+            highContrast = displaySpec.isHighContrast,
         )
         val image = reuseOrBuild(key, snapshot)
         return DriveHudContent(image = image, rows = AaHudComposerRender.alertRows(key))

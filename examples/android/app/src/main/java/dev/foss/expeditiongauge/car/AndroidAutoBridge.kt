@@ -35,15 +35,16 @@ class AndroidAutoBridge(
     @Volatile private var attitudeGaugeMode: AttitudeGaugeMode = AttitudeGaugeMode.INCLINOMETER_LADDER
     @Volatile private var recording: Boolean = false
     @Volatile private var alertsMuted: Boolean = false
+    @Volatile private var highContrast: Boolean = false
     @Volatile private var storedDtcs: List<DtcEntry> = emptyList()
     @Volatile private var invalidationListener: (() -> Unit)? = null
     @Volatile private var toastHandler: ((String) -> Unit)? = null
     private val invalidation = AaScreenInvalidation()
     private val hudCompose = AndroidAutoBridgeHudCompose(this.appContext)
-    private val mute = AndroidAutoBridgeMute(accessibility, scope) { muted ->
-        alertsMuted = muted
+    private val mute = AndroidAutoBridgeMute(accessibility, scope, {
+        alertsMuted = it
         maybeInvalidate(force = true)
-    }
+    }) { highContrast = it; maybeInvalidate(force = true) }
     private val mutators = AndroidAutoBridgeMutators(
         services = services, scope = scope, settings = settings,
         toast = { toastHandler }, invalidateForce = { maybeInvalidate(force = true) },
@@ -92,7 +93,8 @@ class AndroidAutoBridge(
         orientation: HudStripOrientation = HudStripOrientation.ROW,
     ): DriveHudContent =
         hudCompose.composeHud(
-            snapshot, attitudeGaugeMode, activeAlerts, alertThresholds, displaySpec,
+            snapshot, attitudeGaugeMode, activeAlerts, alertThresholds,
+            displaySpec.copy(isHighContrast = displaySpec.isHighContrast || highContrast),
             speedUnit, pressureUnit, tempUnit, cubePxOverride, orientation,
             storedDtcs = storedDtcs,
         )
@@ -139,7 +141,6 @@ class AndroidAutoBridge(
     }
 
     companion object {
-        const val AA_INVALIDATE_MIN_INTERVAL_MS =
-            AaScreenInvalidation.AA_INVALIDATE_MIN_INTERVAL_MS
+        const val AA_INVALIDATE_MIN_INTERVAL_MS = AaScreenInvalidation.AA_INVALIDATE_MIN_INTERVAL_MS
     }
 }

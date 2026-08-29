@@ -1,5 +1,7 @@
 package dev.foss.expeditiongauge.car.gauge
 
+import dev.foss.expeditiongauge.car.aahighcontrast.AaHighContrast
+
 /** High-contrast colors for AA Drive HUD cubes (dark / light). */
 data class DriveHudTheme(
     val background: Int,
@@ -13,8 +15,11 @@ data class DriveHudTheme(
     val textScale: Float = 1f,
 ) {
     companion object {
-        fun forDarkMode(dark: Boolean, textScale: Float = 1f): DriveHudTheme =
-            (if (dark) DARK else LIGHT).copy(textScale = textScale)
+        fun forDarkMode(
+            dark: Boolean,
+            textScale: Float = 1f,
+            highContrast: Boolean = false,
+        ): DriveHudTheme = AaHighContrast.theme(dark, textScale, highContrast)
 
         val DARK = DriveHudTheme(
             background = 0xFF0B0F14.toInt(),

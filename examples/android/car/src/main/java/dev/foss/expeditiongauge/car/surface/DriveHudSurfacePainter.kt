@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference
 class DriveHudSurfacePainter {
     private val hudBitmap = AtomicReference<Bitmap?>(null)
     private val darkMode = AtomicReference(true)
+    private val highContrast = AtomicReference(false)
     private val bitmapPaint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
     @Volatile private var surface: Surface? = null
     @Volatile private var surfaceW: Int = 0
@@ -28,9 +29,10 @@ class DriveHudSurfacePainter {
     @Volatile private var lastFrame: Bitmap? = null
     var onLayoutChanged: (() -> Unit)? = null
 
-    fun setHudBitmap(bitmap: Bitmap?, darkBackground: Boolean) {
+    fun setHudBitmap(bitmap: Bitmap?, darkBackground: Boolean, highContrastMode: Boolean = false) {
         hudBitmap.set(bitmap)
         darkMode.set(darkBackground)
+        highContrast.set(highContrastMode)
     }
 
     fun stripOrientation(): HudStripOrientation = stableOrientation
@@ -87,7 +89,7 @@ class DriveHudSurfacePainter {
         val strip = hudBitmap.get() ?: return
         val bounds = visible
         if (bounds.width() <= 0 || bounds.height() <= 0) return
-        val theme = DriveHudTheme.forDarkMode(darkMode.get())
+        val theme = DriveHudTheme.forDarkMode(darkMode.get(), highContrast = highContrast.get())
         try {
             val canvas = s.lockCanvas(null) ?: return
             try {

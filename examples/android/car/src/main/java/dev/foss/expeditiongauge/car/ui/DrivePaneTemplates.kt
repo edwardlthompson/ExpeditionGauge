@@ -12,6 +12,7 @@ import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.DriveHudContent
 import dev.foss.expeditiongauge.car.DriveHudRow
 import dev.foss.expeditiongauge.car.aaa11y.AaA11yType
+import dev.foss.expeditiongauge.car.aahighcontrast.AaHighContrast
 import dev.foss.expeditiongauge.car.aanight.AaNightMode
 
 internal object DrivePaneTemplates {
@@ -32,6 +33,7 @@ internal object DrivePaneTemplates {
             maxGridItems = limit.coerceAtLeast(1),
             isDarkMode = AaNightMode.fromCarUi(cfg.uiMode, carContext.isDarkMode),
             fontScale = cfg.fontScale,
+            highContrast = AaHighContrast.fromCarUi(carContext),
         )
     }
 
