@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 30: live traction circle (`/feature` traction-circle).
+Sprint 32 row 31: offroad hold-to-peak pitch/roll bars (`/feature` offroad-hold-bars).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

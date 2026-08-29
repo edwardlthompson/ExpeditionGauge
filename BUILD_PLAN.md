@@ -142,7 +142,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 27. ✅ [AGENT] `/feature` preset-alert-thresholds — Per-preset alert thresholds
 28. ✅ [AGENT] `/feature` wet-tire-alerts — Wet/rain tire alert profile
 29. ✅ [AGENT] `/feature` alert-history-log — Local alert history log
-30. 🔲 [AGENT] `/feature` traction-circle — Live traction circle (latG/lonG)
+30. ✅ [AGENT] `/feature` traction-circle — Live traction circle (latG/lonG)
 31. 🔲 [AGENT] `/feature` offroad-hold-bars — Offroad hold-to-peak pitch/roll bars
 32. 🔲 [AGENT] `/feature` crawl-hud-declutter — Crawl-mode HUD declutter
 
