@@ -7,6 +7,7 @@ import dev.foss.expeditiongauge.data.db.dao.RecordingSessionDao
 import dev.foss.expeditiongauge.media.SessionDeleteService
 import dev.foss.expeditiongauge.media.SessionMediaRepository
 import dev.foss.expeditiongauge.settings.SettingsPreferences
+import dev.foss.expeditiongauge.storageautodelete.StorageAutoDelete
 import kotlinx.coroutines.flow.first
 import java.io.File
 
@@ -31,7 +32,7 @@ class SessionStorageBudget(
         return dbSize + directorySize(sessionsDir) + directorySize(exportsDir) + mediaRepository.totalStorageBytes()
     }
 
-    suspend fun isOverCap(): Boolean = usedBytes() >= allowedBytes()
+    suspend fun isOverCap(): Boolean = StorageAutoDelete.needsPrune(usedBytes(), allowedBytes())
 
     suspend fun pruneOldestUntilUnderCap(excludeSessionId: Long? = null): Boolean {
         var pruned = false

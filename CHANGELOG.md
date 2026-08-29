@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Battery-saver recording logs GPS-only samples at 5 Hz when the Settings toggle is on
 * Thermal HUD banner suggests 20 Hz or 5 Hz logging and applies it on tap
 * Recording log interval auto-slows when the phone reports thermal warning or critical
+* Storage auto-delete prunes oldest unprotected sessions when used bytes meet the cap
 
 ### Changed
 
