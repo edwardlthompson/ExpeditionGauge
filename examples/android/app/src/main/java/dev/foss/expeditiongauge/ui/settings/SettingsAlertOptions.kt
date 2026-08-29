@@ -67,6 +67,10 @@ fun SettingsAlertOptions(
         )
         HapticAlertsField()
         AlertSnoozeField()
+        Text(
+            text = stringResource(R.string.alerts_preset_hint),
+            style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+        )
         AlertField(R.string.alerts_max_lat_g, thresholds.maxLatG, "settings_alerts_lat_g") {
             onThresholdsChange(thresholds.copy(maxLatG = it))
         }

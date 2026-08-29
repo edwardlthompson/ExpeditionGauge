@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Keep-awake holds the screen only while moving (speed ≥ 0.5 m/s); parked or unknown speed allows timeout
 * Haptic over-limit alerts repeat on each feedback tick (Settings toggle, default on)
 * Per-threshold alert snooze (5 minutes) skips audio/haptic for that type
+* Empty alert limits inherit Track / Drift / Offroad HUD-preset defaults
 
 ### Changed
 

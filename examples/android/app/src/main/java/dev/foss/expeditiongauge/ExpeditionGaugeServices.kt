@@ -105,6 +105,7 @@ class ExpeditionGaugeServices(
             context = appContext,
             alertEventDao = database.alertEventDao(),
             thresholdsPreferences = alertThresholdsPreferences,
+            profileRepository = settingsProfileRepository,
             scope = scope,
         )
         phoneSensorProvider = PhoneSensorProvider(
