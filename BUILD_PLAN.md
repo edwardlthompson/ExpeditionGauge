@@ -221,7 +221,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 91. ✅ [AGENT] `/feature` tpms-temp-comp — TPMS temperature compensation
 92. ✅ [AGENT] `/feature` trailer-tpms — Trailer / 5th-wheel TPMS profile
 93. ✅ [AGENT] `/feature` gnss-dead-reckon — GNSS-drop dead reckoning
-94. 🔲 [AGENT] `/feature` vehicle-pid-maps — Per-vehicle PID maps
+94. ✅ [AGENT] `/feature` vehicle-pid-maps — Per-vehicle PID maps
 95. 🔲 [AGENT] `/feature` external-gps-rate — External GPS baud / update-rate settings
 
 ##### Accessibility / i18n

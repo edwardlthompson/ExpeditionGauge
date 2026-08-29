@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 94: Per-vehicle PID maps (`/feature` vehicle-pid-maps).
+Sprint 32 row 95: External GPS baud / update-rate settings (`/feature` external-gps-rate).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
