@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 107: Fastlane changelog for next versionCode (`/feature` fastlane-next-changelog). Rows 99–106 are complete.
+Sprint 32 row 108: License / OSS notice completeness in About (`/feature` about-oss-notices). Rows 99–107 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
