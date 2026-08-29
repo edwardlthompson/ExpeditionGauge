@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.recording
 
 import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
+import dev.foss.expeditiongauge.recordingpreroll.RecordingPreroll
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +43,15 @@ class RecordingWriter(
 
     private var writerJob: Job? = null
     private var samplesSincePruneCheck = 0
+    private val preroll = ArrayDeque<TelemetrySnapshot>()
+
+    init {
+        scope.launch {
+            telemetryBus.snapshots.collect { snap ->
+                if (!_recording.value) RecordingPreroll.retain(preroll, snap, snap.timestampMs)
+            }
+        }
+    }
 
     suspend fun startRecording(
         recordingMode: RecordingMode = RecordingMode.NORMAL,
@@ -81,6 +91,7 @@ class RecordingWriter(
         _activeSessionId.value = id
         _recording.value = true
         peaks.reset()
+        RecordingPreroll.drain(preroll).forEach { writeSample(id, it) }
         telemetryBus.publish(telemetryBus.snapshots.value.copy(recordingActive = true))
         writerJob = scope.launch { writeLoop(id) }
         return id
