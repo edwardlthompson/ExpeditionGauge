@@ -38,6 +38,7 @@ import dev.foss.expeditiongauge.ui.components.LapTimerStrip
 import dev.foss.expeditiongauge.ui.live.LivePairingSheet
 import dev.foss.expeditiongauge.ui.recording.RecordingAdvancedSheet
 import dev.foss.expeditiongauge.ui.recording.RecordingLiveStrip
+import dev.foss.expeditiongauge.ui.thermalrecord.ThermalRecordBanner
 import dev.foss.expeditiongauge.ui.settings.SettingsScreen
 import dev.foss.expeditiongauge.ui.settings.SettingsUiActions
 import dev.foss.expeditiongauge.ui.settings.SettingsUiState
@@ -208,13 +209,7 @@ fun DashboardScreen(
                                 modifier = Modifier.testTag("lap_timer_strip"),
                             )
                         }
-                        if (uiState.thermalStatus != dev.foss.expeditiongauge.thermal.ThermalStatus.Normal) {
-                            Text(
-                                text = stringResource(R.string.thermal_warning),
-                                color = GaugeYellow,
-                                modifier = Modifier.fillMaxWidth().padding(SpacingMd),
-                            )
-                        }
+                        ThermalRecordBanner(status = uiState.thermalStatus)
                         if (uiState.storageBlocked) {
                             Text(
                                 text = stringResource(R.string.storage_cap_blocked),

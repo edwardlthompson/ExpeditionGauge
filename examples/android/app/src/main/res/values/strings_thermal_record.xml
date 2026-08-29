@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="thermal_record_apply_hz">Use %1$d Hz log rate</string>
+</resources>
