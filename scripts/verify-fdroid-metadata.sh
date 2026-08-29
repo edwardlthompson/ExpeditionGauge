@@ -39,6 +39,19 @@ else
   fail "missing examples/android/metadata/REPRODUCIBLE.md"
 fi
 
+if [ -s "$META/AntiFeatures.txt" ]; then
+  ok "AntiFeatures.txt present"
+else
+  fail "missing or empty $META/AntiFeatures.txt"
+fi
+
+FASTLANE="$ROOT/examples/android/fastlane/metadata/android/en-US"
+if [ -s "$FASTLANE/AntiFeatures.txt" ]; then
+  ok "fastlane AntiFeatures.txt present"
+else
+  fail "missing or empty $FASTLANE/AntiFeatures.txt"
+fi
+
 if [ ! -f "$GRADLE" ]; then
   fail "missing $GRADLE"
 else

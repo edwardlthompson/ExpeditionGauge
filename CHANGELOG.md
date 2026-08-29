@@ -105,6 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Session ZIP listings can be XOR-sealed with a local passphrase
 * Share chooser prefers Files / DocumentsUI over social apps
 * F-Droid listing includes MIT license, source URL, and SOURCE_DATE_EPOCH publish notes
+* F-Droid Anti-Features listing is None (no Tracking, Ads, or NonFreeNet)
 
 ### Changed
 
