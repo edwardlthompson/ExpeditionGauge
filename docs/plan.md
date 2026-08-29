@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 28: wet/rain tire alert profile (`/feature` wet-tire-alerts).
+Sprint 32 row 29: local alert history log (`/feature` alert-history-log).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
