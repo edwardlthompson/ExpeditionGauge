@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.map.HomeMapRegion
+import dev.foss.expeditiongauge.ui.fossmapstyles.FossMapStyleField
 import dev.foss.expeditiongauge.ui.offlinegeocoder.OfflineGeocoderLabel
 import dev.foss.expeditiongauge.ui.offlinetilecache.OfflineTileCacheLabel
 import dev.foss.expeditiongauge.ui.osmspeedlimit.OsmSpeedLimitLabel
@@ -52,4 +53,5 @@ fun SettingsMapOptions(
     OsmSpeedLimitLabel(lat = homeRegion?.centerLat, lon = homeRegion?.centerLon)
     OfflineGeocoderLabel(lat = homeRegion?.centerLat, lon = homeRegion?.centerLon)
     TerrainToggleField()
+    FossMapStyleField()
 }

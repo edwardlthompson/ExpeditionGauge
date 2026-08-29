@@ -77,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Settings maps can show an offline OSM maxspeed overlay for the home region
 * Offline geocoder names sessions from a local track gazetteer
 * Settings maps can switch on a FOSS hillshade / terrain style
+* Settings maps can cycle MapLibre demo and OpenFreeMap Liberty/Bright styles
 
 ### Changed
 
