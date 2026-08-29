@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-29 — Sprint 31 Golden Path catch-up
+- **Status:** Accepted
+- **Context:** `/build` after template `/upgrade` to v1.0.0. Seven Sequential `/feature` rows were open; product About/Settings already existed.
+- **Decision:** Port stub patterns into `dev.foss.expeditiongauge` (opt-in `PendingCrash`, feedback dialogs, issue-form URLs, privacy sanitizer, same-resolution high-refresh). Do not copy template `examples/` over the app. Crash persist defaults off.
+- **Alternatives considered:** Copy goldenpath packages (rejected — Sacred product tree). Keep always-on `last_crash.txt` (rejected — Golden Path is opt-in).
+- **Consequences:** `watch-agent-gates --scope auto` and `feature-gate --stack android` passed. Human/device items stay in `HUMAN_BACKLOG.md`.
+
 ### 2026-08-28 — Ship v2.18.12
 - **Status:** Accepted
 - **Context:** `/ship` after PR #21 (DTC footer waited on the ~30 s poll tick). Pre-release feature-gate + CI/Security/CodeQL green. Local debug keystore signs the APK so OP13/OP12 can upgrade.

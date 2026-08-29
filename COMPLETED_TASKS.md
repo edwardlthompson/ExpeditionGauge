@@ -2,6 +2,16 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 31 — Golden Path catch-up (template v1.0.0) (2026-08-29)
+
+- ✅ [AGENT] `/feature` about/donations-updates — add `docs/features/donations-updates.md`; port remaining donate/update-prompt patterns into existing `about/` (do not copy examples/ over the app)
+- ✅ [AGENT] `/feature` crash-capture — opt-in PendingCrash allowlist sanitizer beside existing `crash/CrashLogStore`; spec `docs/features/crash-capture.md`
+- ✅ [AGENT] `/feature` settings extras — crash-save toggle / goldenpath SettingsLogic only; keep the existing Settings hub; spec `docs/features/settings.md`
+- ✅ [AGENT] `/feature` feedback — in-app Report a bug / Request a feature dialogs; spec `docs/features/feedback.md`
+- ✅ [AGENT] `/feature` github-feedback — GitHub issue-form URL composer + clipboard fallback; spec `docs/features/github-feedback.md`
+- ✅ [AGENT] `/feature` privacy-report — sanitize/fingerprint/markdown builder (no UI, no network); spec `docs/features/privacy-report.md`
+- ✅ [AGENT] `/feature` display-refresh — fastest same-resolution display mode + HIGH scroll vote; spec `docs/features/display-refresh.md`
+
 ## Hotfix v2.18.12 — OBD DTC scan on connect (2026-08-28)
 
 - ✅ [AGENT] H-001 `ObdDtcScanScheduler` + poll-loop pump: confirmed handshake always kicks Mode 03/07
