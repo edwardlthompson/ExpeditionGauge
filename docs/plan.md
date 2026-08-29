@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 50: session notes (`/feature` session-notes).
+Sprint 32 row 51: library search and favorites (`/feature` library-search-favorites).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
