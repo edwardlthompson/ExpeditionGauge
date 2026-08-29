@@ -116,6 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Predictive back works on feedback, permissions, compare, session edit, and playback
 * Settings can pick a persistable SAF export folder
 * Scroll surfaces vote a 120 Hz preferredFrameRate on API 35+
+* AGP 9.2.1 / Kotlin 2.4.0 pin stays held (KB-026); automerge still skips toolchain bumps
 
 ### Changed
 
