@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 4: Mode 02 freeze frame (`/feature` freeze-frame).
+Sprint 32 row 5: I/M readiness monitors (`/feature` im-readiness).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
