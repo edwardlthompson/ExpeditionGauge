@@ -11,6 +11,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltage
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 
 @Composable
@@ -29,6 +30,7 @@ fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
         line.startsWith("TFT") || line.startsWith("EGT") -> R.string.ford_mode22_temps_cd
         line.startsWith("MAP") || line.startsWith("AFR") || line.startsWith("Boost") ->
             R.string.boost_pids_cd
+        ObdTempsVoltage.matches(line) -> R.string.obd_temps_voltage_cd
         else -> R.string.obd_trip_cd
     }
     val spoken = stringResource(spokenRes, line)
@@ -46,6 +48,7 @@ fun PhoneHudStatusLine(line: String, modifier: Modifier = Modifier) {
                     line.startsWith("TFT") || line.startsWith("EGT") -> "ford_mode22_temps"
                     line.startsWith("MAP") || line.startsWith("AFR") || line.startsWith("Boost") ->
                         "optional_boost_pids"
+                    ObdTempsVoltage.matches(line) -> "obd_temps_voltage"
                     else -> "obd_trip_since_clear"
                 },
             )

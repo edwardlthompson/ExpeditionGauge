@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="obd_temps_voltage_cd">Coolant oil voltage: %1$s</string>
+</resources>

@@ -40,6 +40,7 @@ internal object ObdPollStarter {
                 onDiscover = { hud.discovery.set(it) },
                 onFordTemps = { hud.fordTemps.set(it) },
                 onBoost = { hud.boost.set(it) },
+                onTemps = { hud.temps.set(it) },
             )
         } catch (e: Exception) {
             Log.w(TAG, "OBD poll ended: ${e.message}")

@@ -8,6 +8,7 @@ import dev.foss.expeditiongauge.imreadiness.ImReadiness
 import dev.foss.expeditiongauge.imreadiness.ImReadinessReport
 import dev.foss.expeditiongauge.boostpids.BoostPidSnapshot
 import dev.foss.expeditiongauge.fordmode22.FordMode22Temps
+import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltageSnapshot
 import dev.foss.expeditiongauge.obdtrip.ObdTripSinceClear
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
@@ -42,6 +43,7 @@ internal object ObdPollLoop {
         onDiscover: (Set<Int>) -> Unit = {},
         onFordTemps: (FordMode22Temps?) -> Unit = {},
         onBoost: (BoostPidSnapshot?) -> Unit = {},
+        onTemps: (ObdTempsVoltageSnapshot?) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -59,6 +61,7 @@ internal object ObdPollLoop {
                     onTrip(Elm327ObdTrip.request(reader, writer))
                     onFordTemps(Elm327FordMode22.requestTemps(reader, writer))
                     onBoost(Elm327BoostPids.request(reader, writer))
+                    onTemps(Elm327TempsVoltage.request(reader, writer))
                     if (currentVin() == null) {
                         onVin(Elm327Vin.requestLast6(reader, writer) ?: "")
                     }

@@ -31,6 +31,7 @@ import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.imreadiness.ImReadiness
 import dev.foss.expeditiongauge.boostpids.BoostPids
 import dev.foss.expeditiongauge.fordmode22.FordMode22TempLine
+import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltage
 import dev.foss.expeditiongauge.obdtrip.ObdTrip
 import dev.foss.expeditiongauge.vinlast6.VinLast6
 import dev.foss.expeditiongauge.ui.dashboard.DashboardScreen
@@ -125,6 +126,7 @@ fun AppScreenDashboardRoute(
     val vinLast6 by services.obdManager.vinLast6.collectAsStateWithLifecycle()
     val fordTemps by services.obdManager.fordTemps.collectAsStateWithLifecycle()
     val boostPids by services.obdManager.boostPids.collectAsStateWithLifecycle()
+    val tempsVoltage by services.obdManager.tempsVoltage.collectAsStateWithLifecycle()
     MetricTtsReadout(enabled = ttsReadoutEnabled && FeatureFlags.accessibilityPackEnabled, snapshot = telemetry)
     DashboardScreen(
         viewModel = dashboardViewModel,
@@ -214,6 +216,7 @@ fun AppScreenDashboardRoute(
             VinLast6.line(vinLast6),
             FordMode22TempLine.line(fordTemps),
             BoostPids.line(boostPids),
+            ObdTempsVoltage.line(tempsVoltage, ObdTempsVoltage.parked(telemetry.speedMps)),
         ),
     )
 }
