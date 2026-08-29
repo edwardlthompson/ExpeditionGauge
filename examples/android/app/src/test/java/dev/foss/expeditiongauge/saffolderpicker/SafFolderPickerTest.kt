@@ -11,6 +11,6 @@ class SafFolderPickerTest {
         assertFalse(SafFolderPicker.isTreeUri("https://example.com/file"))
         val flags = SafFolderPicker.persistFlags()
         assertTrue(flags and android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION != 0)
-        assertTrue(SafFolderPicker.treeIntent().action == android.content.Intent.ACTION_OPEN_DOCUMENT_TREE)
+        assertTrue(flags and android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION != 0)
     }
 }
