@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_title">Über</string>
+    <string name="live_banner">LIVE</string>
+    <string name="settings_maps_heading">Offline-Karten</string>
+    <string name="feedback_report_bug">Fehler melden</string>
+</resources>

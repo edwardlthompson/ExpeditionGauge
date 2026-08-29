@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_title">À propos</string>
+    <string name="live_banner">EN DIRECT</string>
+    <string name="settings_maps_heading">Cartes hors ligne</string>
+    <string name="feedback_report_bug">Signaler un bug</string>
+</resources>
