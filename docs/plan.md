@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 90: Spare / 5th TPMS (`/feature` spare-tpms).
+Sprint 32 row 91: TPMS temperature compensation (`/feature` tpms-temp-comp).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
