@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 108: License / OSS notice completeness in About (`/feature` about-oss-notices). Rows 99–107 are complete.
+Sprint 32 row 109: Crash-review ADB smoke (`crash-review-smoke`). Rows 99–108 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
