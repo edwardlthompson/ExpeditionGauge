@@ -103,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Settings can backup a pipe-encoded snapshot that omits adapter addresses
 * Settings can show a local `egset|v1|` QR payload for that backup blob
 * Session ZIP listings can be XOR-sealed with a local passphrase
+* Share chooser prefers Files / DocumentsUI over social apps
 
 ### Changed
 

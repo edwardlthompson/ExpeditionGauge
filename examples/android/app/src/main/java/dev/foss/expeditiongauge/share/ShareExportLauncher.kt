@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.encryptedsessionzip.EncryptedSessionZip
+import dev.foss.expeditiongauge.sharetofiles.ShareToFiles
 import java.io.File
 
 object ShareExportLauncher {
@@ -17,7 +18,12 @@ object ShareExportLauncher {
             putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(videoUri, cardUri))
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_card_caption))
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                EncryptedSessionZip.seal(listOf(videoFile.name, cardFile.name), ""),
+            )
         }
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_preview_title)))
+        val title = context.getString(R.string.share_preview_title)
+        context.startActivity(ShareToFiles.chooser(intent, title))
     }
 }
