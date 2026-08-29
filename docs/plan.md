@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 62: local voice note on mark event (`/feature` mark-event-voice).
+Sprint 32 row 63: Relive photo story timeline (`/feature` photo-story-timeline).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
