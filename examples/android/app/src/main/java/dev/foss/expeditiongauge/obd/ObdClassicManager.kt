@@ -92,6 +92,7 @@ class ObdClassicManager(
                                 onSnapshot = { _snapshot.value = it },
                                 currentDtcs = { _storedDtcs.value },
                                 onDtcs = { _storedDtcs.value = it },
+                                consumeClear = { consumeClearRequest() },
                             )
                         } catch (e: Exception) {
                             Log.w(TAG, "OBD poll ended: ${e.message}")
@@ -134,6 +135,19 @@ class ObdClassicManager(
 
     fun simulateStoredDtcs(codes: List<String>) = ObdDtcSim.apply(codes, catalog, _storedDtcs)
     fun clearSimulatedDtcs() = ObdDtcSim.clear(_storedDtcs)
+
+    @Volatile
+    private var clearRequested = false
+
+    fun requestClearDtcs() {
+        clearRequested = true
+    }
+
+    internal fun consumeClearRequest(): Boolean {
+        if (!clearRequested) return false
+        clearRequested = false
+        return true
+    }
 
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"

@@ -197,5 +197,6 @@ fun AppScreenDashboardRoute(
             scope.launch { services.settingsPreferences.setHudScreenshotMode(mode) }
         },
         storedDtcs = storedDtcs,
+        onClearDtcs = { services.obdManager.requestClearDtcs() },
     )
 }

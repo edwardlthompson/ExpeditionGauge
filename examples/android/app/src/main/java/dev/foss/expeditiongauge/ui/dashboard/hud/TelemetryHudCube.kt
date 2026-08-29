@@ -33,6 +33,8 @@ fun TelemetryHudCube(
     hideGpsExtras: Boolean,
     activeAlerts: Set<AlertType>,
     storedDtcs: List<DtcEntry> = emptyList(),
+    canClearDtcs: Boolean = false,
+    onClearDtcs: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -90,6 +92,8 @@ fun TelemetryHudCube(
         )
         PhoneHudDtcFooter(
             entries = storedDtcs,
+            canClear = canClearDtcs,
+            onClear = onClearDtcs,
             modifier = Modifier.fillMaxWidth(),
         )
         TelemetryHudPedalBar(
@@ -115,6 +119,8 @@ fun CombinedTelemetryTpmsCube(
     showTpms: Boolean,
     themeMode: ThemeMode = ThemeMode.System,
     storedDtcs: List<DtcEntry> = emptyList(),
+    canClearDtcs: Boolean = false,
+    onClearDtcs: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -126,6 +132,8 @@ fun CombinedTelemetryTpmsCube(
             hideGpsExtras = hideGpsExtras,
             activeAlerts = activeAlerts,
             storedDtcs = storedDtcs,
+            canClearDtcs = canClearDtcs,
+            onClearDtcs = onClearDtcs,
             modifier = Modifier.weight(1f),
         )
         if (showTpms) {

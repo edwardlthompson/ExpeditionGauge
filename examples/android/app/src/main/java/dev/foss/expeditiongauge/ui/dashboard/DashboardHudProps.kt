@@ -41,4 +41,6 @@ data class DashboardHudProps(
     val onMarkEvent: () -> Unit = {},
     val onScreenshotClick: () -> Unit = {},
     val storedDtcs: List<DtcEntry> = emptyList(),
+    val canClearDtcs: Boolean = false,
+    val onClearDtcs: () -> Unit = {},
 )

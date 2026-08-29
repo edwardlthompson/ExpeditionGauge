@@ -56,6 +56,8 @@ fun DashboardHudLayout(
     onMarkEvent: () -> Unit = {},
     onScreenshotClick: () -> Unit = {},
     storedDtcs: List<DtcEntry> = emptyList(),
+    canClearDtcs: Boolean = false,
+    onClearDtcs: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -93,6 +95,8 @@ fun DashboardHudLayout(
             onMarkEvent = onMarkEvent,
             onScreenshotClick = onScreenshotClick,
             storedDtcs = storedDtcs,
+            canClearDtcs = canClearDtcs,
+            onClearDtcs = onClearDtcs,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

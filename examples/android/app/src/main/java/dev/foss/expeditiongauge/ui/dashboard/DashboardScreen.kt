@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.dtcclear.DtcClear
 import dev.foss.expeditiongauge.about.DonationsConfig
 import dev.foss.expeditiongauge.stats.SessionAggregateStats
 import dev.foss.expeditiongauge.ui.about.AboutScreen
@@ -96,6 +97,7 @@ fun DashboardScreen(
         dev.foss.expeditiongauge.settings.HudScreenshotMode.FULL_SCREEN,
     onScreenshotModeSelected: (dev.foss.expeditiongauge.settings.HudScreenshotMode) -> Unit = {},
     storedDtcs: List<dev.foss.expeditiongauge.obd.dtc.DtcEntry> = emptyList(),
+    onClearDtcs: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
@@ -257,6 +259,11 @@ fun DashboardScreen(
                             onMarkEvent = onMarkEvent,
                             onScreenshotClick = { context.captureHudScreenshot(screenshotMode) },
                             storedDtcs = storedDtcs,
+                            canClearDtcs = DtcClear.canClear(
+                                telemetry.speedMps,
+                                uiState.recording,
+                            ),
+                            onClearDtcs = onClearDtcs,
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                         )
                     }

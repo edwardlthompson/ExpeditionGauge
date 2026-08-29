@@ -101,4 +101,49 @@ class ObdPollLoopTest {
         assertEquals(2, scans)
         assertTrue(now < 10_000L + ObdDtcReader.RESCAN_INTERVAL_MS)
     }
+
+    @Test
+    fun pump_clearAckEmptiesDtcs() = runBlocking {
+        var loops = 0
+        var last = listOf(DtcEntry("P0420", "Catalyst"))
+        var consumed = false
+        ObdPollLoop.pump(
+            isActive = { loops < 1 },
+            clock = { 10_000L },
+            scheduler = ObdDtcScanScheduler(),
+            currentDtcs = { last },
+            onDtcs = { last = it },
+            scanDtcs = { listOf(DtcEntry("P0420", "Catalyst")) },
+            pollOnce = { loops++ },
+            delayMs = { },
+            consumeClear = {
+                if (consumed) false else {
+                    consumed = true
+                    true
+                }
+            },
+            performClear = { true },
+        )
+        assertEquals(emptyList<DtcEntry>(), last)
+    }
+
+    @Test
+    fun pump_clearFailureLeavesDtcs() = runBlocking {
+        var loops = 0
+        val kept = listOf(DtcEntry("P0420", "Catalyst"))
+        var last = kept
+        ObdPollLoop.pump(
+            isActive = { loops < 1 },
+            clock = { 10_000L },
+            scheduler = ObdDtcScanScheduler(),
+            currentDtcs = { last },
+            onDtcs = { last = it },
+            scanDtcs = { last },
+            pollOnce = { loops++ },
+            delayMs = { },
+            consumeClear = { true },
+            performClear = { false },
+        )
+        assertEquals(kept, last)
+    }
 }

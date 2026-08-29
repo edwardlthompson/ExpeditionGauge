@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dtc_clear_action">Clear codes</string>
+    <string name="dtc_clear_title">Clear stored DTCs?</string>
+    <string name="dtc_clear_body">Parked only. This sends Mode 04 to the adapter and cannot be undone.</string>
+    <string name="dtc_clear_confirm">Clear</string>
+    <string name="dtc_clear_cancel">Cancel</string>
+    <string name="dtc_clear_need_park">Park and stop recording to clear codes.</string>
+</resources>

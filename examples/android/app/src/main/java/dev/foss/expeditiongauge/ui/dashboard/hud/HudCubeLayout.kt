@@ -104,6 +104,8 @@ fun HudCubeLayout(
             hideGpsExtras = hideGpsExtras,
             activeAlerts = props.activeAlerts,
             storedDtcs = props.storedDtcs,
+            canClearDtcs = props.canClearDtcs,
+            onClearDtcs = props.onClearDtcs,
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -138,6 +140,8 @@ fun HudCubeLayout(
             themeMode = props.themeMode,
             showTpms = preset.showTirePressure,
             storedDtcs = props.storedDtcs,
+            canClearDtcs = props.canClearDtcs,
+            onClearDtcs = props.onClearDtcs,
             modifier = Modifier.fillMaxSize(),
         )
     }

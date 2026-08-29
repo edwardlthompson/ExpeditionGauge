@@ -27,6 +27,7 @@ internal object ObdPollLoop {
         onDtcs: (List<DtcEntry>) -> Unit,
         clock: () -> Long = { SystemClock.elapsedRealtime() },
         scheduler: ObdDtcScanScheduler = ObdDtcScanScheduler(),
+        consumeClear: () -> Boolean = { false },
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -43,6 +44,8 @@ internal object ObdPollLoop {
                     previous = ObdPollHelper.pollSnapshot(reader, writer, pidConfig, previous)
                     onSnapshot(previous)
                 },
+                consumeClear = consumeClear,
+                performClear = { Elm327DtcClear.request(reader, writer) },
             )
         } catch (e: IOException) {
             // Socket closed / broken pipe — disconnect path, not a fatal crash.
@@ -64,11 +67,17 @@ internal object ObdPollLoop {
         scanDtcs: (List<DtcEntry>) -> List<DtcEntry>,
         pollOnce: suspend () -> Unit,
         delayMs: suspend (Long) -> Unit = { delay(it) },
+        consumeClear: () -> Boolean = { false },
+        performClear: () -> Boolean = { false },
     ) {
         scheduler.onConnectionConfirmed(clock())
         while (isActive()) {
+            val cleared = consumeClear() && performClear()
+            if (cleared) {
+                onDtcs(emptyList())
+            }
             val now = clock()
-            if (scheduler.due(now)) {
+            if (!cleared && scheduler.due(now)) {
                 onDtcs(scanDtcs(currentDtcs()))
                 scheduler.markAttempt(now)
             }

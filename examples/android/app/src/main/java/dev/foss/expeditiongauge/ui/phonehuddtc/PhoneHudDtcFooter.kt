@@ -30,9 +30,12 @@ import kotlinx.coroutines.delay
 fun PhoneHudDtcFooter(
     entries: List<DtcEntry>,
     modifier: Modifier = Modifier,
+    canClear: Boolean = false,
+    onClear: () -> Unit = {},
 ) {
     var nowMs by remember { mutableLongStateOf(0L) }
     var detail by remember { mutableStateOf<DtcEntry?>(null) }
+    var confirmClear by remember { mutableStateOf(false) }
     LaunchedEffect(entries) {
         if (entries.isEmpty()) return@LaunchedEffect
         while (true) {
@@ -70,6 +73,28 @@ fun PhoneHudDtcFooter(
                 modifier = Modifier.testTag("phone_hud_dtc_detail_close"),
             ) { Text(stringResource(R.string.phone_hud_dtc_close)) }
         },
+        dismissButton = {
+            val clearCd = stringResource(
+                if (canClear) R.string.dtc_clear_action else R.string.dtc_clear_need_park,
+            )
+            TextButton(
+                onClick = { if (canClear) confirmClear = true },
+                enabled = canClear,
+                modifier = Modifier
+                    .testTag("dtc_clear_action")
+                    .semantics { contentDescription = clearCd },
+            ) { Text(stringResource(R.string.dtc_clear_action)) }
+        },
         modifier = Modifier.testTag("phone_hud_dtc_dialog"),
     )
+    if (confirmClear) {
+        PhoneHudDtcClearDialog(
+            onConfirm = {
+                confirmClear = false
+                detail = null
+                onClear()
+            },
+            onDismiss = { confirmClear = false },
+        )
+    }
 }
