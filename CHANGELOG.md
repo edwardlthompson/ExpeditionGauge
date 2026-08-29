@@ -101,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * HUD screenshots drop MediaStore GPS keys and flag JPEG EXIF GPS IFD before insert
 * Settings Advanced can share a sanitized privacy report
 * Settings can backup a pipe-encoded snapshot that omits adapter addresses
+* Settings can show a local `egset|v1|` QR payload for that backup blob
 
 ### Changed
 

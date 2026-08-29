@@ -19,6 +19,7 @@ import dev.foss.expeditiongauge.ui.liveencrypt.LiveEncryptField
 import dev.foss.expeditiongauge.ui.livemultireceiver.LiveMultiReceiverLabel
 import dev.foss.expeditiongauge.ui.privacyreportexport.PrivacyReportExportButton
 import dev.foss.expeditiongauge.ui.settingsjsonbackup.SettingsBackupButton
+import dev.foss.expeditiongauge.ui.settingsqrtransfer.SettingsQrLabel
 
 @Composable
 internal fun SettingsAdvancedCategory(
