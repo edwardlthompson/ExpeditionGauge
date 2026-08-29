@@ -183,7 +183,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 62. ✅ [AGENT] `/feature` mark-event-voice — Local voice note on mark event
 63. ✅ [AGENT] `/feature` photo-story-timeline — Relive photo story timeline
 64. ✅ [AGENT] `/feature` dual-dashcam — Multi-file dashcam import
-65. 🔲 [AGENT] `/feature` video-burnin-fields — Video burn-in extra fields
+65. ✅ [AGENT] `/feature` video-burnin-fields — Video burn-in extra fields
 66. 🔲 [AGENT] `/feature` lon-g-heatmap — Brake / accel (lonG) heatmap
 67. 🔲 [AGENT] `/feature` cornering-histogram — Cornering G histogram
 68. 🔲 [AGENT] `/feature` drift-run-ranking — Drift score / run ranking in library

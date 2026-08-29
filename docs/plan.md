@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 65: video burn-in extra fields (`/feature` video-burnin-fields).
+Sprint 32 row 66: brake / accel (lonG) heatmap (`/feature` lon-g-heatmap).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
