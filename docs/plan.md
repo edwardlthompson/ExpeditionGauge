@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 61: mark-event chapter list in HTML share (`/feature` mark-event-chapters-export).
+Sprint 32 row 62: local voice note on mark event (`/feature` mark-event-voice).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
