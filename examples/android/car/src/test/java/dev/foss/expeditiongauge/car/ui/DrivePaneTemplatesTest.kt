@@ -35,7 +35,7 @@ class DrivePaneTemplatesTest {
         )
         val pane = DrivePaneTemplates.pane(content)
         assertEquals(1, pane.rows.size)
-        assertEquals("Alert", pane.rows[0].title.toString())
+        assertEquals("Alert, Pitch", pane.rows[0].title.toString())
     }
 
     @Test

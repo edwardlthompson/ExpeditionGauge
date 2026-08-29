@@ -28,8 +28,9 @@ internal object DriveHudDtcFooterPaint {
         val visualTop = cubePx - cubeGapPx / 2f
         val visualBottom = (cubePx + footerPx).toFloat()
         val bandH = (visualBottom - visualTop).coerceAtLeast(1f)
-        val maxSize = (bandH * 0.70f).coerceIn(28f, 56f)
-        val minSize = (bandH * 0.38f).coerceIn(16f, 28f)
+        val scale = theme.textScale.coerceIn(1f, 1.5f)
+        val maxSize = (bandH * (0.70f * scale).coerceAtMost(0.92f)).coerceIn(28f, 56f)
+        val minSize = (bandH * 0.38f * scale).coerceIn(16f, 28f)
         paint.textSize = fitTextSize(maxW, minSize, maxSize) { size ->
             paint.textSize = size
             paint.measureText(line)

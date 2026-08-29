@@ -1,5 +1,7 @@
 package dev.foss.expeditiongauge.car
 
+import dev.foss.expeditiongauge.car.aaa11y.AaA11yType
+
 /**
  * Head-unit display geometry for Android Auto layout.
  *
@@ -14,6 +16,7 @@ data class AaDisplaySpec(
     val maxGridItems: Int,
     val isDarkMode: Boolean,
     val isUltraWide: Boolean,
+    val textScale: Float = 1f,
 ) {
     /** Edge length of one HUD cube (px). Pane image is 3×1 cubes. */
     val cubeSizePx: Int
@@ -100,6 +103,7 @@ data class AaDisplaySpec(
             density: Float,
             maxGridItems: Int = DEFAULT_GRID_LIMIT,
             isDarkMode: Boolean = true,
+            fontScale: Float = 1f,
         ): AaDisplaySpec {
             val w = widthDp.coerceAtLeast(1)
             val h = heightDp.coerceAtLeast(1)
@@ -113,6 +117,7 @@ data class AaDisplaySpec(
                 maxGridItems = maxGridItems.coerceAtLeast(1),
                 isDarkMode = isDarkMode,
                 isUltraWide = isUltraWide,
+                textScale = AaA11yType.scale(fontScale),
             )
         }
     }

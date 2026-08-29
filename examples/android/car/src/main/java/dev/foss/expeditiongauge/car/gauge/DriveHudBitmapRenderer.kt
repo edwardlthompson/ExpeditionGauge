@@ -11,12 +11,11 @@ class DriveHudBitmapRenderer(
     private val cubePx: Int = DEFAULT_CUBE_PX,
     private val orientation: HudStripOrientation = HudStripOrientation.ROW,
     private val footerPx: Int = 0,
+    private val textScale: Float = 1f,
 ) {
     private val cubeCount = HudStripOrientation.cubeCount(orientation)
     private val stripW = if (orientation == HudStripOrientation.ROW) cubePx * cubeCount else cubePx
-    private val stripH =
-        if (orientation == HudStripOrientation.ROW) cubePx + footerPx.coerceAtLeast(0)
-        else cubePx * cubeCount
+    private val stripH = if (orientation == HudStripOrientation.ROW) cubePx + footerPx.coerceAtLeast(0) else cubePx * cubeCount
     private val bitmap: Bitmap = Bitmap.createBitmap(stripW, stripH, Bitmap.Config.ARGB_8888)
     private val canvas = Canvas(bitmap)
     private val cubes = DriveHudCubeDraw(canvas, cubePx)
@@ -57,7 +56,7 @@ class DriveHudBitmapRenderer(
         cubes.pedalThrottlePct = throttlePct
         cubes.pedalLonG = lonG ?: 0f
         cubes.pedalFlashOn = pedalFlashOn
-        val theme = DriveHudTheme.forDarkMode(darkBackground)
+        val theme = DriveHudTheme.forDarkMode(darkBackground, textScale)
         canvas.drawColor(theme.background)
         val gap = (cubePx * 0.04f).toInt().coerceAtLeast(2)
         val cell = (cubePx - gap).coerceAtLeast(48)

@@ -54,6 +54,7 @@ internal object AaHudComposerRender {
                 dtcFooterLine = key.dtcFooterLine,
                 throttlePct = snapshot.throttlePct,
                 pedalFlashOn = key.pedalFlashOn,
+                textScale = key.textScale,
             )
         }.onFailure { Log.e(TAG, "Drive HUD render failed", it) }.getOrNull()
 

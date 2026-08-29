@@ -26,15 +26,16 @@ internal object TelemetryCubeLayout {
     /** Pedal track vs row (~4 px thicker than the old 0.04 cube fraction). */
     const val PEDAL_IN_ROW = 0.42f
 
-    fun compute(size: Int): TelemetryCubeSlots {
+    fun compute(size: Int, textScale: Float = 1f): TelemetryCubeSlots {
         val s = size.toFloat().coerceAtLeast(1f)
         val inset = s * 0.035f
         val rowH = ((s - inset * 2f) / ROW_COUNT).coerceAtLeast(1f)
+        val scale = textScale.coerceIn(1f, 1.5f)
         return TelemetryCubeSlots(
             inset = inset,
             rowH = rowH,
-            textSize = rowH * CONTENT_IN_ROW,
-            iconSize = rowH * CONTENT_IN_ROW,
+            textSize = (rowH * CONTENT_IN_ROW * scale).coerceAtMost(rowH * 0.92f),
+            iconSize = (rowH * CONTENT_IN_ROW * scale).coerceAtMost(rowH * 0.92f),
             pedalH = rowH * PEDAL_IN_ROW,
         )
     }

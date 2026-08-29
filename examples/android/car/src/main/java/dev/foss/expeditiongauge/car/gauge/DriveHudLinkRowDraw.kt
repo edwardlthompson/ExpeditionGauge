@@ -13,7 +13,7 @@ internal fun DriveHudCubeDraw.drawTelemetryCube(
     speedAlert: Boolean = false,
 ) {
     drawCubeChrome(x, y, size, theme)
-    val slots = TelemetryCubeLayout.compute(size)
+    val slots = TelemetryCubeLayout.compute(size, theme.textScale)
     val coordLines = coords.lines().filter { it.isNotBlank() }
     val lat = coordLines.getOrElse(0) { "" }
     val lon = coordLines.getOrElse(1) { "" }

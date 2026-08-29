@@ -11,6 +11,7 @@ import androidx.car.app.model.Template
 import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.DriveHudContent
 import dev.foss.expeditiongauge.car.DriveHudRow
+import dev.foss.expeditiongauge.car.aaa11y.AaA11yType
 import dev.foss.expeditiongauge.car.aanight.AaNightMode
 
 internal object DrivePaneTemplates {
@@ -30,6 +31,7 @@ internal object DrivePaneTemplates {
             density = density,
             maxGridItems = limit.coerceAtLeast(1),
             isDarkMode = AaNightMode.fromCarUi(cfg.uiMode, carContext.isDarkMode),
+            fontScale = cfg.fontScale,
         )
     }
 
@@ -40,7 +42,9 @@ internal object DrivePaneTemplates {
         effective.forEach { row ->
             builder.addRow(
                 Row.Builder()
-                    .setTitle(row.title.ifBlank { SPACER })
+                    .setTitle(
+                        AaA11yType.spoken(row.title.ifBlank { SPACER }, row.text.ifBlank { SPACER }),
+                    )
                     .addText(row.text.ifBlank { SPACER })
                     .build(),
             )
@@ -56,7 +60,7 @@ internal object DrivePaneTemplates {
     fun waitingTemplate(message: String): Template {
         val pane = Pane.Builder()
             .setImage(CarIcon.APP_ICON)
-            .addRow(Row.Builder().setTitle("Waiting").addText(message).build())
+            .addRow(Row.Builder().setTitle(AaA11yType.spoken("Waiting", message)).addText(message).build())
             .build()
         return PaneTemplate.Builder(pane)
             .setHeaderAction(Action.APP_ICON)

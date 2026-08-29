@@ -55,9 +55,10 @@ internal class DriveHudCubeDraw(
         val gap = size * 0.04f
         val cellW = (size - pad * 2 - gap) / 2f
         val cellH = (size - pad * 2 - gap) / 2f
-        val label = paint(theme.secondaryText, size * 0.065f, bold = true)
-        val pressurePaint = paint(theme.primaryText, size * 0.10f, bold = true)
-        val tempPaint = paint(theme.secondaryText, size * 0.075f, bold = true)
+        val scale = theme.textScale.coerceIn(1f, 1.5f)
+        val label = paint(theme.secondaryText, size * 0.065f * scale, bold = true)
+        val pressurePaint = paint(theme.primaryText, size * 0.10f * scale, bold = true)
+        val tempPaint = paint(theme.secondaryText, size * 0.075f * scale, bold = true)
         fun corner(cx: Float, cy: Float, name: String, reading: String) {
             val rect = RectF(cx, cy, cx + cellW, cy + cellH)
             val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = theme.background }
@@ -72,13 +73,13 @@ internal class DriveHudCubeDraw(
             val lines = reading.split('\n', limit = 2)
             val pressure = lines.getOrElse(0) { "--" }
             val temp = lines.getOrNull(1)
-            label.textSize = cellH * 0.18f
+            label.textSize = cellH * 0.18f * scale
             canvas.drawText(name, midX, cy + cellH * 0.24f, label)
-            pressurePaint.textSize = cellH * (if (temp != null) 0.28f else 0.34f)
+            pressurePaint.textSize = cellH * (if (temp != null) 0.28f else 0.34f) * scale
             fit(pressurePaint, pressure, cellW * 0.9f)
             canvas.drawText(pressure, midX, cy + cellH * (if (temp != null) 0.52f else 0.68f), pressurePaint)
             if (temp != null) {
-                tempPaint.textSize = cellH * 0.22f
+                tempPaint.textSize = cellH * 0.22f * scale
                 fit(tempPaint, temp, cellW * 0.9f)
                 canvas.drawText(temp, midX, cy + cellH * 0.78f, tempPaint)
             }

@@ -10,10 +10,11 @@ data class DriveHudTheme(
     val divider: Int,
     val alertText: Int,
     val dimText: Int,
+    val textScale: Float = 1f,
 ) {
     companion object {
-        fun forDarkMode(dark: Boolean): DriveHudTheme =
-            if (dark) DARK else LIGHT
+        fun forDarkMode(dark: Boolean, textScale: Float = 1f): DriveHudTheme =
+            (if (dark) DARK else LIGHT).copy(textScale = textScale)
 
         val DARK = DriveHudTheme(
             background = 0xFF0B0F14.toInt(),

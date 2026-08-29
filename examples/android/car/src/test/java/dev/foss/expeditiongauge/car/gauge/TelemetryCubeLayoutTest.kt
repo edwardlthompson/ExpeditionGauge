@@ -41,4 +41,13 @@ class TelemetryCubeLayoutTest {
         assertTrue(slots.pedalH >= 4f)
         assertTrue(slots.iconSize >= 8f)
     }
+
+    @Test
+    fun largerTextScaleGrowsGlyphsWithoutLeavingTheRow() {
+        val base = TelemetryCubeLayout.compute(280)
+        val large = TelemetryCubeLayout.compute(280, textScale = 1.5f)
+        assertTrue(large.textSize > base.textSize)
+        assertTrue(large.textSize < large.rowH)
+        assertTrue(large.iconSize < large.rowH)
+    }
 }

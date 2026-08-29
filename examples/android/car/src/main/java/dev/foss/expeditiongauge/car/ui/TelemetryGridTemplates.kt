@@ -11,6 +11,7 @@ import androidx.car.app.model.Template
 import dev.foss.expeditiongauge.car.AaDisplaySpec
 import dev.foss.expeditiongauge.car.CarHudTile
 import dev.foss.expeditiongauge.car.GridItemImagePolicy
+import dev.foss.expeditiongauge.car.aaa11y.AaA11yType
 import dev.foss.expeditiongauge.car.aanight.AaNightMode
 
 internal object TelemetryGridTemplates {
@@ -27,13 +28,14 @@ internal object TelemetryGridTemplates {
             density = density,
             maxGridItems = limit,
             isDarkMode = AaNightMode.fromCarUi(cfg.uiMode, carContext.isDarkMode),
+            fontScale = cfg.fontScale,
         )
     }
 
     fun gridItem(tile: CarHudTile): GridItem {
         val image = GridItemImagePolicy.resolve(tile.image)
         return GridItem.Builder()
-            .setTitle(tile.title)
+            .setTitle(AaA11yType.spoken(tile.title, tile.secondaryText()))
             .setText(CarText.create(tile.secondaryText()))
             .setImage(image, GridItem.IMAGE_TYPE_LARGE)
             .build()

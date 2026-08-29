@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Crawl-mode HUD hides heading, altitude, and GPS extras so the cube stays readable
 * Android Auto Drive HUD uses the NavigationTemplate canvas unless surface attach fails
 * Android Auto HUD night palette follows the car UI dark/night setting
+* Android Auto HUD type scales with the car UI font (1.0–1.5×); Pane/Grid titles are TalkBack-spoken
 
 ### Changed
 
