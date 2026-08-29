@@ -5,7 +5,7 @@
 
 ## Active Project: ExpeditionGauge
 
-Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.18.12** (OBD DTC scan on connect). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
+Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v1 through **v2.19.0** (privacy backup, Relive, offline maps). **Dev devices:** OnePlus 13 (`8bf09993` primary), OnePlus 12 (`b5214fc6`).
 
 | Milestone | Version | Status |
 |-----------|---------|--------|
@@ -47,6 +47,7 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Sprint 32 Record/Relive | template 1.0.0 | ✅ `/build 44-73`: live graphs through GPS track autodetect |
 | Sprint 32 Maps–i18n | template 1.0.0 | ✅ `/build 74-98`: offline tiles through TalkBack About |
 | Sprint 32 Privacy–quality | template 1.0.0 | ✅ `/build` 99–120: EXIF strip through AGP pin; ADB 109/118/119 backlogged |
+| Privacy / Relive / maps | 2.19.0 | ✅ `/push` folds Sprint 32 Unreleased; versionCode 53; leftover ADB stays open |
 
 **Template lineage:** `.template-version` **1.0.0** (aligned 2026-08-29). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 

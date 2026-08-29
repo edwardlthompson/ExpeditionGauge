@@ -18,7 +18,7 @@ fun PrivacyReportExportButton(modifier: Modifier = Modifier) {
             val body = PrivacyReportExport.markdown(
                 kind = "bug",
                 description = "Settings privacy-report export",
-                appVersion = "2.18.12",
+                appVersion = "2.19.0",
             )
             context.startActivity(PrivacyReportExport.shareIntent(body))
         },

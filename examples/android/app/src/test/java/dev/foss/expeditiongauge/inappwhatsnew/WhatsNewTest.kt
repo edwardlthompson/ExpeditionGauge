@@ -8,8 +8,8 @@ class WhatsNewTest {
     @Test
     fun showsUntilCurrentVersionSeen() {
         assertTrue(WhatsNew.shouldShow(null))
-        assertTrue(WhatsNew.shouldShow("2.18.11"))
-        assertFalse(WhatsNew.shouldShow("2.18.12"))
+        assertTrue(WhatsNew.shouldShow("2.18.12"))
+        assertFalse(WhatsNew.shouldShow("2.19.0"))
         assertTrue(WhatsNew.body().contains("privacy-report"))
     }
 }

@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-29 — Push v2.19.0
+- **Status:** Accepted
+- **Context:** `/push` after Sprint 32 AGENT/AUTO archive. Child repo (Release Please N/A). Design cohesion blocked bootstrap until live-graph hex and map-style `Text("` literals used theme tokens / `stringResource`.
+- **Decision:** Fold `[Unreleased]` into `2.19.0` (`versionCode` 53). Stage Fastlane/F-Droid changelog 54 for the next code. Push `origin main` with empty Unreleased. Do not invent a Release Please merge. Leftover `[ADB]` rows stay on the board.
+- **Alternatives considered:** Ship as 2.18.13 (rejected — Sprint 32 is a minor feature dump). Bump AGP/Kotlin (rejected — KB-026).
+- **Consequences:** Store listing 53 is the v2.19.0 notes. What’s new `CURRENT` is 2.19.0. ADB 42/109/118/119 remain in `HUMAN_BACKLOG.md`.
+
 ### 2026-08-29 — Sprint 32 Privacy / chrome / quality rows 99–120
 - **Status:** Accepted
 - **Context:** Autonomous `/build` scoped to Privacy / distribution, Product chrome, and Device / quality gates on the template-upgrade branch.

@@ -2,7 +2,7 @@ package dev.foss.expeditiongauge.inappwhatsnew
 
 /** In-app What’s new after a version bump. */
 object WhatsNew {
-    const val CURRENT = "2.18.12"
+    const val CURRENT = "2.19.0"
 
     fun shouldShow(seen: String?): Boolean = seen != CURRENT
 

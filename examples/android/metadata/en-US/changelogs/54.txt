@@ -1,0 +1,1 @@
+Placeholder for the next Play/F-Droid listing after v2.19.0 (versionCode 53).

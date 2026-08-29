@@ -1,19 +1,19 @@
 # Feature: fastlane-next-changelog
 
-> Fastlane/F-Droid changelog for the next versionCode (53).
+> Fastlane/F-Droid changelog for the next versionCode (54).
 
 ## Acceptance criteria
 
-- ✅ `metadata/en-US/changelogs/53.txt` exists
+- ✅ `metadata/en-US/changelogs/54.txt` exists
 - ✅ Fastlane mirror has the same file
-- ✅ Next code is current 52 + 1
+- ✅ Next code is current 53 + 1
 - ✅ i18n: store listing English only
 
 ## Smoke scenario
 
-1. Given versionCode 52 on the app
+1. Given versionCode 53 on the app
 2. When the next listing is prepared
-3. Then changelog 53 is present in metadata and Fastlane
+3. Then changelog 54 is present in metadata and Fastlane
 
 ## Container map
 
@@ -21,7 +21,7 @@
 |-------|------|
 | Logic | `fastlanenextchangelog/FastlaneNextChangelog.kt` |
 | Tests | `app/src/test/.../fastlanenextchangelog/` |
-| Wiring | `metadata/en-US/changelogs/53.txt` |
+| Wiring | `metadata/en-US/changelogs/54.txt` |
 
 ## Tests
 

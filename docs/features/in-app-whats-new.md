@@ -4,7 +4,7 @@
 
 ## Acceptance criteria
 
-- ✅ Shows when last seen is null or older than 2.18.12
+- ✅ Shows when last seen is null or older than 2.19.0
 - ✅ Hidden after the current version is marked seen
 - ✅ About has a What’s new action
 - ✅ i18n: `whats_new_title`

@@ -4,9 +4,9 @@
 
 ## Current state
 
-- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.12** (2026-08-28).
-- **Shipped:** through **v2.18.12** (OBD DTC scan on connect). Audit 2026-07-29 archived.
-- **Next:** Sprint 32 leftover `[ADB]` smokes (`HUMAN_BACKLOG.md`). AGENT/AUTO rows archived.
+- Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.19.0** (2026-08-29).
+- **Shipped:** through **v2.19.0** (privacy backup, Relive, offline maps). Audit 2026-07-29 archived.
+- **Next:** leftover `[ADB]` smokes (`HUMAN_BACKLOG.md`). AGENT/AUTO rows archived.
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
@@ -89,6 +89,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 ## Active board
 
+> **v2.19.0** folded from `[Unreleased]` @ `/push` (2026-08-29).
 > **Hotfix v2.18.12** archived in COMPLETED_TASKS.md @ `/ship`.
 > **Sprint 31** archived in COMPLETED_TASKS.md @ `/build`.
 > **Sprint 32** AGENT/AUTO archived in COMPLETED_TASKS.md @ `/cleanup`.

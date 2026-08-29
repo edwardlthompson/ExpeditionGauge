@@ -18,8 +18,8 @@ android {
         applicationId = "dev.foss.expeditiongauge"
         minSdk = 26
         targetSdk = 37
-        versionCode = 52
-        versionName = "2.18.12"
+        versionCode = 53
+        versionName = "2.19.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val aaosStandalone = project.hasProperty("aaosStandalone")
         manifestPlaceholders["automotiveRequired"] = if (aaosStandalone) "true" else "false"

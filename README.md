@@ -9,7 +9,7 @@
 ![FOSS](https://img.shields.io/badge/FOSS-no_tracking-656d76?style=flat-square)
 [![CI](https://img.shields.io/github/actions/workflow/status/edwardlthompson/ExpeditionGauge/ci.yml?style=flat-square&label=CI)](https://github.com/edwardlthompson/ExpeditionGauge/actions/workflows/ci.yml)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.17.0-0969da?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.19.0-0969da?style=flat-square)
 ![AGENT](https://img.shields.io/badge/AGENT-Cursor_Agent-2ea043?style=flat-square)
 ![HUMAN](https://img.shields.io/badge/HUMAN-Human_Developer-0969da?style=flat-square)
 ![ADB](https://img.shields.io/badge/ADB-Android_Device-bf8700?style=flat-square)
@@ -21,6 +21,10 @@
 Offline-first automotive HUD for off-road and track driving — Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and playback with export.
 
 **Package:** `dev.foss.expeditiongauge` · **License:** MIT · **No Google Play Services or Firebase in the APK.**
+
+## Pitch
+
+Offline-first automotive HUD for off-road and track driving. Compose gauges, GPS/IMU fusion, BLE sensors, session recording, and Relive playback — no Google Play Services or Firebase in the APK.
 
 ## Features
 
@@ -35,7 +39,11 @@ Offline-first automotive HUD for off-road and track driving — Compose gauges, 
 | **Live telemetry** | Opt-in P2P sender/receiver (WebSocket signaling) |
 | **Android Auto** | Full-bleed 3×1 Drive HUD on the head unit (Attitude / Telemetry / TPMS) — see [`docs/help/ANDROID_AUTO.md`](docs/help/ANDROID_AUTO.md) |
 
-Shipped through **v2.17.0**. See [`CHANGELOG.md`](CHANGELOG.md).
+Shipped through **v2.19.0**. See [`CHANGELOG.md`](CHANGELOG.md).
+
+## Quick start
+
+Sideload with the Play Store spoof so Android Auto can see the app. Follow [Install with ADB](#install-with-adb-play-store-spoof) below, or build from source under [Build from source (developers)](#build-from-source-developers).
 
 ---
 
@@ -311,6 +319,14 @@ examples/android/   ExpeditionGauge app (Compose, Room, MapLibre)
 docs/               Agent docs, design specs, ADRs, feature specs
 scripts/            Gates, CI helpers, ADB smokes
 ```
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). Agents start at [`docs/START_HERE.md`](docs/START_HERE.md).
+
+## Security
+
+Report vulnerabilities privately per [`SECURITY.md`](SECURITY.md). Product privacy defaults are in [Privacy & security](#privacy--security).
 
 ## License
 

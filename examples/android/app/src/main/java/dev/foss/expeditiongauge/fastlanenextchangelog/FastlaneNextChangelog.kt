@@ -1,9 +1,9 @@
 package dev.foss.expeditiongauge.fastlanenextchangelog
 
-/** Next Play/F-Droid versionCode changelog (current app versionCode is 52). */
+/** Next Play/F-Droid versionCode changelog (current app versionCode is 53). */
 object FastlaneNextChangelog {
-    const val CURRENT_CODE = 52
-    const val NEXT_CODE = 53
+    const val CURRENT_CODE = 53
+    const val NEXT_CODE = 54
 
     fun fileName(code: Int = NEXT_CODE): String = "$code.txt"
 
