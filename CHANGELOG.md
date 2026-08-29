@@ -86,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Mag hard-iron fit uses min/max of a figure-eight sweep
 * A 40 µT magnetometer spike flags a compass calibration reminder
 * Parked autocal waits 5 s of stillness instead of 2.5 s
+* Inclinometer zero can be stored per vehicle id
 
 ### Changed
 
