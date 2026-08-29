@@ -17,6 +17,7 @@ import dev.foss.expeditiongauge.onboarding.OnboardingPreferences
 import dev.foss.expeditiongauge.permissions.PermissionsHelper
 import dev.foss.expeditiongauge.settings.DrivingModePreferences
 import dev.foss.expeditiongauge.stats.SessionStatsAggregator
+import dev.foss.expeditiongauge.display.WindowRefresh
 import dev.foss.expeditiongauge.ui.navigation.ExpeditionGaugeApp
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModelFactory
 import dev.foss.expeditiongauge.ui.theme.BrightnessPreferences
@@ -114,6 +115,7 @@ class MainActivity : ComponentActivity() {
                 },
             )
         }
+        window.decorView.post { WindowRefresh.applyTo(this) }
     }
 
     override fun onStart() {

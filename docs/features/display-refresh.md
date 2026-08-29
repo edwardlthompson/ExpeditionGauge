@@ -4,10 +4,10 @@ Window requests the fastest same-resolution display mode. Scroll surfaces vote H
 
 ## Acceptance criteria
 
-- 🔲 About and Settings scroll at the panel's peak same-resolution rate when the OS allows it
-- 🔲 Missing display or empty mode list leaves `preferredDisplayModeId` unchanged
-- 🔲 No new controls; motion follows OS refresh (battery saver / ARR)
-- 🔲 i18n: N/A — no user-facing strings
+- ✅ About and Settings scroll at the panel's peak same-resolution rate when the OS allows it
+- ✅ Missing display or empty mode list leaves `preferredDisplayModeId` unchanged
+- ✅ No new controls; motion follows OS refresh (battery saver / ARR)
+- ✅ i18n: N/A — no user-facing strings
 
 ## Smoke scenario
 

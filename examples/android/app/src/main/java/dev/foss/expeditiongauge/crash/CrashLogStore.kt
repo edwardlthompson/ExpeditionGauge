@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.crash
 
 import android.content.Context
+import dev.foss.expeditiongauge.feedback.FeedbackPrefs
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -73,12 +74,21 @@ object CrashReporter {
             if (!handling) {
                 handling = true
                 try {
-                    val version = runCatching {
-                        val info = app.packageManager.getPackageInfo(app.packageName, 0)
-                        @Suppress("DEPRECATION")
-                        "${info.versionName} (${info.versionCode})"
-                    }.getOrDefault("unknown")
-                    store.write(throwable, version, thread.name)
+                    if (FeedbackPrefs(app).saveCrashes()) {
+                        val version = runCatching {
+                            val info = app.packageManager.getPackageInfo(app.packageName, 0)
+                            @Suppress("DEPRECATION")
+                            "${info.versionName} (${info.versionCode})"
+                        }.getOrDefault("unknown")
+                        store.write(throwable, version, thread.name)
+                        PendingCrashStore(app).write(
+                            PendingCrash(
+                                message = throwable.javaClass.simpleName + ": " +
+                                    (throwable.message ?: ""),
+                                stack = throwable.stackTraceToString(),
+                            ),
+                        )
+                    }
                 } catch (_: Throwable) {
                     // Never swallow the original crash path.
                 } finally {

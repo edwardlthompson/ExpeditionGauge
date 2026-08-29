@@ -4,11 +4,11 @@
 
 ## Acceptance criteria
 
-- 🔲 After a captured crash, one review dialog; never auto-open GitHub
-- 🔲 Write failure drops the record; handler errors do not re-enter
-- 🔲 Save-crashes setting off: nothing persisted; turning it off deletes the queued record
-- 🔲 At most one sanitized record; allowlist keys only
-- 🔲 i18n: `feedback_*` / existing crash strings
+- ✅ After a captured crash, one review dialog; never auto-open GitHub
+- ✅ Write failure drops the record; handler errors do not re-enter
+- ✅ Save-crashes setting off: nothing persisted; turning it off deletes the queued record
+- ✅ At most one sanitized record; allowlist keys only
+- ✅ i18n: `feedback_*` / existing crash strings
 
 ## Smoke scenario
 

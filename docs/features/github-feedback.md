@@ -4,10 +4,10 @@
 
 ## Acceptance criteria
 
-- 🔲 Small fields prefill `issues/new?template=...`; large bodies use clipboard + short URL
-- 🔲 Placeholder `OWNER/REPO` never hits the network; 403/timeout return empty search
-- 🔲 Open GitHub is `https` only
-- 🔲 Default feedback repo is `edwardlthompson/ExpeditionGauge`
+- ✅ Small fields prefill `issues/new?template=...`; large bodies use clipboard + short URL
+- ✅ Placeholder `OWNER/REPO` never hits the network; 403/timeout return empty search
+- ✅ Open GitHub is `https` only
+- ✅ Default feedback repo is `edwardlthompson/ExpeditionGauge`
 
 ## Smoke scenario
 

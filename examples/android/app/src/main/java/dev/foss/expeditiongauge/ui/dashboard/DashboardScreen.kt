@@ -174,6 +174,7 @@ fun DashboardScreen(
                     canApplyUpdate = canApplyUpdate,
                     onApplyUpdate = onApplyUpdate,
                     onBack = onAboutClose,
+                    online = isOnline,
                     modifier = Modifier.fillMaxSize().padding(innerPadding),
                 )
                 else -> Box(

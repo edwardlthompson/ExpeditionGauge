@@ -4,9 +4,9 @@
 
 ## Acceptance criteria
 
-- 🔲 `null`/empty input becomes `""`; size cap drops excess lines (8 KiB / 200 stack lines)
-- 🔲 Paths, `ghp_` tokens, JWTs, and `AKIA` keys are stripped
-- 🔲 Fingerprint is stable if only the username in a path changes
+- ✅ `null`/empty input becomes `""`; size cap drops excess lines (8 KiB / 200 stack lines)
+- ✅ Paths, `ghp_` tokens, JWTs, and `AKIA` keys are stripped
+- ✅ Fingerprint is stable if only the username in a path changes
 
 ## Smoke scenario
 

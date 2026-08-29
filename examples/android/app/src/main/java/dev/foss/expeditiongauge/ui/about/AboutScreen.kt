@@ -8,7 +8,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
@@ -16,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonateLinks
 import dev.foss.expeditiongauge.about.DonationsConfig
+import dev.foss.expeditiongauge.display.highRefreshScroll
+import dev.foss.expeditiongauge.ui.feedback.FeedbackScreen
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
 import dev.foss.expeditiongauge.ui.theme.GaugeMenuSurface
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
@@ -31,13 +39,18 @@ fun AboutScreen(
     canApplyUpdate: Boolean,
     onApplyUpdate: () -> Unit,
     onBack: () -> Unit,
+    online: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
+    var feedbackKind by remember { mutableStateOf<String?>(null) }
     GaugeMenuSurface(modifier = modifier) {
         GaugeBackHandler(onBack = onBack)
         Column(
-            modifier = Modifier.padding(SpacingMd),
+            modifier = Modifier
+                .padding(SpacingMd)
+                .verticalScroll(rememberScrollState())
+                .highRefreshScroll(),
             verticalArrangement = Arrangement.spacedBy(SpacingMd),
         ) {
         Text(
@@ -72,9 +85,20 @@ fun AboutScreen(
                 )
             }
         }
+        TextButton(
+            onClick = { feedbackKind = "bug" },
+            modifier = Modifier.testTag("about_report_bug"),
+        ) { Text(stringResource(R.string.feedback_report_bug)) }
+        TextButton(
+            onClick = { feedbackKind = "feature" },
+            modifier = Modifier.testTag("about_request_feature"),
+        ) { Text(stringResource(R.string.feedback_request_feature)) }
         Button(onClick = onBack) {
             Text(stringResource(R.string.about_close))
         }
         }
+    }
+    feedbackKind?.let { kind ->
+        FeedbackScreen(kind = kind, online = online, onDismiss = { feedbackKind = null })
     }
 }

@@ -32,6 +32,7 @@ import dev.foss.expeditiongauge.stats.SessionStatsAggregator
 import dev.foss.expeditiongauge.ui.AppScreen
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModel
 import dev.foss.expeditiongauge.ui.dashboard.DashboardViewModelFactory
+import dev.foss.expeditiongauge.ui.crash.PendingCrashReview
 import dev.foss.expeditiongauge.ui.effects.LaunchPromptEffects
 import dev.foss.expeditiongauge.ui.theme.BrightnessMode
 import dev.foss.expeditiongauge.ui.theme.BrightnessPreferences
@@ -167,6 +168,7 @@ fun ExpeditionGaugeApp(
         updateStatus = updateStatus,
         applyAsset = applyAsset,
     )
+    PendingCrashReview(online = isOnline)
 
     ExpeditionGaugeTheme(
         themeMode = themeMode,

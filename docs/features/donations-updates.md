@@ -4,14 +4,14 @@
 
 ## Acceptance criteria
 
-- 🔲 Quiet **Donate via Venmo** in About; never on the update/install dialog
-- 🔲 First run records the installed version with no donate popup
-- 🔲 After a later launch where the installed version changed: one optional note (Donate | Not now)
-- 🔲 Once per 24 hours, fetch GitHub `releases/latest` (User-Agent + 10s timeout); compare installer filenames
-- 🔲 Newer matching asset and not dismissed: **Install** | **Later**
-- 🔲 Failed fetch, timeout, empty assets, or same version: stay silent
-- 🔲 Offline/error: no network required for donate links or first-run version record
-- 🔲 i18n: `about_donate*`, `about_not_now`, `about_install`, `about_later`
+- ✅ Quiet **Donate via Venmo** in About; never on the update/install dialog
+- ✅ First run records the installed version with no donate popup
+- ✅ After a later launch where the installed version changed: one optional note (Donate | Not now)
+- ✅ Once per 24 hours, fetch GitHub `releases/latest` (User-Agent + 10s timeout); compare installer filenames
+- ✅ Newer matching asset and not dismissed: **Install** | **Later**
+- ✅ Failed fetch, timeout, empty assets, or same version: stay silent
+- ✅ Offline/error: no network required for donate links or first-run version record
+- ✅ i18n: `about_donate*`, `about_not_now`, `about_install`, `about_later`
 
 ## Smoke scenario
 

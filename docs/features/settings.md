@@ -10,6 +10,7 @@
 - ✅ Update-check toggle can disable the daily GitHub release check (`docs/PRIVACY.md`)
 - ✅ Offline: settings load last persisted values; no network required for display
 - ✅ i18n: all user-visible strings under `settings.*` keys
+- ✅ Save-crashes toggle defaults off; turning it off deletes the queued crash record
 
 ## Smoke scenario
 

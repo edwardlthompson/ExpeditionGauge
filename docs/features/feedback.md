@@ -4,10 +4,10 @@
 
 ## Acceptance criteria
 
-- 🔲 About has Report a bug and Request a feature; review panel shows escaped preview, Copy, Open GitHub, Discard
-- 🔲 Copy still works offline; Open GitHub disabled with i18n reason when offline
-- 🔲 Accessibility: dialog with labelled buttons; no Android Toast
-- 🔲 i18n: `feedback_*`
+- ✅ About has Report a bug and Request a feature; review panel shows escaped preview, Copy, Open GitHub, Discard
+- ✅ Copy still works offline; Open GitHub disabled with i18n reason when offline
+- ✅ Accessibility: dialog with labelled buttons; no Android Toast
+- ✅ i18n: `feedback_*`
 
 ## Smoke scenario
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feedback_report_bug">Report a bug</string>
+    <string name="feedback_request_feature">Request a feature</string>
+    <string name="feedback_review_crash">Review saved crash</string>
+    <string name="feedback_description">Description</string>
+    <string name="feedback_copy">Copy</string>
+    <string name="feedback_open_github">Open GitHub</string>
+    <string name="feedback_discard">Discard</string>
+    <string name="feedback_offline">Offline — copy still works; Open GitHub stays disabled.</string>
+    <string name="settings_save_crashes">Save crash details for me to review</string>
+</resources>

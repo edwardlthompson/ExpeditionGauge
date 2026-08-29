@@ -197,6 +197,7 @@ fun AppScreenRouter(
             updateStatus = updateStatus,
             donations = donations,
             canApplyUpdate = canApplyUpdate,
+            online = isOnline,
             onApplyUpdate = {
                 val asset = applyAsset
                 val host = activity
