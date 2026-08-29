@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 31: offroad hold-to-peak pitch/roll bars (`/feature` offroad-hold-bars).
+Sprint 32 row 32: crawl-mode HUD declutter (`/feature` crawl-hud-declutter).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
