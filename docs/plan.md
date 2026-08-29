@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 63: Relive photo story timeline (`/feature` photo-story-timeline).
+Sprint 32 row 64: multi-file dashcam import (`/feature` dual-dashcam).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
