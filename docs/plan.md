@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 26: per-threshold alert snooze (`/feature` alert-snooze).
+Sprint 32 row 27: per-preset alert thresholds (`/feature` preset-alert-thresholds).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
