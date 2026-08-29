@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 39: AA parked-only voice Record/Stop (`/feature` aa-parked-voice).
+Sprint 32 row 40: AA parked session library (`/feature` aa-parked-library).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
