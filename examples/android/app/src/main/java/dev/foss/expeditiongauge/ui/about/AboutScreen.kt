@@ -68,6 +68,7 @@ fun AboutScreen(
             text = stringResource(R.string.about_oss_notices, OssNotices.summary()),
             color = GaugeScaleWhite,
         )
+        WhatsNewButton()
         Text(text = stringResource(R.string.about_format, installedFormat), color = GaugeScaleWhite)
         Text(text = updateStatus, color = GaugeScaleWhite)
         if (canApplyUpdate) {

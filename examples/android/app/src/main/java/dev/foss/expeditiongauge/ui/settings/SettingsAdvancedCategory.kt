@@ -81,4 +81,5 @@ internal fun SettingsAdvancedCategory(
     PrivacyReportExportButton()
     SettingsBackupButton()
     SettingsQrLabel()
+    SafFolderButton()
 }
