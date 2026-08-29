@@ -10,4 +10,10 @@ paths = [
   '''^schemas/golden-path/sanitize-fixtures\.json$''',
   '''^examples/web/src/privacy-report/sanitize-fixtures\.json$''',
   '''^examples/android/app/src/test/resources/sanitize-fixtures\.json$''',
+  '''^tests/privacy_report/test_sanitize\.py$''',
+  '''^tests/test_report_issue\.py$''',
+  '''^examples/android/app/src/test/java/dev/foss/expeditiongauge/privacyreport/.*Test\.kt$''',
+  '''^examples/android/app/src/test/java/dev/foss/expeditiongauge/privacyreportexport/.*Test\.kt$''',
+  '''^examples/android/app/src/test/java/dev/foss/expeditiongauge/feedback/FeedbackPreviewTest\.kt$''',
+  '''^examples/android/app/src/test/java/dev/foss/expeditiongauge/crash/PendingCrashTest\.kt$''',
 ]

@@ -126,6 +126,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * BUILD_PLAN Sprint 32 boards the `/allideas` product backlog (120 Sequential rows, theme order)
 * Crash log persist is now opt-in (`Save crash details for me to review`, default off)
 
+### Fixed
+
+* Gitleaks allowlists sanitizer unit-test fixtures (`ghp_` / AWS example keys) so Security Scan can pass
+
 ## [2.18.12] — OBD DTC scan on connect (2026-08-28)
 
 ### Fixed
