@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 85: Compass calibration reminder after mag spike (`/feature` compass-cal-reminder).
+Sprint 32 row 86: Longer parked autocal dwell (`/feature` parked-autocal-dwell).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

@@ -212,7 +212,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 ##### Sensors / calibration
 
 84. ✅ [AGENT] `/feature` mag-hardiron — Mag hard-iron wizard
-85. 🔲 [AGENT] `/feature` compass-cal-reminder — Compass calibration reminder after mag spike
+85. ✅ [AGENT] `/feature` compass-cal-reminder — Compass calibration reminder after mag spike
 86. 🔲 [AGENT] `/feature` parked-autocal-dwell — Longer parked autocal dwell
 87. 🔲 [AGENT] `/feature` inclinometer-zero-profile — Inclinometer zero persist per vehicle
 88. 🔲 [AGENT] `/feature` ble-battery — BLE device battery icons
