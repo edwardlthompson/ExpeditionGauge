@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 113: App shortcuts (`/feature` app-shortcuts). Rows 99–108 and 110–112 are complete.
+Sprint 32 row 114: Last-session home widget (`/feature` last-session-widget). Rows 99–108 and 110–113 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

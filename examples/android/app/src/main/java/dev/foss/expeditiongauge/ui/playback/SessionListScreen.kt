@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import dev.foss.expeditiongauge.data.db.ExpeditionGaugeDatabase
 import dev.foss.expeditiongauge.data.db.entities.RecordingSessionEntity
 import dev.foss.expeditiongauge.recording.ActivityType
 import dev.foss.expeditiongauge.driftrunranking.DriftRunRanking
+import dev.foss.expeditiongauge.lastsessionwidget.LastSessionStore
 import dev.foss.expeditiongauge.settings.SessionFavoritesStore
 import dev.foss.expeditiongauge.stats.SessionStatsSummary
 import dev.foss.expeditiongauge.ui.sectortimescsv.SectorTimesShareButton
@@ -66,6 +68,9 @@ fun SessionListScreen(
     }
     val sessions by sessionsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
     val context = LocalContext.current
+    LaunchedEffect(sessions) {
+        sessions.firstOrNull()?.let { LastSessionStore(context).save(it.name, it.startTimeMs) }
+    }
     val favoriteStore = remember { SessionFavoritesStore(context) }
     val favoriteIds by favoriteStore.favoriteIds.collectAsStateWithLifecycle(emptySet())
     val summaryById = remember(statsSummaries) { statsSummaries.associateBy { it.sessionId } }

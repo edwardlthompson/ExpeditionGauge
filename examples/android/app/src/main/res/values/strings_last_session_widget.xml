@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="last_session_empty">No session</string>
+    <string name="last_session_widget_label">Last session</string>
+</resources>
