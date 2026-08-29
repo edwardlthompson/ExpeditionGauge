@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 76: Offline geocoder for session titles (`/feature` offline-geocoder).
+Sprint 32 row 77: Hillshade / terrain Settings toggle (`/feature` terrain-toggle).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
