@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Golden Path catch-up: opt-in crash review, About bug/feature dialogs, GitHub issue-form URLs, privacy sanitizer, and high-refresh display mode
 * Phone HUD DTC carousel (same 5 s `n/N` line as Android Auto ROW); tap opens the full OBDex title
+* OBD RPM shift-light on the phone HUD (default 5500 RPM, or Settings max RPM)
 
 ### Changed
 

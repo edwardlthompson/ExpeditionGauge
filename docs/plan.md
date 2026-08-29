@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 12: OBD RPM shift-light (`/feature` obd-shift-light).
+Sprint 32 row 13: coolant / oil / voltage cluster (`/feature` obd-temps-voltage).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
