@@ -82,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Live receiver keeps a 6000-sample local ring for Relive
 * Optional live passphrase XOR-seals metric payloads
 * Live pit room accepts up to eight receivers
+* A second phone can send IMU over live as imu|pitch|roll|hdg
 
 ### Changed
 

@@ -2,10 +2,10 @@ package dev.foss.expeditiongauge.live
 
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.livemultireceiver.LiveMultiReceiver
+import dev.foss.expeditiongauge.phoneimulive.PhoneImuLive
 import dev.foss.expeditiongauge.telemetry.TelemetryBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 /**
  * Feature entry point for Live Telemetry (Sprint 19).
@@ -22,6 +22,9 @@ class LiveTelemetryModule(
     val receiverCount: StateFlow<Int> = webSocketClient.receiverCount
 
     fun pitRoomLabel(): String = LiveMultiReceiver.label(receiverCount.value)
+
+    fun applyPhoneImu(payload: String, dto: LiveSampleDto): LiveSampleDto =
+        PhoneImuLive.decode(payload)?.let { PhoneImuLive.merge(dto, it) } ?: dto
 
     fun isEnabled(): Boolean = FeatureFlags.liveTelemetryEnabled
 
