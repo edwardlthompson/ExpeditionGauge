@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 13: coolant / oil / voltage cluster (`/feature` obd-temps-voltage).
+Sprint 32 row 14: gear estimate from RPM + speed (`/feature` gear-estimate).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

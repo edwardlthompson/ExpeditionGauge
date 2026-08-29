@@ -122,7 +122,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 10. ✅ [AGENT] `/feature` ford-mode22-temps — Ford Mode 22 trans temp / EGT PIDs
 11. ✅ [AGENT] `/feature` optional-boost-pids — Optional MAP / AFR / boost PIDs
 12. ✅ [AGENT] `/feature` obd-shift-light — OBD RPM shift-light / redline threshold
-13. 🔲 [AGENT] `/feature` obd-temps-voltage — Coolant / oil / voltage cluster (parked/idle)
+13. ✅ [AGENT] `/feature` obd-temps-voltage — Coolant / oil / voltage cluster (parked/idle)
 14. 🔲 [AGENT] `/feature` gear-estimate — Gear estimate from RPM + speed
 15. 🔲 [AGENT] `/feature` wifi-elm327 — Wi-Fi ELM327 (FOSS TCP, no Play)
 16. 🔲 [AGENT] `/feature` multi-ecu-headers — Multi-ECU OBD headers
