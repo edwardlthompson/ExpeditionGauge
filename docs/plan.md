@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 5: I/M readiness monitors (`/feature` im-readiness).
+Sprint 32 row 6: OBD trip-since-clear monitors (`/feature` obd-trip-since-clear).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
