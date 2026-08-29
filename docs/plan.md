@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 45: battery-saver recording profile (`/feature` battery-saver-record).
+Sprint 32 row 46: thermal recording throttle UI (`/feature` thermal-record-ui).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
