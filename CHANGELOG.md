@@ -94,6 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Trailer TPMS adds T1/T2 axle corners beside the truck
 * GNSS-drop dead reckoning steps position from speed and heading
 * Per-vehicle OBD PID maps default to RPM, speed, and coolant
+* External GPS baud snaps to a FOSS-safe list and rate stays 1–20 Hz
 
 ### Changed
 
