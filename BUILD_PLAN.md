@@ -165,7 +165,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 44. ✅ [AGENT] `/feature` live-record-graphs — Real-time recording graphs
 45. ✅ [AGENT] `/feature` battery-saver-record — Battery-saver recording profile
 46. ✅ [AGENT] `/feature` thermal-record-ui — Thermal recording throttle UI
-47. 🔲 [AGENT] `/feature` thermal-log-interval — Log interval auto by thermal
+47. ✅ [AGENT] `/feature` thermal-log-interval — Log interval auto by thermal
 48. 🔲 [AGENT] `/feature` storage-autodelete — Storage budget + auto-delete
 49. 🔲 [AGENT] `/feature` storage-meter — Storage usage meter
 50. 🔲 [AGENT] `/feature` session-notes — Session notes

@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 47: log interval auto by thermal (`/feature` thermal-log-interval).
+Sprint 32 row 48: storage budget + auto-delete (`/feature` storage-autodelete).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
