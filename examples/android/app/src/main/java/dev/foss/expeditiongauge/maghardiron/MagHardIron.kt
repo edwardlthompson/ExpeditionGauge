@@ -1,5 +1,7 @@
 package dev.foss.expeditiongauge.maghardiron
 
+import dev.foss.expeditiongauge.compasscalreminder.CompassCalReminder
+
 data class MagSample(val x: Float, val y: Float, val z: Float)
 
 data class HardIronOffset(val x: Float, val y: Float, val z: Float)
@@ -9,8 +11,19 @@ object MagHardIron {
     const val MIN_SAMPLES = 8
     private val sweep = ArrayDeque<MagSample>()
 
+    @Volatile
+    var reminderDue: Boolean = false
+        private set
+
     @Synchronized
     fun remember(x: Float, y: Float, z: Float): HardIronOffset? {
+        val prev = sweep.lastOrNull()
+        if (prev != null) {
+            reminderDue = CompassCalReminder.shouldRemind(
+                CompassCalReminder.magnitude(prev.x, prev.y, prev.z),
+                CompassCalReminder.magnitude(x, y, z),
+            )
+        }
         sweep.addLast(MagSample(x, y, z))
         if (sweep.size > 64) sweep.removeFirst()
         return fit(sweep.toList())

@@ -84,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Live pit room accepts up to eight receivers
 * A second phone can send IMU over live as imu|pitch|roll|hdg
 * Mag hard-iron fit uses min/max of a figure-eight sweep
+* A 40 µT magnetometer spike flags a compass calibration reminder
 
 ### Changed
 
