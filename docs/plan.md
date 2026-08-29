@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 14: gear estimate from RPM + speed (`/feature` gear-estimate).
+Sprint 32 row 15: Wi-Fi ELM327 FOSS TCP (`/feature` wifi-elm327).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
