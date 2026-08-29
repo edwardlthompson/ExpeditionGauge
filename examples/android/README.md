@@ -51,4 +51,6 @@ Before running instrumented tests or manual QA:
 
 ## F-Droid notes
 
-Document dependency hashes and reproducible build verification steps in your project's `AGENT_MEMORY.md` when activating module A.
+Listing files live in `metadata/en-US/` (mirrored under `fastlane/metadata/android/en-US/`).
+Reproducible publish steps: [`metadata/REPRODUCIBLE.md`](metadata/REPRODUCIBLE.md).
+Verify locally: `bash ../../scripts/verify-fdroid-metadata.sh`.

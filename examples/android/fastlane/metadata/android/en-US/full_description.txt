@@ -27,3 +27,4 @@ Optional hardware (all default off):
 • WitMotion BLE IMU, OBD-II, BLE TPMS, external Bluetooth GPS
 
 Pure FOSS (MIT). No Google Play Services, Firebase, or closed telemetry.
+Reproducible release builds use SOURCE_DATE_EPOCH=1700000000. Source: https://github.com/edwardlthompson/ExpeditionGauge

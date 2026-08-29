@@ -25,13 +25,19 @@ else
   ok "metadata directory present"
 fi
 
-for f in title.txt short_description.txt full_description.txt; do
+for f in title.txt short_description.txt full_description.txt license.txt source_code.txt; do
   if [ ! -s "$META/$f" ]; then
     fail "missing or empty $META/$f"
   else
     ok "$f present"
   fi
 done
+
+if [ -f "$ROOT/examples/android/metadata/REPRODUCIBLE.md" ]; then
+  ok "REPRODUCIBLE.md present"
+else
+  fail "missing examples/android/metadata/REPRODUCIBLE.md"
+fi
 
 if [ ! -f "$GRADLE" ]; then
   fail "missing $GRADLE"
