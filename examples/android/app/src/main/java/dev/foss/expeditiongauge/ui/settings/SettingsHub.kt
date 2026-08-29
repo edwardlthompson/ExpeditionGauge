@@ -22,6 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.about.DonateLinks
+import dev.foss.expeditiongauge.ui.settingssearch.SettingsSearchField
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -43,6 +48,7 @@ fun SettingsHub(
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
+    var query by remember { mutableStateOf("") }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -54,6 +60,7 @@ fun SettingsHub(
             style = MaterialTheme.typography.headlineSmall,
             color = GaugeYellow,
         )
+        SettingsSearchField(query = query, onQuery = { query = it })
         SettingsHubRow(
             label = stringResource(R.string.settings_hub_display),
             hint = stringResource(R.string.settings_hub_display_hint),

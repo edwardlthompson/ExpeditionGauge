@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 111: Onboarding refresh for v2.18+ (`/feature` onboarding-v218). Rows 99–108 and 110 are complete.
+Sprint 32 row 112: Settings search (`/feature` settings-search). Rows 99–108 and 110–111 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

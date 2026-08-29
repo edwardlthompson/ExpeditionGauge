@@ -247,7 +247,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 ##### Product chrome
 
 110. ✅ [AGENT] `/feature` in-app-whats-new — In-app What’s new after version bump
-111. 🔲 [AGENT] `/feature` onboarding-v218 — Onboarding refresh for v2.18+ features
+111. ✅ [AGENT] `/feature` onboarding-v218 — Onboarding refresh for v2.18+ features
 112. 🔲 [AGENT] `/feature` settings-search — Settings search
 113. 🔲 [AGENT] `/feature` app-shortcuts — App shortcuts (Record / Library)
 114. 🔲 [AGENT] `/feature` last-session-widget — Last-session home widget
