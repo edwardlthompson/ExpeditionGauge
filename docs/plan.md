@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 80: Live receiver local record (`/feature` live-receiver-record).
+Sprint 32 row 81: Optional live payload encrypt (`/feature` live-encrypt).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
