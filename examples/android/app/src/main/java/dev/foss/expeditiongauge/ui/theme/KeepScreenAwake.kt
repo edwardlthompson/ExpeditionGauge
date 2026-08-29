@@ -1,3 +1,8 @@
 package dev.foss.expeditiongauge.ui.theme
 
-internal fun shouldKeepScreenAwake(preferenceEnabled: Boolean): Boolean = preferenceEnabled
+import dev.foss.expeditiongauge.keepawake.KeepAwakeMoving
+
+internal fun shouldKeepScreenAwake(
+    preferenceEnabled: Boolean,
+    speedMps: Float?,
+): Boolean = KeepAwakeMoving.shouldKeep(preferenceEnabled, speedMps)

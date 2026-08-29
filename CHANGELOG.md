@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Night HUD amber palette when brightness is Night
 * Auto brightness follows the ambient light sensor when lux is available
 * Parked/idle HUD dim (speed under 0.5 m/s or unknown) caps window brightness at 0.12
+* Keep-awake holds the screen only while moving (speed ≥ 0.5 m/s); parked or unknown speed allows timeout
 
 ### Changed
 
