@@ -117,7 +117,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 5. ✅ [AGENT] `/feature` im-readiness — I/M readiness monitors
 6. ✅ [AGENT] `/feature` obd-trip-since-clear — OBD trip-since-clear monitors
 7. ✅ [AGENT] `/feature` vin-last6 — Mode 09 VIN last-6 only
-8. 🔲 [AGENT] `/feature` pid-discovery — OBD PID discovery wizard
+8. ✅ [AGENT] `/feature` pid-discovery — OBD PID discovery wizard
 9. 🔲 [AGENT] `/feature` ford-mode22-catalog — Ford Mode 22 PID catalog expand
 10. 🔲 [AGENT] `/feature` ford-mode22-temps — Ford Mode 22 trans temp / EGT PIDs
 11. 🔲 [AGENT] `/feature` optional-boost-pids — Optional MAP / AFR / boost PIDs

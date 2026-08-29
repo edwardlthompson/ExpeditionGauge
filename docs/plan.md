@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 8: OBD PID discovery wizard (`/feature` pid-discovery).
+Sprint 32 row 9: Ford Mode 22 PID catalog (`/feature` ford-mode22-catalog).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
