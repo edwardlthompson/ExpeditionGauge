@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 60: Relive chapter markers from mark events (`/feature` relive-chapters).
+Sprint 32 row 61: mark-event chapter list in HTML share (`/feature` mark-event-chapters-export).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
