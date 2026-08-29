@@ -62,6 +62,12 @@ else
     fail "missing changelog $META/changelogs/${VERSION_CODE}.txt"
   else
     ok "changelog for versionCode ${VERSION_CODE}"
+    NEXT_CODE=$((VERSION_CODE + 1))
+    if [ -s "$META/changelogs/${NEXT_CODE}.txt" ]; then
+      ok "next changelog ${NEXT_CODE}"
+    else
+      fail "missing next changelog $META/changelogs/${NEXT_CODE}.txt"
+    fi
   fi
 fi
 

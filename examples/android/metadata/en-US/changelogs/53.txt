@@ -1,0 +1,1 @@
+Privacy: HUD screenshots drop GPS EXIF, Settings can export a sanitized report and a local settings backup/QR, and share prefers Files. F-Droid listing now includes MIT license, source URL, SOURCE_DATE_EPOCH notes, and Anti-Features: None.
