@@ -25,6 +25,7 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.playback.HeatmapMetric
 import dev.foss.expeditiongauge.playback.PlaybackEngine
 import dev.foss.expeditiongauge.playback.RouteHeatmapLayer
+import dev.foss.expeditiongauge.ui.playbackbookmarks.PlaybackBookmarkList
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.layout.navigationBarBottomPadding
@@ -73,6 +74,10 @@ internal fun PlaybackBottomSection(
                 totalSamples = state.samples.size,
                 onSeek = { engine.seekToIndex(it) },
                 onMediaMarkerTap = onMediaMarkerTap,
+            )
+            PlaybackBookmarkList(
+                markers = state.markers,
+                onJump = { engine.seekToIndex(it) },
             )
         }
         Slider(

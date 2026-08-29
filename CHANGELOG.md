@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Library can share sector split times as CSV
 * Relive playback speed stays clamped between 0.25× and 4×
 * Gamepad A/L1/R1 and +/- keys scrub and speed Relive
+* Relive shows a jump list of mark-event bookmarks
 
 ### Changed
 
