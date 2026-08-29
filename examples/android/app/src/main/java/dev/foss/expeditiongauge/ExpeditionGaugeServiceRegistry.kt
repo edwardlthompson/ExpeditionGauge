@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge
 
 import dev.foss.expeditiongauge.accessibility.AccessibilityPreferences
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.thermalloginterval.ThermalLogInterval
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -31,6 +32,13 @@ internal fun ExpeditionGaugeServices.bindLifecycleFlows(
     }
     scope.launch {
         settingsPreferences.logIntervalMs.collect { recordingWriter.setLogIntervalMs(it) }
+    }
+    scope.launch {
+        combine(thermalMonitor.status, recordingWriter.recording) { status, rec ->
+            ThermalLogInterval.autoIntervalMs(status, rec)
+        }.collect { ms ->
+            if (ms != null) settingsPreferences.setLogIntervalMs(ms)
+        }
     }
     scope.launch {
         settingsPreferences.tpmsEnabled.collect { enabled ->
