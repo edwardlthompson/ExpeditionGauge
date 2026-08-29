@@ -182,7 +182,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 61. ✅ [AGENT] `/feature` mark-event-chapters-export — Mark-event chapter list in HTML share
 62. ✅ [AGENT] `/feature` mark-event-voice — Local voice note on mark event
 63. ✅ [AGENT] `/feature` photo-story-timeline — Relive photo story timeline
-64. 🔲 [AGENT] `/feature` dual-dashcam — Multi-file dashcam import
+64. ✅ [AGENT] `/feature` dual-dashcam — Multi-file dashcam import
 65. 🔲 [AGENT] `/feature` video-burnin-fields — Video burn-in extra fields
 66. 🔲 [AGENT] `/feature` lon-g-heatmap — Brake / accel (lonG) heatmap
 67. 🔲 [AGENT] `/feature` cornering-histogram — Cornering G histogram
