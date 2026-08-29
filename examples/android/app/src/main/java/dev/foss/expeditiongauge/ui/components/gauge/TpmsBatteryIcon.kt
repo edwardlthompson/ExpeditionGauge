@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import dev.foss.expeditiongauge.blebattery.BleBattery
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -40,11 +41,11 @@ fun TpmsBatteryIcon(
             size = Size(nubW, bodyH * 0.5f),
             cornerRadius = CornerRadius(1f, 1f),
         )
-        val pct = batteryPct?.coerceIn(0, 100)
-        val fillColor = when {
-            pct == null -> Color.Transparent
-            pct <= 15 -> GaugeRed
-            pct <= 35 -> GaugeYellow
+        val pct = BleBattery.parsePercent(batteryPct)
+        val fillColor = when (BleBattery.band(pct)) {
+            "unknown" -> Color.Transparent
+            "low" -> GaugeRed
+            "warn" -> GaugeYellow
             else -> if (highContrast) GaugeScaleWhite else GaugeScaleWhite.copy(alpha = 0.85f)
         }
         if (pct != null && pct > 0) {
