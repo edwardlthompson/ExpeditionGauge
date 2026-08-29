@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 import android.provider.Settings
 import dev.foss.expeditiongauge.R
@@ -22,6 +24,8 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.hudtile.HudTileLayout
+import dev.foss.expeditiongauge.settings.HudTileLayoutStore
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutEngine
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -63,6 +67,8 @@ fun DashboardHudLayout(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val context = LocalContext.current
+        val tileOrder by remember { HudTileLayoutStore(context) }.order
+            .collectAsStateWithLifecycle(HudTileLayout.DEFAULT)
         val animatorReduced = remember {
             Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
         }
@@ -99,6 +105,7 @@ fun DashboardHudLayout(
             canClearDtcs = canClearDtcs,
             onClearDtcs = onClearDtcs,
             statusLines = statusLines,
+            tileOrder = tileOrder,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(

@@ -6,14 +6,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.piddiscovery.PidDiscovery
+import dev.foss.expeditiongauge.hudtile.HudTileLayout
+import dev.foss.expeditiongauge.settings.HudTileLayoutStore
 import dev.foss.expeditiongauge.ui.fordmode22.FordMode22CatalogDialog
+import dev.foss.expeditiongauge.ui.hudtile.HudTileLayoutDialog
 import dev.foss.expeditiongauge.ui.multiecu.MultiEcuHeadersDialog
 import dev.foss.expeditiongauge.ui.piddiscovery.PidDiscoveryDialog
 import dev.foss.expeditiongauge.ui.wifielm.WifiElm327Field
@@ -34,9 +41,14 @@ internal fun SettingsHardwareCategory(
             Text(stringResource(R.string.calibration_wizard_open))
         }
     }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val tileStore = remember { HudTileLayoutStore(context) }
+    val tileOrder by tileStore.order.collectAsStateWithLifecycle(HudTileLayout.DEFAULT)
     var showDiscover by remember { mutableStateOf(false) }
     var showFord22 by remember { mutableStateOf(false) }
     var showEcus by remember { mutableStateOf(false) }
+    var showTiles by remember { mutableStateOf(false) }
     Button(
         onClick = {
             actions.onPidDiscover()
@@ -76,6 +88,19 @@ internal fun SettingsHardwareCategory(
     }
     if (showEcus) {
         MultiEcuHeadersDialog(onDismiss = { showEcus = false })
+    }
+    Button(
+        onClick = { showTiles = true },
+        modifier = Modifier.testTag("hud_tile_action"),
+    ) {
+        Text(stringResource(R.string.hud_tile_action))
+    }
+    if (showTiles) {
+        HudTileLayoutDialog(
+            order = tileOrder,
+            onCycle = { scope.launch { tileStore.cycle() } },
+            onDismiss = { showTiles = false },
+        )
     }
     WifiElm327Field(
         selectedEndpoint = state.selectedObdAddress,

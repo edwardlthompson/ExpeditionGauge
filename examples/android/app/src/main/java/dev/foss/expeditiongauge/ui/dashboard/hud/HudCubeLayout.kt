@@ -19,6 +19,8 @@ import dev.foss.expeditiongauge.ui.components.gauge.AttitudeGMeterGauge
 import dev.foss.expeditiongauge.ui.components.gauge.CompassBallGauge
 import dev.foss.expeditiongauge.ui.components.gauge.InclinometerGauge
 import dev.foss.expeditiongauge.ui.components.gauge.TirePressurePanel
+import dev.foss.expeditiongauge.hudtile.HudTileId
+import dev.foss.expeditiongauge.hudtile.HudTileLayout
 import dev.foss.expeditiongauge.ui.dashboard.DashboardHudProps
 import dev.foss.expeditiongauge.ui.dashboard.DashboardHudSideChrome
 import dev.foss.expeditiongauge.ui.orientation.HudTileMode
@@ -148,17 +150,20 @@ fun HudCubeLayout(
         )
     }
 
-    val tiles = when (props.layoutSpec.tileMode) {
-        HudTileMode.THREE_TILE -> buildList {
-            if (preset.showAttitude) add(gMeterTile)
-            if (preset.showSpeed || preset.showHeading || preset.showGps) add(telemetryTile)
-            if (preset.showTirePressure) add(tpmsTile)
+    val available = when (props.layoutSpec.tileMode) {
+        HudTileMode.THREE_TILE -> buildMap {
+            if (preset.showAttitude) put(HudTileId.ATTITUDE, gMeterTile)
+            if (preset.showSpeed || preset.showHeading || preset.showGps) {
+                put(HudTileId.TELEMETRY, telemetryTile)
+            }
+            if (preset.showTirePressure) put(HudTileId.TPMS, tpmsTile)
         }
-        HudTileMode.TWO_TILE -> buildList {
-            if (preset.showAttitude) add(gMeterTile)
-            add(combinedTile)
+        HudTileMode.TWO_TILE -> buildMap {
+            if (preset.showAttitude) put(HudTileId.ATTITUDE, gMeterTile)
+            put(HudTileId.TELEMETRY, combinedTile)
         }
     }
+    val tiles = HudTileLayout.arrange(props.tileOrder, available)
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val count = tiles.size.coerceAtLeast(1)

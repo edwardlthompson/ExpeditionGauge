@@ -9,6 +9,8 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.hudtile.HudTileId
+import dev.foss.expeditiongauge.hudtile.HudTileLayout
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutSpec
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
 
@@ -44,4 +46,5 @@ data class DashboardHudProps(
     val canClearDtcs: Boolean = false,
     val onClearDtcs: () -> Unit = {},
     val statusLines: List<String> = emptyList(),
+    val tileOrder: List<HudTileId> = HudTileLayout.DEFAULT,
 )

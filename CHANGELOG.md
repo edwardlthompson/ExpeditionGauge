@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Multi-ECU OBD headers (`7E0`/`7E1`/…) probed on the scan tick
 * Developer PID sniffer (blocks Mode 04 / VIN; redacts `4902`)
 * OBD reconnect soak: eight reconnects each scan immediately
+* User-configurable HUD tile order (Attitude / Telemetry / TPMS)
 
 ### Changed
 
