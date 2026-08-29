@@ -115,7 +115,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 3. ✅ [AGENT] `/feature` dtc-clear — Parked Mode 04 clear DTCs with confirm
 4. ✅ [AGENT] `/feature` freeze-frame — Mode 02 freeze frame
 5. ✅ [AGENT] `/feature` im-readiness — I/M readiness monitors
-6. 🔲 [AGENT] `/feature` obd-trip-since-clear — OBD trip-since-clear monitors
+6. ✅ [AGENT] `/feature` obd-trip-since-clear — OBD trip-since-clear monitors
 7. 🔲 [AGENT] `/feature` vin-last6 — Mode 09 VIN last-6 only
 8. 🔲 [AGENT] `/feature` pid-discovery — OBD PID discovery wizard
 9. 🔲 [AGENT] `/feature` ford-mode22-catalog — Ford Mode 22 PID catalog expand
