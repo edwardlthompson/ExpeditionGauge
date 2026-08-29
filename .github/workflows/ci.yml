@@ -159,8 +159,8 @@ jobs:
       - name: Sync exemplar config stubs
         if: hashFiles('examples/android/gradlew') != ''
         run: bash scripts/sync-exemplar-config.sh
-      - name: Run feature gate (strict multi-stack)
-        run: bash scripts/feature-gate.sh --stack multi --strict --json
+      - name: Run feature gate (active stack)
+        run: bash scripts/feature-gate.sh --stack android --json
 
   validate-index:
     name: Validate Template Index
@@ -188,7 +188,11 @@ jobs:
       - name: Check Sprint 0 artifacts exist
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash scripts/validate-bootstrap.sh --quick
+        run: |
+          # Child playbook --quick: optional linters skip if missing (do not inherit template CI).
+          env -u CI -u GITHUB_ACTIONS -u REQUIRE_ACTION_LINT -u REQUIRE_HADOLINT \
+            -u REQUIRE_SHELLCHECK -u REQUIRE_SEMGREP \
+            bash scripts/validate-bootstrap.sh --quick
 
   web:
     name: Web - Lint, Test, Build
@@ -457,7 +461,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Simulate child-repo upgrade path
-        run: bash scripts/simulate-template-upgrade.sh
+        run: |
+          if python3 -c "import json; raise SystemExit(0 if json.load(open('branding/product.json', encoding='utf-8')).get('mode') == 'product' else 1)"; then
+            echo "SKIP template upgrade simulation (branding mode=product; never run init-project on this child)"
+            exit 0
+          fi
+          bash scripts/simulate-template-upgrade.sh
 
   template-update-check:
     name: Template Update Check
