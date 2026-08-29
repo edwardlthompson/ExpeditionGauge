@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 35: AA larger type / TalkBack (`/feature` aa-a11y-type).
+Sprint 32 row 36: AA high-contrast tokens (`/feature` aa-high-contrast).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
