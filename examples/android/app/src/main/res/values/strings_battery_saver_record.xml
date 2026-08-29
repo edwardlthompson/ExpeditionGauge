@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="battery_saver_record_toggle">Battery-saver recording (GPS-only, 5 Hz)</string>
+</resources>

@@ -18,9 +18,11 @@ import dev.foss.expeditiongauge.gauge.toInclinometerStyle
 import dev.foss.expeditiongauge.car.gauge.next
 import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.presets.DashboardPresetId
+import dev.foss.expeditiongauge.batterysaverrecord.BatterySaverRecord
 import dev.foss.expeditiongauge.recording.RecordingMode
 import dev.foss.expeditiongauge.recording.RecordingWriter
 import dev.foss.expeditiongauge.recording.SessionEventRecorder
+import dev.foss.expeditiongauge.settings.BatterySaverRecordStore
 import dev.foss.expeditiongauge.settings.SettingsPreferences
 import dev.foss.expeditiongauge.timing.LapTimingService
 import dev.foss.expeditiongauge.timing.PredictiveTimingState
@@ -163,6 +165,8 @@ class DashboardViewModel(
         viewModelScope.launch {
             val profile = settingsProfileRepository.activeProfile.first()
             val externalImu = telemetryBus.snapshots.value.imuStatuses.any { it.connected }
+            val saverOn = BatterySaverRecordStore(appContext).enabled.first()
+            BatterySaverRecord.active = saverOn
             runCatching {
                 recordingWriter.startRecording(
                     recordingMode = profile.recordingMode,
@@ -170,9 +174,12 @@ class DashboardViewModel(
                     manualStart = true,
                 )
             }.onSuccess { sessionId ->
+                BatterySaverRecord.applyInterval(saverOn, recordingWriter::setLogIntervalMs)
                 if (settingsPreferences.lapTimingEnabled.first()) {
                     lapTimingService.onRecordingStarted(sessionId)
                 }
+            }.onFailure {
+                BatterySaverRecord.active = false
             }
         }
     }
@@ -181,6 +188,7 @@ class DashboardViewModel(
         viewModelScope.launch {
             val sessionId = recordingWriter.activeSessionId.value
             recordingWriter.stopRecording()
+            BatterySaverRecord.active = false
             if (sessionId != null && settingsPreferences.lapTimingEnabled.first()) {
                 lapTimingService.onRecordingStopped(sessionId)
             }

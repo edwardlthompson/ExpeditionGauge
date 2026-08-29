@@ -1,12 +1,14 @@
 package dev.foss.expeditiongauge.recording
 
+import dev.foss.expeditiongauge.batterysaverrecord.BatterySaverRecord
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import org.json.JSONArray
 import org.json.JSONObject
 
 internal object RecordingSampleWriter {
-    fun toEntity(snapshot: TelemetrySnapshot, sessionId: Long): SampleEntity {
+    fun toEntity(raw: TelemetrySnapshot, sessionId: Long): SampleEntity {
+        val snapshot = BatterySaverRecord.apply(raw)
         val extras = JSONObject().apply {
             put("fusionSource", snapshot.fusionSource)
             put("gpsSource", snapshot.gpsSource)
