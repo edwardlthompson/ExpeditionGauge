@@ -1,6 +1,7 @@
 package dev.foss.expeditiongauge.playback
 
 import dev.foss.expeditiongauge.data.db.entities.SampleEntity
+import dev.foss.expeditiongauge.playbackspeed.PlaybackSpeed
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -81,7 +82,7 @@ class PlaybackEngine {
     fun seekBy(deltaMs: Long) = seekController.seekBy(deltaMs)
 
     fun setSpeedMultiplier(multiplier: Float) {
-        _state.value = _state.value.copy(speedMultiplier = multiplier.coerceIn(0.25f, 4f))
+        _state.value = _state.value.copy(speedMultiplier = PlaybackSpeed.clamp(multiplier))
     }
 
     fun adjustSpeed(delta: Float) {
