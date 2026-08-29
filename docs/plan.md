@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 46: thermal recording throttle UI (`/feature` thermal-record-ui).
+Sprint 32 row 47: log interval auto by thermal (`/feature` thermal-log-interval).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
