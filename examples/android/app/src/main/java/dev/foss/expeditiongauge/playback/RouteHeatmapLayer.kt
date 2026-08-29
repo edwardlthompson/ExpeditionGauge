@@ -6,6 +6,7 @@ import kotlin.math.abs
 
 enum class HeatmapMetric {
     LAT_G,
+    LON_G,
     DRIFT_ANGLE,
     SLIP_RATIO,
 }
@@ -20,6 +21,7 @@ data class HeatmapSegment(
 object RouteHeatmapLayer {
     fun sampleIntensity(sample: SampleEntity, metric: HeatmapMetric): Float = when (metric) {
         HeatmapMetric.LAT_G -> abs(sample.latG)
+        HeatmapMetric.LON_G -> abs(sample.lonAccel)
         HeatmapMetric.DRIFT_ANGLE -> abs(sample.driftAngleDeg ?: 0f)
         HeatmapMetric.SLIP_RATIO -> sample.slipRatio ?: 0f
     }
@@ -56,11 +58,15 @@ object RouteHeatmapLayer {
                 val normalized = (intensity / 2f).coerceIn(0f, 1f)
                 Color(red = normalized, green = 1f - normalized * 0.5f, blue = 0.2f, alpha = 0.85f)
             }
+            HeatmapMetric.LON_G -> {
+                val normalized = (intensity / 2f).coerceIn(0f, 1f)
+                Color(red = 0.2f, green = 0.6f + normalized * 0.4f, blue = 1f - normalized, alpha = 0.85f)
+            }
         }
     }
 
     fun heatmapColorBucket(intensity: Float, metric: HeatmapMetric): Int = when (metric) {
-        HeatmapMetric.LAT_G -> when {
+        HeatmapMetric.LAT_G, HeatmapMetric.LON_G -> when {
             intensity >= 1.5f -> 3
             intensity >= 1.0f -> 2
             intensity >= 0.5f -> 1

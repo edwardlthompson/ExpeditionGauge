@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Relive shows a horizontal photo-story strip from media attachments
 * A second dashcam import is stored as an extra clip with a time offset
 * Video burn-in fields are selectable (speed, β, latG, lonG, pitch, roll)
+* Relive heatmap can color the route by brake/accel lonG
 
 ### Changed
 

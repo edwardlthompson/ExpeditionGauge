@@ -28,6 +28,7 @@ fun RouteHeatmapControls(
                     Text(
                         when (metric) {
                             HeatmapMetric.LAT_G -> stringResource(R.string.heatmap_lat_g)
+                            HeatmapMetric.LON_G -> stringResource(R.string.heatmap_lon_g)
                             HeatmapMetric.DRIFT_ANGLE -> stringResource(R.string.heatmap_drift)
                             HeatmapMetric.SLIP_RATIO -> stringResource(R.string.heatmap_slip)
                         },
