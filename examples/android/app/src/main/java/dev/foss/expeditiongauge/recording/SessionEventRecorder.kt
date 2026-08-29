@@ -2,11 +2,17 @@ package dev.foss.expeditiongauge.recording
 
 import dev.foss.expeditiongauge.data.db.dao.SessionEventDao
 import dev.foss.expeditiongauge.data.db.entities.SessionEventEntity
+import dev.foss.expeditiongauge.markeventvoice.MarkEventVoice
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import org.json.JSONObject
 
 object SessionEventFactory {
-    fun fromSnapshot(sessionId: Long, snapshot: TelemetrySnapshot, tag: String? = null): SessionEventEntity {
+    fun fromSnapshot(
+        sessionId: Long,
+        snapshot: TelemetrySnapshot,
+        tag: String? = null,
+        audioUri: String? = null,
+    ): SessionEventEntity {
         val json = JSONObject()
             .put("timestampMs", snapshot.timestampMs)
             .put("speedMps", snapshot.speedMps.toDouble())
@@ -20,11 +26,12 @@ object SessionEventFactory {
                 snapshot.rpm?.let { put("rpm", it.toDouble()) }
                 tag?.let { put("tag", it) }
             }
+        val payload = audioUri?.let { MarkEventVoice.withAudioUri(json.toString(), it) } ?: json.toString()
         return SessionEventEntity(
             sessionId = sessionId,
             timestampMs = snapshot.timestampMs,
             eventType = "mark",
-            payloadJson = json.toString(),
+            payloadJson = payload,
         )
     }
 }
@@ -32,7 +39,12 @@ object SessionEventFactory {
 class SessionEventRecorder(
     private val sessionEventDao: SessionEventDao,
 ) {
-    suspend fun markEvent(sessionId: Long, snapshot: TelemetrySnapshot, tag: String? = null): Long {
-        return sessionEventDao.insert(SessionEventFactory.fromSnapshot(sessionId, snapshot, tag))
+    suspend fun markEvent(
+        sessionId: Long,
+        snapshot: TelemetrySnapshot,
+        tag: String? = null,
+        audioUri: String? = null,
+    ): Long {
+        return sessionEventDao.insert(SessionEventFactory.fromSnapshot(sessionId, snapshot, tag, audioUri))
     }
 }
