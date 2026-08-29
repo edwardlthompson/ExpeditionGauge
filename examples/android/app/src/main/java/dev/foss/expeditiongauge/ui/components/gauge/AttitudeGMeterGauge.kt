@@ -34,6 +34,7 @@ import dev.foss.expeditiongauge.gauge.BallPosition
 import dev.foss.expeditiongauge.gauge.GBallTrailBuffer
 import dev.foss.expeditiongauge.gauge.GaugeDisplayRotation
 import dev.foss.expeditiongauge.gauge.GaugeLogic
+import dev.foss.expeditiongauge.tractioncircle.TractionCircle
 import dev.foss.expeditiongauge.ui.theme.GaugeRed
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -71,7 +72,7 @@ fun AttitudeGMeterGauge(
     val ball = remember(pitchDeg, rollDeg, latG, lonG, mode, displayRotation, isPortraitLayout) {
         ballForMode(mode, pitchDeg, rollDeg, latG, lonG, displayRotation, isPortraitLayout)
     }
-    val showTrail = recording
+    val showTrail = TractionCircle.liveTrail(mode == AttitudeGaugeMode.G_FORCE, recording)
     var trailPoints by remember { mutableStateOf<List<Pair<Float, Float>>>(emptyList()) }
     LaunchedEffect(pitchDeg, rollDeg, latG, lonG, mode, displayRotation, isPortraitLayout, showTrail) {
         if (showTrail) {
@@ -80,8 +81,8 @@ fun AttitudeGMeterGauge(
             trailPoints = trailBuffer.snapshot()
         }
     }
-    LaunchedEffect(recording) {
-        if (!recording) {
+    LaunchedEffect(recording, mode) {
+        if (!TractionCircle.liveTrail(mode == AttitudeGaugeMode.G_FORCE, recording)) {
             trailBuffer.clear()
             trailPoints = emptyList()
         }
@@ -176,12 +177,15 @@ internal fun ballForMode(
     mode: AttitudeGaugeMode,
     pitchDeg: Float,
     rollDeg: Float,
-    @Suppress("UNUSED_PARAMETER") latG: Float,
-    @Suppress("UNUSED_PARAMETER") lonG: Float,
+    latG: Float,
+    lonG: Float,
     displayRotation: Int,
     isPortraitLayout: Boolean = false,
 ): BallPosition = when (mode) {
-    AttitudeGaugeMode.G_FORCE,
+    AttitudeGaugeMode.G_FORCE -> {
+        val clamped = TractionCircle.clamp(latG, lonG)
+        GaugeDisplayRotation.mapGForce(clamped.first, clamped.second, displayRotation, isPortraitLayout)
+    }
     AttitudeGaugeMode.INCLINOMETER_LADDER,
     AttitudeGaugeMode.INCLINOMETER_HORIZON,
     AttitudeGaugeMode.INCLINOMETER_DUAL_DIAL,
