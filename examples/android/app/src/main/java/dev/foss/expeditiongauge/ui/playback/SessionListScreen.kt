@@ -64,7 +64,8 @@ fun SessionListScreen(
         }
     }
     val sessions by sessionsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
-    val favoriteStore = remember { SessionFavoritesStore(LocalContext.current) }
+    val context = LocalContext.current
+    val favoriteStore = remember { SessionFavoritesStore(context) }
     val favoriteIds by favoriteStore.favoriteIds.collectAsStateWithLifecycle(emptySet())
     val ordered = remember(sessions, favoriteIds) {
         SessionFavorites.favoritesFirst(sessions, favoriteIds) { it.id }
