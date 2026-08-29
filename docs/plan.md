@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 104: Default share to Files (`/feature` share-to-files). Rows 99–103 are complete.
+Sprint 32 row 105: F-Droid metadata + reproducible publish (`/feature` fdroid-reproducible). Rows 99–104 are complete.
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
