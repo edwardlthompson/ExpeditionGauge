@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.sessionmapcompare.SessionMapCompare
 import dev.foss.expeditiongauge.stats.SessionComparison
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
@@ -52,6 +53,12 @@ fun SessionComparisonScreen(
             deltaMs = comparison.bestLapDeltaMs,
         )
         Text(text = stringResource(R.string.comparison_slip_delta, comparison.slipDelta))
+        val leftPts = SessionMapCompare.fromThumb(comparison.left.routeThumb)
+        val rightPts = SessionMapCompare.fromThumb(comparison.right.routeThumb)
+        Text(
+            text = stringResource(R.string.session_map_compare_points, leftPts.size, rightPts.size),
+            modifier = Modifier.testTag("session_map_compare_points"),
+        )
         if (onGhostCompare != null && dev.foss.expeditiongauge.FeatureFlags.ghostLapEnabled) {
             Button(onClick = onGhostCompare, modifier = Modifier.testTag("comparison_ghost_map")) {
                 Text(stringResource(R.string.comparison_ghost_map))

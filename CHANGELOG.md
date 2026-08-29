@@ -68,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Relive heatmap can color the route by brake/accel lonG
 * Relive shows the peak 0.25 G cornering-histogram bin
 * Library ranks sessions by drift score after starred favorites
+* Session compare shows GPS polyline point counts for both sessions
 
 ### Changed
 
