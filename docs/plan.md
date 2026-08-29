@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 32: crawl-mode HUD declutter (`/feature` crawl-hud-declutter).
+Sprint 32 row 33: custom Canvas AA Drive HUD (`/feature` aa-custom-canvas).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
