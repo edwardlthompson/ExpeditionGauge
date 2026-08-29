@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 75: Offline OSM speed-limit overlay (`/feature` osm-speed-limit).
+Sprint 32 row 76: Offline geocoder for session titles (`/feature` offline-geocoder).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
