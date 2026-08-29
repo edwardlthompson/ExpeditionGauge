@@ -20,6 +20,8 @@ import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.liverecordgraphs.LiveGraphPoint
 import dev.foss.expeditiongauge.liverecordgraphs.RecordingLiveGraph
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
+import dev.foss.expeditiongauge.ui.theme.GaugeGreen
+import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingSm
 
 @Composable
@@ -41,8 +43,8 @@ fun RecordingLiveGraphStrip(
             .testTag("recording_live_graph")
             .semantics { contentDescription = label },
     ) {
-        drawSeries(RecordingLiveGraph.speedSeries(points), Color(0xFFFFD700))
-        drawSeries(RecordingLiveGraph.latGSeries(points), Color(0xFF88FF88))
+        drawSeries(RecordingLiveGraph.speedSeries(points), GaugeYellow)
+        drawSeries(RecordingLiveGraph.latGSeries(points), GaugeGreen)
     }
 }
 

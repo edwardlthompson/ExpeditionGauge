@@ -4,4 +4,5 @@
     <string name="osm_speed_limit_overlay">OSM speed limits</string>
     <string name="terrain_toggle">Hillshade / terrain</string>
     <string name="foss_map_style">Map style</string>
+    <string name="foss_map_style_current">Map style: %1$s</string>
 </resources>

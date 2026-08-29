@@ -30,6 +30,6 @@ fun FossMapStyleField(modifier: Modifier = Modifier) {
         },
         modifier = modifier.testTag("foss_map_style"),
     ) {
-        Text("${stringResource(R.string.foss_map_style)}: ${style.label}")
+        Text(stringResource(R.string.foss_map_style_current, style.label))
     }
 }
