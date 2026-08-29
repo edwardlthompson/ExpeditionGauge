@@ -1,0 +1,1 @@
+OBD stored/pending DTCs scan immediately on every confirmed adapter handshake (and reconnect), not only on a later poll-loop tick.
