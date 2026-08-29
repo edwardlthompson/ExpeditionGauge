@@ -177,7 +177,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 56. ✅ [AGENT] `/feature` sector-times-csv — Sector times CSV export
 57. ✅ [AGENT] `/feature` playback-speed — Variable playback speed
 58. ✅ [AGENT] `/feature` playback-gamepad — Keyboard / gamepad scrub
-59. 🔲 [AGENT] `/feature` playback-bookmarks — Playback bookmarks from mark events
+59. ✅ [AGENT] `/feature` playback-bookmarks — Playback bookmarks from mark events
 60. 🔲 [AGENT] `/feature` relive-chapters — Relive chapter markers from mark events
 61. 🔲 [AGENT] `/feature` mark-event-chapters-export — Mark-event chapter list in HTML share
 62. 🔲 [AGENT] `/feature` mark-event-voice — Local voice note on mark event

@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 59: playback bookmarks from mark events (`/feature` playback-bookmarks).
+Sprint 32 row 60: Relive chapter markers from mark events (`/feature` relive-chapters).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)
