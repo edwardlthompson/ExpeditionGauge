@@ -12,7 +12,7 @@
 
 ## Next feature
 
-Sprint 32 row 25: haptic over-limit alerts (`/feature` haptic-alerts).
+Sprint 32 row 26: per-threshold alert snooze (`/feature` alert-snooze).
 
 1. Copy `docs/features/_template.md` → `docs/features/{name}.md`
 2. Lock the public API (Sequential)

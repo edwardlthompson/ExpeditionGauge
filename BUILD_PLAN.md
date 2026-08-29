@@ -137,7 +137,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 22. ✅ [AGENT] `/feature` ambient-autodim — Ambient lux auto-dim refine
 23. ✅ [AGENT] `/feature` parked-idle-dim — Parked idle dim / burn-in guard
 24. ✅ [AGENT] `/feature` keep-awake-moving — Keep-awake only while moving
-25. 🔲 [AGENT] `/feature` haptic-alerts — Haptic over-limit alerts
+25. ✅ [AGENT] `/feature` haptic-alerts — Haptic over-limit alerts
 26. 🔲 [AGENT] `/feature` alert-snooze — Per-threshold alert snooze
 27. 🔲 [AGENT] `/feature` preset-alert-thresholds — Per-preset alert thresholds
 28. 🔲 [AGENT] `/feature` wet-tire-alerts — Wet/rain tire alert profile
