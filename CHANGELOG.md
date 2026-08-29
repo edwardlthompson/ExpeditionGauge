@@ -75,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Track setup can auto-detect a start/finish gate from a closed GPS loop
 * Offline map tile cache keeps the newest eight regions and evicts older packs
 * Settings maps can show an offline OSM maxspeed overlay for the home region
+* Offline geocoder names sessions from a local track gazetteer
 
 ### Changed
 
