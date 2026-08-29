@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import dev.foss.expeditiongauge.webrtcdatachannel.WebRtcDataChannel
 import org.json.JSONObject
 
 enum class LiveReceiverState {
@@ -37,7 +38,8 @@ class LiveTelemetryReceiver(
     }
 
     fun onMetricReceived(json: String) {
-        val obj = runCatching { JSONObject(json) }.getOrNull() ?: return
+        val raw = WebRtcDataChannel.unwrap(json) ?: return
+        val obj = runCatching { JSONObject(raw) }.getOrNull() ?: return
         _latestSample.value = LiveSampleDto(
             timestampMs = obj.optLong("t"),
             speedMps = obj.optDouble("speed").toFloat(),

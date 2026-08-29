@@ -78,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Offline geocoder names sessions from a local track gazetteer
 * Settings maps can switch on a FOSS hillshade / terrain style
 * Settings maps can cycle MapLibre demo and OpenFreeMap Liberty/Bright styles
+* Live telemetry frames metrics as a FOSS `dc1|` Data Channel payload
 
 ### Changed
 
