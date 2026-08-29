@@ -5,6 +5,7 @@ import dev.foss.expeditiongauge.imreadiness.ImReadinessHold
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.obdtrip.ObdTripHold
+import dev.foss.expeditiongauge.piddiscovery.PidDiscoveryHold
 import dev.foss.expeditiongauge.vinlast6.VinLast6Hold
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ internal class ObdHudState {
     val im = ImReadinessHold()
     val trip = ObdTripHold()
     val vin = VinLast6Hold()
+    val discovery = PidDiscoveryHold()
 
     fun setDtcs(value: List<DtcEntry>) {
         _dtcs.value = value
@@ -32,5 +34,6 @@ internal class ObdHudState {
         im.set(null)
         trip.set(null)
         vin.set(null)
+        discovery.set(null)
     }
 }

@@ -36,6 +36,8 @@ internal object ObdPollLoop {
         onTrip: (ObdTripSinceClear?) -> Unit = {},
         onVin: (String?) -> Unit = {},
         currentVin: () -> String? = { null },
+        consumeDiscover: () -> Boolean = { false },
+        onDiscover: (Set<Int>) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(sock.outputStream)
         val reader = BufferedReader(InputStreamReader(sock.inputStream))
@@ -63,6 +65,9 @@ internal object ObdPollLoop {
                 },
                 consumeClear = consumeClear,
                 performClear = { Elm327DtcClear.request(reader, writer) },
+                consumeDiscover = consumeDiscover,
+                performDiscover = { Elm327PidDiscovery.request(reader, writer) },
+                onDiscover = onDiscover,
             )
         } catch (e: IOException) {
             // Socket closed / broken pipe — disconnect path, not a fatal crash.
@@ -86,9 +91,13 @@ internal object ObdPollLoop {
         delayMs: suspend (Long) -> Unit = { delay(it) },
         consumeClear: () -> Boolean = { false },
         performClear: () -> Boolean = { false },
+        consumeDiscover: () -> Boolean = { false },
+        performDiscover: () -> Set<Int> = { emptySet() },
+        onDiscover: (Set<Int>) -> Unit = {},
     ) {
         scheduler.onConnectionConfirmed(clock())
         while (isActive()) {
+            if (consumeDiscover()) onDiscover(performDiscover())
             val cleared = consumeClear() && performClear()
             if (cleared) {
                 onDtcs(emptyList())

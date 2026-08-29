@@ -33,6 +33,7 @@ data class SettingsUiActions(
     val onDeveloperModeChange: (Boolean) -> Unit = {},
     val onDeveloperModeOpen: () -> Unit = {},
     val onObdPidConfigChange: (ObdPidConfig) -> Unit = {},
+    val onPidDiscover: () -> Unit = {},
     val onExternalGpsEnabledChange: (Boolean) -> Unit = {},
     val onForgetExternalGps: () -> Unit = {},
     val onTpmsEnabledChange: (Boolean) -> Unit = {},

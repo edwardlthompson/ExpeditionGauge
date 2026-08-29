@@ -57,4 +57,5 @@ data class SettingsUiState(
     val alertsMuted: Boolean = false,
     val activePresetId: DashboardPresetId = DashboardPresetId.Default,
     val screenshotMode: HudScreenshotMode = HudScreenshotMode.FULL_SCREEN,
+    val pidDiscoveryPids: Set<Int>? = null,
 )

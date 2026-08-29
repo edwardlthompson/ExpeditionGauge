@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pid_discovery_action">Discover PIDs</string>
+    <string name="pid_discovery_title">Supported PIDs</string>
+    <string name="pid_discovery_empty">Connect OBD, then discover. Waiting for 0100/0120/0140.</string>
+    <string name="pid_discovery_apply">Enable matching</string>
+    <string name="pid_discovery_close">Close</string>
+</resources>

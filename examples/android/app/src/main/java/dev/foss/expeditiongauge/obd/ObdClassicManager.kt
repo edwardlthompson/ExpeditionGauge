@@ -13,7 +13,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -50,6 +49,7 @@ class ObdClassicManager(
     val imReadiness = hud.im.report
     val tripSinceClear = hud.trip.trip
     val vinLast6 = hud.vin.last6
+    val pidDiscovery = hud.discovery.pids
 
     fun selectDevice(address: String) {
         selectedAddress = address
@@ -81,29 +81,13 @@ class ObdClassicManager(
                     _phase.value = ObdConnectionPhase.Connected
                     _snapshot.value = ObdSnapshot(connected = true)
                     Log.i(TAG, "OBD connected — scheduling immediate DTC scan")
-                    pollJob = scope.launch(Dispatchers.IO) {
-                        try {
-                            ObdPollLoop.run(
-                                sock = sock,
-                                pidConfig = pidConfig,
-                                catalog = catalog,
-                                isActive = { isActive },
-                                onSnapshot = { _snapshot.value = it },
-                                currentDtcs = { hud.dtcs.value },
-                                onDtcs = { hud.setDtcs(it) },
-                                consumeClear = { hud.clear.consume() },
-                                onIm = { hud.im.set(it) },
-                                onTrip = { hud.trip.set(it) },
-                                onVin = { hud.vin.set(it) },
-                                currentVin = { hud.vin.last6.value },
-                            )
-                        } catch (e: Exception) {
-                            Log.w(TAG, "OBD poll ended: ${e.message}")
-                        } finally {
-                            if (socket === sock) {
-                                disconnect(clearPhase = false)
-                                _phase.value = ObdConnectionPhase.Failed
-                            }
+                    pollJob = ObdPollStarter.launch(
+                        scope, sock, pidConfig, catalog, hud,
+                        onSnapshot = { _snapshot.value = it },
+                    ) {
+                        if (socket === sock) {
+                            disconnect(clearPhase = false)
+                            _phase.value = ObdConnectionPhase.Failed
                         }
                     }
                 } catch (e: Exception) {
@@ -139,6 +123,7 @@ class ObdClassicManager(
     fun simulateStoredDtcs(codes: List<String>) = hud.simulate(codes, catalog)
     fun clearSimulatedDtcs() = hud.clearSim()
     fun requestClearDtcs() = hud.clear.request()
+    fun requestPidDiscovery() = hud.discovery.request()
 
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"

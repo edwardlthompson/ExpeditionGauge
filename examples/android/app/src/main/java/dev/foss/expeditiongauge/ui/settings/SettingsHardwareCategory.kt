@@ -3,11 +3,17 @@ package dev.foss.expeditiongauge.ui.settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.FeatureFlags
 import dev.foss.expeditiongauge.R
+import dev.foss.expeditiongauge.piddiscovery.PidDiscovery
+import dev.foss.expeditiongauge.ui.piddiscovery.PidDiscoveryDialog
 
 @Composable
 internal fun SettingsHardwareCategory(
@@ -24,6 +30,29 @@ internal fun SettingsHardwareCategory(
         ) {
             Text(stringResource(R.string.calibration_wizard_open))
         }
+    }
+    var showDiscover by remember { mutableStateOf(false) }
+    Button(
+        onClick = {
+            actions.onPidDiscover()
+            showDiscover = true
+        },
+        modifier = Modifier.testTag("pid_discovery_action"),
+    ) {
+        Text(stringResource(R.string.pid_discovery_action))
+    }
+    if (showDiscover) {
+        PidDiscoveryDialog(
+            pids = state.pidDiscoveryPids,
+            onApply = {
+                val pids = state.pidDiscoveryPids
+                if (!pids.isNullOrEmpty()) {
+                    actions.onObdPidConfigChange(PidDiscovery.applyToConfig(state.obdPidConfig, pids))
+                }
+                showDiscover = false
+            },
+            onDismiss = { showDiscover = false },
+        )
     }
     SettingsHardwareOptions(
         tpmsEnabled = state.tpmsEnabled,

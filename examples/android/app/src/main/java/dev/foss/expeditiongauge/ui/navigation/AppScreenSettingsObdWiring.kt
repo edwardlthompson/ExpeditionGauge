@@ -20,6 +20,8 @@ internal data class AppScreenSettingsObdWiring(
     val onPairNew: () -> Unit,
     val onDeviceSelect: (String) -> Unit,
     val onPidConfigChange: (ObdPidConfig) -> Unit,
+    val onPidDiscover: () -> Unit,
+    val pidDiscoveryPids: Set<Int>?,
 )
 
 @Composable
@@ -30,6 +32,7 @@ internal fun rememberAppScreenSettingsObdWiring(
     obdAddress: String?,
 ): AppScreenSettingsObdWiring {
     val obdPhase by services.obdManager.phase.collectAsStateWithLifecycle()
+    val pidDiscoveryPids by services.obdManager.pidDiscovery.collectAsStateWithLifecycle()
     val connectionStatus = when (obdPhase) {
         ObdConnectionPhase.Idle -> stringResource(R.string.settings_obd_status_idle)
         ObdConnectionPhase.Connecting -> stringResource(R.string.settings_obd_status_connecting)
@@ -68,5 +71,7 @@ internal fun rememberAppScreenSettingsObdWiring(
                 services.obdManager.pidConfig = config
             }
         },
+        onPidDiscover = { services.obdManager.requestPidDiscovery() },
+        pidDiscoveryPids = pidDiscoveryPids,
     )
 }

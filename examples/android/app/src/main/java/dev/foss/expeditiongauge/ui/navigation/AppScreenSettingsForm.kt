@@ -129,6 +129,7 @@ internal fun AppScreenSettingsForm(
             alertsMuted = alertsMuted,
             activePresetId = activePresetId,
             screenshotMode = screenshotMode,
+            pidDiscoveryPids = obd.pidDiscoveryPids,
         ),
         actions = rememberSettingsUiActions(
             context = context,
@@ -234,6 +235,7 @@ private fun rememberSettingsUiActions(
     onForgetObd = obd.onForget,
     onObdPairNew = obd.onPairNew,
     onObdPidConfigChange = obd.onPidConfigChange,
+    onPidDiscover = obd.onPidDiscover,
     onExternalGpsSelect = { address ->
         scope.launch {
             FeatureFlags.externalGpsEnabled = true
