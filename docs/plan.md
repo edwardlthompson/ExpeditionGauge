@@ -8,7 +8,7 @@
 | Task | Owner | Tests / fallback |
 |------|-------|------------------|
 | ✅ Canon/Mixed template machinery | AGENT | `validate-bootstrap.sh --quick` |
-| 🔲 Golden Path catalog rows | HUMAN | Say numbers after `/upgrade` report |
+| ✅ Golden Path catalog rows 1–7 added | AGENT | `BUILD_PLAN.md` Child Repo Playbook Sprint 31 |
 
 ## Next feature
 

@@ -26,10 +26,21 @@
 | Tests | `settings/*.test.ts` | `src/test/.../settings/` |
 | Wiring | `appBootstrap.ts` + `AppShell.ts` | `GoldenPathApp.kt` (composition root) |
 
+## Tests
+
+- Automated: yes — `src/test/java/dev/foss/expeditiongauge/settings/`
+- Coverage: theme persist, category hub; remaining work is crash-save toggle only
+
+## Fallback validation
+
+- Why tests are not feasible: N/A (automated tests exist)
+- Command: `python3 scripts/agent-run.py feature-gate --stack android`
+
 ## Out of scope (Sprint 2)
 
 - Account sync, cloud backup, analytics
 - Donation URL editing (stays in About / `donations.json`)
+- Replacing the existing Settings hub
 
 ## Notes
 

@@ -6,6 +6,7 @@
 
 - Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.18.12** (2026-08-28).
 - **Shipped:** through **v2.18.12** (OBD DTC scan on connect). Audit 2026-07-29 archived.
+- **Next:** Sprint 31 Golden Path catch-up (7 `/feature` rows; one per task).
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
@@ -87,6 +88,24 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 ## Active board
 
 > **Hotfix v2.18.12** archived in COMPLETED_TASKS.md @ `/ship`.
+
+## Child Repo Playbook
+
+### Sprint 31 — Golden Path catch-up (template v1.0.0)
+
+<!-- parallel_exception: one /feature row at a time; Sequential only -->
+
+Port remaining Golden Path slices into `dev.foss.expeditiongauge`. Reference the stub; do **not** copy `examples/` over the product. Thin wiring ≤10 lines in `ExpeditionGaugeApp` / `MainActivity`. One feature per `/feature` task.
+
+#### Sequential
+
+1. 🔲 [AGENT] `/feature` about/donations-updates — add `docs/features/donations-updates.md`; port remaining donate/update-prompt patterns into existing `about/` (do not copy examples/ over the app)
+2. 🔲 [AGENT] `/feature` crash-capture — opt-in PendingCrash allowlist sanitizer beside existing `crash/CrashLogStore`; spec `docs/features/crash-capture.md`
+3. 🔲 [AGENT] `/feature` settings extras — crash-save toggle / goldenpath SettingsLogic only; keep the existing Settings hub; spec `docs/features/settings.md`
+4. 🔲 [AGENT] `/feature` feedback — in-app Report a bug / Request a feature dialogs; spec `docs/features/feedback.md`
+5. 🔲 [AGENT] `/feature` github-feedback — GitHub issue-form URL composer + clipboard fallback; spec `docs/features/github-feedback.md`
+6. 🔲 [AGENT] `/feature` privacy-report — sanitize/fingerprint/markdown builder (no UI, no network); spec `docs/features/privacy-report.md`
+7. 🔲 [AGENT] `/feature` display-refresh — fastest same-resolution display mode + HIGH scroll vote; spec `docs/features/display-refresh.md`
 
 ---
 
