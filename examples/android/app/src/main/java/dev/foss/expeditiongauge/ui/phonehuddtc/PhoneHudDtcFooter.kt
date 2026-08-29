@@ -2,6 +2,7 @@ package dev.foss.expeditiongauge.ui.phonehuddtc
 
 import android.os.SystemClock
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,10 +63,18 @@ fun PhoneHudDtcFooter(
         onDismissRequest = { detail = null },
         title = { Text(shown.code) },
         text = {
-            Text(
-                text = PhoneHudDtc.fullTitle(shown),
-                modifier = Modifier.testTag("phone_hud_dtc_detail"),
-            )
+            Column {
+                Text(
+                    text = PhoneHudDtc.fullTitle(shown),
+                    modifier = Modifier.testTag("phone_hud_dtc_detail"),
+                )
+                shown.freezeSummary?.let { summary ->
+                    Text(
+                        text = stringResource(R.string.freeze_frame_label) + ": " + summary,
+                        modifier = Modifier.testTag("freeze_frame"),
+                    )
+                }
+            }
         },
         confirmButton = {
             TextButton(

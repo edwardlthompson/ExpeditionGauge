@@ -3,6 +3,7 @@ package dev.foss.expeditiongauge.obd
 import android.bluetooth.BluetoothSocket
 import android.os.SystemClock
 import android.util.Log
+import dev.foss.expeditiongauge.freezeframe.FreezeFrame
 import dev.foss.expeditiongauge.obd.dtc.DtcCatalog
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.settings.ObdPidConfig
@@ -39,7 +40,11 @@ internal object ObdPollLoop {
                 scheduler = scheduler,
                 currentDtcs = currentDtcs,
                 onDtcs = onDtcs,
-                scanDtcs = { prev -> ObdDtcReader.refresh(reader, writer, catalog, prev) },
+                scanDtcs = { prev ->
+                    val codes = ObdDtcReader.refresh(reader, writer, catalog, prev)
+                    if (codes.isEmpty()) codes
+                    else FreezeFrame.attach(codes, Elm327FreezeFrame.request(reader, writer))
+                },
                 pollOnce = {
                     previous = ObdPollHelper.pollSnapshot(reader, writer, pidConfig, previous)
                     onSnapshot(previous)

@@ -9,7 +9,7 @@ object PhoneHudDtc {
 
     fun current(entries: List<DtcEntry>, nowMs: Long): DtcEntry? {
         val frame = DtcCarousel.frame(entries, nowMs) ?: return null
-        return DtcEntry(frame.code, frame.description)
+        return entries.firstOrNull { it.code == frame.code }
     }
 
     fun fullTitle(entry: DtcEntry): String =

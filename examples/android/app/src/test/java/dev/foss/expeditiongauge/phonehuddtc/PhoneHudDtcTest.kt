@@ -31,4 +31,10 @@ class PhoneHudDtcTest {
         assertEquals("P0420 $long", PhoneHudDtc.fullTitle(entry))
         assertEquals(entry, PhoneHudDtc.current(listOf(entry), 0L))
     }
+
+    @Test
+    fun currentKeepsFreezeSummary() {
+        val entry = DtcEntry("P0420", "Catalyst", freezeSummary = "P0420 · 2100 rpm")
+        assertEquals(entry, PhoneHudDtc.current(listOf(entry), 0L))
+    }
 }

@@ -4,4 +4,5 @@ package dev.foss.expeditiongauge.obd.dtc
 data class DtcEntry(
     val code: String,
     val description: String,
+    val freezeSummary: String? = null,
 )
