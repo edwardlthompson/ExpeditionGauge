@@ -95,6 +95,7 @@ fun DashboardScreen(
     screenshotMode: dev.foss.expeditiongauge.settings.HudScreenshotMode =
         dev.foss.expeditiongauge.settings.HudScreenshotMode.FULL_SCREEN,
     onScreenshotModeSelected: (dev.foss.expeditiongauge.settings.HudScreenshotMode) -> Unit = {},
+    storedDtcs: List<dev.foss.expeditiongauge.obd.dtc.DtcEntry> = emptyList(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
@@ -255,6 +256,7 @@ fun DashboardScreen(
                             },
                             onMarkEvent = onMarkEvent,
                             onScreenshotClick = { context.captureHudScreenshot(screenshotMode) },
+                            storedDtcs = storedDtcs,
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                         )
                     }

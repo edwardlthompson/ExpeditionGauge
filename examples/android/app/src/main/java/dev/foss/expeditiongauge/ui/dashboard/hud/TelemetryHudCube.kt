@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dev.foss.expeditiongauge.alerts.AlertType
+import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.presets.DashboardPreset
+import dev.foss.expeditiongauge.ui.phonehuddtc.PhoneHudDtcFooter
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.telemetry.SensorLinkState
@@ -30,6 +32,7 @@ fun TelemetryHudCube(
     useMetric: Boolean,
     hideGpsExtras: Boolean,
     activeAlerts: Set<AlertType>,
+    storedDtcs: List<DtcEntry> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -85,6 +88,10 @@ fun TelemetryHudCube(
             links = SensorLinkState.from(telemetry),
             modifier = Modifier.fillMaxWidth(),
         )
+        PhoneHudDtcFooter(
+            entries = storedDtcs,
+            modifier = Modifier.fillMaxWidth(),
+        )
         TelemetryHudPedalBar(
             throttlePct = telemetry.throttlePct,
             lonG = telemetry.lonG,
@@ -107,6 +114,7 @@ fun CombinedTelemetryTpmsCube(
     highContrast: Boolean,
     showTpms: Boolean,
     themeMode: ThemeMode = ThemeMode.System,
+    storedDtcs: List<DtcEntry> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.fillMaxSize()) {
@@ -117,6 +125,7 @@ fun CombinedTelemetryTpmsCube(
             useMetric = useMetric,
             hideGpsExtras = hideGpsExtras,
             activeAlerts = activeAlerts,
+            storedDtcs = storedDtcs,
             modifier = Modifier.weight(1f),
         )
         if (showTpms) {

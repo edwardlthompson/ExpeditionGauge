@@ -103,6 +103,7 @@ fun HudCubeLayout(
             useMetric = useMetric,
             hideGpsExtras = hideGpsExtras,
             activeAlerts = props.activeAlerts,
+            storedDtcs = props.storedDtcs,
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -136,6 +137,7 @@ fun HudCubeLayout(
             highContrast = true,
             themeMode = props.themeMode,
             showTpms = preset.showTirePressure,
+            storedDtcs = props.storedDtcs,
             modifier = Modifier.fillMaxSize(),
         )
     }

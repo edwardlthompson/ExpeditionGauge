@@ -7,6 +7,7 @@ import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutSpec
 import dev.foss.expeditiongauge.ui.theme.ThemeMode
@@ -39,4 +40,5 @@ data class DashboardHudProps(
     val onRecordClick: () -> Unit = {},
     val onMarkEvent: () -> Unit = {},
     val onScreenshotClick: () -> Unit = {},
+    val storedDtcs: List<DtcEntry> = emptyList(),
 )

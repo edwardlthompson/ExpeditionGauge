@@ -114,6 +114,7 @@ fun AppScreenDashboardRoute(
         }
     }
 
+    val storedDtcs by services.obdManager.storedDtcs.collectAsStateWithLifecycle()
     MetricTtsReadout(enabled = ttsReadoutEnabled && FeatureFlags.accessibilityPackEnabled, snapshot = telemetry)
     DashboardScreen(
         viewModel = dashboardViewModel,
@@ -195,5 +196,6 @@ fun AppScreenDashboardRoute(
         onScreenshotModeSelected = { mode ->
             scope.launch { services.settingsPreferences.setHudScreenshotMode(mode) }
         },
+        storedDtcs = storedDtcs,
     )
 }

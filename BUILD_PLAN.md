@@ -110,7 +110,7 @@ Order: OBD (phone DTC first) → driving HUD → Android Auto → record/Relive 
 
 ##### OBD / diagnostics
 
-1. 🔲 [AGENT] `/feature` phone-hud-dtc — Phone HUD DTC carousel (AA already shows codes)
+1. ✅ [AGENT] `/feature` phone-hud-dtc — Phone HUD DTC carousel (AA already shows codes)
 2. 🔲 [AGENT] `/feature` dtc-full-title — Phone HUD DTC tap for full OBDex title
 3. 🔲 [AGENT] `/feature` dtc-clear — Parked Mode 04 clear DTCs with confirm
 4. 🔲 [AGENT] `/feature` freeze-frame — Mode 02 freeze frame

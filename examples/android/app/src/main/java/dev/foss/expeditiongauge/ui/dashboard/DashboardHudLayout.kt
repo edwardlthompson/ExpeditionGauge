@@ -20,6 +20,7 @@ import dev.foss.expeditiongauge.presets.DashboardPreset
 import dev.foss.expeditiongauge.settings.PressureUnit
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
+import dev.foss.expeditiongauge.obd.dtc.DtcEntry
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.orientation.OrientationLayoutEngine
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
@@ -54,6 +55,7 @@ fun DashboardHudLayout(
     onRecordClick: () -> Unit = {},
     onMarkEvent: () -> Unit = {},
     onScreenshotClick: () -> Unit = {},
+    storedDtcs: List<DtcEntry> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -90,6 +92,7 @@ fun DashboardHudLayout(
             onRecordClick = onRecordClick,
             onMarkEvent = onMarkEvent,
             onScreenshotClick = onScreenshotClick,
+            storedDtcs = storedDtcs,
         )
         if (spec.isLandscape) {
             DashboardHudLandscape(
