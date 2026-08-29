@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="storage_meter_cd">Session storage %1$d percent used</string>
+</resources>

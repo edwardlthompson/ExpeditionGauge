@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +11,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import dev.foss.expeditiongauge.R
 import dev.foss.expeditiongauge.recording.SessionStorageBudget
+import dev.foss.expeditiongauge.ui.storagemeter.StorageMeterBar
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
 
 @Composable
@@ -33,6 +33,7 @@ fun SettingsStorageOptions(
             ),
             modifier = Modifier.testTag("settings_storage_summary"),
         )
+        StorageMeterBar(usedBytes = usedBytes, allowedBytes = allowedBytes)
         Text(text = stringResource(R.string.settings_storage_loop_hint))
         Slider(
             value = storagePercent.toFloat(),
