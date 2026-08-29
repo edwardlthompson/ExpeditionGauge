@@ -38,6 +38,8 @@ internal object ObdPollStarter {
                 currentVin = { hud.vin.last6.value },
                 consumeDiscover = { hud.discovery.consume() },
                 onDiscover = { hud.discovery.set(it) },
+                consumeSniff = { hud.sniff.consume() },
+                onSniff = { hud.sniff.set(it) },
                 onFordTemps = { hud.fordTemps.set(it) },
                 onBoost = { hud.boost.set(it) },
                 onTemps = { hud.temps.set(it) },

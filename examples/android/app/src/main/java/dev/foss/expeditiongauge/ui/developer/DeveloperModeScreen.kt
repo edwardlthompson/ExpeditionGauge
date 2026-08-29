@@ -20,6 +20,7 @@ import dev.foss.expeditiongauge.gauge.UnitDisplay
 import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import dev.foss.expeditiongauge.ui.navigation.GaugeBackHandler
+import dev.foss.expeditiongauge.ui.pidsniffer.PidSnifferPanel
 import dev.foss.expeditiongauge.ui.theme.GaugeScaleWhite
 import dev.foss.expeditiongauge.ui.theme.GaugeYellow
 import dev.foss.expeditiongauge.ui.theme.SpacingMd
@@ -31,6 +32,8 @@ fun DeveloperModeScreen(
     onMadgwickBetaChange: (Float) -> Unit,
     onBack: () -> Unit,
     speedUnit: SpeedUnit = SpeedUnit.METRIC,
+    lastSniff: String? = null,
+    onPidSniff: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     GaugeBackHandler(onBack = onBack)
@@ -73,6 +76,7 @@ fun DeveloperModeScreen(
                 .fillMaxWidth()
                 .testTag("developer_madgwick_slider"),
         )
+        PidSnifferPanel(last = lastSniff, onSend = onPidSniff)
         Button(onClick = onBack, modifier = Modifier.testTag("developer_mode_close")) {
             Text(stringResource(R.string.settings_close))
         }

@@ -250,6 +250,7 @@ fun AppScreenRouter(
             )
             val madgwickBeta by services.settingsPreferences.madgwickBeta
                 .collectAsStateWithLifecycle(initialValue = 0.1f)
+            val sniffLast by services.obdManager.pidSniff.collectAsStateWithLifecycle()
             DeveloperModeScreen(
                 telemetry = telemetry,
                 madgwickBeta = madgwickBeta,
@@ -258,6 +259,8 @@ fun AppScreenRouter(
                 },
                 onBack = { onScreenChange(AppScreen.Settings) },
                 speedUnit = speedUnit,
+                lastSniff = sniffLast,
+                onPidSniff = { services.obdManager.requestPidSniff(it) },
             )
         }
         AppScreen.LiveReceiver -> AppScreenLiveReceiverRoute(

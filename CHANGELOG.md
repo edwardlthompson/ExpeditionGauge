@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Gear estimate on the phone HUD from OBD RPM and speed
 * Wi-Fi ELM327 over FOSS TCP (LAN-only `host:port`, default 192.168.0.10:35000)
 * Multi-ECU OBD headers (`7E0`/`7E1`/…) probed on the scan tick
+* Developer PID sniffer (blocks Mode 04 / VIN; redacts `4902`)
 
 ### Changed
 

@@ -47,6 +47,8 @@ internal object ObdPollLoop {
         onBoost: (BoostPidSnapshot?) -> Unit = {},
         onTemps: (ObdTempsVoltageSnapshot?) -> Unit = {},
         onEcus: (List<String>?) -> Unit = {},
+        consumeSniff: () -> String? = { null },
+        onSniff: (String) -> Unit = {},
     ) {
         val writer = OutputStreamWriter(output)
         val reader = BufferedReader(InputStreamReader(input))
@@ -81,6 +83,9 @@ internal object ObdPollLoop {
                 consumeDiscover = consumeDiscover,
                 performDiscover = { Elm327PidDiscovery.request(reader, writer) },
                 onDiscover = onDiscover,
+                consumeSniff = consumeSniff,
+                performSniff = { Elm327PidSniffer.request(reader, writer, it) },
+                onSniff = onSniff,
             )
         } catch (e: IOException) {
             // Socket closed / broken pipe — disconnect path, not a fatal crash.
@@ -107,10 +112,14 @@ internal object ObdPollLoop {
         consumeDiscover: () -> Boolean = { false },
         performDiscover: () -> Set<Int> = { emptySet() },
         onDiscover: (Set<Int>) -> Unit = {},
+        consumeSniff: () -> String? = { null },
+        performSniff: (String) -> String = { "" },
+        onSniff: (String) -> Unit = {},
     ) {
         scheduler.onConnectionConfirmed(clock())
         while (isActive()) {
             if (consumeDiscover()) onDiscover(performDiscover())
+            consumeSniff()?.let { onSniff(performSniff(it)) }
             val cleared = consumeClear() && performClear()
             if (cleared) {
                 onDtcs(emptyList())

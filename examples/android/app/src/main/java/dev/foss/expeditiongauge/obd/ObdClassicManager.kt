@@ -49,6 +49,7 @@ class ObdClassicManager(
     val boostPids = hud.boost.snap
     val tempsVoltage = hud.temps.snap
     val ecuHeaders = hud.ecus.ids
+    val pidSniff = hud.sniff.last
 
     fun selectDevice(address: String) {
         selectedAddress = address
@@ -108,6 +109,7 @@ class ObdClassicManager(
     fun clearSimulatedDtcs() = hud.clearSim()
     fun requestClearDtcs() = hud.clear.request()
     fun requestPidDiscovery() = hud.discovery.request()
+    fun requestPidSniff(command: String) = hud.sniff.request(command)
 
     companion object {
         private const val TAG = "ExpeditionGauge/Obd"

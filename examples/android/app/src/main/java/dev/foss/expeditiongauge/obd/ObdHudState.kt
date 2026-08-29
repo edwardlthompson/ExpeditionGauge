@@ -10,6 +10,7 @@ import dev.foss.expeditiongauge.multiecu.MultiEcuHold
 import dev.foss.expeditiongauge.obdtemps.ObdTempsVoltageHold
 import dev.foss.expeditiongauge.obdtrip.ObdTripHold
 import dev.foss.expeditiongauge.piddiscovery.PidDiscoveryHold
+import dev.foss.expeditiongauge.pidsniffer.PidSnifferHold
 import dev.foss.expeditiongauge.vinlast6.VinLast6Hold
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,7 @@ internal class ObdHudState {
     val boost = BoostPidsHold()
     val temps = ObdTempsVoltageHold()
     val ecus = MultiEcuHold()
+    val sniff = PidSnifferHold()
 
     fun setDtcs(value: List<DtcEntry>) {
         _dtcs.value = value
@@ -47,5 +49,6 @@ internal class ObdHudState {
         boost.set(null)
         temps.set(null)
         ecus.set(null)
+        sniff.set(null)
     }
 }
