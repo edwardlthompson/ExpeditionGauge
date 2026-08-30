@@ -70,7 +70,7 @@ class DriveHudCarIconTest {
             darkBackground = true,
         )
         assertEquals(cube * 3, bmp.width)
-        assertEquals(cube + DriveHudBitmapRenderer.footerPxFor(cube), bmp.height)
+        assertEquals(cube + DriveHudStripMetrics.footerPxFor(cube), bmp.height)
         assertTrue(bmp.config == android.graphics.Bitmap.Config.ARGB_8888)
     }
 
@@ -98,7 +98,7 @@ class DriveHudCarIconTest {
                 cubePx = 200,
             )
             assertEquals(600, bmp.width)
-            assertEquals(200 + DriveHudBitmapRenderer.footerPxFor(200), bmp.height)
+            assertEquals(200 + DriveHudStripMetrics.footerPxFor(200), bmp.height)
         }
     }
 

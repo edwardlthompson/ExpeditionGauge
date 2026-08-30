@@ -14,6 +14,7 @@ internal class DriveHudCubeDraw(
     var pedalThrottlePct: Float? = null
     var pedalLonG: Float = 0f
     var pedalFlashOn: Boolean = true
+    var satelliteCount: Int = 0
 
     fun drawCubeChrome(x: Int, y: Int, size: Int, theme: DriveHudTheme) {
         val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = theme.cubeFill }

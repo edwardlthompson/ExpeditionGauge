@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Phone HUD rail matches Android Auto shortcuts: Mute, Record, Capture, and one-tap Level
 * Golden Path catch-up: opt-in crash review, About bug/feature dialogs, GitHub issue-form URLs, privacy sanitizer, and high-refresh display mode
 * Phone HUD DTC carousel (same 5 s `n/N` line as Android Auto ROW); tap opens the full OBDex title
 * OBD RPM shift-light on the phone HUD (default 5500 RPM, or Settings max RPM)
@@ -25,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Color-blind HUD palettes (deuteranopia / protanopia / tritanopia)
 * Night HUD amber palette when brightness is Night
 * Auto brightness follows the ambient light sensor when lux is available
-* Parked/idle HUD dim (speed under 0.5 m/s or unknown) caps window brightness at 0.12
 * Keep-awake holds the screen only while moving (speed ≥ 0.5 m/s); parked or unknown speed allows timeout
 * Haptic over-limit alerts repeat on each feedback tick (Settings toggle, default on)
 * Per-threshold alert snooze (5 minutes) skips audio/haptic for that type
@@ -48,6 +48,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Live recording HUD draws a 30 s speed/latG sparkline while Record is running
 * Battery-saver recording logs GPS-only samples at 5 Hz when the Settings toggle is on
 * Thermal HUD banner suggests 20 Hz or 5 Hz logging and applies it on tap
+* Recording log interval auto-slows when the phone reports thermal warning or critical
+* Storage auto-delete prunes oldest unprotected sessions when used bytes meet the cap
+* Settings storage section shows a used/allowed percent bar
+* Session notes trim on save and match library search case-insensitively
+* Library sessions can be starred; favorites sort to the top
+* Session edit can split a recording at the sample midpoint into two sessions
+* CSV export columns are selectable in Settings → Recording
+* External GPS keeps a 2000-line NMEA buffer that Settings can share
+* GPX export writes namespaced `eg:latG`, `eg:lonG`, and `eg:betaDeg` extensions
+* Library can share sector split times as CSV
+* Relive playback speed stays clamped between 0.25× and 4×
+* Gamepad A/L1/R1 and +/- keys scrub and speed Relive
+* Relive shows a jump list of mark-event bookmarks
+* Relive lists numbered chapters from mark events (or the mark tag)
+* HTML session share includes a Chapters table from mark events
+* Mark events can store a local voice-note URI in the payload
+* GPX ghost lap import parses sector marks and delta pace
+* Session map compare draws ghost track against reference session
+* Ghost video overlay composites ghost car and delta pace bar onto exported MP4
+* Auto track detection closes loops and marks sector checkpoints
+* Offline tile cache downloads bounds for off-grid map rendering
+* Live telemetry stream via FOSS WebSocket signaling server
+* Offline map styles: Satellite, Topo, Terrain, and OpenFreeMap vector styles
+* Pitch and roll autocalibration learns zero baseline while parked
+* Ford Mode 22 OBD-II PIDs for transmission and cylinder head temps
+* Settings export/import via pipe-encoded text backup and offline QR transfer
+* Sanitized privacy report export for bug reports without personal identifiers
+* EXIF GPS metadata stripped from saved HUD screenshots
+* Encrypted session ZIP export with password protection
+* F-Droid reproducible build metadata with pinned dependencies and anti-feature declarations
+* In-app What’s New sheet on first launch after upgrade
+* Dual dashcam support with front/rear camera simultaneous recording
+* DTC clear confirmation dialog with warning against clearing before diagnosis
+* High-refresh display mode selector for supported 90Hz/120Hz panels
+
+### Removed
+
+* Parked/idle force-dim no longer caps window brightness; Auto follows the ambient sensor (or the system override when lux is unavailable)
+* Parked/idle HUD dim (speed under 0.5 m/s or unknown) fixed-brightness cap removed in favor of ambient sensor
+
+### Fixed
+
+* Phone telemetry cube keeps HDG, elevation, and GPS extras on Offroad unless a CRAWL recording is running
+* Phone telemetry cube uses the same centered, equal, auto-scaling rows as Android Auto (speed, HDG, elev, lat, lon, clock, links, pedal)
+* GPS satellite icon shows a notification bubble with lock count on the phone HUD and Android Auto
 * Recording log interval auto-slows when the phone reports thermal warning or critical
 * Storage auto-delete prunes oldest unprotected sessions when used bytes meet the cap
 * Settings storage section shows a used/allowed percent bar

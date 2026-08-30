@@ -89,12 +89,13 @@ object DriveHudCarIcon {
         pedalFlashOn: Boolean = true,
         textScale: Float = 1f,
         highContrast: Boolean = false,
+        satelliteCount: Int = 0,
     ): Bitmap {
         val clamped = cubePx.coerceIn(AaDisplaySpec.MIN_CUBE_PX, AaDisplaySpec.MAX_SURFACE_CUBE_PX)
         // ROW always reserves the DTC band (empty when no codes); COLUMN never has a footer.
         val footerPx =
             if (orientation == HudStripOrientation.ROW) {
-                DriveHudBitmapRenderer.footerPxFor(clamped)
+                DriveHudStripMetrics.footerPxFor(clamped)
             } else {
                 0
             }
@@ -115,6 +116,7 @@ object DriveHudCarIcon {
             dtcFooterLine = dtcFooterLine,
             throttlePct = throttlePct,
             pedalFlashOn = pedalFlashOn,
+            satelliteCount = satelliteCount,
         )
         return rendered.copy(Bitmap.Config.ARGB_8888, false)
     }

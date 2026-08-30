@@ -85,6 +85,7 @@ class AaHudComposer(appContext: Context) {
                 (nowMs / 280L) % 2L == 0L,
             textScale = displaySpec.textScale,
             highContrast = displaySpec.isHighContrast,
+            satelliteCount = snapshot.numSatellites ?: 0,
         )
         val image = reuseOrBuild(key, snapshot)
         return DriveHudContent(image = image, rows = AaHudComposerRender.alertRows(key))

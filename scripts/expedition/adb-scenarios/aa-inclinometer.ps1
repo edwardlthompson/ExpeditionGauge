@@ -37,6 +37,13 @@ function Invoke-AdbInclinometerScenario {
     Start-Sleep -Seconds 2
     $content = Get-UiDumpContent
 
+    $presetPage = Find-TapTarget -Content $content -Label "Dashboard preset"
+    if ($presetPage) {
+        Invoke-AdbCommand shell input tap $presetPage.X $presetPage.Y | Out-Null
+        Start-Sleep -Seconds 2
+        $content = Get-UiDumpContent
+    }
+
     $offroad = Find-TapTarget -Content $content -Label "Offroad"
     if (-not $offroad) {
         Write-JsonResult @{

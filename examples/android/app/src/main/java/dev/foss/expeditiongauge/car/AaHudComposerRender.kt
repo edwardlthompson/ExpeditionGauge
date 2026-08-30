@@ -56,6 +56,7 @@ internal object AaHudComposerRender {
                 pedalFlashOn = key.pedalFlashOn,
                 textScale = key.textScale,
                 highContrast = key.highContrast,
+                satelliteCount = key.satelliteCount,
             )
         }.onFailure { Log.e(TAG, "Drive HUD render failed", it) }.getOrNull()
 

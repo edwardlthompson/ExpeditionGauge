@@ -11,6 +11,10 @@ cd "$ROOT"
 
 WEB_SRC="$ROOT/examples/web/src"
 WEB_E2E="$ROOT/examples/web/e2e"
+if [ ! -d "$WEB_SRC/about" ]; then
+  echo "SKIP: Golden Path web About slice not in this repo"
+  exit 0
+fi
 BACKUP="$(mktemp -d)"
 
 CLI_TRACKED=(

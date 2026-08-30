@@ -8,6 +8,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ fun TelemetryHudPedalBar(
     throttlePct: Float?,
     lonG: Float,
     modifier: Modifier = Modifier,
+    fillRow: Boolean = false,
 ) {
     val target = PedalBarLogic.from(throttlePct, lonG)
     val th by animateFloatAsState(target.throttle01, label = "throttle", animationSpec = tween(90))
@@ -49,8 +51,8 @@ fun TelemetryHudPedalBar(
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(16.dp)
-            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .then(if (fillRow) Modifier.fillMaxHeight() else Modifier.height(16.dp))
+            .padding(horizontal = 8.dp, vertical = if (fillRow) 0.dp else 2.dp)
             .semantics { contentDescription = desc },
     ) {
         val r = size.height * 0.45f

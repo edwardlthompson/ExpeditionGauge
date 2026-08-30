@@ -8,7 +8,11 @@ from pathlib import Path
 from human_task_android import (
     automate_adb_instrumented,
     automate_android_sdk_smoke,
+    automate_crash_review_smoke,
+    automate_dhu_screenshot_ci,
+    automate_emulator_hud_smoke,
     automate_fdroid_dry_run,
+    automate_inclinometer_landscape,
 )
 from human_task_core import AttemptResult, resolve_config
 from human_task_github import (
@@ -57,6 +61,10 @@ HUMAN_RULES: list[tuple[re.Pattern[str], str, object]] = [
 ]
 
 ADB_RULES: list[tuple[re.Pattern[str], str, object]] = [
+    (re.compile(r"dhu-screenshot-ci", re.I), "adb", automate_dhu_screenshot_ci),
+    (re.compile(r"crash-review-smoke", re.I), "adb", automate_crash_review_smoke),
+    (re.compile(r"emulator-hud-smoke", re.I), "adb", automate_emulator_hud_smoke),
+    (re.compile(r"inclinometer-landscape-pack", re.I), "adb", automate_inclinometer_landscape),
     (re.compile(r"instrumented|connectedDebugAndroidTest|\badb\b", re.I), "adb", automate_adb_instrumented),
     (re.compile(r"F-Droid|device dry-run", re.I), "adb", automate_fdroid_dry_run),
     (re.compile(r"emulator|Android SDK", re.I), "adb", automate_android_sdk_smoke),

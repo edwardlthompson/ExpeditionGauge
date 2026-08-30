@@ -16,7 +16,7 @@ import dev.foss.expeditiongauge.settings.SpeedUnit
 import dev.foss.expeditiongauge.settings.TempUnit
 import dev.foss.expeditiongauge.car.aaparkeddtc.AaParkedDtc
 import dev.foss.expeditiongauge.obd.dtc.DtcEntry
-import dev.foss.expeditiongauge.parkedidle.ParkedIdleDim
+import dev.foss.expeditiongauge.keepawake.KeepAwakeMoving
 import dev.foss.expeditiongauge.telemetry.TelemetrySnapshot
 import kotlinx.coroutines.CoroutineScope
 
@@ -107,7 +107,7 @@ class AndroidAutoBridge(
 
     override fun isRecording(): Boolean = recording
     override fun speakParkedVoice(phrase: String) = hudCompose.speakParked(phrase, isVehicleParked())
-    override fun isVehicleParked(): Boolean = ParkedIdleDim.parked(snapshot.speedMps)
+    override fun isVehicleParked(): Boolean = KeepAwakeMoving.parked(snapshot.speedMps)
     override fun parkedDtcRows(): List<DriveHudRow> =
         AaParkedDtc.rows(storedDtcs.map { it.code to it.description })
     override fun parkedLibraryRows(): List<DriveHudRow> = libraryRows

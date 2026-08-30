@@ -89,3 +89,60 @@ def automate_android_sdk_smoke(root: Path, _cfg: dict) -> AttemptResult:
         return AttemptResult(1, "adb-unavailable", "no_authorized_device after unit tests", True)
     return AttemptResult(1, "android-sdk", "No Android example tree", True)
 
+
+def _pwsh() -> str:
+    return shutil.which("pwsh") or shutil.which("powershell") or "pwsh"
+
+
+def automate_pwsh_adb(root: Path, rel: str, args: list[str], method: str) -> AttemptResult:
+    script = root / rel
+    if not script.is_file():
+        return AttemptResult(1, method, f"{rel} missing", True)
+    if not adb_authorized(root):
+        return AttemptResult(1, method, "no_authorized_device", True)
+    code, tail = run_cmd(root, [_pwsh(), "-NoProfile", "-File", str(script), *args])
+    if code == 0:
+        return AttemptResult(0, method, tail or "ok", False)
+    return AttemptResult(1, method, tail or f"exit {code}", True)
+
+
+def automate_crash_review_smoke(root: Path, _cfg: dict) -> AttemptResult:
+    return automate_pwsh_adb(
+        root,
+        "scripts/expedition/adb-smoke.ps1",
+        ["-Sprint", "32", "-Scenario", "crash-review-smoke"],
+        "crash-review-smoke",
+    )
+
+
+def automate_emulator_hud_smoke(root: Path, _cfg: dict) -> AttemptResult:
+    return automate_pwsh_adb(
+        root,
+        "scripts/expedition/adb-smoke.ps1",
+        ["-Sprint", "32", "-Scenario", "emulator-hud-smoke"],
+        "emulator-hud-smoke",
+    )
+
+
+def automate_inclinometer_landscape(root: Path, _cfg: dict) -> AttemptResult:
+    return automate_pwsh_adb(
+        root,
+        "scripts/expedition/adb-smoke.ps1",
+        ["-Sprint", "32", "-Scenario", "inclinometer-landscape-pack"],
+        "inclinometer-landscape-pack",
+    )
+
+
+def automate_dhu_screenshot_ci(root: Path, _cfg: dict) -> AttemptResult:
+    dhu = (
+        Path(os.environ.get("LOCALAPPDATA", ""))
+        / "Android/Sdk/extras/google/auto/desktop-head-unit.exe"
+    )
+    if os.name == "nt" and not dhu.is_file():
+        return AttemptResult(1, "dhu-screenshot-ci", "DHU binary missing", True)
+    return automate_pwsh_adb(
+        root,
+        "scripts/expedition/dhu-smoke.ps1",
+        ["-RestartDhu"],
+        "dhu-screenshot-ci",
+    )

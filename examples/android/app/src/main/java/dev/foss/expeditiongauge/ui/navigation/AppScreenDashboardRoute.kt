@@ -123,6 +123,7 @@ fun AppScreenDashboardRoute(
         }
     }
 
+    val alertsMuted by accessibilityPreferences.alertsMuted.collectAsStateWithLifecycle(false)
     val storedDtcs by services.obdManager.storedDtcs.collectAsStateWithLifecycle()
     val imReport by services.obdManager.imReadiness.collectAsStateWithLifecycle()
     val tripSinceClear by services.obdManager.tripSinceClear.collectAsStateWithLifecycle()
@@ -225,5 +226,9 @@ fun AppScreenDashboardRoute(
             GearEstimate.line(telemetry.rpm, telemetry.speedMps),
             MultiEcuHeaders.line(ecuHeaders),
         ),
+        alertsMuted = alertsMuted,
+        onAlertsMutedChange = { muted ->
+            scope.launch { accessibilityPreferences.setAlertsMuted(muted) }
+        },
     )
 }

@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-08-29 — Sprint 32 leftover ADB on OP13
+- **Status:** Accepted
+- **Context:** Cloud agents boarded v2.19.0 / Sprint 32 on VMs with no ADB or DHU. Four `[ADB]` rows stayed on the board (`dhu-screenshot-ci`, `crash-review-smoke`, `emulator-hud-smoke`, `inclinometer-landscape-pack`).
+- **Decision:** Install v2.19.0 debug on OnePlus 13 (`8bf09993`), add `adb-scenarios/sprint32-quality.ps1`, run the four smokes locally, archive the rows.
+- **Alternatives considered:** Mark complete from unit tests only (rejected — the rows are device/DHU gates). Run on OP12 only (rejected — OP13 is primary).
+- **Consequences:** BUILD_PLAN active board has no leftover ADB. `dhu-smoke.ps1` opens the app with `pwsh` so UTF-8 `_expedition-common.ps1` parses. AA Customize launcher remains in `HUMAN_BACKLOG.md`.
+
 ### 2026-08-29 — Push v2.19.0
 - **Status:** Accepted
 - **Context:** `/push` after Sprint 32 AGENT/AUTO archive. Child repo (Release Please N/A). Design cohesion blocked bootstrap until live-graph hex and map-style `Text("` literals used theme tokens / `stringResource`.

@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterCenterFocus
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +46,9 @@ fun DashboardHudSideChrome(
     onRecordClick: () -> Unit,
     onMarkEvent: () -> Unit,
     onScreenshotClick: () -> Unit,
+    onLevelClick: () -> Unit = {},
+    alertsMuted: Boolean = false,
+    onMuteClick: () -> Unit = {},
     iconSize: Dp = 40.dp,
     modifier: Modifier = Modifier,
 ) {
@@ -79,6 +85,17 @@ fun DashboardHudSideChrome(
                 glyphSize = glyph,
             )
             GutterIconButton(
+                onClick = onMuteClick,
+                testTag = if (alertsMuted) "dashboard_unmute" else "dashboard_mute",
+                buttonSize = btn,
+                imageVector = if (alertsMuted) Icons.Filled.VolumeOff else Icons.Filled.VolumeUp,
+                contentDescription = stringResource(
+                    if (alertsMuted) R.string.dashboard_unmute else R.string.dashboard_mute,
+                ),
+                tint = GaugeYellow,
+                glyphSize = glyph,
+            )
+            GutterIconButton(
                 onClick = onRecordClick,
                 testTag = if (recording) "record_stop" else "record_play",
                 buttonSize = btn,
@@ -95,6 +112,15 @@ fun DashboardHudSideChrome(
                 buttonSize = btn,
                 imageVector = Icons.Filled.PhotoCamera,
                 contentDescription = stringResource(R.string.dashboard_screenshot),
+                tint = GaugeYellow,
+                glyphSize = glyph,
+            )
+            GutterIconButton(
+                onClick = onLevelClick,
+                testTag = "dashboard_level",
+                buttonSize = btn,
+                imageVector = Icons.Filled.FilterCenterFocus,
+                contentDescription = stringResource(R.string.dashboard_level),
                 tint = GaugeYellow,
                 glyphSize = glyph,
             )

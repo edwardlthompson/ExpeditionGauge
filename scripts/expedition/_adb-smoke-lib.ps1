@@ -402,9 +402,10 @@ function Dismiss-OnboardingIfPresent {
     if ($skip) {
         Invoke-AdbCommand shell input tap $skip.X $skip.Y | Out-Null
         Start-Sleep -Seconds 2
+        Dismiss-OnboardingIfPresent
         return
     }
-    foreach ($label in @("Get started", "Next")) {
+    foreach ($label in @("Not now", "Get started", "Next")) {
         $btn = Find-TapTarget -Content $content -Label $label
         if ($btn) {
             Invoke-AdbCommand shell input tap $btn.X $btn.Y | Out-Null

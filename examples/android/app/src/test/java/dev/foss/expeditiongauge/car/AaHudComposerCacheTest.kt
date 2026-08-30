@@ -42,4 +42,25 @@ class AaHudComposerCacheTest {
         )
         assertNotSame(a.image, c.image)
     }
+
+    @Test
+    fun satelliteCountChange_rebuildsDriveHud() {
+        val composer = AaHudComposer(RuntimeEnvironment.getApplication())
+        val spec = AaDisplaySpec.DEFAULT
+        val a = composer.composeDriveHud(
+            TelemetrySnapshot(numSatellites = 8),
+            AttitudeGaugeMode.INCLINOMETER_LADDER,
+            emptySet(),
+            AlertThresholds(),
+            spec,
+        )
+        val b = composer.composeDriveHud(
+            TelemetrySnapshot(numSatellites = 14),
+            AttitudeGaugeMode.INCLINOMETER_LADDER,
+            emptySet(),
+            AlertThresholds(),
+            spec,
+        )
+        assertNotSame(a.image, b.image)
+    }
 }

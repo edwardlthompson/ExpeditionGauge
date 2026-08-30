@@ -8,7 +8,7 @@ import dev.foss.expeditiongauge.car.HudStripOrientation
  * ROW = Attitude|Telemetry|TPMS + DTC footer; COLUMN = Attitude|Telemetry.
  */
 class DriveHudBitmapRenderer(
-    private val cubePx: Int = DEFAULT_CUBE_PX,
+    private val cubePx: Int = DriveHudStripMetrics.DEFAULT_CUBE_PX,
     private val orientation: HudStripOrientation = HudStripOrientation.ROW,
     private val footerPx: Int = 0,
     private val textScale: Float = 1f,
@@ -53,10 +53,12 @@ class DriveHudBitmapRenderer(
         dtcFooterLine: String? = null,
         throttlePct: Float? = null,
         pedalFlashOn: Boolean = true,
+        satelliteCount: Int = 0,
     ): Bitmap {
         cubes.pedalThrottlePct = throttlePct
         cubes.pedalLonG = lonG ?: 0f
         cubes.pedalFlashOn = pedalFlashOn
+        cubes.satelliteCount = satelliteCount
         val theme = DriveHudTheme.forDarkMode(darkBackground, textScale, highContrast)
         canvas.drawColor(theme.background)
         val gap = (cubePx * 0.04f).toInt().coerceAtLeast(2)
@@ -139,11 +141,5 @@ class DriveHudBitmapRenderer(
             maxPitch, maxRoll, yawDeg, latG, lonG,
         )
         cubes.drawAttitudeBitmap(x, y, size, theme, attitude)
-    }
-
-    companion object {
-        const val DEFAULT_CUBE_PX = 280
-        /** Permanent ROW DTC band (~18% of cube; readable after Surface scale-to-fit). */
-        fun footerPxFor(cubePx: Int): Int = (cubePx * 18 / 100).coerceIn(52, 72)
     }
 }

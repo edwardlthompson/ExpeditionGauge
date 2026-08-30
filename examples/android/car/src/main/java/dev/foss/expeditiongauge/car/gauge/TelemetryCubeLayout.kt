@@ -11,8 +11,10 @@ internal data class TelemetryCubeSlots(
     fun rowTop(index: Int): Float = inset + index * rowH
 }
 
-internal object TelemetryCubeLayout {
+object TelemetryCubeLayout {
     const val ROW_COUNT = 7
+    /** Phone adds a clock row between lon and links. */
+    const val PHONE_ROW_COUNT = 8
     const val SPEED_ROW = 0
     const val HEADING_ROW = 1
     const val ELEV_ROW = 2
@@ -26,7 +28,7 @@ internal object TelemetryCubeLayout {
     /** Pedal track vs row (~4 px thicker than the old 0.04 cube fraction). */
     const val PEDAL_IN_ROW = 0.42f
 
-    fun compute(size: Int, textScale: Float = 1f): TelemetryCubeSlots {
+    internal fun compute(size: Int, textScale: Float = 1f): TelemetryCubeSlots {
         val s = size.toFloat().coerceAtLeast(1f)
         val inset = s * 0.035f
         val rowH = ((s - inset * 2f) / ROW_COUNT).coerceAtLeast(1f)

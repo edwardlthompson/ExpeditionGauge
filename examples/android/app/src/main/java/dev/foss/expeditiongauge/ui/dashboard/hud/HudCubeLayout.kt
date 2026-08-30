@@ -37,7 +37,7 @@ fun HudCubeLayout(
     val telemetry = props.telemetry
     val isPortraitLayout = !props.layoutSpec.isLandscape
     val useMetric = props.speedUnit == SpeedUnit.METRIC
-    val hideGpsExtras = CrawlHudDeclutter.hideGpsExtras(props.crawlingMode)
+    val hideGpsExtras = CrawlHudDeclutter.hideGpsExtras(props.recording, props.crawlingMode)
     val holdBars = OffroadHoldBars.active(
         crawling = props.crawlingMode,
         offroadPreset = preset.id == DashboardPresetId.Offroad,
@@ -202,6 +202,9 @@ fun HudCubeLayout(
             onRecordClick = props.onRecordClick,
             onMarkEvent = props.onMarkEvent,
             onScreenshotClick = props.onScreenshotClick,
+            onLevelClick = props.onLevelClick,
+            alertsMuted = props.alertsMuted,
+            onMuteClick = props.onMuteClick,
             iconSize = iconSize,
             modifier = Modifier
                 .align(Alignment.CenterEnd)

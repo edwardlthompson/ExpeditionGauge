@@ -1,19 +1,21 @@
 # Feature: crawl-hud-declutter
 
-> Hide GPS extras and heading on the phone HUD while crawl mode is on.
+> Hide GPS extras and heading on the phone HUD while a CRAWL recording is running.
 
 ## Acceptance criteria
 
-- ✅ Crawl on → hide lat/lon, sats, clock, heading, altitude
+- ✅ CRAWL recording on → hide lat/lon, sats, clock, heading, altitude
 - ✅ Speed, pedals, alerts, and links stay visible
-- ✅ Crawl off → existing preset visibility
+- ✅ Not recording (including Offroad idle) → existing preset visibility
 - ✅ i18n: none
 
 ## Smoke scenario
 
-1. Given recording mode is Crawling
+1. Given Offroad is selected and no recording is running
 2. When the telemetry cube is visible
-3. Then only speed (and non-GPS chrome) remains
+3. Then HDG, elevation, and GPS extras stay visible
+4. When a CRAWL recording starts
+5. Then only speed (and non-GPS chrome) remains
 
 ## Container map
 
@@ -23,7 +25,6 @@
 | View | `TelemetryHudCube` |
 | Tests | `src/test/.../crawlhud/` |
 | Wiring | `HudCubeLayout.hideGpsExtras` |
-
 ## Tests
 
 - Automated: yes — `CrawlHudDeclutterTest`

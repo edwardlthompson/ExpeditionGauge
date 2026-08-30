@@ -3,7 +3,7 @@ param(
     [Parameter(Mandatory = $true)]
     [int]$Sprint,
     [Parameter(Mandatory = $true)]
-    [ValidateSet("cold-start", "calibrate-level", "drift-simulation", "thermal-recording", "recording-export", "playback-scrub", "playback-drift-viz", "playback-graphs", "elevation-playback-scrub", "playback-keyboard-seek", "playback-layout-rotation", "heatmap-scrubber", "ghost-lap-same-session", "ghost-lap-cross-session", "imu-fallback", "imu-single", "imu-multi", "obd-elm327", "obd-slip-beta", "tpms-pair", "external-gps", "crawling-mode", "session-metadata", "library-filter-tag", "playback-video-export", "flyover-video-export", "sharing-video-card", "lap-timing", "lap-timing-phone", "alerts-latg", "alerts-cooldown", "polish-off-regression", "preset-switch-mid-drive", "mark-event-export", "session-compare-drift", "talkback-labels", "video-sync-drift", "calibration-wizard", "developer-mode", "live-session-start", "live-receiver-screen", "live-recording-offline", "nav-insets-3button", "nav-insets-gesture", "nav-insets-landscape", "orientation-rotate-recording", "orientation-cold-flow", "aa-service-registered", "aa-live-metrics", "aa-record-from-car", "aa-disconnect-mid-drive", "aa-inclinometer", "media-attach-recording")]
+    [ValidateSet("cold-start", "calibrate-level", "drift-simulation", "thermal-recording", "recording-export", "playback-scrub", "playback-drift-viz", "playback-graphs", "elevation-playback-scrub", "playback-keyboard-seek", "playback-layout-rotation", "heatmap-scrubber", "ghost-lap-same-session", "ghost-lap-cross-session", "imu-fallback", "imu-single", "imu-multi", "obd-elm327", "obd-slip-beta", "tpms-pair", "external-gps", "crawling-mode", "session-metadata", "library-filter-tag", "playback-video-export", "flyover-video-export", "sharing-video-card", "lap-timing", "lap-timing-phone", "alerts-latg", "alerts-cooldown", "polish-off-regression", "preset-switch-mid-drive", "mark-event-export", "session-compare-drift", "talkback-labels", "video-sync-drift", "calibration-wizard", "developer-mode", "live-session-start", "live-receiver-screen", "live-recording-offline", "nav-insets-3button", "nav-insets-gesture", "nav-insets-landscape", "orientation-rotate-recording", "orientation-cold-flow", "aa-service-registered", "aa-live-metrics", "aa-record-from-car", "aa-disconnect-mid-drive", "aa-inclinometer", "media-attach-recording", "crash-review-smoke", "emulator-hud-smoke", "inclinometer-landscape-pack")]
     [string]$Scenario,
     [string]$Serial = ""
 )
@@ -30,8 +30,14 @@ $pkg = "dev.foss.expeditiongauge"
 . "$PSScriptRoot\_adb-smoke-lib.ps1"
 . "$PSScriptRoot\adb-scenarios\relive.ps1"
 . "$PSScriptRoot\adb-scenarios\aa-inclinometer.ps1"
+. "$PSScriptRoot\adb-scenarios\sprint32-quality.ps1"
 
 if (Invoke-AdbReliveScenario -Name $Scenario) {
+    Write-JsonResult @{ status = "ok"; scenario = $Scenario; sprint = $Sprint; serial = $Serial; package = $pkg }
+    exit 0
+}
+
+if (Invoke-Sprint32QualityScenario -Name $Scenario) {
     Write-JsonResult @{ status = "ok"; scenario = $Scenario; sprint = $Sprint; serial = $Serial; package = $pkg }
     exit 0
 }

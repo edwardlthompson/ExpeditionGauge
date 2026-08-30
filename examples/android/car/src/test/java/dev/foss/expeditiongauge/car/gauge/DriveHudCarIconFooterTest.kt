@@ -15,7 +15,7 @@ class DriveHudCarIconFooterTest {
     @Test
     fun renderBitmap_rowAlwaysReservesFooterBand() {
         val cube = 280
-        val footer = DriveHudBitmapRenderer.footerPxFor(cube)
+        val footer = DriveHudStripMetrics.footerPxFor(cube)
         val empty = DriveHudCarIcon.renderBitmap(
             pitchDeg = 0f,
             rollDeg = 0f,

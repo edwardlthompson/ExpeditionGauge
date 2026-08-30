@@ -96,7 +96,8 @@ try {
     }
 
     Write-Host "== 3) Open ExpeditionGauge on DHU ==" -ForegroundColor Cyan
-    powershell.exe -NoProfile -File "$PSScriptRoot\dhu-open-expeditiongauge.ps1" -MouseFallback
+    # pwsh: _expedition-common.ps1 is UTF-8 (emoji regex). powershell.exe 5.1 mis-parses it.
+    pwsh -NoProfile -File "$PSScriptRoot\dhu-open-expeditiongauge.ps1" -MouseFallback
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "dhu-smoke: open-app helper failed (exit $LASTEXITCODE) — capture anyway"
     }

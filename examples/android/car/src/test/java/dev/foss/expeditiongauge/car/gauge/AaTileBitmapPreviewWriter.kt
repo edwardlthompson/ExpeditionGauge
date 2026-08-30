@@ -67,6 +67,7 @@ object AaTileBitmapPreviewWriter {
                 cubePx = cube,
                 darkBackground = true,
                 throttlePct = 42f,
+                satelliteCount = 12,
             ),
         )
         writePng(
@@ -93,6 +94,7 @@ object AaTileBitmapPreviewWriter {
                 cubePx = cube,
                 darkBackground = false,
                 throttlePct = 42f,
+                satelliteCount = 12,
             ),
         )
     }

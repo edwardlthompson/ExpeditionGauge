@@ -102,5 +102,8 @@ internal fun DriveHudCubeDraw.drawLinkRow(
         val cx = x + step * (index + 1)
         val cy = y + height * 0.5f
         drawer(canvas, cx, cy, glyph, iconPaint)
+        if (index == 0) {
+            SatCountBadge.draw(canvas, cx, cy, glyph, satelliteCount, theme.alertText)
+        }
     }
 }

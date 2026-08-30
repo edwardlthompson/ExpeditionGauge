@@ -46,9 +46,9 @@ Child repo forked from agent-project-bootstrap (2026-06-30). **Shipped:** core v
 | Golden Path catch-up | template 1.0.0 | ✅ Sprint 31: crash review, feedback, GitHub issue URLs, sanitizer, high-refresh |
 | Sprint 32 Record/Relive | template 1.0.0 | ✅ `/build 44-73`: live graphs through GPS track autodetect |
 | Sprint 32 Maps–i18n | template 1.0.0 | ✅ `/build 74-98`: offline tiles through TalkBack About |
-| Sprint 32 Privacy–quality | template 1.0.0 | ✅ `/build` 99–120: EXIF strip through AGP pin; ADB 109/118/119 backlogged |
-| Privacy / Relive / maps | 2.19.0 | ✅ `/push` folds Sprint 32 Unreleased; versionCode 53; leftover ADB stays open |
-
+| Sprint 32 Privacy–quality | template 1.0.0 | ✅ `/build` 99–120: EXIF strip through AGP pin |
+| Privacy / Relive / maps | 2.19.0 | ✅ `/push` folds Sprint 32 Unreleased; versionCode 53 |
+| Sprint 32 leftover ADB | 2.19.0 | ✅ OP13: DHU screenshot, crash-review, HUD launch, inclinometer landscape |
 **Template lineage:** `.template-version` **1.0.0** (aligned 2026-08-29). App semver remains independent (Android `versionName` / Releases). Release Please automerge: **N/A** (RP job template-repo-only; ship via `create-release.ps1`).
 
 ## G-meter HUD rotation (locked 2026-07-12, supersedes 2026-06-30 CW cube)
@@ -70,7 +70,6 @@ Prefer USGS 3DEP EPQS DEM when sats used &lt;6 or vertical accuracy &gt;15 m; A-
 | Platform | Android Compose + Room + MapLibre | `examples/android/` |
 | Package | `dev.foss.expeditiongauge` | minSdk 24 |
 | License | MIT | Pure FOSS, no Play Services in APK |
-
 ## Template Stack (maintainer reference)
 
 | Layer | Technology | Version | Notes |
@@ -78,7 +77,6 @@ Prefer USGS 3DEP EPQS DEM when sats used &lt;6 or vertical accuracy &gt;15 m; A-
 | Platform | Multi-stack template (Web, Python, Android, Node, optional Lightroom/Rust/Go) | 0.11.1 | Template maintainer repo |
 | License | MIT | - | Pure FOSS |
 | Distribution | GitHub Releases + GitHub Pages demo | - | F-Droid/Winget stubs for child repos |
-
 ## Active Modules
 
 - ✅ Web / PWA (`modules/web/MODULE.md`)
@@ -116,7 +114,6 @@ FOSS Cursor agent bootstrap template: labeled BUILD_PLAN sprints, Golden Path ex
 | Date | Milestone | What worked | What to improve |
 |------|-----------|-------------|-----------------|
 | 2026-06-13 | v0.6.0 design system | Cross-stack tokens + i18n scaffold | Restore optional-stack CI jobs after large merge |
-
 ## Template Provenance
 
 - **Source template:** `edwardlthompson/agent-project-bootstrap` (self-maintained)

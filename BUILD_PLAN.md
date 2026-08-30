@@ -6,7 +6,7 @@
 
 - Android app: [`examples/android/`](examples/android/) · `dev.foss.expeditiongauge` · **v2.19.0** (2026-08-29).
 - **Shipped:** through **v2.19.0** (privacy backup, Relive, offline maps). Audit 2026-07-29 archived.
-- **Next:** leftover `[ADB]` smokes (`HUMAN_BACKLOG.md`). AGENT/AUTO rows archived.
+- **Next:** no open BUILD_PLAN `[AGENT]`/`[ADB]` rows. AA Customize launcher confirm stays in `HUMAN_BACKLOG.md` (not a plan row).
 - **Audit 2026-07-29:** gates green; Dependabot zero open Critical/High; CodeQL/CI/Security green on main; AGP/Kotlin automerge held (KB-026).
 - **Dev device:** OnePlus 13 · serial `8bf09993` (primary); OP12 `b5214fc6` alternate — [`docs/DEV_DEVICE.md`](docs/DEV_DEVICE.md).
 
@@ -85,6 +85,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 | Hotfix v2.18.12 | OBD DTC scan on connect (H-001–H-003) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Sprint 31 | Golden Path catch-up (template v1.0.0) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 | Sprint 32 AGENT/AUTO | `/allideas` product backlog (116 AGENT rows) | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
+| Sprint 32 ADB leftover | DHU / crash-review / HUD / inclinometer landscape | [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md) |
 ---
 
 ## Active board
@@ -93,6 +94,7 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 > **Hotfix v2.18.12** archived in COMPLETED_TASKS.md @ `/ship`.
 > **Sprint 31** archived in COMPLETED_TASKS.md @ `/build`.
 > **Sprint 32** AGENT/AUTO archived in COMPLETED_TASKS.md @ `/cleanup`.
+> **Sprint 32** leftover ADB archived in COMPLETED_TASKS.md @ OP13 (`8bf09993`).
 
 ## Child Repo Playbook
 
@@ -103,18 +105,10 @@ Deep dives: [`docs/design/`](docs/design/) · [`docs/adr/`](docs/adr/) · [`docs
 
 ### Sprint 32 — Product backlog (`/allideas`)
 
-<!-- parallel_exception: archived AGENT/AUTO; leftover ADB stay open -->
+<!-- parallel_exception: archived -->
+> Archived @ 2026-08-29 → [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
 
-> **Sprint 32** AGENT/AUTO archived in COMPLETED_TASKS.md @ `/cleanup`.
-
-Do **not** copy template `examples/` over the app. Leftover HUMAN/ADB stay on this board until a device/human clears `HUMAN_BACKLOG.md`.
-
-#### Human & device (after automation)
-
-42. 🔲 [ADB] dhu-screenshot-ci — DHU screenshot smoke when head-unit CLI is present
-109. 🔲 [ADB] crash-review-smoke — Crash-review ADB smoke (opt-in persist)
-118. 🔲 [ADB] emulator-hud-smoke — Instrumented emulator HUD smoke
-119. 🔲 [ADB] inclinometer-landscape-pack — Inclinometer landscape ADB pack (ADR-0013)
+Do **not** copy template `examples/` over the app.
 
 ---
 
@@ -126,7 +120,7 @@ Do **not** copy template `examples/` over the app. Leftover HUMAN/ADB stay on th
 | Fusion / recording | `fusion/`, `recording/`, `playback/` |
 | Relive (22–27) | `media/`, `export/`, `flyover/`, `share/` |
 | Layout | `ui/layout/InsetAwareScaffold.kt` |
-| ADB smokes | `scripts/expedition/adb-smoke.ps1`, `adb-scenarios/relive.ps1`, `adb-scenarios/aa-inclinometer.ps1` |
+| ADB smokes | `scripts/expedition/adb-smoke.ps1`, `adb-scenarios/relive.ps1`, `adb-scenarios/aa-inclinometer.ps1`, `adb-scenarios/sprint32-quality.ps1` |
 ---
 
 ### Critique
@@ -155,7 +149,7 @@ Do **not** copy template `examples/` over the app. Leftover HUMAN/ADB stay on th
 | JAVA_HOME unset / WSL bash (F-001) | Prefer Git Bash in `agent-run.py`; set `JAVA_HOME` to JDK 17 — [`DEV_DEVICE.md`](docs/DEV_DEVICE.md) |
 | Dependabot gradle without lockfile (F-002) | Regenerate `app/gradle.lockfile` on bump PRs; see SECURITY_TRIAGE |
 | weekly-health red on every push | Push stub job; full health on schedule/dispatch only |
-**Boarded:** Custom Canvas AA, AAOS APK, live record graphs, and offline tile cache are Sprint 32 rows (not deferred). Remaining human/device: [`HUMAN_BACKLOG.md`](HUMAN_BACKLOG.md).
+**Boarded:** Custom Canvas AA, AAOS APK, live record graphs, and offline tile cache shipped in Sprint 32 / v2.19.0. Non-plan leftover: [`HUMAN_BACKLOG.md`](HUMAN_BACKLOG.md).
 
 ---
 

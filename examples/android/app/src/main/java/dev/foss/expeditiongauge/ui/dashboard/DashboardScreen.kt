@@ -100,6 +100,8 @@ fun DashboardScreen(
     storedDtcs: List<dev.foss.expeditiongauge.obd.dtc.DtcEntry> = emptyList(),
     onClearDtcs: () -> Unit = {},
     statusLines: List<String> = emptyList(),
+    alertsMuted: Boolean = false,
+    onAlertsMutedChange: (Boolean) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val telemetry = uiState.telemetry
@@ -254,6 +256,9 @@ fun DashboardScreen(
                             },
                             onMarkEvent = onMarkEvent,
                             onScreenshotClick = { context.captureHudScreenshot(screenshotMode) },
+                            onLevelClick = viewModel::calibrateLevel,
+                            alertsMuted = alertsMuted,
+                            onMuteClick = { onAlertsMutedChange(!alertsMuted) },
                             storedDtcs = storedDtcs,
                             canClearDtcs = DtcClear.canClear(
                                 telemetry.speedMps,
@@ -288,4 +293,3 @@ fun DashboardScreen(
         }
     }
 }
-

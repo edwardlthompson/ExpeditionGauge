@@ -2,6 +2,13 @@
 
 > Archive of finished BUILD_PLAN items.
 
+## Sprint 32 leftover ADB (2026-08-29)
+
+- ✅ [ADB] dhu-screenshot-ci — DHU screenshot smoke when head-unit CLI is present (OP13 + DHU; `dhu-live.png` Drive HUD)
+- ✅ [ADB] crash-review-smoke — Crash-review ADB smoke (opt-in persist)
+- ✅ [ADB] emulator-hud-smoke — Instrumented emulator HUD smoke (OP13 launch)
+- ✅ [ADB] inclinometer-landscape-pack — Inclinometer landscape ADB pack (ADR-0013)
+
 ## Sprint 32 — Product backlog (`/allideas`) (2026-08-29)
 
 ##### OBD / diagnostics

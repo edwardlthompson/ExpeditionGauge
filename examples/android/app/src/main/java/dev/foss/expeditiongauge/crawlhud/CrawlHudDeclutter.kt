@@ -1,11 +1,12 @@
 package dev.foss.expeditiongauge.crawlhud
 
 object CrawlHudDeclutter {
-    fun hideGpsExtras(crawling: Boolean): Boolean = crawling
+    fun hideGpsExtras(recording: Boolean, crawlMode: Boolean): Boolean =
+        recording && crawlMode
 
-    fun showHeading(crawling: Boolean, presetShowHeading: Boolean): Boolean =
-        presetShowHeading && !crawling
+    fun showHeading(hideGpsExtras: Boolean, presetShowHeading: Boolean): Boolean =
+        presetShowHeading && !hideGpsExtras
 
-    fun showAltitude(crawling: Boolean, presetShowGps: Boolean): Boolean =
-        presetShowGps && !crawling
+    fun showAltitude(hideGpsExtras: Boolean, presetShowGps: Boolean): Boolean =
+        presetShowGps && !hideGpsExtras
 }
