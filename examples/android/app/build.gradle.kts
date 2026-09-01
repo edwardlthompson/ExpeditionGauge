@@ -68,7 +68,7 @@ dependencyLocking {
 dependencies {
     implementation(project(":car"))
 
-    val composeBom = platform("androidx.compose:compose-bom:2026.06.01")
+    val composeBom = platform("androidx.compose:compose-bom:2026.08.00")
     val roomVersion = "2.8.4"
     implementation(composeBom)
     androidTestImplementation(composeBom)
@@ -91,12 +91,12 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.11.2")
 
     // Pinned FOSS stack — Sprint 1; versions mirrored in app/gradle.lockfile
-    implementation("org.maplibre.compose:maplibre-compose:0.13.1")
-    implementation("org.maplibre.gl:android-sdk:13.4.1")
+    implementation("org.maplibre.compose:maplibre-compose:0.15.0")
+    implementation("org.maplibre.gl:android-sdk:13.6.0")
     implementation("com.github.eltonvs:kotlin-obd-api:1.4.1")
-    implementation("androidx.media3:media3-exoplayer:1.10.1")
-    implementation("androidx.media3:media3-ui:1.10.1")
-    implementation("com.squareup.okhttp3:okhttp:5.4.0")
+    implementation("androidx.media3:media3-exoplayer:1.11.0")
+    implementation("androidx.media3:media3-ui:1.11.0")
+    implementation("com.squareup.okhttp3:okhttp:5.5.0")
     implementation("com.google.zxing:core:3.5.4")
     val cameraX = "1.5.2"
     implementation("androidx.camera:camera-camera2:$cameraX")
@@ -107,7 +107,7 @@ dependencies {
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.16.1")
-    testImplementation("org.bouncycastle:bcprov-jdk18on:1.85")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
