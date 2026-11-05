@@ -331,3 +331,10 @@ Report vulnerabilities privately per [`SECURITY.md`](SECURITY.md). Product priva
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
+
+## What this is not
+
+- A finished commercial product promise
+- A place for secrets or production credentials
+- An unbounded scope — see README goals above
+
