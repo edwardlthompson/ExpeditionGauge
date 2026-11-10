@@ -24,7 +24,7 @@ Drift and track sessions benefit from synchronized onboard video with telemetry 
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | Third-party proprietary video SDK | Violates FOSS policy |
 | Cloud transcode | Privacy / offline-first conflict |
 | Inline video in Room BLOB | Storage and migration complexity |
