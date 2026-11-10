@@ -50,7 +50,7 @@ Two bugs stacked:
 ## Alternatives Considered
 
 | Alternative | Rejected because |
-|-------------|------------------|
+| ------------- | ------------------ |
 | Euler unwrap after Madgwick | Gimbal singularity; oscillates between roll±180 and pitch±90 |
 | Re-zero per orientation | User requires one Zero across portrait/landscape |
 | Application WindowManager on every sample | OEM reports ROTATION_0 while Activity is ROTATION_90 |
