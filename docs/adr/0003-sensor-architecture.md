@@ -13,7 +13,7 @@ ExpeditionGauge must deliver accurate attitude, G-force, heading, and drift angl
 Adopt a **Hexagonal (Ports & Adapters)** sensor stack:
 
 | Layer | Package | Responsibility |
-|-------|---------|----------------|
+| ------- | --------- | ---------------- |
 | **Telemetry port** | `telemetry/TelemetryBus` | Single `Flow<TelemetrySnapshot>` for UI, recording, alerts, live stream |
 | **Phone adapters** | `sensors/PhoneSensorProvider`, `gps/PhoneGpsProvider` | Android `SensorManager` + `LocationManager` (no Play Services) |
 | **Fusion domain** | `fusion/SensorFusionEngine` | `SensorAxisRemap` → Madgwick/complementary → vehicle pitch/roll (ADR-0013) |
@@ -58,7 +58,7 @@ CalibrationStore    ──► SensorFusionEngine           │
 ## Alternatives Considered
 
 | Alternative | Rejected because |
-|-------------|------------------|
+| ------------- | ------------------ |
 | ViewModels subscribe to sensors directly | Breaks recording/alerts/live reuse of same stream |
 | Play Services FusedLocationProvider | Violates FOSS / F-Droid policy |
 | Full 15-state EKF on phone | CPU/thermal cost too high for v1; lightweight β EKF sufficient |
