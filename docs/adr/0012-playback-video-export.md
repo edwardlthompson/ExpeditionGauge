@@ -24,7 +24,7 @@ Sprint 18 burn-in exports telemetry onto an **imported** session MP4. Relive use
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | MapLibre offscreen render | Heavier; tile network dependency |
 | FFmpeg CLI | Non-FOSS bundling / APK size |
 | In-process only (no WorkManager) | ANR risk on 2-min encode |

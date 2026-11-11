@@ -24,7 +24,7 @@ Lap and sector timing must work phone-only (GPS only) and integrate with playbac
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | MapLibre hit-testing for crossings | Couples timing to map SDK; harder to test |
 | Separate scrubbers per panel | Causes playback desync (see BUILD_PLAN risk table) |
 | Transponder/beacon hardware | Out of scope for v1 polish |
