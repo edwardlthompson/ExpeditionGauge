@@ -17,3 +17,13 @@ A Cursor planning agent should review these items and fold the useful ones into 
 - [ ] Bump Media3 1.10.1 to 1.11.1 — Picks up playback fixes for recording playback. Label: `[AGENT]` · Priority: P3 · https://developer.android.com/jetpack/androidx/releases/media3
 - [ ] Watch Car App Library template changes in Android Auto 18.2 — The :car module may need adjustments when 18.2 ships. Label: `[AGENT]` · Priority: P3 · https://www.androidsage.com/2026/11/13/android-auto-18-2/
 - [ ] Consider cheap Arduino SCI telemetry for pre-OBD-II vehicles — Opens the HUD to older expedition vehicles. Label: `[AGENT]` · Priority: P3 · https://github.com/MZULALI/xj-scanner
+
+## 2026-11-14
+
+**News and updates**
+
+- Android Auto 18.2 beta rolling out: 100+ assets reworked to prepare a light mode; Android 11 to become the minimum. [source](https://9to5google.com/2026/11/13/android-auto-18-2-update-beta-release/)
+
+**Tasks for the planning agent**
+
+- [ ] Check Drive HUD tiles stay readable in Android Auto light mode — Hardcoded dark colors could break when light mode ships. Label: `[AGENT]` · Priority: P3 · https://9to5google.com/2026/11/13/android-auto-18-2-update-beta-release/
