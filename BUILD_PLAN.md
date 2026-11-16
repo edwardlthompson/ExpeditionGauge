@@ -138,7 +138,7 @@ Do **not** copy template `examples/` over the app.
 | Nav inset double-padding | `InsetAwareScaffold.kt` — one scaffold owner per route |
 | Session backup leakage | `allowBackup=false`; local-only default |
 | AGP Netty CVE noise | `.trivyignore` scoped to lockfile; revisit on AGP bump |
-| AGP BouncyCastle lockfile pins | `testImplementation` bcprov 1.80.2 + `.trivyignore` CVE-2025-14813 (KB-015); do not global `force` |
+| AGP BouncyCastle lockfile pins | `testImplementation` bcprov 1.85 + `.trivyignore` AGP 1.79 CVEs (KB-015); do not global `force` |
 | Large uncommitted feature drift | Commit after ADB; split inclinometer vs cursor infra commits |
 | Hooks broken mid-migration | `.py` hooks + `hooks.json` committed together; smoke via `check-cursor-hooks --smoke` |
 | Agent doc drift reintroduces `.sh` | `check_cursor_integrations` gate on `.cursor/` agent surfaces |

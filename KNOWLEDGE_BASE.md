@@ -124,14 +124,16 @@
 | **Fix** | Root `.trivyignore` lists affected CVE IDs; revisit when AGP bumps transitive Netty |
 | **Prevention** | Do not ignore Netty in runtime classpath; prefer AGP upgrade over blanket ignore when fix version ships |
 | **Update 2026-08-04** | Added `CVE-2026-56819` (netty-codec-http2 DoS) — still AGP test-harness only |
+| **Update 2026-11-16** | Added `CVE-2026-75595` (netty-handler SNI bypass) — still AGP test-harness only. App runtime Guava pinned to `33.7.2-android` for CVE-2026-102554; leftover AGP/KSP/lint `-jre` pins stay ignored |
 ### KB-015 — BouncyCastle CVE-2025-14813 in lockfile (Ship 2026-06-30)
 
 | Field | Detail |
 |-------|--------|
 | **Symptom** | Security Scan fails on `org.bouncycastle:bcprov-jdk18on:1.78.1` / `1.79` in `gradle.lockfile` after MapLibre / Robolectric deps |
 | **Cause** | Robolectric and AGP `unified-test-platform-*` declare older BouncyCastle; dependency locking records plugin pins separately from resolved runtime |
-| **Fix** | Explicit `testImplementation` on `bcprov-jdk18on:1.80.2` for unit-test runtime; `.trivyignore` for AGP `unified-test-platform` lockfile pins (do not `force` globally — breaks locked androidTest plugin) |
+| **Fix** | Explicit `testImplementation` on `bcprov-jdk18on:1.85` for unit-test runtime; `.trivyignore` for AGP `unified-test-platform` lockfile pins (do not `force` globally — breaks locked androidTest plugin) |
 | **Prevention** | Re-run `./gradlew --write-locks` after dependency changes; prefer targeted test deps over `resolutionStrategy.force` on all configurations |
+| **Update 2026-11-16** | Added `CVE-2026-8763` / `CVE-2026-13506` / `CVE-2026-5598` for AGP lint/test-plugin `bcprov-jdk18on:1.79`; unit tests already resolve 1.85 |
 ### KB-016 — Child-repo release tag vs `.template-version` (Ship 2026-07-02)
 
 | Field | Detail |

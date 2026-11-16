@@ -131,6 +131,8 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.10.1")
     implementation("com.squareup.okhttp3:okhttp:5.4.0")
     implementation("com.google.zxing:core:3.5.4")
+    // CVE-2026-102554 — AGP/KSP still lock older -jre pins (.trivyignore / KB-014).
+    implementation("com.google.guava:guava:33.7.2-android")
     val cameraX = "1.5.2"
     implementation("androidx.camera:camera-camera2:$cameraX")
     implementation("androidx.camera:camera-lifecycle:$cameraX")
