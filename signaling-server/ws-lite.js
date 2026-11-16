@@ -1,6 +1,9 @@
 "use strict";
 const crypto = require("crypto");
 const GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+/** npm `ws` default is 100 MiB; signaling JSON/SDP stays tiny. */
+const MAX_PAYLOAD = 64 * 1024;
+const MAX_HEADER = 14;
 
 function acceptKey(key) {
   return crypto.createHash("sha1").update(String(key) + GUID).digest("base64");
@@ -30,7 +33,7 @@ function encode(data, opcode = 1, mask = false) {
   return Buffer.concat([hdr, key, masked]);
 }
 
-function parseFrames(buf) {
+function parseFrames(buf, maxPayload = MAX_PAYLOAD) {
   const frames = [];
   let offset = 0;
   while (buf.length - offset >= 2) {
@@ -44,9 +47,12 @@ function parseFrames(buf) {
       hdr = 4;
     } else if (len === 127) {
       if (buf.length - offset < 10) break;
-      len = Number(buf.readBigUInt64BE(offset + 2));
+      const n = buf.readBigUInt64BE(offset + 2);
+      if (n > BigInt(maxPayload)) return { frames, rest: Buffer.alloc(0), error: "too_big" };
+      len = Number(n);
       hdr = 10;
     }
+    if (len > maxPayload) return { frames, rest: Buffer.alloc(0), error: "too_big" };
     const maskLen = masked ? 4 : 0;
     if (buf.length - offset < hdr + maskLen + len) break;
     let payload = buf.subarray(offset + hdr + maskLen, offset + hdr + maskLen + len);
@@ -63,12 +69,14 @@ function parseFrames(buf) {
 }
 
 class WsSocket {
-  constructor(socket) {
+  constructor(socket, maxPayload = MAX_PAYLOAD) {
     this._socket = socket;
     this.readyState = 1;
     this.OPEN = 1;
+    this._max = maxPayload;
     this._buf = Buffer.alloc(0);
     this._parts = [];
+    this._partBytes = 0;
     this._opcode = 0;
     this._handlers = { message: [], close: [] };
     socket.on("data", (chunk) => this._onData(chunk));
@@ -86,8 +94,17 @@ class WsSocket {
   }
 
   _onData(chunk) {
+    if (this.readyState !== 1) return;
+    if (this._buf.length + chunk.length > this._max + MAX_HEADER) {
+      this._close();
+      return;
+    }
     this._buf = Buffer.concat([this._buf, chunk]);
-    const parsed = parseFrames(this._buf);
+    const parsed = parseFrames(this._buf, this._max);
+    if (parsed.error) {
+      this._close();
+      return;
+    }
     this._buf = parsed.rest;
     for (const frame of parsed.frames) this._handle(frame);
   }
@@ -105,7 +122,13 @@ class WsSocket {
     if (frame.opcode === 1 || frame.opcode === 2) {
       this._opcode = frame.opcode;
       this._parts = [frame.payload];
+      this._partBytes = frame.payload.length;
     } else if (frame.opcode === 0) {
+      this._partBytes += frame.payload.length;
+      if (this._partBytes > this._max) {
+        this._close();
+        return;
+      }
       this._parts.push(frame.payload);
     } else {
       return;
@@ -113,6 +136,7 @@ class WsSocket {
     if (!frame.fin) return;
     const payload = Buffer.concat(this._parts);
     this._parts = [];
+    this._partBytes = 0;
     const msg = this._opcode === 1 ? payload.toString("utf8") : payload;
     for (const fn of this._handlers.message) fn(msg);
   }
@@ -120,12 +144,14 @@ class WsSocket {
   _close() {
     if (this.readyState === 3) return;
     this.readyState = 3;
-    try { this._socket.end(); } catch { /* ignore */ }
+    this._buf = Buffer.alloc(0);
+    this._parts = [];
+    try { this._socket.destroy(); } catch { /* ignore */ }
     for (const fn of this._handlers.close) fn();
   }
 }
 
-function attachWebSocket(server, { path, onConnection }) {
+function attachWebSocket(server, { path, onConnection, maxPayload = MAX_PAYLOAD }) {
   server.on("upgrade", (req, socket, head) => {
     const urlPath = String(req.url || "").split("?")[0];
     if (urlPath !== path) {
@@ -143,8 +169,8 @@ function attachWebSocket(server, { path, onConnection }) {
         `Sec-WebSocket-Accept: ${acceptKey(key)}\r\n\r\n`,
     );
     if (head && head.length) socket.unshift(head);
-    onConnection(new WsSocket(socket));
+    onConnection(new WsSocket(socket, maxPayload));
   });
 }
 
-module.exports = { attachWebSocket, encode, acceptKey, WsSocket };
+module.exports = { attachWebSocket, encode, acceptKey, parseFrames, MAX_PAYLOAD, WsSocket };
