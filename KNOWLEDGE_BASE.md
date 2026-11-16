@@ -324,4 +324,12 @@
 | **Cause** | `DeveloperHeadUnitNetworkService` is not exported; shell uid 2000 cannot start it. `adb unroot` then force-stop Gearhead kills the HU server and it cannot be restarted until `adb root` |
 | **Fix** | `adb root`, start the service (`aa-start-head-unit-server.ps1`), keep root until DHU is connected. Then open EG from the AA dock |
 | **Prevention** | Do not `adb unroot` immediately after `aa-refresh-host.ps1` if DHU still needs port 5277; see `docs/help/ANDROID_AUTO.md` DHU scripts
+### KB-039 — F-Droid scanner vs OBDex gzip and AA ELF helper (2026-11-16)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | fdroiddata recipe needed `scanignore` of `assets/dtc/obdex_en.gz` and `scandelete` of `scripts/expedition/bin` plus `signaling-server/` |
+| **Cause** | F-Droid's scanner treats gzip/ELF as unknown binaries; `ws` lockfile listed optional native peers (`bufferutil`, `utf-8-validate`) |
+| **Fix** | Split OBDex into `obdex_en_*.json` shards under 500 KB with `assets/dtc/README.md` (CC0). Gitignore `run-as-uid-arm64` and compile from `run-as-uid.c`. Signaling server is stdlib + `ws-lite.js` |
+| **Prevention** | Do not commit prebuilt Android ELF helpers; do not gzip assets just to beat hygiene — shard JSON instead. Keep npm out of the Android source tree when the APK does not use it |
 

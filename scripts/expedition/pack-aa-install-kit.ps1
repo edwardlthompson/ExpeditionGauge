@@ -34,7 +34,16 @@ Copy-Item $Apk (Join-Path $staging $apkLeaf)
 Copy-Item (Join-Path $PSScriptRoot "install-aa-from-pc.ps1") $staging
 Copy-Item (Join-Path $PSScriptRoot "install-aa-from-pc.sh") $staging
 Copy-Item (Join-Path $PSScriptRoot "aa-spoof-adb.sh") $staging
-Copy-Item (Join-Path $PSScriptRoot "bin\run-as-uid-arm64") (Join-Path $staging "bin\run-as-uid-arm64")
+$buildHelper = Join-Path $PSScriptRoot "build-run-as-uid.ps1"
+if (Test-Path $buildHelper) {
+    & $buildHelper
+    if ($LASTEXITCODE -ne 0) { Write-Error "pack-aa-install-kit: build-run-as-uid failed" }
+}
+$helperBin = Join-Path $PSScriptRoot "bin\run-as-uid-arm64"
+if (-not (Test-Path $helperBin)) {
+    Write-Error "pack-aa-install-kit: missing $helperBin (install NDK and re-run)"
+}
+Copy-Item $helperBin (Join-Path $staging "bin\run-as-uid-arm64")
 Copy-Item (Join-Path $Root "docs\help\ANDROID_AUTO_SIDELOAD.md") (Join-Path $staging "ANDROID_AUTO_SIDELOAD.md")
 
 $guide = @"

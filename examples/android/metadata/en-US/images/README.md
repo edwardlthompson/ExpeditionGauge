@@ -17,4 +17,4 @@ Regenerate screenshots on a physical device:
 pwsh scripts/expedition/capture-fdroid-screenshots.ps1 -Serial b5214fc6
 ```
 
-Paths are referenced from `metadata/en-US/` (manual F-Droid) or `fastlane/metadata/android/en-US/` (Fastlane).
+F-Droid scrapes repo-root `fastlane/metadata/android/en-US/` (this Triple-T tree is the local-gate copy).

@@ -11,7 +11,7 @@
 
 ## Smoke scenario
 
-1. Given `examples/android/metadata/en-US/`
+1. Given repo-root `fastlane/metadata/android/en-US/` and `examples/android/metadata/en-US/`
 2. When `scripts/verify-fdroid-metadata.sh` runs
 3. Then license, source URL, and changelog for the current versionCode pass
 

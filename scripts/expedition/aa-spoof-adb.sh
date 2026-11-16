@@ -56,8 +56,11 @@ fi
 
 if [[ "$NEED_HELPER" -eq 1 ]]; then
   HELPER="$HERE/bin/run-as-uid-arm64"
+  if [[ ! -f "$HELPER" && -f "$HERE/build-run-as-uid.sh" ]]; then
+    bash "$HERE/build-run-as-uid.sh" || true
+  fi
   if [[ ! -f "$HELPER" ]]; then
-    echo "FAIL: Magisk su missing and no bin/run-as-uid-arm64 next to this script." >&2
+    echo "FAIL: Magisk su missing and no bin/run-as-uid-arm64. Install Magisk or run scripts/expedition/build-run-as-uid.sh (NDK)." >&2
     exit 1
   fi
   echo "Magisk su missing — using run-as-uid-arm64 helper"

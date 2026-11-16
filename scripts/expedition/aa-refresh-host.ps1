@@ -65,8 +65,12 @@ function Install-AsPlayStore([string]$ApkPath) {
     $create = (adb -s $Serial shell "su $uid -c `"$createCmd`"" 2>&1 | Out-String)
     if ($create -match "su: inaccessible|not found|No such file") {
         $helperLocal = Join-Path $PSScriptRoot "bin\run-as-uid-arm64"
+        $buildHelper = Join-Path $PSScriptRoot "build-run-as-uid.ps1"
+        if (-not (Test-Path $helperLocal) -and (Test-Path $buildHelper)) {
+            & $buildHelper
+        }
         if (-not (Test-Path $helperLocal)) {
-            throw "aa-refresh-host: Magisk su missing and no run-as-uid-arm64 helper at $helperLocal"
+            throw "aa-refresh-host: Magisk su missing and no run-as-uid-arm64 helper — run scripts/expedition/build-run-as-uid.ps1 (NDK)"
         }
         Write-Host "Magisk su missing — using run-as-uid-arm64 helper (adb-root devices)" -ForegroundColor Yellow
         $helperRemote = "/data/local/tmp/run-as-uid"

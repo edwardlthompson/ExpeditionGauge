@@ -17,6 +17,13 @@
 
 ## Entries
 
+### 2026-11-16 — F-Droid source-side readiness
+- **Status:** Accepted
+- **Context:** Edward's fdroiddata fork recipe for `dev.foss.expeditiongauge` needed `scandelete` of `scripts/expedition/bin` (ELF helper) and `signaling-server/` (npm `ws` optional native peers), plus `scanignore` of `obdex_en.gz`. Fastlane lived under `examples/android/fastlane/` where F-Droid does not scrape it. HEAD is 2.19.0 / 53 untagged.
+- **Decision:** Canonical Fastlane at repo-root `fastlane/`. Compile `run-as-uid-arm64` from `run-as-uid.c` in pack/install scripts (do not commit the ELF). Split OBDex into CC0 JSON shards with `assets/dtc/README.md` provenance. Rewrite signaling to stdlib + `ws-lite.js`. Release signing uses `signingConfigs.maybeCreate` / `findByName` only when a keystore file exists so F-Droid strip leaves an unsigned APK.
+- **Alternatives considered:** Keep gzip + `scanignore` (rejected — scanner-opaque). Fetch OBDex at Gradle build time (rejected — F-Droid dislikes network in the recipe). Drop signaling-server from git (rejected — live-telemetry self-host docs).
+- **Consequences:** Fork metadata can drop `scanignore` for the gzip and `scandelete` for `scripts/expedition/bin`. `signaling-server/` should no longer need `scandelete`. YAML Summary/Description can go once root fastlane is scraped. Tag `v2.19.0` after this lands.
+
 ### 2026-08-29 — Sprint 32 leftover ADB on OP13
 - **Status:** Accepted
 - **Context:** Cloud agents boarded v2.19.0 / Sprint 32 on VMs with no ADB or DHU. Four `[ADB]` rows stayed on the board (`dhu-screenshot-ci`, `crash-review-smoke`, `emulator-hud-smoke`, `inclinometer-landscape-pack`).

@@ -7,8 +7,8 @@ from pathlib import Path
 DUMMY_NAME = ("dummy", "placeholder", "sample", "lorem")
 SCREEN_DIRS = ("phoneScreenshots", "sevenInchScreenshots", "tenInchScreenshots")
 ROOTS = (
+    Path("fastlane") / "metadata" / "android",
     Path("examples") / "android" / "metadata",
-    Path("examples") / "android" / "fastlane" / "metadata" / "android",
 )
 
 

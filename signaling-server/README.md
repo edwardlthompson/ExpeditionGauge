@@ -2,17 +2,23 @@
 
 Minimal FOSS WebSocket room server for Live Telemetry (Sprint 19).
 
+**Not part of the Android APK.** Node stdlib + `ws-lite.js` only (no npm packages, no native addons) so F-Droid's scanner can leave this tree in place.
+
 ## Run locally
 
 ```bash
 cd signaling-server
-npm install
-npm start
+node server.js
+# or: npm start
 ```
 
 Default: `ws://127.0.0.1:8787/live`
 
 Set in app **Settings → Live telemetry → Signaling URL** (or `project.config.json` dev default).
+
+```bash
+npm test
+```
 
 ## Protocol
 

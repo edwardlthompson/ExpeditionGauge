@@ -146,7 +146,7 @@ Inside the unzipped folder you should see at least:
 
 - `ExpeditionGauge-X.Y.Z.apk`
 - `aa-spoof-adb.sh`
-- `bin/run-as-uid-arm64` (helper used on some phones)
+- `bin/run-as-uid-arm64` (NDK helper, compiled into the kit; not committed)
 
 ---
 
