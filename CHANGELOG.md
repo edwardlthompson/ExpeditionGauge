@@ -86,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * F-Droid listing lives at repo-root `fastlane/` (real HUD screenshots). Release `signingConfigs` use `maybeCreate` / `findByName` so F-Droid can strip signing without a prebuild sed
-* AA `run-as-uid-arm64` is compiled from `run-as-uid.c` at pack time (not committed). Live signaling server is Node stdlib only (no `ws` native peers). OBDex DTC titles are CC0 JSON shards instead of a scanner-opaque gzip
+* AA `run-as-uid-arm64` is compiled from `run-as-uid.c` at pack time (not committed). Live signaling server is Node stdlib only (no `ws` native peers) and rejects WebSocket frames over 64 KiB. OBDex DTC titles are CC0 JSON shards instead of a scanner-opaque gzip
 
 ### Removed
 
