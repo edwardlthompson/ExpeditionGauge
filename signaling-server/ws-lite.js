@@ -96,13 +96,13 @@ class WsSocket {
   _onData(chunk) {
     if (this.readyState !== 1) return;
     if (this._buf.length + chunk.length > this._max + MAX_HEADER) {
-      this._close();
+      this._shutdown({ abort: true, code: 1009 });
       return;
     }
     this._buf = Buffer.concat([this._buf, chunk]);
     const parsed = parseFrames(this._buf, this._max);
     if (parsed.error) {
-      this._close();
+      this._shutdown({ abort: true, code: 1009 });
       return;
     }
     this._buf = parsed.rest;
@@ -111,7 +111,7 @@ class WsSocket {
 
   _handle(frame) {
     if (frame.opcode === 8) {
-      this._close();
+      this._shutdown({ reply: true, payload: frame.payload });
       return;
     }
     if (frame.opcode === 9) {
@@ -126,7 +126,7 @@ class WsSocket {
     } else if (frame.opcode === 0) {
       this._partBytes += frame.payload.length;
       if (this._partBytes > this._max) {
-        this._close();
+        this._shutdown({ abort: true, code: 1009 });
         return;
       }
       this._parts.push(frame.payload);
@@ -142,11 +142,26 @@ class WsSocket {
   }
 
   _close() {
+    this._shutdown({ abort: true });
+  }
+
+  _shutdown({ reply = false, payload, abort = false, code } = {}) {
     if (this.readyState === 3) return;
     this.readyState = 3;
     this._buf = Buffer.alloc(0);
     this._parts = [];
-    try { this._socket.destroy(); } catch { /* ignore */ }
+    try {
+      if ((reply || code) && this._socket.writable) {
+        let body = payload;
+        if (!body && code) {
+          body = Buffer.alloc(2);
+          body.writeUInt16BE(code);
+        }
+        this._socket.write(encode(body || Buffer.alloc(0), 8, false));
+      }
+      if (abort) this._socket.destroy();
+      else this._socket.end();
+    } catch { /* ignore */ }
     for (const fn of this._handlers.close) fn();
   }
 }

@@ -83,3 +83,18 @@ test("closes the socket when a client advertises a huge frame", async () => {
   await new Promise((resolve) => socket.once("close", resolve));
   await new Promise((resolve) => server.close(resolve));
 });
+
+test("replies to a client close handshake", async () => {
+  const server = createServer();
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const { port } = server.address();
+  const ws = connect(`ws://127.0.0.1:${port}/live`);
+  await new Promise((resolve) => ws.addEventListener("open", resolve, { once: true }));
+  const closed = new Promise((resolve, reject) => {
+    ws.addEventListener("close", (ev) => resolve(ev.code), { once: true });
+    ws.addEventListener("error", reject, { once: true });
+  });
+  ws.close(1000, "bye");
+  assert.equal(await closed, 1000);
+  await new Promise((resolve) => server.close(resolve));
+});
