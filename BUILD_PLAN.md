@@ -1,3 +1,61 @@
+# Build Plan
+
+<!-- remaining-tally -->
+**Remaining:** (tally on next sync)
+<!-- /remaining-tally -->
+
+Live board. Canonical shape: agent-project-bootstrap `BUILD_PLAN_TEMPLATE.md`.
+Finished work: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
+
+**Who:** `AGENT` code · `HUMAN` person · `ADB` device · `AUTO` CI/scripts
+**Venue (AGENT only):** `[LOCAL]` This Computer · `[CLOUD]` Cursor Cloud
+**State:** 🔲 open · ✅ done · ❌ blocked
+
+Format: `🔲 [AGENT][LOCAL] Short task — scope: path/prefix`.
+
+### Open PRs (synced)
+
+> Auto-managed. Do not hand-edit inside the markers.
+
+<!-- open-prs-sync:begin -->
+_No open Dependabot or Release Please PRs._
+<!-- open-prs-sync:end -->
+
+### Template gaps (synced)
+
+> Auto-managed. Do not hand-edit inside the markers.
+
+<!-- template-gaps-sync:begin -->
+_No template gaps._
+<!-- template-gaps-sync:end -->
+
+### Local agent (This Computer)
+
+Standing queue for This Computer. Rows: `🔲 [AGENT][LOCAL] … — scope: path`.
+
+<!-- local-agent-lane:begin -->
+_No local agent items._
+<!-- local-agent-lane:end -->
+
+### Cloud agent (Cursor Cloud)
+
+Standing queue for Cursor Cloud. Rows: `🔲 [AGENT][CLOUD] … — scope: path`.
+
+<!-- cloud-agent-lane:begin -->
+_No cloud agent items._
+<!-- cloud-agent-lane:end -->
+
+## Archive
+
+Older sprints: [`COMPLETED_TASKS.md`](COMPLETED_TASKS.md).
+
+## Preserved source board
+
+Quoted so no prior task is lost. Prefer the lanes above; do not invent work.
+
+<details>
+<summary>Previous board</summary>
+
 # ExpeditionGauge — BUILD_PLAN
 
 **Agent rule:** Finish all [AGENT] **Sequential** rows before **Parallel** dispatch. Shared schema/types stay Sequential-only. Details: [`docs/PARALLEL_AGENT_SCOPES.md`](docs/PARALLEL_AGENT_SCOPES.md), `scripts/plan-parallel-dispatch.sh`.
@@ -158,3 +216,5 @@ Do **not** copy template `examples/` over the app.
 Bootstrap complete (2026-06-30). All `project.config.json` sprint toggles through `v2_sharing_polish` are **on** and shipped.
 
 After new rows: Agent Mode + `python3 scripts/agent-run.py watch-agent-gates --once --autofix` per [AGENT] step; `resume-agent.ps1` after Cursor reopen.
+
+</details>
