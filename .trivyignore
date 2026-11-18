@@ -15,7 +15,13 @@ CVE-2026-55833
 CVE-2026-56745
 CVE-2026-56819
 CVE-2026-59901
+CVE-2026-75595
 GHSA-xpw8-rcwv-8f8p
 # AGP unified-test-platform / lint-check BouncyCastle (gradle.lockfile — not packaged in APK).
-# Runtime/test classpaths forced to bcprov 1.80.2; lockfile retains AGP plugin pins. See KB-015.
+# Unit-test classpath is bcprov 1.85; lockfile retains AGP plugin pin 1.79. See KB-015.
 CVE-2025-14813
+CVE-2026-5598
+CVE-2026-8763
+CVE-2026-13506
+# AGP / KSP / lint Guava pins in gradle.lockfile. App runtime is 33.7.2-android (CVE-2026-102554).
+CVE-2026-102554

@@ -5,7 +5,7 @@
 ## Acceptance criteria
 
 - ✅ `metadata/en-US/changelogs/54.txt` exists
-- ✅ Fastlane mirror has the same file
+- ✅ Repo-root Fastlane has the same file
 - ✅ Next code is current 53 + 1
 - ✅ i18n: store listing English only
 

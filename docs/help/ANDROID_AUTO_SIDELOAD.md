@@ -16,7 +16,7 @@ Works on Magisk/rooted devices including Android 14/15/16. Every GitHub Release 
 | Asset | Purpose |
 |-------|---------|
 | `ExpeditionGauge-X.Y.Z.apk` | App binary |
-| `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` | Same APK + Play Store spoof scripts (`aa-spoof-adb.sh`, `install-aa-from-pc.ps1`) + `bin/run-as-uid-arm64` for `adb root` devices without Magisk `su` |
+| `ExpeditionGauge-X.Y.Z-AA-install-kit.zip` | Same APK + Play Store spoof scripts (`aa-spoof-adb.sh`, `install-aa-from-pc.ps1`) + `bin/run-as-uid-arm64` (built from `scripts/expedition/bin/run-as-uid.c` at pack time) for `adb root` devices without Magisk `su` |
 
 1. Enable USB debugging; connect phone.
 2. Download and unzip `ExpeditionGauge-*-AA-install-kit.zip` from [Releases](https://github.com/edwardlthompson/ExpeditionGauge/releases) **or** clone the repo.

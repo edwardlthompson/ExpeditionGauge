@@ -5,7 +5,7 @@
 </p>
 
 ![MIT](https://img.shields.io/badge/license-MIT-2ea043?style=flat-square)
-![Template](https://img.shields.io/badge/template-1.0.0-0969da?style=flat-square)
+![Template](https://img.shields.io/badge/template-1.13.0-0969da?style=flat-square)
 ![FOSS](https://img.shields.io/badge/FOSS-no_tracking-656d76?style=flat-square)
 [![CI](https://img.shields.io/github/actions/workflow/status/edwardlthompson/ExpeditionGauge/ci.yml?style=flat-square&label=CI)](https://github.com/edwardlthompson/ExpeditionGauge/actions/workflows/ci.yml)
 ![Android](https://img.shields.io/badge/Android-FOSS-3DDC84?style=flat-square)
@@ -146,7 +146,7 @@ Inside the unzipped folder you should see at least:
 
 - `ExpeditionGauge-X.Y.Z.apk`
 - `aa-spoof-adb.sh`
-- `bin/run-as-uid-arm64` (helper used on some phones)
+- `bin/run-as-uid-arm64` (NDK helper, compiled into the kit; not committed)
 
 ---
 

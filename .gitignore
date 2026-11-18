@@ -74,9 +74,15 @@ examples/rust/target/
 # Android extras
 examples/android/.cxx/
 examples/android/captures/
+examples/android/keystore.properties
 *.apk
 *.aab
 *.idsig
+*.jks
+
+# Built AA sideload helper (source is run-as-uid.c; compile via build-run-as-uid)
+scripts/expedition/bin/run-as-uid-arm64
+scripts/expedition/bin/run-as-uid
 
 # Node / tooling
 .turbo/

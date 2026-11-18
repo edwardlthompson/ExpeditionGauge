@@ -11,7 +11,7 @@ if (-not $Serial) { $Serial = Get-AdbSerial $config }
 
 $pkg = "dev.foss.expeditiongauge"
 $outDir = Join-Path $Root "examples\android\metadata\en-US\images\phoneScreenshots"
-$fastlaneDir = Join-Path $Root "examples\android\fastlane\metadata\android\en-US\images\phoneScreenshots"
+$fastlaneDir = Join-Path $Root "fastlane\metadata\android\en-US\images\phoneScreenshots"
 New-Item -ItemType Directory -Force -Path $outDir, $fastlaneDir | Out-Null
 
 function Invoke-AdbShell {

@@ -86,8 +86,12 @@ $createCmd = "pm install-create --user 0 -i $play -r -S $size"
 $create = (Adb shell "su $uid -c `"$createCmd`"" 2>&1 | Out-String)
 if ($create -match "su: inaccessible|not found|No such file") {
     $helperLocal = Join-Path $PSScriptRoot "bin\run-as-uid-arm64"
+    $buildHelper = Join-Path $PSScriptRoot "build-run-as-uid.ps1"
+    if (-not (Test-Path $helperLocal) -and (Test-Path $buildHelper)) {
+        & $buildHelper
+    }
     if (-not (Test-Path $helperLocal)) {
-        Write-Error "Magisk su missing and no run-as-uid-arm64 helper — install Magisk or rebuild scripts/expedition/bin/run-as-uid-arm64"
+        Write-Error "Magisk su missing and no run-as-uid-arm64 helper — install Magisk or run scripts/expedition/build-run-as-uid.ps1 (NDK)"
     }
     Write-Host "Magisk su missing — using run-as-uid-arm64 helper" -ForegroundColor Yellow
     $helperRemote = "/data/local/tmp/run-as-uid"

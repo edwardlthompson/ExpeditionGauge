@@ -44,9 +44,8 @@ Driver taps **Start live session** on the dashboard when Live Telemetry is enabl
 
 ```bash
 cd signaling-server
-npm install
-npm start
-# listens on ws://0.0.0.0:8787/live
+node server.js
+# listens on ws://0.0.0.0:8787/live  (stdlib only; no npm install)
 ```
 
 ## Web receiver

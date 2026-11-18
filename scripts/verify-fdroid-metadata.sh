@@ -45,11 +45,28 @@ else
   fail "missing or empty $META/AntiFeatures.txt"
 fi
 
-FASTLANE="$ROOT/examples/android/fastlane/metadata/android/en-US"
+FASTLANE="$ROOT/fastlane/metadata/android/en-US"
 if [ -s "$FASTLANE/AntiFeatures.txt" ]; then
   ok "fastlane AntiFeatures.txt present"
 else
   fail "missing or empty $FASTLANE/AntiFeatures.txt"
+fi
+for f in title.txt short_description.txt full_description.txt; do
+  if [ ! -s "$FASTLANE/$f" ]; then
+    fail "missing or empty $FASTLANE/$f"
+  else
+    ok "fastlane $f present"
+  fi
+done
+if [ ! -s "$FASTLANE/images/icon.png" ]; then
+  fail "missing $FASTLANE/images/icon.png"
+else
+  ok "fastlane icon.png present"
+fi
+if ! ls "$FASTLANE/images/phoneScreenshots"/*.png >/dev/null 2>&1; then
+  fail "missing fastlane phoneScreenshots PNGs"
+else
+  ok "fastlane phoneScreenshots present"
 fi
 
 if [ ! -f "$GRADLE" ]; then
@@ -68,6 +85,11 @@ else
     else
       fail "missing next changelog $META/changelogs/${NEXT_CODE}.txt"
     fi
+    if [ -s "$FASTLANE/changelogs/${VERSION_CODE}.txt" ]; then
+      ok "fastlane changelog ${VERSION_CODE}"
+    else
+      fail "missing $FASTLANE/changelogs/${VERSION_CODE}.txt"
+    fi
   fi
 fi
 
@@ -83,8 +105,10 @@ else
   fail "missing root LICENSE"
 fi
 
-if [ -d "$ROOT/examples/android/fastlane/metadata/android/en-US" ]; then
-  ok "fastlane metadata mirror present"
+if [ -d "$FASTLANE" ]; then
+  ok "root fastlane metadata present"
+else
+  fail "missing $FASTLANE"
 fi
 
 echo ""

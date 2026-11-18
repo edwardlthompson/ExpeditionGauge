@@ -51,6 +51,6 @@ Before running instrumented tests or manual QA:
 
 ## F-Droid notes
 
-Listing files live in `metadata/en-US/` (mirrored under `fastlane/metadata/android/en-US/`).
+Listing files live in `metadata/en-US/` (local Triple-T). F-Droid scrapes repo-root `fastlane/metadata/android/en-US/`.
 Reproducible publish steps: [`metadata/REPRODUCIBLE.md`](metadata/REPRODUCIBLE.md).
 Verify locally: `bash ../../scripts/verify-fdroid-metadata.sh`.
