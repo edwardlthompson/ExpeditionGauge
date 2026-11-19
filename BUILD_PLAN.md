@@ -51,7 +51,7 @@ _No cloud agent items._
 
 <!-- parallel_exception: independent news follow-ups; run sequentially -->
 
-_No open news tasks._
+1. 🔲 [AGENT] Bump Compose BOM 2026.06.01 → 2026.11.01 (Compose 1.13 / Material3 1.5.0; needs Kotlin 2.2+ and compileSdk 37.1, check AGP) and fix Slider/RangeSlider call sites (`onValueChange` now required); fix 4 Slider/RangeSlider file(s) — scope: examples/android/ (news P2, 2026-11-19) https://developer.android.com/blog/posts/jetpack-compose-november-2026-release
 
 
 ## Archive
