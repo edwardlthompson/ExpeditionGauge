@@ -13,7 +13,7 @@ Drivers want live speed and attitude on the head unit without proprietary Google
 1. **`androidx.car.app:app`** (Apache 2.0) in isolated **`:car`** Gradle module — no Play Services in production path.
 2. **`CarAppBridge`** registry — phone app implements bridge to `TelemetryBus` + `RecordingWriter` + `CalibrationStore`; car UI stays decoupled.
 3. **Always-on when capable** — no Settings opt-out; `isAndroidAutoEnabled()` reflects build capability (`FeatureFlags.androidAutoCapable`), not a user toggle.
-4. **`NavigationTemplate` + Surface Drive HUD** — paint native **3×1** Attitude | Telemetry | TPMS on a wide host `Surface`, or **1×2** Attitude | Telemetry (no TPMS tile) when the visible rect is stably tall (`HudStripOrientation` hysteresis). Permissions: `ACCESS_SURFACE` + `NAVIGATION_TEMPLATES` + `MAP_TEMPLATES`, Car API **7+**. No side content panel. POI category kept for discovery. Pane letterbox remains **fallback** only (always ROW 3×1).
+| 4. **`NavigationTemplate` + Surface Drive HUD** — paint native **3×1** Attitude | Telemetry | TPMS on a wide host `Surface`, or **1×2** Attitude | Telemetry (no TPMS tile) when the visible rect is stably tall (`HudStripOrientation` hysteresis). Permissions: `ACCESS_SURFACE` + `NAVIGATION_TEMPLATES` + `MAP_TEMPLATES`, Car API **7+**. No side content panel. POI category kept for discovery. Pane letterbox remains **fallback** only (always ROW 3×1). |
 5. **Bitmap attitude family** — `DriveHudBitmapRenderer` paints inclinometer styles plus AA **G-meter** and **3D compass** bitmaps. Tap attitude cube (left third wide / top half tall) to cycle `DISPLAY_CYCLE` (requires map **PAN**). Telemetry cube includes compact lat/long.
 6. **Top actions** — map ActionStrip **PAN only** (required for Surface taps). Wide: Mute + Capture + Record/Stop + parked-only Level. Tall/COLUMN: **icon-only Mute** (empty strip crashes the host). Pane fallback keeps max one titled action (Record).
 7. **Live refresh** — Surface HUD paints at ~**30 Hz** (bridge 33 ms) without per-tick `Screen.invalidate()` (host template rebuilds stay rare). Pane fallback still throttles template invalidate to **500 ms**.
@@ -40,7 +40,7 @@ Drivers want live speed and attitude on the head unit without proprietary Google
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | Google Play Services Car API | FOSS violation |
 | Duplicate sensor pipeline in `:car` | Drift from phone fusion |
 | WebView / custom OpenGL on car | AA template policy |

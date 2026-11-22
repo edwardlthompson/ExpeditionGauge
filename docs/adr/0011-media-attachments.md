@@ -24,7 +24,7 @@ Drivers want geotagged-style photo waypoints on the telemetry timeline without b
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | Store URIs only (gallery links) | Broken links after user deletes gallery items |
 | Room BLOB columns | DB size + migration pain |
 | CameraX dependency | Heavier stack for v2.4.0 scope |

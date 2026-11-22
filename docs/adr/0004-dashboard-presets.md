@@ -10,7 +10,7 @@ Drivers need quick layout switches (Drift, Offroad, Track, Minimal) without dupl
 
 ## Decision
 
-1. **`DashboardPreset`** — sealed enum-like model with panel weights, visibility flags, and linked `RecordingMode` (`NORMAL` | `CRAWLING`).
+| 1. **`DashboardPreset`** — sealed enum-like model with panel weights, visibility flags, and linked `RecordingMode` (`NORMAL` | `CRAWLING`). |
 2. **`SettingsProfile`** — domain model backed by Room `SettingsProfileEntity` + DataStore active profile id.
 3. **Single `DashboardViewModel`** reads active preset from profile store; UI applies `Row(Modifier.weight())` from preset config only.
 4. **`FeatureFlags`** gates optional panels (TPMS, drift readout, live telemetry) — core fusion path unchanged when flags off.
@@ -24,7 +24,7 @@ Drivers need quick layout switches (Drift, Offroad, Track, Minimal) without dupl
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | Separate screen per preset | Duplicates gauge wiring and ViewModels |
 | Runtime Compose `when` without persistence | Lost on rotation / app restart |
 | Hard-coded layout in DashboardScreen | Cannot save per-vehicle profiles |
