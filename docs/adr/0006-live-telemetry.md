@@ -25,7 +25,7 @@ Track-day pit crews need sub-30-second pairing to view driver metrics on a secon
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | Firebase / Google WebRTC SDK | Proprietary; FOSS violation |
 | Raw WebSocket metrics stream | No NAT traversal on cellular |
 | MQTT cloud broker | Central server stores sensitive telemetry |

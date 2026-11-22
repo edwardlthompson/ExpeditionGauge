@@ -24,7 +24,7 @@ Sprint 19b fixed navigation insets for edge-to-edge. Users want portrait pocket 
 ## Alternatives Considered
 
 | Approach | Rejected because |
-|----------|------------------|
+| ---------- | ------------------ |
 | Single layout with weights only | Portrait unusable — gauges too small |
 | Separate Activities per orientation | Breaks recording continuity |
 | Force landscape always | Blocks Sprint 20 product goal |
