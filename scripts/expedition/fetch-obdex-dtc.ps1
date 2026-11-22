@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Regenerates the slim CC0 OBDex DTC catalog asset (code -> English title).
+  Regenerates the slim CC0 OBDex DTC catalog JSON shards (code -> English title).
 
 .DESCRIPTION
   Wraps scripts/expedition/fetch-obdex-dtc.py. Source data is OBDex (CC0-1.0),

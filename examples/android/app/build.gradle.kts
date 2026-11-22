@@ -4,6 +4,8 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+import java.util.Properties
+
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
@@ -30,10 +32,41 @@ android {
         }
     }
 
+    val uploadStorePath = System.getenv("GOLDENPATH_UPLOAD_STORE_FILE")
+        ?.takeIf { it.isNotBlank() }
+        ?: (project.findProperty("RELEASE_STORE_FILE") as String?)
+    val keystoreProps = rootProject.file("keystore.properties")
+    val props = Properties()
+    if (keystoreProps.isFile) {
+        keystoreProps.inputStream().use { props.load(it) }
+    }
+    val storePath = uploadStorePath
+        ?: props.getProperty("storeFile")?.takeIf { it.isNotBlank() }
+    val store = storePath?.let { path ->
+        val asFile = file(path)
+        if (asFile.isFile) asFile else rootProject.file(path).takeIf { it.isFile }
+    }
+    if (store != null) {
+        // maybeCreate survives F-Droid stripping a signingConfigs { } block.
+        signingConfigs.maybeCreate("release").apply {
+            storeFile = store
+            storePassword = System.getenv("GOLDENPATH_UPLOAD_STORE_PASSWORD")
+                ?: props.getProperty("storePassword").orEmpty()
+            keyAlias = System.getenv("GOLDENPATH_UPLOAD_KEY_ALIAS")
+                ?: props.getProperty("keyAlias").orEmpty()
+            keyPassword = System.getenv("GOLDENPATH_UPLOAD_KEY_PASSWORD")
+                ?: props.getProperty("keyPassword").orEmpty()
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             isShrinkResources = false
+            // findByName is null after F-Droid strips signingConfigs; keep unsigned.
+            signingConfigs.findByName("release")
+                ?.takeIf { it.storeFile?.isFile == true }
+                ?.let { signingConfig = it }
         }
     }
 
@@ -98,6 +131,8 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.10.1")
     implementation("com.squareup.okhttp3:okhttp:5.4.0")
     implementation("com.google.zxing:core:3.5.4")
+    // CVE-2026-102554 — AGP/KSP still lock older -jre pins (.trivyignore / KB-014).
+    implementation("com.google.guava:guava:33.7.2-android")
     val cameraX = "1.5.2"
     implementation("androidx.camera:camera-camera2:$cameraX")
     implementation("androidx.camera:camera-lifecycle:$cameraX")

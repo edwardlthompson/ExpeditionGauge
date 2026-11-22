@@ -4,7 +4,7 @@ Static pit-crew dashboard for ExpeditionGauge live telemetry.
 
 ## Local use
 
-1. Start signaling server: `cd ../signaling-server && npm start`
+1. Start signaling server: `cd ../signaling-server && node server.js`
 2. Serve this folder: `npx serve .` or open `index.html` via a local HTTP server
 3. Join with session ID + 6-digit code from the driver app QR
 

@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $Root = Get-ExpeditionRoot
 
 $images = Join-Path $Root "examples\android\metadata\en-US\images"
-$fastlaneImages = Join-Path $Root "examples\android\fastlane\metadata\android\en-US\images"
+$fastlaneImages = Join-Path $Root "fastlane\metadata\android\en-US\images"
 New-Item -ItemType Directory -Force -Path $images, (Join-Path $images "phoneScreenshots"), $fastlaneImages, (Join-Path $fastlaneImages "phoneScreenshots") | Out-Null
 
 $syncIcon = Join-Path $Root "scripts\expedition\sync-app-icon.py"
@@ -43,7 +43,7 @@ def draw_feature(path: Path) -> None:
     img.save(path)
 
 root = Path(r"__ROOT__")
-for base in [root / "examples/android/metadata/en-US/images", root / "examples/android/fastlane/metadata/android/en-US/images"]:
+for base in [root / "examples/android/metadata/en-US/images", root / "fastlane/metadata/android/en-US/images"]:
     base.mkdir(parents=True, exist_ok=True)
     draw_feature(base / "featureGraphic.png")
 print("generated featureGraphic.png")

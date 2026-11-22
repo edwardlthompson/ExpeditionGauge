@@ -16,7 +16,7 @@ SOURCE = ROOT / "docs" / "assets" / "app-icon-512.png"
 RES = ROOT / "examples" / "android" / "app" / "src" / "main" / "res"
 STORE_DIRS = [
     ROOT / "examples" / "android" / "metadata" / "en-US" / "images",
-    ROOT / "examples" / "android" / "fastlane" / "metadata" / "android" / "en-US" / "images",
+    ROOT / "fastlane" / "metadata" / "android" / "en-US" / "images",
 ]
 
 LEGACY_DP = 48

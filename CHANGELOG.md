@@ -83,6 +83,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * DTC clear confirmation dialog with warning against clearing before diagnosis
 * High-refresh display mode selector for supported 90Hz/120Hz panels
 
+### Changed
+
+* F-Droid listing lives at repo-root `fastlane/` (real HUD screenshots). Release `signingConfigs` use `maybeCreate` / `findByName` so F-Droid can strip signing without a prebuild sed
+* AA `run-as-uid-arm64` is compiled from `run-as-uid.c` at pack time (not committed). Live signaling server is Node stdlib only (no `ws` native peers) and rejects WebSocket frames over 64 KiB. OBDex DTC titles are CC0 JSON shards instead of a scanner-opaque gzip
+* App runtime Guava pinned to 33.7.2-android (CVE-2026-102554). New AGP test-harness Trivy IDs for Netty/BouncyCastle/Guava pins stay in `.trivyignore` (KB-014/015)
+
 ### Removed
 
 * Parked/idle force-dim no longer caps window brightness; Auto follows the ambient sensor (or the system override when lux is unavailable)

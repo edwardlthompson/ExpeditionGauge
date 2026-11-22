@@ -1,0 +1,1 @@
+v1.2.0 polish waves 2–3: dashboard presets, playback layout + keyboard seek, session stats, comparison, mark events, HTML share summary, onboarding tour, accessibility pack, calibration tips.

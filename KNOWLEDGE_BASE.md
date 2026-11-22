@@ -124,14 +124,16 @@
 | **Fix** | Root `.trivyignore` lists affected CVE IDs; revisit when AGP bumps transitive Netty |
 | **Prevention** | Do not ignore Netty in runtime classpath; prefer AGP upgrade over blanket ignore when fix version ships |
 | **Update 2026-08-04** | Added `CVE-2026-56819` (netty-codec-http2 DoS) — still AGP test-harness only |
+| **Update 2026-11-16** | Added `CVE-2026-75595` (netty-handler SNI bypass) — still AGP test-harness only. App runtime Guava pinned to `33.7.2-android` for CVE-2026-102554; leftover AGP/KSP/lint `-jre` pins stay ignored |
 ### KB-015 — BouncyCastle CVE-2025-14813 in lockfile (Ship 2026-06-30)
 
 | Field | Detail |
 |-------|--------|
 | **Symptom** | Security Scan fails on `org.bouncycastle:bcprov-jdk18on:1.78.1` / `1.79` in `gradle.lockfile` after MapLibre / Robolectric deps |
 | **Cause** | Robolectric and AGP `unified-test-platform-*` declare older BouncyCastle; dependency locking records plugin pins separately from resolved runtime |
-| **Fix** | Explicit `testImplementation` on `bcprov-jdk18on:1.80.2` for unit-test runtime; `.trivyignore` for AGP `unified-test-platform` lockfile pins (do not `force` globally — breaks locked androidTest plugin) |
+| **Fix** | Explicit `testImplementation` on `bcprov-jdk18on:1.85` for unit-test runtime; `.trivyignore` for AGP `unified-test-platform` lockfile pins (do not `force` globally — breaks locked androidTest plugin) |
 | **Prevention** | Re-run `./gradlew --write-locks` after dependency changes; prefer targeted test deps over `resolutionStrategy.force` on all configurations |
+| **Update 2026-11-16** | Added `CVE-2026-8763` / `CVE-2026-13506` / `CVE-2026-5598` for AGP lint/test-plugin `bcprov-jdk18on:1.79`; unit tests already resolve 1.85 |
 ### KB-016 — Child-repo release tag vs `.template-version` (Ship 2026-07-02)
 
 | Field | Detail |
@@ -324,4 +326,12 @@
 | **Cause** | `DeveloperHeadUnitNetworkService` is not exported; shell uid 2000 cannot start it. `adb unroot` then force-stop Gearhead kills the HU server and it cannot be restarted until `adb root` |
 | **Fix** | `adb root`, start the service (`aa-start-head-unit-server.ps1`), keep root until DHU is connected. Then open EG from the AA dock |
 | **Prevention** | Do not `adb unroot` immediately after `aa-refresh-host.ps1` if DHU still needs port 5277; see `docs/help/ANDROID_AUTO.md` DHU scripts
+### KB-039 — F-Droid scanner vs OBDex gzip and AA ELF helper (2026-11-16)
+
+| Field | Detail |
+|-------|--------|
+| **Symptom** | fdroiddata recipe needed `scanignore` of `assets/dtc/obdex_en.gz` and `scandelete` of `scripts/expedition/bin` plus `signaling-server/` |
+| **Cause** | F-Droid's scanner treats gzip/ELF as unknown binaries; `ws` lockfile listed optional native peers (`bufferutil`, `utf-8-validate`) |
+| **Fix** | Split OBDex into `obdex_en_*.json` shards under 500 KB with `assets/dtc/README.md` (CC0). Gitignore `run-as-uid-arm64` and compile from `run-as-uid.c`. Signaling server is stdlib + `ws-lite.js` |
+| **Prevention** | Do not commit prebuilt Android ELF helpers; do not gzip assets just to beat hygiene — shard JSON instead. Keep npm out of the Android source tree when the APK does not use it |
 
