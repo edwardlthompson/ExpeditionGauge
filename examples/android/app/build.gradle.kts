@@ -101,8 +101,8 @@ dependencyLocking {
 dependencies {
     implementation(project(":car"))
 
-    val composeBom = platform("androidx.compose:compose-bom:2026.06.01")
-    val roomVersion = "2.8.4"
+    val composeBom = platform("androidx.compose:compose-bom:2026.11.01")
+    val roomVersion = "2.8.5"
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
@@ -112,7 +112,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.datastore:datastore-preferences:1.2.1")
+    implementation("androidx.datastore:datastore-preferences:1.3.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
@@ -121,19 +121,19 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
-    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
 
     // Pinned FOSS stack — Sprint 1; versions mirrored in app/gradle.lockfile
-    implementation("org.maplibre.compose:maplibre-compose:0.13.1")
-    implementation("org.maplibre.gl:android-sdk:13.4.1")
+    implementation("org.maplibre.compose:maplibre-compose:0.20.0")
+    implementation("org.maplibre.gl:android-sdk:13.7.1")
     implementation("com.github.eltonvs:kotlin-obd-api:1.4.1")
     implementation("androidx.media3:media3-exoplayer:1.10.1")
     implementation("androidx.media3:media3-ui:1.10.1")
-    implementation("com.squareup.okhttp3:okhttp:5.4.0")
+    implementation("com.squareup.okhttp3:okhttp:5.5.1")
     implementation("com.google.zxing:core:3.5.4")
     // CVE-2026-102554 — AGP/KSP still lock older -jre pins (.trivyignore / KB-014).
-    implementation("com.google.guava:guava:33.7.2-android")
-    val cameraX = "1.5.2"
+    implementation("com.google.guava:guava:33.8.0-android")
+    val cameraX = "1.7.0"
     implementation("androidx.camera:camera-camera2:$cameraX")
     implementation("androidx.camera:camera-lifecycle:$cameraX")
     implementation("androidx.camera:camera-view:$cameraX")
@@ -141,8 +141,8 @@ dependencies {
     testImplementation("androidx.test:core:1.7.0")
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.16.1")
-    testImplementation("org.bouncycastle:bcprov-jdk18on:1.85")
+    testImplementation("org.robolectric:robolectric:4.18.1")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.87")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
