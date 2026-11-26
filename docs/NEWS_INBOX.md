@@ -49,3 +49,16 @@ A Cursor planning agent should review these items and fold the useful ones into 
 
 - [x] Bump the Gradle wrapper 9.6.1 to 9.9.2 and commit the regenerated wrapper jar and distributionSha256Sum — the patch fixes four High build-tool vulnerabilities (SFTP host keys, snapshot dependency verification, TestKit temp dir, daemon registry). It also picks up the 9.3 Critical version-catalog code-execution fix this wrapper lacks. Run ./gradlew wrapper --gradle-version=<ver> in the wrapper (examples/android/gradle/wrapper/). Label: `[AGENT]` · Priority: P2 · https://docs.gradle.org/9.9.2/release-notes.html (synced to BUILD_PLAN)
 - [ ] Decide whether to verify your identity and register this app with Google before January 2027 — if yes, create an Android Developer Console account and register the package name(s) with the SHA-256 of the GitHub Releases signing key (plus F-Droid's key if F-Droid re-signs it); if no, add an "advanced flow" install note to the README. The app is sideloaded (GitHub Releases/Obtainium/F-Droid), exactly the installs the rollout gates, and this is a personal identity/policy call. Label: `[HUMAN]` · Priority: P2 · https://developer.android.com/blog/posts/android-developer-verification-2027 (inbox only: no /build-parsed human group on this board)
+
+## 2026-11-26
+
+**News and updates**
+
+- Android Auto 18.2 now swaps the top tab row for a vertical left sidebar (plus a bigger now-playing bar) when an app gets a wide enough slice of the screen; seen in Spotify, YouTube Music, Amazon Music and the dialer, which points to a platform-level change. With Maps docked beside the app it did not appear. The existing DHU smoke covers tall/portrait; wide-but-short head units are the gap for the :car Drive HUD tiles. [9to5Google](https://9to5google.com/2026/11/25/android-auto-wide-display-update/) · [autoevolution](https://www.autoevolution.com/news/android-auto-182-starts-rolling-out-with-a-big-navigation-change-for-wide-screens-278950.html)
+
+- Cursor SDK 1.5.0 (Nov 24, then 1.5.1 and 1.5.2 by Nov 26) adds a `shell-tool-call-delta` stream update, makes `RunResult.usage` count completed model calls on cancelled or failed runs, adds `onConnectionStateChange`, and raises `InlineMcpServersBlockedError` for policy-blocked inline MCP servers. scripts/expedition/dispatch_parallel_agents.py imports cursor_sdk unpinned and only uses `Agent.prompt`, so nothing breaks, but per-agent usage is now reliable enough to record. [SDK release notes](https://cursor.com/docs/release-notes/sdk#nov-24-2026) · [PyPI](https://pypi.org/project/cursor-sdk/)
+
+**Tasks for the planning agent**
+
+- [ ] Add a wide/short landscape DHU profile (with and without the Maps split) to the :car smoke checks — Android Auto now reflows apps by available width, and the 3×1 Drive HUD tiles should stay legible on wide-but-short head units. Label: `[AGENT]` · Priority: P3 · https://9to5google.com/2026/11/25/android-auto-wide-display-update/
+- [ ] Pin cursor-sdk>=1.5.2 in the parallel-dispatch docs and record RunResult.usage in .cursor/parallel-dispatch/*.json — Usage is now reliable even for cancelled or failed agents, which helps track cost per sprint. Label: `[AGENT]` · Priority: P3 · https://cursor.com/docs/release-notes/sdk#nov-24-2026
