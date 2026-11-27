@@ -62,3 +62,16 @@ A Cursor planning agent should review these items and fold the useful ones into 
 
 - [ ] Add a wide/short landscape DHU profile (with and without the Maps split) to the :car smoke checks — Android Auto now reflows apps by available width, and the 3×1 Drive HUD tiles should stay legible on wide-but-short head units. Label: `[AGENT]` · Priority: P3 · https://9to5google.com/2026/11/25/android-auto-wide-display-update/
 - [ ] Pin cursor-sdk>=1.5.2 in the parallel-dispatch docs and record RunResult.usage in .cursor/parallel-dispatch/*.json — Usage is now reliable even for cancelled or failed agents, which helps track cost per sprint. Label: `[AGENT]` · Priority: P3 · https://cursor.com/docs/release-notes/sdk#nov-24-2026
+
+## 2026-11-27
+
+**News and updates**
+
+- An Android Auto 18.3 beta teardown ([Android Authority](https://www.androidauthority.com/android-auto-details-page-icons-app-lock-apk-teardown-3739686/), Nov 26) shows a work-in-progress Settings → Vehicles → Details page with car make/model, head-unit software version and display dimensions, plus a Copy button for bug reports; apps locked with Android's coming app lock won't open in AA, and Maps' speedometer moves top-left. Not shipped yet. ExpeditionGauge's bug_report.yml is the generic template with no Android Auto fields, so HUD reports can't be reproduced on the DHU by display size.
+
+- NGINX fixed two unauthenticated HTTP/2 RCEs (CVE-2026-123007 flow-control integer underflow, which also hits plain static serving, and CVE-2026-123633 use-after-free when proxying with `worker_connections` running low; CVSS 4.0 9.2, back to 1.9.5) in 1.30.7 / 1.31.9; current is 1.30.8 / 1.31.10. Turning off HTTP/2 mitigates. [nginx advisories](https://nginx.org/en/security_advisories.html) · [Wiz write-up](https://www.wiz.io/blog/nginx-http2-rce-vulnerabilities) · [Better Stack short](https://www.youtube.com/shorts/fGprTmtYm0E). signaling-server/README.md recommends an nginx/Caddy reverse proxy for self-hosting without naming a minimum version.
+
+**Tasks for the planning agent**
+
+- [ ] Add Android Auto fields to .github/ISSUE_TEMPLATE/bug_report.yml (AA app version, head-unit make/model, display size; mention AA's coming Settings → Vehicles → Details copy button) — AA keeps reflowing layouts by display size, so HUD bugs need the head-unit dimensions to reproduce on the DHU. Label: `[AGENT]` · Priority: P3 · https://www.androidauthority.com/android-auto-details-page-icons-app-lock-apk-teardown-3739686/
+- [ ] Add "nginx >=1.30.8 / 1.31.10 if you use nginx" to the self-host section of signaling-server/README.md — Self-hosters following the README would otherwise deploy whatever distro nginx they have. Label: `[AGENT]` · Priority: P3 · https://nginx.org/en/security_advisories.html
