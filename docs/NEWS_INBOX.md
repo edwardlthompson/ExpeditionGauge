@@ -75,3 +75,13 @@ A Cursor planning agent should review these items and fold the useful ones into 
 
 - [ ] Add Android Auto fields to .github/ISSUE_TEMPLATE/bug_report.yml (AA app version, head-unit make/model, display size; mention AA's coming Settings → Vehicles → Details copy button) — AA keeps reflowing layouts by display size, so HUD bugs need the head-unit dimensions to reproduce on the DHU. Label: `[AGENT]` · Priority: P3 · https://www.androidauthority.com/android-auto-details-page-icons-app-lock-apk-teardown-3739686/
 - [ ] Add "nginx >=1.30.8 / 1.31.10 if you use nginx" to the self-host section of signaling-server/README.md — Self-hosters following the README would otherwise deploy whatever distro nginx they have. Label: `[AGENT]` · Priority: P3 · https://nginx.org/en/security_advisories.html
+
+## 2026-11-28
+
+**News and updates**
+
+- Gradle [9.9.3](https://github.com/gradle/gradle/releases/tag/v9.9.3) (Nov 27) is a regression-only patch: 9.9.2 failed to start on Windows when GRADLE_USER_HOME sits on an ImDisk RAM disk ([gradle#39909](https://github.com/gradle/gradle/issues/39909)). No new security fixes; 9.9.2's four High fixes are still why the open wrapper-bump row is P2, and Gradle now recommends 9.9.3, so landing on it avoids a second bump. The board row is unchanged. [Release notes](https://docs.gradle.org/9.9.3/release-notes.html)
+
+**Tasks for the planning agent**
+
+- [ ] Use Gradle 9.9.3 rather than 9.9.2 when doing the open wrapper bump — 9.9.3 has the same security fixes plus a Windows startup regression fix, so one bump covers both. Label: `[AGENT]` · Priority: P3 · https://github.com/gradle/gradle/releases/tag/v9.9.3 (BUILD_PLAN row left unchanged)
